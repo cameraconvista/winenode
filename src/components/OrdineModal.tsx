@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useSuppliers from "../hooks/useSuppliers";
-import { useWines } from "../hooks/useWines";
+import useWines from '../hooks/useWines';
 import { useOrdini } from "../hooks/useOrdini";
 
 interface OrdineModalProps {
@@ -423,10 +423,10 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                   // Genera messaggio WhatsApp ottimizzato per mobile
                   const dataOrdine = new Date().toLocaleDateString('it-IT');
                   const oraOrdine = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-                  
+
                   // Versione compatta per mobile
                   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                  
+
                   let messaggio;
                   if (isMobile) {
                     // Messaggio compatto per mobile (senza ID ordine perché non ancora salvato)
@@ -460,31 +460,31 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
 
                   // Encoding sicuro per mobile
                   const encoded = encodeURIComponent(messaggio);
-                  
+
                   // Apri WhatsApp con gestione ottimizzata per mobile
                   if (isMobile) {
                     // Strategia migliorata per mobile
                     try {
                       // Prova prima WhatsApp Web mobile che è più affidabile
                       const whatsappWebUrl = `https://wa.me/?text=${encoded}`;
-                      
+
                       // Su iOS usa il link diretto
                       if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
                         window.location.href = whatsappWebUrl;
                       } else {
                         // Su Android prova prima l'app nativa
                         const whatsappUrl = `whatsapp://send?text=${encoded}`;
-                        
+
                         // Crea un link nascosto per test
                         const testLink = document.createElement('a');
                         testLink.href = whatsappUrl;
                         testLink.style.display = 'none';
                         document.body.appendChild(testLink);
-                        
+
                         // Tenta di aprire l'app nativa
                         const startTime = Date.now();
                         window.location.href = whatsappUrl;
-                        
+
                         // Se dopo 2 secondi siamo ancora nella pagina, apri WhatsApp Web
                         setTimeout(() => {
                           if (Date.now() - startTime > 1900) {
@@ -527,7 +527,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                 Per completare l'ordine, conferma di aver inviato il messaggio WhatsApp al fornitore.
                 L'ordine verrà salvato nel sistema solo dopo la conferma.
               </p>
-              
+
               <div className="text-xs text-gray-400 bg-gray-800/50 rounded p-3">
                 <p className="font-medium text-amber-300 mb-2">📋 Riepilogo ordine da confermare:</p>
                 <p>🏪 Fornitore: {ordineData.fornitore}</p>
@@ -544,7 +544,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               >
                 ← Torna Indietro
               </button>
-              
+
               <button
                 onClick={() => {
                   // Non inviare, torna al riassunto per reinviare
@@ -554,7 +554,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               >
                 ❌ Non Inviato
               </button>
-              
+
               <button
                 onClick={async () => {
                   console.log('Conferma invio WhatsApp - salvataggio ordine:', ordineData);

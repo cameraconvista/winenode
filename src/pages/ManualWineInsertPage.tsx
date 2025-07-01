@@ -3,7 +3,7 @@ import { Sparkles, Upload, RotateCcw, ArrowLeft, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { toast } from "sonner";
-import { useWines } from '../hooks/useWines';
+import useWines from '../hooks/useWines';
 
 function useUser() {
   const [user, setUser] = useState(null);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useWines } from "../hooks/useWines";
+import useWines from "../hooks/useWines";
 import { useColumnResize } from "../hooks/useColumnResize";
 import ImportaVini from "../components/ImportaVini";
 import CategoryTabs from "../components/CategoryTabs";
@@ -139,14 +139,14 @@ export default function ArchiviPage() {
     // Se si sta modificando la giacenza, salva direttamente su Supabase
     if (field === "giacenza") {
       console.log('🔄 Salvando giacenza diretta su Supabase:', row.nomeVino, 'Nuova giacenza:', value);
-      
+
       // Estrai l'ID numerico dalla stringa (formato: "db-123")
       const numericId = row.id.startsWith('db-') ? parseInt(row.id.replace('db-', '')) : null;
-      
+
       if (numericId) {
         try {
           const userId = authManager.getUserId();
-          
+
           // Aggiorna la giacenza nella tabella giacenza usando UPSERT
           const { error } = await supabase
             .from('giacenza')
@@ -163,13 +163,13 @@ export default function ArchiviPage() {
             console.error('❌ Errore salvataggio giacenza su Supabase:', error.message);
             return;
           }
-          
+
           console.log('✅ Giacenza salvata direttamente su Supabase');
-          
+
           // Aggiorna solo lo stato locale DOPO il salvataggio riuscito
           (row as any)[field] = Number(value) || 0;
           setWineRows(updatedRows);
-          
+
         } catch (err) {
           console.error('❌ Errore inatteso salvataggio giacenza:', err);
         }
@@ -183,7 +183,7 @@ export default function ArchiviPage() {
     }
   };
 
-  
+
 
   const handleRowClick = (index: number, event: React.MouseEvent) => {
     if (event.ctrlKey || event.metaKey) {

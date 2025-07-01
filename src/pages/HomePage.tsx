@@ -5,7 +5,7 @@ import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import CarrelloModal from '../components/CarrelloModal';
 import CategoryTabs from '../components/CategoryTabs';
-import { useWines } from '../hooks/useWines';
+import useWines from '../hooks/useWines';
 import { authManager, isSupabaseAvailable, supabase } from '../lib/supabase';
 
 type WineType = {
