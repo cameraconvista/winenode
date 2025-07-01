@@ -47,23 +47,27 @@ export default function ArchiviPage() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Normalizza tipo vino
   const normalizeType = (type?: string | null) => {
     if (!type) return "";
-    const map: Record<string, string> = {
-      "bollicine": "BOLLICINE ITALIANE",
-      "bollicine italiane": "BOLLICINE ITALIANE",
-      "bollicine francesi": "BOLLICINE FRANCESI",
-      "bianco": "BIANCHI",
-      "bianchi": "BIANCHI",
-      "rosso": "ROSSI",
-      "rossi": "ROSSI",
-      "rosato": "ROSATI",
-      "rosati": "ROSATI",
-      "dolce": "VINI DOLCI",
-      "vini dolci": "VINI DOLCI"
-    };
-    return map[type.toLowerCase().trim()] || type.toUpperCase();
+    const normalized = type.toUpperCase().trim();
+
+    // Mapping esatto delle tipologie importate da Google Sheets
+    if (normalized === "BOLLICINE ITALIANE") return "BOLLICINE ITALIANE";
+    if (normalized === "BOLLICINE FRANCESI") return "BOLLICINE FRANCESI";
+    if (normalized === "BIANCHI") return "BIANCHI";
+    if (normalized === "ROSSI") return "ROSSI";
+    if (normalized === "ROSATI") return "ROSATI";
+    if (normalized === "VINI DOLCI") return "VINI DOLCI";
+
+    // Fallback per compatibilità con vecchi dati
+    if (normalized.includes("BOLLICINE") && normalized.includes("ITALIANA")) return "BOLLICINE ITALIANE";
+    if (normalized.includes("BOLLICINE") && normalized.includes("FRANCESE")) return "BOLLICINE FRANCESI";
+    if (normalized.includes("BIANCO")) return "BIANCHI";
+    if (normalized.includes("ROSSO")) return "ROSSI";
+    if (normalized.includes("ROSATO")) return "ROSATI";
+    if (normalized.includes("DOLCI")) return "VINI DOLCI";
+
+    return normalized;
   };
 
   // Carica vini da Supabase e filtra per tab

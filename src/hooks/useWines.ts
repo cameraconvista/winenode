@@ -44,7 +44,7 @@ const useWines = () => {
           inventory = wine.giacenza.giacenzaa;
         }
 
-        return {
+        const wineData = {
           id: wine.id,
           name: wine.nome_vino || '',
           type: wine.tipologia || '',
@@ -57,6 +57,11 @@ const useWines = () => {
           region: wine.provenienza || null,
           description: wine.produttore || null
         };
+        
+        // Debug log per verificare tipologia
+        console.log(`🍷 Vino "${wineData.name}" - Tipologia: "${wineData.type}"`);
+        
+        return wineData;
       });
 
       const uniqueSuppliers = Array.from(new Set(winesData.map(w => w.supplier).filter(Boolean))).sort();
