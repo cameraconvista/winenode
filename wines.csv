@@ -1,0 +1,7 @@
+
+nome_vino,anno,produttore,provenienza,fornitore,costo,vendita,margine,tipologia
+Chianti Classico,2020,Antinori,Toscana,Fornitore A,12.50,25.00,12.50,ROSSI
+Prosecco di Valdobbiadene,2021,Bisol,Veneto,Fornitore B,8.00,18.00,10.00,BOLLICINE ITALIANE
+Pinot Grigio,2022,Livio Felluga,Friuli,Fornitore C,10.00,22.00,12.00,BIANCHI
+Brunello di Montalcino,2018,Biondi Santi,Toscana,Fornitore A,45.00,95.00,50.00,ROSSI
+Barolo,2019,Gaja,Piemonte,Fornitore D,35.00,75.00,40.00,ROSSI
