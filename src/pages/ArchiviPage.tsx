@@ -90,14 +90,14 @@ export default function ArchiviPage() {
           anno: wine.vintage || "",
           produttore: wine.description || "",
           provenienza: wine.region || "",
-          giacenza: wine.inventory || 0, // Questo ora viene dalla tabella giacenze tramite JOIN
+          giacenza: wine.inventory || 0,
           fornitore: wine.supplier || "",
           tipologia: normalizeType(wine.type),
           ordine: idx
         }))
-        .sort((a, b) => a.nomeVino.localeCompare(b.nomeVino));
+        .sort((a, b) => a.nomeVino.localeCompare(b.nomeVino, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
 
-      console.log('📋 Vini filtrati per TUTTI I VINI:', filtered.length);
+      console.log('📋 Vini filtrati per TUTTI I VINI (A-Z):', filtered.length);
       setWineRows(filtered);
       return;
     }
@@ -111,13 +111,14 @@ export default function ArchiviPage() {
         anno: wine.vintage || "",
         produttore: wine.description || "",
         provenienza: wine.region || "",
-        giacenza: wine.inventory || 0, // Questo ora viene dalla tabella giacenze tramite JOIN
+        giacenza: wine.inventory || 0,
         fornitore: wine.supplier || "",
         tipologia: activeTab,
         ordine: idx
-      }));
+      }))
+      .sort((a, b) => a.nomeVino.localeCompare(b.nomeVino, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
 
-    console.log(`📋 Vini filtrati per ${activeTab}:`, filtered.length);
+    console.log(`📋 Vini filtrati per ${activeTab} (A-Z):`, filtered.length);
     setWineRows(filtered);
   }, [existingWines, activeTab]);
 
