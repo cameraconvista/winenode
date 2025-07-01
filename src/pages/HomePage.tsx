@@ -80,7 +80,8 @@ export default function HomePage() {
     const matchesAlerts = !filters.showAlertsOnly || wine.inventory <= wine.minStock;
 
     return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
-  }); // NIENTE SORT - mantieni l'ordine di Supabase
+  })
+  .sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
 
   const handleInventoryChange = async (id: number, value: number) => {
     const adjusted = Math.max(0, value);
