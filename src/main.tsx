@@ -6,23 +6,35 @@ import './index.css'
 
 import { createClient } from '@supabase/supabase-js'
 
-// ✅ CREA IL CLIENTE SUPABASE
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-)
+// ✅ Verifica che le variabili d'ambiente siano presenti
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// ✅ STAMPA IN CONSOLE L'UTENTE LOGGATO
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('❌ Errore: Variabili ambiente mancanti.')
+  console.error('VITE_SUPABASE_URL:', SUPABASE_URL)
+  console.error('VITE_SUPABASE_ANON_KEY:', SUPABASE_ANON_KEY)
+  throw new Error('Variabili Supabase mancanti. Controlla i Secret in Replit.')
+}
+
+// ✅ Crea client Supabase
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+// ✅ Logga la sessione utente attuale (solo per debug)
 supabase.auth.getSession().then(({ data, error }) => {
-  console.log('👤 USER SESSION:', data.session)
-  console.log('🆔 USER ID:', data.session?.user.id)
-  if (error) console.error('❌ Supabase Error:', error)
+  if (error) {
+    console.error('❌ Errore Supabase:', error.message)
+  } else {
+    console.log('👤 USER SESSION:', data.session)
+    console.log('🆔 USER ID:', data.session?.user.id)
+  }
 })
 
+// ✅ Avvia l'app
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
