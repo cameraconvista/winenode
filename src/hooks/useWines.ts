@@ -158,3 +158,4 @@ const useWines = () => {
 };
 
 export default useWines;
+export { useWines };
