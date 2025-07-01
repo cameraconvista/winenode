@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
 
 export interface WineType {
-  id: number;
+  id: string; // ✅ Cambiato da number a string per UUID
   name: string;
   type: string;
   supplier: string;
@@ -74,7 +74,7 @@ const useWines = () => {
     }
   };
 
-  const updateWineInventory = async (id: number, newInventory: number): Promise<boolean> => {
+  const updateWineInventory = async (id: string, newInventory: number): Promise<boolean> => {
     const userId = authManager.getUserId();
     try {
       const { error } = await supabase
@@ -97,7 +97,7 @@ const useWines = () => {
     }
   };
 
-  const updateWine = async (id: number, updates: Partial<WineType>): Promise<boolean> => {
+  const updateWine = async (id: string, updates: Partial<WineType>): Promise<boolean> => {
     const userId = authManager.getUserId();
     try {
       const updatesDb: any = {};
