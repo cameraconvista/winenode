@@ -103,6 +103,48 @@ async function importCategoryFromSheet(doc: any, sheetTitle: string, userId: str
   }
 }
 
+// Sistema di sincronizzazione automatica
+let autoSyncInterval: NodeJS.Timeout | null = null;
+
+export function startAutoSync(googleSheetUrl: string, userId: string) {
+  if (autoSyncInterval) {
+    clearInterval(autoSyncInterval);
+  }
+  
+  console.log('🔄 Avvio sincronizzazione automatica ogni 5 minuti');
+  
+  autoSyncInterval = setInterval(async () => {
+    try {
+      console.log('🔍 Controllo automatico aggiornamenti Google Sheet...');
+      const result = await importFromGoogleSheet(googleSheetUrl, userId);
+      
+      if (result.success && result.importedWines > 0) {
+        console.log(`✅ Sincronizzazione automatica: ${result.importedWines} vini aggiornati`);
+        
+        // Notifica l'utente dell'aggiornamento
+        if (typeof window !== 'undefined') {
+          const event = new CustomEvent('winesUpdated', { 
+            detail: { message: result.message, wines: result.importedWines }
+          });
+          window.dispatchEvent(event);
+        }
+      } else {
+        console.log('📋 Sincronizzazione automatica: nessun aggiornamento necessario');
+      }
+    } catch (error) {
+      console.error('❌ Errore sincronizzazione automatica:', error);
+    }
+  }, 5 * 60 * 1000); // 5 minuti
+}
+
+export function stopAutoSync() {
+  if (autoSyncInterval) {
+    clearInterval(autoSyncInterval);
+    autoSyncInterval = null;
+    console.log('⏹️ Sincronizzazione automatica fermata');
+  }
+}
+
 export async function importFromGoogleSheet(googleSheetUrl: string, userId: string): Promise<ImportResult> {
   if (!isSupabaseAvailable || !supabase) {
     return {

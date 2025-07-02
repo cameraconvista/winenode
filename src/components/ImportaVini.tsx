@@ -30,7 +30,10 @@ export default function ImportaVini({}: ImportaViniProps) {
   const [sheetStatus, setSheetStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [sheetMessage, setSheetMessage] = useState('')
 
-  // Load current Google Sheet link on component mount
+  // Auto-sync state
+  const [autoSyncEnabled, setAutoSyncEnabled] = useState(false)
+
+  // Load current Google Sheet link and start auto-sync
   useEffect(() => {
     const loadCurrentSheetLink = async () => {
       const userId = authManager.getUserId()
@@ -45,6 +48,12 @@ export default function ImportaVini({}: ImportaViniProps) {
 
         if (!error && data?.google_sheet_url) {
           setCurrentSheetLink(data.google_sheet_url)
+          
+          // Avvia sincronizzazione automatica
+          const { startAutoSync } = await import('../lib/importFromGoogleSheet')
+          startAutoSync(data.google_sheet_url, userId)
+          setAutoSyncEnabled(true)
+          console.log('🔄 Sincronizzazione automatica attivata')
         }
       } catch (error) {
         console.error('Error loading sheet link:', error)
@@ -52,6 +61,34 @@ export default function ImportaVini({}: ImportaViniProps) {
     }
 
     loadCurrentSheetLink()
+
+    // Cleanup al dismount
+    return () => {
+      import('../lib/importFromGoogleSheet').then(({ stopAutoSync }) => {
+        stopAutoSync()
+      })
+    }
+  }, [])
+
+  // Listener per aggiornamenti automatici
+  useEffect(() => {
+    const handleWinesUpdated = (event: CustomEvent) => {
+      setSheetStatus('success')
+      setSheetMessage(`🔄 ${event.detail.message}`)
+      
+      // Nascondi il messaggio dopo 3 secondi
+      setTimeout(() => {
+        setSheetStatus('idle')
+        setSheetMessage('')
+      }, 3000)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('winesUpdated', handleWinesUpdated as EventListener)
+      return () => {
+        window.removeEventListener('winesUpdated', handleWinesUpdated as EventListener)
+      }
+    }
   }, [])
 
   const saveWineToSupabase = async (name: string, type: string, userId: string) => {
@@ -139,6 +176,14 @@ export default function ImportaVini({}: ImportaViniProps) {
         
         // Salva il link per uso futuro
         await saveSheetLink()
+        
+        // Avvia sincronizzazione automatica se non già attiva
+        if (!autoSyncEnabled) {
+          const { startAutoSync } = await import('../lib/importFromGoogleSheet')
+          startAutoSync(googleSheetUrl, userId)
+          setAutoSyncEnabled(true)
+          console.log('🔄 Sincronizzazione automatica attivata')
+        }
         
         // Aggiorna la lista dei vini
         if (typeof onImportComplete === 'function') {
