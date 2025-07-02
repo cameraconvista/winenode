@@ -191,18 +191,7 @@ export default function ArchiviPage() {
     }
   };
 
-  const addNewRow = () => {
-    const newRow: WineRow = {
-      id: `row-${Date.now()}`,
-      nomeVino: "",
-      anno: "",
-      produttore: "",
-      provenienza: "",
-      giacenza: 0,
-      fornitore: "",
-    };
-    setWineRows(prev => [...prev, newRow]);
-  };
+  
 
   const lineHeight = fontSize * 1.2;
   const rowHeight = fontSize * 2.5;
@@ -247,51 +236,23 @@ export default function ArchiviPage() {
                     </td>
                   </tr>
                 ) : (
-                  <>
-                    {filteredRows.map((row, index) => (
-                      <WineTableRow 
-                        key={row.id} 
-                        row={row} 
-                        index={index} 
-                        isSelected={selectedRows.includes(index)} 
-                        columnWidths={columnWidths} 
-                        fontSize={fontSize} 
-                        onRowClick={handleRowClick} 
-                        onCellChange={handleCellChange} 
-                      />
-                    ))}
-                    {/* Righe vuote per riempire la pagina */}
-                    {Array.from({ length: Math.max(0, 20 - filteredRows.length) }, (_, emptyIndex) => {
-                      const emptyRow = {
-                        id: `empty-${emptyIndex}`,
-                        nomeVino: "",
-                        anno: "",
-                        produttore: "",
-                        provenienza: "",
-                        giacenza: 0,
-                        fornitore: "",
-                        tipologia: "",
-                        ordine: filteredRows.length + emptyIndex
-                      };
-                      return (
-                        <WineTableRow 
-                          key={`empty-${emptyIndex}`} 
-                          row={emptyRow} 
-                          index={filteredRows.length + emptyIndex} 
-                          isSelected={false} 
-                          columnWidths={columnWidths} 
-                          fontSize={fontSize} 
-                          onRowClick={() => {}} 
-                          onCellChange={() => {}} 
-                        />
-                      );
-                    })}
-                  </>
+                  filteredRows.map((row, index) => (
+                    <WineTableRow 
+                      key={row.id} 
+                      row={row} 
+                      index={index} 
+                      isSelected={selectedRows.includes(index)} 
+                      columnWidths={columnWidths} 
+                      fontSize={fontSize} 
+                      onRowClick={handleRowClick} 
+                      onCellChange={handleCellChange} 
+                    />
+                  ))
                 )}
               </tbody>
             </table>
             <div className="sticky bottom-0 z-40 bg-[#8B4513] border-t-2 border-amber-900 shadow-lg">
-              <button onClick={addNewRow} className="w-full border border-amber-900 p-3 text-white font-medium hover:bg-amber-200 transition-colors" style={{ backgroundColor: "#2d0505", fontSize, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>Aggiungi</button>
+              <div className="w-full border border-amber-900 p-3" style={{ backgroundColor: "#2d0505", fontSize, height: 40 }}></div>
             </div>
           </div>
         </div>
