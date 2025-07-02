@@ -112,14 +112,18 @@ export function startAutoSync(googleSheetUrl: string, userId: string) {
   }
   
   console.log('🔄 Avvio sincronizzazione automatica ogni 1 minuto');
+  console.log('📍 Google Sheet URL:', googleSheetUrl);
+  console.log('👤 User ID:', userId);
   
-  autoSyncInterval = setInterval(async () => {
+  // Esegui una sincronizzazione immediata al primo avvio
+  setTimeout(async () => {
+    console.log('🚀 Sincronizzazione immediata al primo avvio...');
     try {
-      console.log('🔍 Controllo automatico aggiornamenti Google Sheet...');
       const result = await importFromGoogleSheet(googleSheetUrl, userId);
+      console.log('📊 Risultato sincronizzazione immediata:', result);
       
       if (result.success && result.importedWines > 0) {
-        console.log(`✅ Sincronizzazione automatica: ${result.importedWines} vini aggiornati`);
+        console.log(`✅ Sincronizzazione immediata: ${result.importedWines} vini importati`);
         
         // Notifica l'utente dell'aggiornamento
         if (typeof window !== 'undefined') {
@@ -128,8 +132,40 @@ export function startAutoSync(googleSheetUrl: string, userId: string) {
           });
           window.dispatchEvent(event);
         }
+      }
+    } catch (error) {
+      console.error('❌ Errore sincronizzazione immediata:', error);
+    }
+  }, 2000);
+  
+  autoSyncInterval = setInterval(async () => {
+    try {
+      const now = new Date().toLocaleTimeString();
+      console.log(`🔍 [${now}] Controllo automatico aggiornamenti Google Sheet...`);
+      
+      const result = await importFromGoogleSheet(googleSheetUrl, userId);
+      
+      console.log(`📊 [${now}] Risultato sincronizzazione:`, {
+        success: result.success,
+        wines: result.importedWines,
+        categories: result.importedCategories,
+        message: result.message
+      });
+      
+      if (result.success && result.importedWines > 0) {
+        console.log(`✅ [${now}] Sincronizzazione automatica: ${result.importedWines} vini aggiornati`);
+        
+        // Notifica l'utente dell'aggiornamento
+        if (typeof window !== 'undefined') {
+          const event = new CustomEvent('winesUpdated', { 
+            detail: { message: result.message, wines: result.importedWines }
+          });
+          window.dispatchEvent(event);
+        }
+      } else if (result.success) {
+        console.log(`📋 [${now}] Sincronizzazione automatica: nessun nuovo vino da importare`);
       } else {
-        console.log('📋 Sincronizzazione automatica: nessun aggiornamento necessario');
+        console.log(`❌ [${now}] Sincronizzazione fallita: ${result.message}`);
       }
     } catch (error) {
       console.error('❌ Errore sincronizzazione automatica:', error);
@@ -173,6 +209,7 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
     // Debug: mostra tutti i fogli disponibili
     const availableSheets = doc.sheetsByIndex.map(sheet => sheet.title);
     console.log('📋 Fogli disponibili nel Google Sheet:', availableSheets);
+    console.log('📅 Data ultimo aggiornamento Google Sheet:', doc.lastUpdatedTime);
     
     const sheetsToImport = Object.keys(CATEGORY_MAPPINGS);
     console.log('🔍 Fogli da cercare:', sheetsToImport);
@@ -209,6 +246,15 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
       if (actualSheetTitle) {
         console.log(`🔄 Importando categoria: ${actualSheetTitle} → ${CATEGORY_MAPPINGS[sheetName]}`);
         
+        // Debug: mostra info prima dell'importazione
+        const currentCount = await supabase
+          .from('vini')
+          .select('id', { count: 'exact' })
+          .eq('tipologia', CATEGORY_MAPPINGS[sheetName])
+          .eq('user_id', userId);
+        
+        console.log(`📊 Vini attuali in DB per ${CATEGORY_MAPPINGS[sheetName]}:`, currentCount.count);
+        
         const result = await importCategoryFromSheet(doc, actualSheetTitle, userId);
         totalWines += result.wines;
         
@@ -220,7 +266,7 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
           allErrors.push(...result.errors);
         }
 
-        console.log(`✅ ${actualSheetTitle}: ${result.wines} vini importati`);
+        console.log(`✅ ${actualSheetTitle}: ${result.wines} vini importati (${currentCount.count} → ${result.wines})`);
 
         // Pausa tra le importazioni per evitare rate limiting
         await new Promise(resolve => setTimeout(resolve, 500));

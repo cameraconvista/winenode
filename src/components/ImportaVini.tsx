@@ -48,7 +48,7 @@ export default function ImportaVini({}: ImportaViniProps) {
 
         if (!error && data?.google_sheet_url) {
           setCurrentSheetLink(data.google_sheet_url)
-          
+
           // Avvia sincronizzazione automatica
           const { startAutoSync } = await import('../lib/importFromGoogleSheet')
           startAutoSync(data.google_sheet_url, userId)
@@ -75,7 +75,7 @@ export default function ImportaVini({}: ImportaViniProps) {
     const handleWinesUpdated = (event: CustomEvent) => {
       setSheetStatus('success')
       setSheetMessage(`🔄 ${event.detail.message}`)
-      
+
       // Nascondi il messaggio dopo 3 secondi
       setTimeout(() => {
         setSheetStatus('idle')
@@ -142,7 +142,7 @@ export default function ImportaVini({}: ImportaViniProps) {
     // Test credenziali Google prima di procedere
     const { testGoogleCredentials } = await import('../utils/testGoogleCredentials')
     const hasCredentials = testGoogleCredentials()
-    
+
     if (!hasCredentials) {
       setSheetStatus('error')
       setSheetMessage('❌ Credenziali Google Sheets non configurate nelle Secrets')
@@ -169,14 +169,14 @@ export default function ImportaVini({}: ImportaViniProps) {
       // Importa usando il sistema Google Sheets API ripristinato
       const { importFromGoogleSheet } = await import('../lib/importFromGoogleSheet')
       const result = await importFromGoogleSheet(googleSheetUrl, userId)
-      
+
       if (result.success) {
         setSheetStatus('success')
         setSheetMessage(result.message)
-        
+
         // Salva il link per uso futuro
         await saveSheetLink()
-        
+
         // Avvia sincronizzazione automatica se non già attiva
         if (!autoSyncEnabled) {
           const { startAutoSync } = await import('../lib/importFromGoogleSheet')
@@ -184,7 +184,7 @@ export default function ImportaVini({}: ImportaViniProps) {
           setAutoSyncEnabled(true)
           console.log('🔄 Sincronizzazione automatica attivata')
         }
-        
+
         // Aggiorna la lista dei vini
         if (typeof onImportComplete === 'function') {
           onImportComplete()
@@ -192,7 +192,48 @@ export default function ImportaVini({}: ImportaViniProps) {
       } else {
         setSheetStatus('error')
         setSheetMessage(result.message)
-        
+
+        if (result.errors && result.errors.length > 0) {
+          console.error('Errori importazione:', result.errors)
+        }
+      }
+    } catch (error) {
+      console.error('Errore importazione Google Sheet:', error)
+      setSheetStatus('error')
+      setSheetMessage(`❌ Errore durante l'importazione: ${error.message}`)
+    } finally {
+      setIsLoadingSheet(false)
+    }
+  }
+
+  const handleManualSync = async () => {
+    const userId = authManager.getUserId()
+    if (!userId) {
+      setSheetStatus('error')
+      setSheetMessage('Utente non autenticato')
+      return
+    }
+
+    if (!currentSheetLink) {
+      setSheetStatus('error')
+      setSheetMessage('Nessun Google Sheet collegato')
+      return
+    }
+
+    setIsLoadingSheet(true)
+    setSheetStatus('idle')
+
+    try {
+      const { importFromGoogleSheet } = await import('../lib/importFromGoogleSheet')
+      const result = await importFromGoogleSheet(currentSheetLink, userId)
+
+      if (result.success) {
+        setSheetStatus('success')
+        setSheetMessage(result.message)
+      } else {
+        setSheetStatus('error')
+        setSheetMessage(result.message)
+
         if (result.errors && result.errors.length > 0) {
           console.error('Errori importazione:', result.errors)
         }
@@ -454,6 +495,18 @@ export default function ImportaVini({}: ImportaViniProps) {
           </div>
         </div>
       )}
+      {currentSheetLink && (
+                <div className="text-sm text-green-400 mb-2 flex items-center justify-between">
+                  <span>✅ Google Sheet collegato</span>
+                  <button
+                    onClick={handleManualSync}
+                    disabled={isLoadingSheet}
+                    className="text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-2 py-1 rounded"
+                  >
+                    {isLoadingSheet ? '🔄' : 'Sincronizza Ora'}
+                  </button>
+                </div>
+              )}
     </div>
   )
 }
