@@ -501,7 +501,19 @@ export default function SettingsPage() {
                 alt="WINENODE" 
                 className="h-32 w-auto object-contain" 
               />
-              <div className="w-10"></div>
+              <button
+                onClick={() => navigate("/")}
+                className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200 hover:scale-105"
+                title="Vai alla home"
+                style={{
+                  filter: "brightness(1.3)",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)"
+                }}
+              >
+                <Home className="h-6 w-6" />
+              </button>
             </div>
           </div>
         </div>
