@@ -138,7 +138,7 @@ export default function WineTableRow({
 
           <div className="flex items-center justify-center gap-1">
             {row.giacenza <= 2 && row.giacenza > 0 && (
-              <svg className="w-3 h-3 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
               </svg>
             )}
@@ -146,7 +146,7 @@ export default function WineTableRow({
               type="number"
               value={row.giacenza}
               onChange={(e) => onCellChange(index, "giacenza", e.target.value)}
-              className="flex-1 bg-transparent text-center outline-none"
+              className="flex-1 bg-transparent text-center outline-none text-gray-600"
               style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
               min="0"
             />
