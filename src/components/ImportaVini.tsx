@@ -85,7 +85,7 @@ export default function ImportaVini({}: ImportaViniProps) {
       .from('giacenza')
       .insert({
         vino_id: wineData.id,
-        giacenzaa: 0,
+        giacenza: 0,
         user_id: userId,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
