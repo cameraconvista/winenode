@@ -76,6 +76,12 @@ export default function WineDetailsModal({
                   <span className="mx-2">·</span>
                 </>
               )}
+              {wine.cost && wine.cost > 0 && (
+                <>
+                  <span className="text-amber-400 font-bold">€{wine.cost.toFixed(2)}</span>
+                  <span className="mx-2">·</span>
+                </>
+              )}
               <span className="text-blue-300 font-medium">
                 {wine.supplier && wine.supplier.trim() ? wine.supplier : 'BOLOGNA VINI'}
               </span>
