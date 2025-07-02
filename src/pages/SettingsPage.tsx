@@ -501,17 +501,7 @@ export default function SettingsPage() {
                 alt="WINENODE" 
                 className="h-32 w-auto object-contain" 
               />
-              <button
-                onClick={() => navigate("/")}
-                className="p-2 text-white hover:text-cream hover:bg-gray-800 rounded-lg transition-colors"
-                title="Vai alla home"
-                style={{
-                  filter: "brightness(1.2)",
-                  color: "#ffffff"
-                }}
-              >
-                <img src="/iconwinenode.png" alt="Home" className="h-6 w-6" />
-              </button>
+              <div className="w-10"></div>
             </div>
           </div>
         </div>
