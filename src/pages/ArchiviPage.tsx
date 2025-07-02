@@ -259,18 +259,46 @@ export default function ArchiviPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredRows.map((row, index) => (
-                    <WineTableRow 
-                      key={row.id} 
-                      row={row} 
-                      index={index} 
-                      isSelected={selectedRows.includes(index)} 
-                      columnWidths={columnWidths} 
-                      fontSize={fontSize} 
-                      onRowClick={handleRowClick} 
-                      onCellChange={handleCellChange} 
-                    />
-                  ))
+                  <>
+                    {filteredRows.map((row, index) => (
+                      <WineTableRow 
+                        key={row.id} 
+                        row={row} 
+                        index={index} 
+                        isSelected={selectedRows.includes(index)} 
+                        columnWidths={columnWidths} 
+                        fontSize={fontSize} 
+                        onRowClick={handleRowClick} 
+                        onCellChange={handleCellChange} 
+                      />
+                    ))}
+                    {/* Righe vuote per riempire la pagina */}
+                    {Array.from({ length: Math.max(0, 20 - filteredRows.length) }, (_, emptyIndex) => {
+                      const emptyRow = {
+                        id: `empty-${emptyIndex}`,
+                        nomeVino: "",
+                        anno: "",
+                        produttore: "",
+                        provenienza: "",
+                        giacenza: 0,
+                        fornitore: "",
+                        tipologia: "",
+                        ordine: filteredRows.length + emptyIndex
+                      };
+                      return (
+                        <WineTableRow 
+                          key={`empty-${emptyIndex}`} 
+                          row={emptyRow} 
+                          index={filteredRows.length + emptyIndex} 
+                          isSelected={false} 
+                          columnWidths={columnWidths} 
+                          fontSize={fontSize} 
+                          onRowClick={() => {}} 
+                          onCellChange={() => {}} 
+                        />
+                      );
+                    })}
+                  </>
                 )}
               </tbody>
             </table>
