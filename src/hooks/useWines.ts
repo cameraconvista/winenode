@@ -1,14 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
-
-// ✅ Debounce utility per evitare aggiornamenti troppo rapidi
-const debounce = (func: Function, wait: number) => {
-  let timeout: NodeJS.Timeout;
-  return (...args: any[]) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(null, args), wait);
-  };
-};
 
 export interface WineType {
   id: string; // ✅ Cambiato da number a string per UUID
@@ -181,12 +172,6 @@ const useWines = () => {
     }
   };
 
-  // ✅ Versione debounced per aggiornamenti rapidi
-  const debouncedUpdateInventory = useCallback(
-    debounce(updateWineInventory, 500), // 500ms di debounce
-    []
-  );
-
   useEffect(() => {
     fetchWines();
   }, []);
@@ -198,8 +183,7 @@ const useWines = () => {
     error,
     refreshWines: fetchWines,
     updateWineInventory,
-    updateWine,
-    debouncedUpdateInventory // ✅ Funzione debounced per UI rapida
+    updateWine
   };
 };
 

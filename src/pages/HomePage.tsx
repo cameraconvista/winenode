@@ -51,6 +51,7 @@ export default function HomePage() {
   const [editingValue, setEditingValue] = useState('');
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
+  const [showOrdineModal, setShowOrdineModal] = useState(false);
 
   const filteredWines = wines
     .filter(wine => {
