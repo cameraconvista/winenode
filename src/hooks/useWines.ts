@@ -28,24 +28,38 @@ const useWines = () => {
       const userId = authManager.getUserId();
       if (!isValid || !userId) throw new Error('Utente non autenticato');
 
-      const { data, error: winesError } = await supabase
+      // Prima recupera i vini
+      const { data: viniData, error: viniError } = await supabase
         .from('vini')
-        .select(`
-          *,
-          giacenza (giacenza, min_stock)
-        `)
+        .select('*')
         .eq('user_id', userId)
-        .order('id', { ascending: true });
+        .order('nome_vino', { ascending: true });
 
-      if (winesError) throw winesError;
+      if (viniError) throw viniError;
 
-      const mappedWines: WineType[] = (data || []).map((wine: any) => ({
-        id: wine.id,
-        name: wine.nome_vino || '',
-        type: wine.tipologia || '',
-        supplier: wine.fornitore || '',
-        inventory: wine.giacenza?.[0]?.giacenza ?? 0,
-        minStock: wine.giacenza?.[0]?.min_stock ?? 0,
+      // Poi recupera le giacenze
+      const { data: giacenzeData, error: giacenzeError } = await supabase
+        .from('giacenza')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (giacenzeError) throw giacenzeError;
+
+      // Crea una mappa delle giacenze per vino_id
+      const giacenzeMap = new Map();
+      (giacenzeData || []).forEach((g: any) => {
+        giacenzeMap.set(g.vino_id, g);
+      });
+
+      const mappedWines: WineType[] = (viniData || []).map((wine: any) => {
+        const giacenzaData = giacenzeMap.get(wine.id);
+        return {
+          id: wine.id,
+          name: wine.nome_vino || '',
+          type: wine.tipologia || '',
+          supplier: wine.fornitore || '',
+          inventory: giacenzaData?.giacenza ?? 0,
+          minStock: giacenzaData?.min_stock ?? 2,
         price: wine.vendita?.toString() || '',
         cost: wine.costo || 0,
         vintage: wine.anno?.toString() || '',
