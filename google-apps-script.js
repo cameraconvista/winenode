@@ -8,11 +8,8 @@ const SUPABASE_URL = "https://rtmohyjquscdkbtibdsu.supabase.co";
 const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0bW9oeWpxdXNjZGtidGliZHN1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTQ1NjY4MCwiZXhwIjoyMDY3MDMyNjgwfQ.vdU1ICEONshwgtd636O92_qamM9ohXe2dwljYwjf5hk";
 const DEFAULT_USER_ID = "02c85ceb-8026-4bd9-9dc5-c03a74f56346";
 
-// 📊 CONFIGURAZIONE GOOGLE SHEET - CORREGGI QUESTO ID!
-// Trova l'ID corretto nell'URL del tuo Google Sheet tra /d/ e /edit
-// Esempio: https://docs.google.com/spreadsheets/d/1ABC123DEF456/edit#gid=0
-// L'ID è: 1ABC123DEF456
-const GOOGLE_SHEET_ID = "1slvYCYuQ78Yf9fsRL1yR5xkW2kshOcQVe8E2HsvGZ8Y";
+// 📊 CONFIGURAZIONE GOOGLE SHEET
+const GOOGLE_SHEET_ID = "1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy";
 
 // 🍷 MAPPATURA FOGLI → TIPOLOGIE
 const TIPOLOGIE_MAPPING = {
@@ -34,24 +31,13 @@ function parseEuro(value) {
 
 // 🔍 FUNZIONE PER MAPPARE INTESTAZIONI
 function mappaIntestazioni(headers) {
-  const mapping = {
-    nome_vino: -1,
-    anno: -1,
-    produttore: -1,
-    provenienza: -1,
-    fornitore: -1,
-    costo: -1,
-    vendita: -1,
-    margine: -1
-  };
+  const mapping = {};
   
   headers.forEach((header, index) => {
-    if (!header) return;
-    
     const cleanHeader = header.toString().toLowerCase().trim();
     
     // Mapping più flessibile per le colonne
-    if (cleanHeader.includes('nome') || cleanHeader.includes('vino') || cleanHeader.includes('wine') || cleanHeader === 'name') {
+    if (cleanHeader.includes('nome') || cleanHeader.includes('vino') || cleanHeader.includes('wine')) {
       mapping.nome_vino = index;
     } else if (cleanHeader.includes('anno') || cleanHeader.includes('year') || cleanHeader.includes('vintage')) {
       mapping.anno = index;
@@ -70,8 +56,8 @@ function mappaIntestazioni(headers) {
     }
   });
   
-  // Se non troviamo nome_vino, usa la prima colonna non vuota
-  if (mapping.nome_vino === -1) {
+  // Se non troviamo nome_vino, proviamo con la prima colonna non vuota
+  if (mapping.nome_vino === undefined) {
     for (let i = 0; i < headers.length; i++) {
       if (headers[i] && headers[i].toString().trim() !== '') {
         mapping.nome_vino = i;
@@ -88,65 +74,47 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
   try {
     console.log(`🔄 Elaborazione foglio: ${nomeFoglio}`);
     
-    // 1. VERIFICA E APRI IL GOOGLE SHEET
-    let spreadsheet;
-    try {
-      spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
-      console.log(`✅ Google Sheet aperto: ${spreadsheet.getName()}`);
-    } catch (error) {
-      console.error(`❌ Errore apertura Google Sheet con ID: ${GOOGLE_SHEET_ID}`);
-      console.error(`❌ Dettagli errore:`, error.toString());
-      console.error(`❌ Verifica che l'ID sia corretto e che il foglio sia condiviso`);
-      return { success: false, wines: 0 };
-    }
-    
-    // 2. TROVA IL FOGLIO
+    // 1. LEGGI DATI DAL FOGLIO
+    const spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
     const foglio = spreadsheet.getSheetByName(nomeFoglio);
+    
     if (!foglio) {
-      console.log(`❌ Foglio '${nomeFoglio}' non trovato nel Google Sheet`);
-      const foglioDisponibili = spreadsheet.getSheets().map(s => s.getName());
-      console.log(`📋 Fogli disponibili:`, foglioDisponibili);
+      console.log(`❌ Foglio '${nomeFoglio}' non trovato`);
       return { success: false, wines: 0 };
     }
     
-    // 3. OTTIENI TUTTI I DATI
+    // 2. OTTIENI TUTTI I DATI
     const dataRange = foglio.getDataRange();
     const values = dataRange.getValues();
     
     if (values.length < 2) {
-      console.log(`⚠️ ${nomeFoglio}: Nessun dato disponibile (solo ${values.length} righe)`);
+      console.log(`⚠️ ${nomeFoglio}: Nessun dato disponibile`);
       return { success: true, wines: 0 };
     }
     
-    // 4. PROCESSA INTESTAZIONI
+    // 3. PROCESSA INTESTAZIONI
     const headers = values[0].map(h => h ? h.toString().trim() : '');
     console.log(`📋 Intestazioni trovate:`, headers);
     
     const columnMapping = mappaIntestazioni(headers);
     console.log(`🔍 Mappatura colonne:`, columnMapping);
     
-    // 5. ELIMINA VINI ESISTENTI
-    try {
-      const deleteResponse = UrlFetchApp.fetch(`${SUPABASE_URL}/rest/v1/vini?tipologia=eq.${tipologia}&user_id=eq.${DEFAULT_USER_ID}`, {
-        method: 'DELETE',
-        headers: {
-          'apikey': SUPABASE_API_KEY,
-          'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        }
-      });
-      
-      if (deleteResponse.getResponseCode() === 204) {
-        console.log(`✅ Vini esistenti eliminati per ${tipologia}`);
-      } else {
-        console.log(`⚠️ Risposta delete: ${deleteResponse.getResponseCode()}`);
+    // 4. ELIMINA VINI ESISTENTI
+    const deleteResponse = UrlFetchApp.fetch(`${SUPABASE_URL}/rest/v1/vini?tipologia=eq.${tipologia}&user_id=eq.${DEFAULT_USER_ID}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_API_KEY,
+        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
       }
-    } catch (deleteError) {
-      console.error(`❌ Errore eliminazione vini esistenti:`, deleteError);
+    });
+    
+    if (deleteResponse.getResponseCode() !== 204) {
+      console.log(`⚠️ Impossibile eliminare vini esistenti per ${tipologia}`);
     }
     
-    // 6. PROCESSA RIGHE DATI
+    // 5. PROCESSA RIGHE DATI
     const viniDaInserire = [];
     
     for (let i = 1; i < values.length; i++) {
@@ -154,11 +122,11 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
       
       // Estrai nome vino
       let nomeVino = '';
-      if (columnMapping.nome_vino >= 0 && row[columnMapping.nome_vino]) {
-        nomeVino = row[columnMapping.nome_vino].toString().trim();
+      if (columnMapping.nome_vino !== undefined && columnMapping.nome_vino >= 0) {
+        nomeVino = row[columnMapping.nome_vino] ? row[columnMapping.nome_vino].toString().trim() : '';
       }
       
-      // Salta righe vuote o senza nome vino valido
+      // Salta righe vuote o senza nome vino
       if (!nomeVino || nomeVino === '' || nomeVino.toUpperCase() === tipologia.toUpperCase()) {
         continue;
       }
@@ -193,7 +161,7 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
     
     console.log(`📊 ${tipologia}: ${viniDaInserire.length} vini validi da sincronizzare`);
     
-    // 7. INSERISCI VINI IN BATCH
+    // 6. INSERISCI VINI IN BATCH
     let totalInseriti = 0;
     const batchSize = 50;
     
@@ -216,7 +184,7 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
           totalInseriti += batch.length;
           console.log(`✅ ${tipologia}: Batch ${Math.floor(i/batchSize) + 1} inserito (${batch.length} vini)`);
         } else {
-          console.error(`❌ Errore inserimento batch ${tipologia} (${insertResponse.getResponseCode()}):`, insertResponse.getContentText());
+          console.error(`❌ Errore inserimento batch ${tipologia}:`, insertResponse.getContentText());
         }
         
         // Pausa tra batch
@@ -234,7 +202,7 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
     return { success: true, wines: totalInseriti };
     
   } catch (error) {
-    console.error(`❌ Errore sincronizzazione ${tipologia}:`, error.toString());
+    console.error(`❌ Errore sincronizzazione ${tipologia}:`, error);
     return { success: false, wines: 0 };
   }
 }
@@ -244,29 +212,9 @@ function sincronizzaAutomatica() {
   console.log('🚀 Avvio sincronizzazione automatica Google Sheets → Supabase');
   
   try {
-    // 1. VERIFICA ID GOOGLE SHEET
-    if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID.length < 20) {
-      console.error('❌ ID Google Sheet non valido. Controlla la configurazione!');
-      return { totalWines: 0, successfulCategories: 0, totalCategories: 0 };
-    }
-    
-    // 2. APRI IL GOOGLE SHEET
-    let spreadsheet;
-    try {
-      spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
-      console.log(`✅ Connesso al Google Sheet: ${spreadsheet.getName()}`);
-    } catch (error) {
-      console.error('❌ Impossibile aprire il Google Sheet');
-      console.error(`❌ ID utilizzato: ${GOOGLE_SHEET_ID}`);
-      console.error(`❌ Errore: ${error.toString()}`);
-      console.error('❌ Verifica che:');
-      console.error('   1. L\'ID sia corretto');
-      console.error('   2. Il foglio sia condiviso con questo account');
-      console.error('   3. Il foglio non sia stato eliminato');
-      return { totalWines: 0, successfulCategories: 0, totalCategories: 0 };
-    }
-    
+    const spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
     const fogli = spreadsheet.getSheets();
+    
     console.log(`📋 Trovati ${fogli.length} fogli nel Google Sheet`);
     
     let totalVini = 0;
@@ -294,7 +242,7 @@ function sincronizzaAutomatica() {
       }
     }
     
-    console.log(`🏁 Sincronizzazione completata: ${totalVini} vini totali da ${categorieOK} categorie`);
+    console.log(`🏁 Sincronizzazione completata: ${totalVini} vini totali`);
     
     return {
       totalWines: totalVini,
@@ -303,7 +251,7 @@ function sincronizzaAutomatica() {
     };
     
   } catch (error) {
-    console.error('❌ Errore sincronizzazione automatica:', error.toString());
+    console.error('❌ Errore sincronizzazione automatica:', error);
     return { totalWines: 0, successfulCategories: 0, totalCategories: 0 };
   }
 }
@@ -374,48 +322,15 @@ function verificaStatoDatabase() {
   }
 }
 
-// 🔧 FUNZIONE PER TESTARE CONNESSIONE GOOGLE SHEET
-function testConnessioneGoogleSheet() {
-  console.log('🔧 Test connessione Google Sheet...');
-  console.log(`📋 ID utilizzato: ${GOOGLE_SHEET_ID}`);
-  
-  try {
-    const spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
-    console.log(`✅ Connessione riuscita!`);
-    console.log(`📋 Nome: ${spreadsheet.getName()}`);
-    console.log(`📋 URL: ${spreadsheet.getUrl()}`);
-    
-    const fogli = spreadsheet.getSheets();
-    console.log(`📋 Fogli disponibili (${fogli.length}):`);
-    fogli.forEach((foglio, index) => {
-      console.log(`   ${index + 1}. ${foglio.getName()} (${foglio.getDataRange().getNumRows()} righe)`);
-    });
-    
-    return true;
-  } catch (error) {
-    console.error('❌ Errore connessione Google Sheet:', error.toString());
-    console.error('❌ Suggerimenti:');
-    console.error('   1. Verifica che l\'ID sia corretto');
-    console.error('   2. Condividi il Google Sheet con questo account Google Apps Script');
-    console.error('   3. Assicurati che il foglio non sia stato eliminato');
-    return false;
-  }
-}
-
 // ============================================
 // ISTRUZIONI PER L'USO:
 // ============================================
 //
-// 1. **IMPORTANTE**: Modifica GOOGLE_SHEET_ID con l'ID corretto del tuo Google Sheet
-//    - Vai al tuo Google Sheet
-//    - Copia l'URL (es: https://docs.google.com/spreadsheets/d/1ABC123DEF456/edit#gid=0)
-//    - L'ID è la parte tra /d/ e /edit: 1ABC123DEF456
-//
-// 2. Copia questo codice in Google Apps Script
+// 1. Copia questo codice in Google Apps Script
+// 2. Sostituisci GOOGLE_SHEET_ID con l'ID del tuo Google Sheet
 // 3. Salva il progetto
-// 4. Esegui 'testConnessioneGoogleSheet()' per verificare la connessione
-// 5. Esegui 'testSincronizzazione()' per testare la sincronizzazione
-// 6. Esegui 'configuraTriggersAutomatici()' per attivare sync automatica
-// 7. Usa 'verificaStatoDatabase()' per controllare i dati
+// 4. Esegui 'testSincronizzazione()' per testare
+// 5. Esegui 'configuraTriggersAutomatici()' per attivare sync automatica
+// 6. Usa 'verificaStatoDatabase()' per controllare i dati
 //
 // ============================================
