@@ -51,7 +51,7 @@ export default function ArchiviPage() {
       const h = window.innerHeight;
       const newSize = (w <= 1024 && w > 480 && h < w) ? 12 : 14;
       setFontSize(prev => prev !== newSize ? newSize : prev);
-      
+
       // Forza refresh del layout su mobile per orientamento
       if (w <= 768) {
         setTimeout(() => {
@@ -59,10 +59,10 @@ export default function ArchiviPage() {
         }, 100);
       }
     };
-    
+
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
-    
+
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
@@ -73,13 +73,13 @@ export default function ArchiviPage() {
     if (!type) return "";
     const normalized = type.toUpperCase().trim();
 
-    // Mapping esatto delle tipologie importate da Google Sheets
+    // Mappatura esatta per categorie del Google Sheet
+    if (normalized === "ROSSI" || normalized === "ROSSO") return "ROSSI";
+    if (normalized === "BIANCHI" || normalized === "BIANCO") return "BIANCHI";
+    if (normalized === "ROSATI" || normalized === "ROSATO") return "ROSATI";
     if (normalized === "BOLLICINE ITALIANE") return "BOLLICINE ITALIANE";
     if (normalized === "BOLLICINE FRANCESI") return "BOLLICINE FRANCESI";
-    if (normalized === "BIANCHI") return "BIANCHI";
-    if (normalized === "ROSSI") return "ROSSI";
-    if (normalized === "ROSATI") return "ROSATI";
-    if (normalized === "VINI DOLCI") return "VINI DOLCI";
+    if (normalized === "VINI DOLCI" || normalized === "DOLCI") return "VINI DOLCI";
 
     // Fallback per compatibilità con vecchi dati
     if (normalized.includes("BOLLICINE") && normalized.includes("ITALIANA")) return "BOLLICINE ITALIANE";
@@ -161,7 +161,7 @@ export default function ArchiviPage() {
     const rowHeight = 40; // Altezza singola riga
     const availableHeight = containerHeight - headerHeight;
     const maxVisibleRows = Math.floor(availableHeight / rowHeight);
-    
+
     // Se abbiamo meno righe del massimo visibile, aggiungi righe vuote
     if (filtered.length < maxVisibleRows) {
       const emptyRowsNeeded = maxVisibleRows - filtered.length;
@@ -238,7 +238,7 @@ export default function ArchiviPage() {
     }
   };
 
-  
+
 
   const lineHeight = fontSize * 1.2;
   const rowHeight = fontSize * 2.5;
