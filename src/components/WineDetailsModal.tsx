@@ -69,25 +69,37 @@ export default function WineDetailsModal({
         <div className="p-4 space-y-3">
           {/* Info box completo con tutte le informazioni del vino */}
           <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 space-y-3">
-            {/* Nome Vino */}
-            <div className="text-cream font-bold text-lg leading-tight">{wine.name}</div>
+            {/* Nome Vino - tutto maiuscolo */}
+            <div className="text-cream font-bold text-lg leading-tight uppercase">{wine.name}</div>
 
             {/* Seconda riga: Anno · Produttore · (Fornitore) */}
             <div className="text-sm text-gray-300">
-              {wine.vintage && (
+              {wine.vintage ? (
                 <>
                   <span className="text-cream font-medium">{wine.vintage}</span>
                   <span className="mx-2">·</span>
+                  {wine.description && (
+                    <>
+                      <span className="text-cream font-medium">{wine.description}</span>
+                      <span className="mx-2">·</span>
+                    </>
+                  )}
+                  {wine.supplier && (
+                    <span className="text-blue-300 font-medium">({wine.supplier})</span>
+                  )}
                 </>
-              )}
-              {wine.description && (
+              ) : (
                 <>
-                  <span className="text-cream font-medium">{wine.description}</span>
-                  {wine.supplier && <span className="mx-2">·</span>}
+                  {wine.description && (
+                    <>
+                      <span className="text-cream font-medium">{wine.description}</span>
+                      {wine.supplier && <span className="mx-2">·</span>}
+                    </>
+                  )}
+                  {wine.supplier && (
+                    <span className="text-blue-300 font-medium">({wine.supplier})</span>
+                  )}
                 </>
-              )}
-              {wine.supplier && (
-                <span className="text-blue-300 font-medium">({wine.supplier})</span>
               )}
             </div>
 
