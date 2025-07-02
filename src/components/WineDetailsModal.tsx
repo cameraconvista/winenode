@@ -72,35 +72,30 @@ export default function WineDetailsModal({
             {/* Nome Vino */}
             <div className="text-cream font-bold text-lg leading-tight">{wine.name}</div>
 
-            {/* Anno */}
-            {wine.vintage && (
-              <div className="text-sm">
-                <span className="text-gray-400">Anno: </span>
-                <span className="text-cream font-medium">{wine.vintage}</span>
-              </div>
-            )}
-
-            {/* Produttore */}
-            {wine.description && (
-              <div className="text-sm">
-                <span className="text-gray-400">Produttore: </span>
-                <span className="text-cream font-medium">{wine.description}</span>
-              </div>
-            )}
+            {/* Seconda riga: Anno · Produttore · (Fornitore) */}
+            <div className="text-sm text-gray-300">
+              {wine.vintage && (
+                <>
+                  <span className="text-cream font-medium">{wine.vintage}</span>
+                  <span className="mx-2">·</span>
+                </>
+              )}
+              {wine.description && (
+                <>
+                  <span className="text-cream font-medium">{wine.description}</span>
+                  {wine.supplier && <span className="mx-2">·</span>}
+                </>
+              )}
+              {wine.supplier && (
+                <span className="text-blue-300 font-medium">({wine.supplier})</span>
+              )}
+            </div>
 
             {/* Provenienza */}
             {wine.region && (
               <div className="text-sm">
                 <span className="text-gray-400">Provenienza: </span>
                 <span className="text-cream font-medium">{wine.region}</span>
-              </div>
-            )}
-
-            {/* Fornitore */}
-            {wine.supplier && (
-              <div className="text-sm">
-                <span className="text-gray-400">Fornitore: </span>
-                <span className="text-blue-300 font-medium">{wine.supplier}</span>
               </div>
             )}
 
