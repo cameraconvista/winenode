@@ -90,7 +90,7 @@ export default function HomePage() {
 
     // Aggiornamento ottimistico per feedback immediato
     const previousInventory = wines.find(w => w.id === id)?.inventory || 0;
-    
+
     const success = await updateWineInventory(id, adjusted);
     if (success) {
       console.log('✅ Giacenza salvata correttamente su Supabase');
@@ -299,9 +299,9 @@ export default function HomePage() {
                                   <span className="mx-2">·</span>
                                 </>
                               )}
-                              <span className="text-gray-400 font-medium">
-                                {wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'}
-                              </span>
+                              {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
+                                <span className="text-gray-400 font-medium">{wine.supplier}</span>
+                              )}
                             </>
                           ) : (
                             <>
@@ -311,9 +311,9 @@ export default function HomePage() {
                                   <span className="mx-2">·</span>
                                 </>
                               )}
-                              <span className="text-gray-400 font-medium">
-                                {wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'}
-                              </span>
+                              {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
+                                <span className="text-gray-400 font-medium">{wine.supplier}</span>
+                              )}
                             </>
                           )}
                         </div>
