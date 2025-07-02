@@ -65,53 +65,97 @@ async function syncCategory(tipo, url) {
 
     console.log(`📊 Righe trovate nel CSV: ${parsed.data.length}`);
 
+    // Debug: mostra le chiavi disponibili
+    if (parsed.data.length > 0) {
+      console.log(`🔍 Chiavi disponibili nel CSV ${tipo}:`, Object.keys(parsed.data[0]));
+    }
+
+    // Mostra le prime 3 righe per debug
+    console.log(`🔍 Prime 3 righe del CSV per ${tipo}:`);
+    parsed.data.slice(0, 3).forEach((row, index) => {
+      console.log(`  Riga ${index + 1}: [`, Object.keys(row).slice(0, 5).map(k => `'${k}'`).join(', '), '] ...');
+      console.log(`    Esempio dati: {`);
+      Object.entries(row).slice(0, 8).forEach(([key, value]) => {
+        console.log(`  '${key}': '${value}',`);
+      });
+      console.log(`}`);
+    });
+
     // Filtra e mappa i dati - usa tutti i possibili nomi di colonna
     const validRows = parsed.data
-      .filter(row => {
+      .filter((row, index) => {
+        // Skip prima riga se è un header
+        if (index === 0) {
+          const firstValue = Object.values(row)[0]?.toString().toUpperCase();
+          if (firstValue === tipo.toUpperCase() || firstValue === 'NOME VINO' || firstValue === 'NOME') {
+            console.log(`⏭️ Saltata riga ${index + 1}: header rilevato`);
+            return false;
+          }
+        }
+
         // Prova diversi nomi possibili per la colonna del nome vino
         const nome = row['NOME VINO']?.trim() || 
                     row['NOME']?.trim() || 
                     row['Nome Vino']?.trim() || 
                     row['Nome']?.trim() ||
                     row['nome_vino']?.trim() ||
-                    row['nome']?.trim();
+                    row['nome']?.trim() ||
+                    Object.values(row)[0]?.toString().trim(); // Prova prima colonna
         
         const isValid = nome && 
+               nome.length > 2 &&
                nome.toUpperCase() !== 'NOME VINO' && 
                nome.toUpperCase() !== 'NOME' &&
                nome.toUpperCase() !== tipo.toUpperCase() &&
-               nome.length > 0;
+               !nome.toUpperCase().includes('NOME VINO');
+        
+        if (!isValid && nome) {
+          console.log(`❌ Riga ${index + 1} scartata - Nome: "${nome}" (lunghezza: ${nome.length})`);
+        } else if (isValid) {
+          console.log(`✅ Riga ${index + 1} valida - Nome: "${nome}"`);
+        }
         
         return isValid;
       })
-      .map(row => {
+      .map((row, index) => {
+        // Se il parsing con header fallisce, usa l'ordine delle colonne
+        const keys = Object.keys(row);
+        const values = Object.values(row);
+        
         // Mappatura flessibile delle colonne
         const nomeVino = row['NOME VINO']?.trim() || 
                         row['NOME']?.trim() || 
                         row['Nome Vino']?.trim() || 
                         row['Nome']?.trim() ||
                         row['nome_vino']?.trim() ||
-                        row['nome']?.trim();
+                        row['nome']?.trim() ||
+                        values[0]?.toString().trim(); // Prima colonna come fallback
         
         const anno = row['ANNO']?.trim() || 
                     row['Anno']?.trim() || 
-                    row['anno']?.trim();
+                    row['anno']?.trim() ||
+                    values[1]?.toString().trim(); // Seconda colonna come fallback
         
         const produttore = row['PRODUTTORE']?.trim() || 
                           row['Produttore']?.trim() || 
-                          row['produttore']?.trim();
+                          row['produttore']?.trim() ||
+                          values[2]?.toString().trim(); // Terza colonna come fallback
         
         const provenienza = row['PROVENIENZA']?.trim() || 
                            row['Provenienza']?.trim() || 
-                           row['provenienza']?.trim();
+                           row['provenienza']?.trim() ||
+                           values[3]?.toString().trim(); // Quarta colonna come fallback
         
         const fornitore = row['FORNITORE']?.trim() || 
                          row['Fornitore']?.trim() || 
-                         row['fornitore']?.trim();
+                         row['fornitore']?.trim() ||
+                         values[4]?.toString().trim(); // Quinta colonna come fallback
         
-        const costo = parseEuro(row['COSTO '] ?? row['COSTO'] ?? row['Costo'] ?? row['costo']);
-        const vendita = parseEuro(row['VENDITA'] ?? row['Vendita'] ?? row['vendita']);
-        const margine = parseEuro(row['MARGINE'] ?? row['Margine'] ?? row['margine']);
+        const costo = parseEuro(row['COSTO '] ?? row['COSTO'] ?? row['Costo'] ?? row['costo'] ?? values[5]);
+        const vendita = parseEuro(row['VENDITA'] ?? row['Vendita'] ?? row['vendita'] ?? values[6]);
+        const margine = parseEuro(row['MARGINE'] ?? row['Margine'] ?? row['margine'] ?? values[7]);
+
+        console.log(`📝 Mappatura riga ${index + 1}: ${nomeVino} | ${produttore} | €${vendita}`);
 
         return {
           nome_vino: nomeVino || null,
