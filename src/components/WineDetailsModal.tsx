@@ -122,7 +122,7 @@ export default function WineDetailsModal({
                   Soglia Minima
                 </span>
               </label>
-              <div className="flex items-stretch bg-gray-800 border border-gray-600 rounded-md overflow-hidden">
+              <div className="flex items-center bg-gray-800 border border-gray-600 rounded-md">
                 <button
                   type="button"
                   onClick={() => {
@@ -131,7 +131,7 @@ export default function WineDetailsModal({
                       setFormData(prev => ({ ...prev, minStock: (currentValue - 1).toString() }));
                     }
                   }}
-                  className="flex-shrink-0 w-8 h-9 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors border-r border-gray-600"
+                  className="w-10 h-10 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-md border-r border-gray-600"
                 >
                   −
                 </button>
@@ -139,7 +139,7 @@ export default function WineDetailsModal({
                   type="number"
                   value={formData.minStock}
                   onChange={(e) => setFormData(prev => ({ ...prev, minStock: e.target.value }))}
-                  className="flex-1 bg-transparent px-2 py-2 text-cream text-center focus:outline-none h-9"
+                  className="flex-1 bg-transparent px-3 py-2 text-cream text-center focus:outline-none min-w-0"
                   min="0"
                   required
                 />
@@ -149,7 +149,7 @@ export default function WineDetailsModal({
                     const currentValue = parseInt(formData.minStock) || 0;
                     setFormData(prev => ({ ...prev, minStock: (currentValue + 1).toString() }));
                   }}
-                  className="flex-shrink-0 w-8 h-9 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors border-l border-gray-600"
+                  className="w-10 h-10 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-md border-l border-gray-600"
                 >
                   +
                 </button>
@@ -161,7 +161,7 @@ export default function WineDetailsModal({
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Giacenza
               </label>
-              <div className="flex items-stretch bg-gray-800 border border-gray-600 rounded-md overflow-hidden">
+              <div className="flex items-center bg-gray-800 border border-gray-600 rounded-md">
                 <button
                   type="button"
                   onClick={() => {
@@ -170,7 +170,7 @@ export default function WineDetailsModal({
                       setFormData(prev => ({ ...prev, inventory: (currentValue - 1).toString() }));
                     }
                   }}
-                  className="flex-shrink-0 w-8 h-9 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors border-r border-gray-600"
+                  className="w-10 h-10 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-md border-r border-gray-600"
                 >
                   −
                 </button>
@@ -178,7 +178,7 @@ export default function WineDetailsModal({
                   type="number"
                   value={formData.inventory}
                   onChange={(e) => setFormData(prev => ({ ...prev, inventory: e.target.value }))}
-                  className="flex-1 bg-transparent px-2 py-2 text-cream text-center focus:outline-none h-9"
+                  className="flex-1 bg-transparent px-3 py-2 text-cream text-center focus:outline-none min-w-0"
                   min="0"
                 />
                 <button
@@ -187,7 +187,7 @@ export default function WineDetailsModal({
                     const currentValue = parseInt(formData.inventory) || 0;
                     setFormData(prev => ({ ...prev, inventory: (currentValue + 1).toString() }));
                   }}
-                  className="flex-shrink-0 w-8 h-9 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors border-l border-gray-600"
+                  className="w-10 h-10 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-md border-l border-gray-600"
                 >
                   +
                 </button>
