@@ -52,6 +52,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showOrdineModal, setShowOrdineModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredWines = wines
     .filter(wine => {
@@ -67,6 +68,15 @@ export default function HomePage() {
       return false;
     }
 
+    // ✅ RICERCA GLOBALE - Se c'è un termine di ricerca, cerca in tutti i campi
+    const matchesSearch = !searchTerm || (
+      wine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (wine.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (wine.supplier || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (wine.region || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (wine.vintage || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const matchesCategory = 
       activeTab === "TUTTI I VINI" ||
       (activeTab === "BOLLICINE ITALIANE" && (normalizedType === "bollicine italiane" || normalizedType === "bollicine")) ||
@@ -80,7 +90,7 @@ export default function HomePage() {
     const matchesSupplier = !filters.supplier || wine.supplier === filters.supplier;
     const matchesAlerts = !filters.showAlertsOnly || wine.inventory <= wine.minStock;
 
-    return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
+    return matchesSearch && matchesCategory && matchesType && matchesSupplier && matchesAlerts;
   })
   .sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
 
@@ -135,6 +145,14 @@ export default function HomePage() {
     setActiveTab(category);
   };
 
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    // ✅ FUNZIONALITÀ RICHIESTA: Quando si inizia a digitare, passa automaticamente a "TUTTI I VINI"
+    if (value.trim() && activeTab !== "TUTTI I VINI") {
+      setActiveTab("TUTTI I VINI");
+    }
+  };
+
   const handleFornitoreSelezionato = (fornitore: string) => {
     console.log('Fornitore selezionato:', fornitore);
     setShowOrdineModal(false);
@@ -181,7 +199,25 @@ export default function HomePage() {
               className="h-20 sm:h-32 w-auto object-contain -mb-2" 
             />
 
-            {/* Pulsantiera sotto il logo - ottimizzata per mobile */}
+            {/* Barra di ricerca */}
+            <div className="w-full px-2 pb-3">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Cerca vino, produttore, regione..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="w-full px-4 py-2 bg-black/30 border border-amber-500/30 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all duration-200"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Pulsantiera sotto la ricerca - ottimizzata per mobile */}
             <div className="flex items-center justify-between w-full pb-2">
               {/* Gruppo pulsanti a sinistra */}
               <div className="flex gap-1 sm:gap-2">
