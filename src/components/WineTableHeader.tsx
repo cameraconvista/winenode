@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface WineTableHeaderProps {
@@ -32,7 +31,7 @@ export default function WineTableHeader({
           className="px-2 py-3 text-center align-middle font-bold text-white border border-amber-900 border-r-2 border-r-amber-900 uppercase bg-[#3b1d1d] backdrop-blur-sm"
           style={{ width: columnWidths["#"] }}
         ></th>
-        
+
         <th
           className="px-3 py-3 text-center align-middle font-bold text-white border border-amber-900 border-r-2 border-r-amber-900 uppercase bg-[#3b1d1d] backdrop-blur-sm relative group"
           style={{ width: columnWidths["nomeVino"] }}
@@ -119,7 +118,7 @@ export default function WineTableHeader({
         </th>
 
         <th
-          className="px-1 py-3 text-center align-middle font-bold text-white border border-amber-900 border-r-2 border-r-amber-900 uppercase bg-[#3b1d1d] backdrop-blur-sm relative group"
+          className="px-1 py-3 text-center align-middle font-bold text-white border border-amber-900 uppercase bg-[#3b1d1d] backdrop-blur-sm relative group"
           style={{ width: columnWidths["giacenza"] }}
         >
           GIACENZA
@@ -134,11 +133,6 @@ export default function WineTableHeader({
             </div>
           </div>
         </th>
-
-        <th
-          className="px-2 py-3 text-center align-middle font-bold text-white border border-amber-900 uppercase bg-[#3b1d1d] backdrop-blur-sm"
-          style={{ width: columnWidths["azioni"] }}
-        />
       </tr>
     </thead>
   );

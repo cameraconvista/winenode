@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface WineRow {
@@ -157,15 +156,6 @@ export default function WineTableRow({
           >
             +
           </button>
-        </div>
-      </td>
-
-      <td
-        className="border border-amber-900 p-0"
-        style={{ backgroundColor: bgColor, width: columnWidths["azioni"] }}
-      >
-        <div className="flex items-center justify-center gap-2 h-full" style={{ height: 40 }}>
-          {/* Azioni vuote */}
         </div>
       </td>
     </tr>
