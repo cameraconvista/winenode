@@ -166,9 +166,18 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                       {/* Input quantità con selezione bottiglie/cartoni per singolo vino */}
                       <div className="flex flex-col gap-3 pt-2 border-t border-gray-600/50">
                         <div className="flex items-center justify-between">
-                          <label className="text-sm text-gray-300 font-medium">
-                            Quantità da ordinare:
-                          </label>
+                          <div className="flex flex-col">
+                            <label className="text-sm text-gray-300 font-medium">
+                              Quantità da ordinare:
+                            </label>
+                            {/* Mostra ordine minimo se impostato */}
+                            {w.ordineMinimo && w.ordineMinimo > 0 && (
+                              <div className="text-xs text-blue-300 mt-1 flex items-center gap-1">
+                                <span className="text-blue-400">📦</span>
+                                Ordine minimo: {w.ordineMinimo} {w.unitaOrdine === 'cartoni' ? `bottiglie (${Math.floor(w.ordineMinimo / 6)} cartoni)` : 'bottiglie'}
+                              </div>
+                            )}
+                          </div>
                           {/* Toggle individuale bottiglie/cartoni per questo vino */}
                           <div className="flex bg-gray-700 rounded-lg p-1">
                             <button
