@@ -18,11 +18,7 @@ export default function WineDetailsModal({
   suppliers = [] 
 }: WineDetailsModalProps) {
   const [formData, setFormData] = useState({
-    price: '',
-    minStock: '',
-    supplier: '',
-    description: '',
-    type: ''
+    minStock: ''
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -30,11 +26,7 @@ export default function WineDetailsModal({
   useEffect(() => {
     if (wine) {
       setFormData({
-        price: wine.price || '',
-        minStock: wine.minStock.toString(),
-        supplier: wine.supplier || '',
-        description: wine.description || '',
-        type: wine.type || ''
+        minStock: wine.minStock.toString()
       });
     }
   }, [wine]);
@@ -46,11 +38,7 @@ export default function WineDetailsModal({
     try {
       if (onUpdateWine) {
         await onUpdateWine(wine.id, {
-          price: formData.price,
-          minStock: parseInt(formData.minStock) || 2,
-          supplier: formData.supplier,
-          description: formData.description,
-          type: formData.type
+          minStock: parseInt(formData.minStock) || 2
         });
       }
       onOpenChange(false);
@@ -134,23 +122,6 @@ export default function WineDetailsModal({
               min="0"
               required
             />
-          </div>
-
-          {/* Campo modificabile: Fornitore */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Fornitore
-            </label>
-            <select
-              value={formData.supplier}
-              onChange={(e) => setFormData(prev => ({ ...prev, supplier: e.target.value }))}
-              className="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-cream focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Seleziona fornitore</option>
-              {suppliers.map(supplier => (
-                <option key={supplier} value={supplier}>{supplier}</option>
-              ))}
-            </select>
           </div>
         </div>
 
