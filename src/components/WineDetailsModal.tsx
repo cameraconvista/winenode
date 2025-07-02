@@ -18,7 +18,8 @@ export default function WineDetailsModal({
   suppliers = [] 
 }: WineDetailsModalProps) {
   const [formData, setFormData] = useState({
-    minStock: ''
+    minStock: '',
+    inventory: ''
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +27,8 @@ export default function WineDetailsModal({
   useEffect(() => {
     if (wine) {
       setFormData({
-        minStock: wine.minStock.toString()
+        minStock: wine.minStock.toString(),
+        inventory: wine.inventory.toString()
       });
     }
   }, [wine]);
@@ -38,7 +40,8 @@ export default function WineDetailsModal({
     try {
       if (onUpdateWine) {
         await onUpdateWine(wine.id, {
-          minStock: parseInt(formData.minStock) || 2
+          minStock: parseInt(formData.minStock) || 2,
+          inventory: parseInt(formData.inventory) || 0
         });
       }
       onOpenChange(false);
@@ -109,19 +112,87 @@ export default function WineDetailsModal({
             </div>
           </div>
 
-          {/* Campo modificabile: Soglia Minima con Giacenza */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Soglia Minima * <span className="text-blue-300 font-normal">(Giacenza attuale: {wine.inventory})</span>
-            </label>
-            <input
-              type="number"
-              value={formData.minStock}
-              onChange={(e) => setFormData(prev => ({ ...prev, minStock: e.target.value }))}
-              className="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-cream focus:outline-none focus:ring-2 focus:ring-blue-500"
-              min="0"
-              required
-            />
+          {/* Campi modificabili: Soglia Minima e Giacenza */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Soglia Minima */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <span className="flex items-center gap-1">
+                  <span className="text-yellow-400">⚠️</span>
+                  Soglia Minima
+                </span>
+              </label>
+              <div className="flex items-center bg-gray-800 border border-gray-600 rounded-md">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentValue = parseInt(formData.minStock) || 0;
+                    if (currentValue > 0) {
+                      setFormData(prev => ({ ...prev, minStock: (currentValue - 1).toString() }));
+                    }
+                  }}
+                  className="px-2 py-2 text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  value={formData.minStock}
+                  onChange={(e) => setFormData(prev => ({ ...prev, minStock: e.target.value }))}
+                  className="flex-1 bg-transparent px-2 py-2 text-cream text-center focus:outline-none"
+                  min="0"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentValue = parseInt(formData.minStock) || 0;
+                    setFormData(prev => ({ ...prev, minStock: (currentValue + 1).toString() }));
+                  }}
+                  className="px-2 py-2 text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Giacenza */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Giacenza
+              </label>
+              <div className="flex items-center bg-gray-800 border border-gray-600 rounded-md">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentValue = parseInt(formData.inventory) || 0;
+                    if (currentValue > 0) {
+                      setFormData(prev => ({ ...prev, inventory: (currentValue - 1).toString() }));
+                    }
+                  }}
+                  className="px-2 py-2 text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  value={formData.inventory}
+                  onChange={(e) => setFormData(prev => ({ ...prev, inventory: e.target.value }))}
+                  className="flex-1 bg-transparent px-2 py-2 text-cream text-center focus:outline-none"
+                  min="0"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentValue = parseInt(formData.inventory) || 0;
+                    setFormData(prev => ({ ...prev, inventory: (currentValue + 1).toString() }));
+                  }}
+                  className="px-2 py-2 text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
