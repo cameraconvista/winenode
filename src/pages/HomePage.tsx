@@ -186,28 +186,28 @@ export default function HomePage() {
               {/* Gruppo pulsanti a sinistra */}
               <div className="flex gap-1 sm:gap-2">
                 <button 
-                  onClick={() => navigate('/settings')} 
+                  onClick={()={() => navigate('/settings')} 
                   title="Impostazioni" 
                   className="text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
                 <button 
-                  onClick={() => navigate('/settings/archivi')} 
+                  onClick={()={() => navigate('/settings/archivi')} 
                   title="Archivi" 
                   className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Database className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
                 <button 
-                  onClick={() => setShowCarrelloModal(true)} 
+                  onClick={()={() => setShowCarrelloModal(true)} 
                   title="Nuovo Ordine" 
                   className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <span className="text-lg sm:text-xl filter brightness-200 contrast-200">🛒</span>
                 </button>
                 <button 
-                  onClick={() => setShowFilterModal(true)} 
+                  onClick={()={() => setShowFilterModal(true)} 
                   title="Filtri" 
                   className={`text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center relative ${
                     (filters.wineType || filters.supplier) ? 'bg-amber-500/20' : ''
@@ -300,7 +300,7 @@ export default function HomePage() {
                                 </>
                               )}
                               {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
-                                <span className="text-gray-400 font-medium">{wine.supplier}</span>
+                                <span className="text-yellow-200 font-medium">{wine.supplier}</span>
                               )}
                             </>
                           ) : (
@@ -312,7 +312,7 @@ export default function HomePage() {
                                 </>
                               )}
                               {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
-                                <span className="text-gray-400 font-medium">{wine.supplier}</span>
+                                <span className="text-yellow-200 font-medium">{wine.supplier}</span>
                               )}
                             </>
                           )}
