@@ -1,6 +1,6 @@
 const SUPABASE_URL = "https://rtmohyjquscdkbtibdsu.supabase.co";
 const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0bW9oeWpxdXNjZGtidGliZHN1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTQ1NjY4MCwiZXhwIjoyMDY3MDMyNjgwfQ.vdU1ICEONshwgtd636O92_qamM9ohXe2dwljYwjf5hk";
-const DEFAULT_USER_ID = "f52daf3e-c605-4b83-991a-33a2e91ad7ff";
+const DEFAULT_USER_ID = "02c85ceb-8026-4bd9-9dc5-c03a74f56346";
 
 const MAPPATURA_SUPABASE = [
   { title: 'BOLLICINE ITALIANE', csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=294419425&single=true&output=csv' },

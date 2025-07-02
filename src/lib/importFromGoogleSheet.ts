@@ -111,7 +111,7 @@ export function startAutoSync(googleSheetUrl: string, userId: string) {
     clearInterval(autoSyncInterval);
   }
   
-  console.log('🔄 Avvio sincronizzazione automatica ogni 1 minuto');
+  console.log('⚠️ Sincronizzazione automatica disabilitata - utilizzando Google Apps Script');
   console.log('📍 Google Sheet URL:', googleSheetUrl);
   console.log('👤 User ID:', userId);
   
@@ -138,39 +138,9 @@ export function startAutoSync(googleSheetUrl: string, userId: string) {
     }
   }, 2000);
   
-  autoSyncInterval = setInterval(async () => {
-    try {
-      const now = new Date().toLocaleTimeString();
-      console.log(`🔍 [${now}] Controllo automatico aggiornamenti Google Sheet...`);
-      
-      const result = await importFromGoogleSheet(googleSheetUrl, userId);
-      
-      console.log(`📊 [${now}] Risultato sincronizzazione:`, {
-        success: result.success,
-        wines: result.importedWines,
-        categories: result.importedCategories,
-        message: result.message
-      });
-      
-      if (result.success && result.importedWines > 0) {
-        console.log(`✅ [${now}] Sincronizzazione automatica: ${result.importedWines} vini aggiornati`);
-        
-        // Notifica l'utente dell'aggiornamento
-        if (typeof window !== 'undefined') {
-          const event = new CustomEvent('winesUpdated', { 
-            detail: { message: result.message, wines: result.importedWines }
-          });
-          window.dispatchEvent(event);
-        }
-      } else if (result.success) {
-        console.log(`📋 [${now}] Sincronizzazione automatica: nessun nuovo vino da importare`);
-      } else {
-        console.log(`❌ [${now}] Sincronizzazione fallita: ${result.message}`);
-      }
-    } catch (error) {
-      console.error('❌ Errore sincronizzazione automatica:', error);
-    }
-  }, 60 * 1000); // 1 minuto
+  // Auto-sync disabilitato - usando Google Apps Script
+  console.log('🔄 Sincronizzazione gestita da Google Apps Script ogni minuto');
+  return;
 }
 
 export function stopAutoSync() {
