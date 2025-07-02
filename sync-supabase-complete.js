@@ -44,7 +44,7 @@ async function checkDatabaseConnection() {
   }
 }
 
-async function syncCategory(tipo, url) {
+async function syncCategory(tipo, url, tipologieStandard) {
   try {
     console.log(`\n🔄 Sincronizzando ${tipo}...`);
 
@@ -166,7 +166,7 @@ async function syncCategory(tipo, url) {
           costo: costo,
           vendita: vendita,
           //margine: margine,
-          tipologia: tipo,
+          tipologia: normalizeType(tipo, tipologieStandard),
           user_id: user_id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -285,10 +285,56 @@ async function main() {
 
   let totalWines = 0;
   let totalCategories = 0;
+  
+  // Recupera le tipologie standard
+  async function getTipologieStandard(userId) {
+    const { data, error } = await supabase
+      .from('tipologie')
+      .select('nome')
+      .eq('user_id', userId);
+
+    if (error || !data) {
+      console.log('⚠️ Uso tipologie di default');
+      return ['ROSSI', 'BIANCHI', 'ROSATI', 'BOLLICINE ITALIANE', 'BOLLICINE FRANCESI', 'VINI DOLCI'];
+    }
+
+    return data.map(t => t.nome);
+  }
+
+  // Funzione per normalizzare le tipologie usando la tabella tipologie
+  function normalizeType(rawType, tipologieStandard) {
+    if (!rawType) return '';
+
+    const type = rawType.toUpperCase().trim();
+
+    // Mapping intelligente alle tipologie standard
+    if (type.includes('BOLLICINE') && type.includes('FRANCESI')) return 'BOLLICINE FRANCESI';
+    if (type.includes('BOLLICINE') && type.includes('ITALIANE')) return 'BOLLICINE ITALIANE';
+    if (type.includes('BOLLICINE') || type.includes('CHAMPAGNE') || type.includes('PROSECCO')) {
+      return 'BOLLICINE ITALIANE';
+    }
+    if (type.includes('BIANCO') || type.includes('BIANCHI')) return 'BIANCHI';
+    if (type.includes('ROSSO') || type.includes('ROSSI')) return 'ROSSI';
+    if (type.includes('ROSATO') || type.includes('ROSATI')) return 'ROSATI';
+    if (type.includes('DOLCE') || type.includes('DOLCI') || type.includes('PASSITO')) return 'VINI DOLCI';
+
+    // Se non trova corrispondenza, cerca nella lista delle tipologie standard
+    const match = tipologieStandard.find(std => 
+      type.includes(std) || std.includes(type.split(' ')[0])
+    );
+
+    return match || type;
+  }
+
+  console.log('🔧 Inizio sincronizzazione vini da Google Sheets...');
+
+    // Recupera le tipologie standard
+    const tipologieStandard = await getTipologieStandard(user_id);
+    console.log('📋 Tipologie standard:', tipologieStandard);
 
   // Sincronizza tutte le categorie
   for (const [tipo, url] of Object.entries(CATEGORIES)) {
-    const winesInserted = await syncCategory(tipo, url);
+    const winesInserted = await syncCategory(tipo, url, tipologieStandard);
     if (winesInserted > 0) {
       totalWines += winesInserted;
       totalCategories++;
