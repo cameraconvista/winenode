@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import fetch from 'node-fetch';
 import Papa from 'papaparse';
@@ -8,7 +7,7 @@ dotenv.config();
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.VITE_SUPABASE_SERVICE_ROLE_KEY
 );
 
 // Usa il tuo user_id dai log della console
@@ -25,7 +24,7 @@ const CATEGORIES = {
 
 function parseEuro(value) {
   if (!value || value === '' || value === null || value === undefined) return null;
-  
+
   // Rimuovi tutto tranne numeri, punti e virgole
   const cleaned = value.toString().replace(/[^\d.,]/g, '').replace(',', '.');
   const num = parseFloat(cleaned);
@@ -115,7 +114,7 @@ async function syncCategory(tipo, url) {
       .delete()
       .eq('tipologia', tipo)
       .eq('user_id', user_id);
-    
+
     if (deleteError) {
       console.error(`❌ Errore eliminazione per ${tipo}:`, deleteError);
       throw deleteError;
@@ -127,7 +126,7 @@ async function syncCategory(tipo, url) {
       .from('vini')
       .insert(validRows)
       .select('id');
-    
+
     if (insertError) {
       console.error(`❌ Errore inserimento per ${tipo}:`, insertError);
       throw insertError;
@@ -168,31 +167,31 @@ async function syncCategory(tipo, url) {
 async function cleanDatabase() {
   try {
     console.log('\n🗑️ Pulizia database utente...');
-    
+
     // Prima elimina giacenze
     const { error: giacenzaError } = await supabase
       .from('giacenza')
       .delete()
       .eq('user_id', user_id);
-    
+
     if (giacenzaError) {
       console.error('Errore eliminazione giacenze:', giacenzaError);
     } else {
       console.log('✅ Giacenze eliminate');
     }
-    
+
     // Poi elimina vini
     const { error: viniError } = await supabase
       .from('vini')
       .delete()
       .eq('user_id', user_id);
-    
+
     if (viniError) {
       console.error('Errore eliminazione vini:', viniError);
     } else {
       console.log('✅ Vini eliminati');
     }
-    
+
   } catch (err) {
     console.error('❌ Errore pulizia database:', err.message);
   }
@@ -201,7 +200,7 @@ async function cleanDatabase() {
 async function main() {
   console.log('🚀 AVVIO SINCRONIZZAZIONE COMPLETA SUPABASE');
   console.log('👤 User ID:', user_id);
-  
+
   // Verifica connessione
   if (!(await checkDatabaseConnection())) {
     console.error('❌ Impossibile connettersi a Supabase');
@@ -221,7 +220,7 @@ async function main() {
       totalWines += winesInserted;
       totalCategories++;
     }
-    
+
     // Pausa tra le categorie per evitare rate limiting
     await new Promise(resolve => setTimeout(resolve, 1500));
   }
@@ -237,15 +236,15 @@ async function main() {
       .from('vini')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user_id);
-    
+
     console.log(`✅ Verifica finale: ${count} vini nel database`);
-    
+
     // Mostra conteggio per categoria
     const { data: categoryData } = await supabase
       .from('vini')
       .select('tipologia', { count: 'exact' })
       .eq('user_id', user_id);
-    
+
     if (categoryData) {
       console.log('\n📋 Vini per categoria:');
       for (const [tipo] of Object.entries(CATEGORIES)) {
@@ -257,7 +256,7 @@ async function main() {
         console.log(`  ${tipo}: ${count} vini`);
       }
     }
-    
+
   } catch (err) {
     console.error('❌ Errore verifica finale:', err.message);
   }
