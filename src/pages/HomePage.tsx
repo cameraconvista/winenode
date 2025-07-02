@@ -299,8 +299,8 @@ export default function HomePage() {
                                   <span className="mx-2">·</span>
                                 </>
                               )}
-                              <span className="text-blue-300 font-medium">
-                                ({wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'})
+                              <span className="text-cream font-medium">
+                                {wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'}
                               </span>
                             </>
                           ) : (
@@ -311,8 +311,8 @@ export default function HomePage() {
                                   <span className="mx-2">·</span>
                                 </>
                               )}
-                              <span className="text-blue-300 font-medium">
-                                ({wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'})
+                              <span className="text-cream font-medium">
+                                {wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'}
                               </span>
                             </>
                           )}
