@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { WineType } from '../hooks/useWines';
@@ -101,7 +100,7 @@ export default function WineDetailsModal({
                 <label className="block text-lg font-medium text-cream mb-3">
                   Giacenza
                 </label>
-                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-64">
+                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-32">
                   <button
                     type="button"
                     onClick={() => {
@@ -142,7 +141,7 @@ export default function WineDetailsModal({
                     Ordine Minimo
                   </span>
                 </label>
-                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-64">
+                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-32">
                   <button
                     type="button"
                     onClick={() => {
@@ -194,7 +193,7 @@ export default function WineDetailsModal({
                     Soglia Minima
                   </span>
                 </label>
-                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-64">
+                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-32">
                   <button
                     type="button"
                     onClick={() => {
