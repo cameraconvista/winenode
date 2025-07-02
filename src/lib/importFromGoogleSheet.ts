@@ -50,6 +50,13 @@ async function importCategoryFromSheet(doc: any, sheetTitle: string, userId: str
       throw deleteError;
     }
 
+    console.log(`📊 ${sheetTitle}: ${wineData.length} righe grezze dal Google Sheet`);
+    
+    // Debug: mostra alcuni esempi di dati
+    if (wineData.length > 0) {
+      console.log('🔍 Esempio di riga dal Google Sheet:', wineData[0]);
+    }
+
     // Prepara i dati per l'inserimento
     const validWines = wineData
       .filter(wine => wine.nome_vino && wine.nome_vino.trim())
@@ -67,6 +74,8 @@ async function importCategoryFromSheet(doc: any, sheetTitle: string, userId: str
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }));
+
+    console.log(`✅ ${sheetTitle}: ${validWines.length} vini validi preparati per l'inserimento`);
 
     if (validWines.length > 0) {
       const { error: insertError } = await supabase

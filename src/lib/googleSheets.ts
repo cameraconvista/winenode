@@ -40,16 +40,27 @@ export async function getSheetData(doc: GoogleSpreadsheet, sheetTitle: string) {
   await sheet.loadHeaderRow();
   const rows = await sheet.getRows();
   
-  return rows.map(row => ({
-    nome_vino: row.get('NOME VINO') || row.get('NAME') || '',
-    anno: row.get('ANNO') || row.get('YEAR') || '',
-    produttore: row.get('PRODUTTORE') || row.get('PRODUCER') || '',
-    provenienza: row.get('PROVENIENZA') || row.get('ORIGIN') || '',
-    fornitore: row.get('FORNITORE') || row.get('SUPPLIER') || '',
-    costo: parseFloat(row.get('COSTO')?.replace(/[^\d.,]/g, '')?.replace(',', '.') || '0') || null,
-    vendita: parseFloat(row.get('VENDITA')?.replace(/[^\d.,]/g, '')?.replace(',', '.') || '0') || null,
-    margine: parseFloat(row.get('MARGINE')?.replace(/[^\d.,]/g, '')?.replace(',', '.') || '0') || null,
-  }));
+  return rows.map(row => {
+    // Helper function per parsing sicuro dei numeri
+    const parseNumericValue = (value: string | undefined | null): number | null => {
+      if (!value || value.trim() === '') return null;
+      const cleaned = value.replace(/[^\d.,]/g, '').replace(',', '.');
+      if (cleaned === '') return null;
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? null : parsed;
+    };
+
+    return {
+      nome_vino: row.get('NOME VINO') || row.get('NAME') || '',
+      anno: row.get('ANNO') || row.get('YEAR') || null,
+      produttore: row.get('PRODUTTORE') || row.get('PRODUCER') || null,
+      provenienza: row.get('PROVENIENZA') || row.get('ORIGIN') || null,
+      fornitore: row.get('FORNITORE') || row.get('SUPPLIER') || null,
+      costo: parseNumericValue(row.get('COSTO')),
+      vendita: parseNumericValue(row.get('VENDITA')),
+      margine: parseNumericValue(row.get('MARGINE')),
+    };
+  });
 }
 
 export function extractSpreadsheetId(url: string): string {
