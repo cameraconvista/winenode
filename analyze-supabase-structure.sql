@@ -1,135 +1,103 @@
+-- === ANALISI COMPLETA STRUTTURA SUPABASE ATTUALE ===
 
--- ============================================
--- ANALISI COMPLETA STRUTTURA SUPABASE WINENODE
--- ============================================
-
--- 1. ELENCO TUTTE LE TABELLE
-SELECT 
-    table_name,
-    table_schema
+-- Verifica tabelle esistenti
+SELECT 'TABELLE ESISTENTI:' as info;
+SELECT table_name, table_type 
 FROM information_schema.tables 
-WHERE table_schema = 'public'
+WHERE table_schema = 'public' 
+AND table_type = 'BASE TABLE'
 ORDER BY table_name;
 
--- 2. STRUTTURA DETTAGLIATA OGNI TABELLA
-SELECT 
-    t.table_name,
-    c.column_name,
-    c.data_type,
-    c.is_nullable,
-    c.column_default,
-    c.character_maximum_length
-FROM information_schema.tables t
-JOIN information_schema.columns c ON t.table_name = c.table_name
-WHERE t.table_schema = 'public'
-ORDER BY t.table_name, c.ordinal_position;
+-- Analisi tabella VINI
+SELECT 'ANALISI TABELLA VINI:' as info;
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns 
+WHERE table_name = 'vini' AND table_schema = 'public'
+ORDER BY ordinal_position;
 
--- 3. FOREIGN KEYS E RELAZIONI
-SELECT
-    tc.table_name, 
-    kcu.column_name, 
-    ccu.table_name AS foreign_table_name,
-    ccu.column_name AS foreign_column_name,
-    tc.constraint_name
-FROM information_schema.table_constraints AS tc 
-JOIN information_schema.key_column_usage AS kcu
-  ON tc.constraint_name = kcu.constraint_name
-JOIN information_schema.constraint_column_usage AS ccu
-  ON ccu.constraint_name = tc.constraint_name
-WHERE tc.constraint_type = 'FOREIGN KEY'
-  AND tc.table_schema = 'public';
+SELECT 'CONTEGGIO VINI:' as info;
+SELECT COUNT(*) as total_vini FROM vini;
 
--- 4. INDICI ESISTENTI
-SELECT
-    schemaname,
-    tablename,
-    indexname,
-    indexdef
-FROM pg_indexes
-WHERE schemaname = 'public'
-ORDER BY tablename, indexname;
+-- Analisi tabella GIACENZA
+SELECT 'ANALISI TABELLA GIACENZA:' as info;
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns 
+WHERE table_name = 'giacenza' AND table_schema = 'public'
+ORDER BY ordinal_position;
 
--- 5. RLS STATUS
-SELECT 
-    schemaname,
-    tablename,
-    rowsecurity as rls_enabled
+SELECT 'CONTEGGIO GIACENZA:' as info;
+SELECT COUNT(*) as total_giacenza FROM giacenza;
+
+-- Analisi tabella ORDINI (semplice)
+SELECT 'ANALISI TABELLA ORDINI:' as info;
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns 
+WHERE table_name = 'ordini' AND table_schema = 'public'
+ORDER BY ordinal_position;
+
+SELECT 'CONTEGGIO ORDINI:' as info;
+SELECT COUNT(*) as total_ordini FROM ordini;
+
+-- Analisi tabella FORNITORI
+SELECT 'ANALISI TABELLA FORNITORI:' as info;
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns 
+WHERE table_name = 'fornitori' AND table_schema = 'public'
+ORDER BY ordinal_position;
+
+SELECT 'CONTEGGIO FORNITORI:' as info;
+SELECT COUNT(*) as total_fornitori FROM fornitori;
+
+-- Analisi tabella TIPOLOGIE
+SELECT 'ANALISI TABELLA TIPOLOGIE:' as info;
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns 
+WHERE table_name = 'tipologie' AND table_schema = 'public'
+ORDER BY ordinal_position;
+
+SELECT 'CONTEGGIO TIPOLOGIE:' as info;
+SELECT COUNT(*) as total_tipologie FROM tipologie;
+
+-- Verifica RLS
+SELECT 'VERIFICA RLS:' as info;
+SELECT schemaname, tablename, rowsecurity 
 FROM pg_tables 
-WHERE schemaname = 'public'
-ORDER BY tablename;
+WHERE schemaname = 'public' 
+AND tablename IN ('vini', 'giacenza', 'ordini', 'fornitori', 'tipologie');
 
--- 6. POLICIES ATTIVE
-SELECT 
-    schemaname,
-    tablename,
-    policyname,
-    permissive,
-    roles,
-    cmd,
-    qual,
-    with_check
+-- Verifica POLICY
+SELECT 'VERIFICA POLICY:' as info;
+SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual
 FROM pg_policies 
 WHERE schemaname = 'public'
 ORDER BY tablename, policyname;
 
--- 7. CONTEGGIO RECORD PER TABELLA
-SELECT 
-    'vini' as tabella,
-    COUNT(*) as numero_record
-FROM vini
-UNION ALL
-SELECT 
-    'giacenza' as tabella,
-    COUNT(*) as numero_record
-FROM giacenza
-UNION ALL
-SELECT 
-    'fornitori' as tabella,
-    COUNT(*) as numero_record
-FROM fornitori
-UNION ALL
-SELECT 
-    'tipologie' as tabella,
-    COUNT(*) as numero_record
-FROM tipologie
-UNION ALL
-SELECT 
-    'ordini' as tabella,
-    COUNT(*) as numero_record
-FROM ordini
-WHERE EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ordini')
-UNION ALL
-SELECT 
-    'ordini_dettaglio' as tabella,
-    COUNT(*) as numero_record
-FROM ordini_dettaglio
-WHERE EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ordini_dettaglio');
+-- Verifica indici
+SELECT 'VERIFICA INDICI:' as info;
+SELECT indexname, tablename, indexdef
+FROM pg_indexes 
+WHERE schemaname = 'public'
+AND tablename IN ('vini', 'giacenza', 'ordini', 'fornitori', 'tipologie')
+ORDER BY tablename, indexname;
 
--- 8. VERIFICA UTENTI PRESENTI
+-- Test di connessione con utente specifico
+SELECT 'TEST USER ID:' as info;
 SELECT 
-    DISTINCT user_id
-FROM vini
-UNION
-SELECT 
-    DISTINCT user_id
-FROM giacenza
-WHERE user_id IS NOT NULL;
+  CASE 
+    WHEN auth.uid() IS NOT NULL THEN 'User autenticato: ' || auth.uid()::text
+    ELSE 'Nessun utente autenticato'
+  END as auth_status;
 
--- 9. TEST RELAZIONI GIACENZA-VINI
-SELECT 
-    v.id as vino_id,
-    v.nome_vino,
-    g.giacenza,
-    g.user_id
-FROM vini v
-LEFT JOIN giacenza g ON v.id = g.vino_id
-LIMIT 5;
+-- Verifica dati di esempio
+SELECT 'ESEMPIO VINI:' as info;
+SELECT id, nome_vino, tipologia, fornitore, costo, vendita
+FROM vini 
+LIMIT 3;
 
--- 10. VERIFICA SEQUENCE E AUTO-INCREMENT
-SELECT 
-    table_name,
-    column_name,
-    column_default
-FROM information_schema.columns
-WHERE column_default LIKE 'nextval%'
-  AND table_schema = 'public';
+SELECT 'ESEMPIO GIACENZA:' as info;
+SELECT g.id, v.nome_vino, g.giacenza, g.min_stock
+FROM giacenza g
+JOIN vini v ON g.vino_id = v.id
+LIMIT 3;
+
+SELECT '=== ANALISI COMPLETATA ===' as info;
