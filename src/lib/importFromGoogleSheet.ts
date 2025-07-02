@@ -111,7 +111,7 @@ export function startAutoSync(googleSheetUrl: string, userId: string) {
     clearInterval(autoSyncInterval);
   }
   
-  console.log('🔄 Avvio sincronizzazione automatica ogni 5 minuti');
+  console.log('🔄 Avvio sincronizzazione automatica ogni 1 minuto');
   
   autoSyncInterval = setInterval(async () => {
     try {
@@ -134,7 +134,7 @@ export function startAutoSync(googleSheetUrl: string, userId: string) {
     } catch (error) {
       console.error('❌ Errore sincronizzazione automatica:', error);
     }
-  }, 5 * 60 * 1000); // 5 minuti
+  }, 60 * 1000); // 1 minuto
 }
 
 export function stopAutoSync() {
