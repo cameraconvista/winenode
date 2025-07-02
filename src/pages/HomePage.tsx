@@ -291,32 +291,27 @@ export default function HomePage() {
                         <div className="text-sm sm:text-base font-semibold truncate overflow-x-hidden uppercase" style={{ color: '#fffbe5' }}>
                           {wine.name}
                         </div>
-                        {/* Seconda riga: Anno · Produttore · (Fornitore) */}
+                        {/* Seconda riga: Anno · Produttore · Fornitore € Prezzo */}
                         <div className="text-xs text-gray-400 truncate overflow-x-hidden">
-                          {wine.vintage ? (
+                          {wine.vintage && (
                             <>
                               <span className="text-gray-400 font-medium">{wine.vintage}</span>
                               <span className="mx-2">·</span>
-                              {wine.description && (
-                                <>
-                                  <span className="text-gray-400 font-medium">{wine.description}</span>
-                                  <span className="mx-2">·</span>
-                                </>
-                              )}
-                              {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
-                                <span className="text-yellow-200 font-medium">{wine.supplier}</span>
-                              )}
                             </>
-                          ) : (
+                          )}
+                          {wine.description && (
                             <>
-                              {wine.description && (
+                              <span className="text-gray-400 font-medium">{wine.description}</span>
+                              <span className="mx-2">·</span>
+                            </>
+                          )}
+                          {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
+                            <>
+                              <span className="text-yellow-200 font-medium">{wine.supplier}</span>
+                              {wine.price && parseFloat(wine.price) > 0 && (
                                 <>
-                                  <span className="text-gray-400 font-medium">{wine.description}</span>
-                                  <span className="mx-2">·</span>
+                                  <span className="mx-3 text-amber-400 font-semibold">€{parseFloat(wine.price).toFixed(2)}</span>
                                 </>
-                              )}
-                              {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
-                                <span className="text-yellow-200 font-medium">{wine.supplier}</span>
                               )}
                             </>
                           )}
