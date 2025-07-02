@@ -116,8 +116,8 @@ export default function WineDetailsModal({
           <div className="grid grid-cols-2 gap-4">
             {/* Soglia Minima */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <span className="flex items-center gap-1">
+              <label className="block text-sm font-medium text-gray-300 mb-2 text-center">
+                <span className="flex items-center justify-center gap-1">
                   <span className="text-yellow-400">⚠️</span>
                   Soglia Minima
                 </span>
@@ -158,7 +158,7 @@ export default function WineDetailsModal({
 
             {/* Giacenza */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2 text-center">
                 Giacenza
               </label>
               <div className="flex items-center bg-gray-800 border border-gray-600 rounded-md">
