@@ -120,49 +120,18 @@ export default function WineTableRow({
       </td>
 
       <td
-        className="border border-amber-900 p-0 group"
+        className="border border-amber-900 p-0"
         style={{ backgroundColor: bgColor, width: columnWidths["giacenza"] }}
       >
-        <div className="relative flex items-center justify-center h-full">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onCellChange(index, "giacenza", Math.max(0, row.giacenza - 1).toString());
-            }}
-            className="absolute left-1 w-4 h-4 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center shadow-sm"
-            style={{ fontSize: 10 }}
-            title="Diminuisci giacenza"
-          >
-            -
-          </button>
-
-          <div className="flex items-center justify-center gap-1">
-            {row.giacenza <= 2 && row.giacenza > 0 && (
-              <svg className="w-3 h-3 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
-              </svg>
-            )}
-            <input
-              type="number"
-              value={row.giacenza}
-              onChange={(e) => onCellChange(index, "giacenza", e.target.value)}
-              className="flex-1 bg-transparent text-center outline-none text-gray-600"
-              style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
-              min="0"
-            />
-          </div>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onCellChange(index, "giacenza", (Number(row.giacenza) + 1).toString());
-            }}
-            className="absolute right-1 w-4 h-4 bg-green-500 hover:bg-green-600 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center shadow-sm"
-            style={{ fontSize: 10 }}
-            title="Aumenta giacenza"
-          >
-            +
-          </button>
+        <div className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center gap-1"
+          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
+        >
+          {row.giacenza <= 2 && row.giacenza > 0 && (
+            <svg className="w-3 h-3 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+            </svg>
+          )}
+          <span className="text-center">{row.giacenza}</span>
         </div>
       </td>
     </tr>
