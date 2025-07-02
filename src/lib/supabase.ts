@@ -145,10 +145,4 @@ export class AuthManager {
 
 export const authManager = AuthManager.getInstance()
 
-// Client Supabase secondario con service_role_key per operazioni backend
-const serverSupabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
-);
-
-export const supabaseServer = serverSupabase;
+// Client secondario rimosso per evitare istanze multiple

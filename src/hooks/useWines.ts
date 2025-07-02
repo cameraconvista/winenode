@@ -32,7 +32,7 @@ const useWines = () => {
         .from('vini')
         .select(`
           *,
-          giacenza (giacenza, min_stock)
+          giacenze (giacenza, min_stock)
         `)
         .eq('user_id', userId)
         .order('id', { ascending: true });
@@ -44,8 +44,8 @@ const useWines = () => {
         name: wine.nome_vino || '',
         type: wine.tipologia || '',
         supplier: wine.fornitore || '',
-        inventory: wine.giacenza?.[0]?.giacenza ?? 0,
-        minStock: wine.giacenza?.[0]?.min_stock ?? 0,
+        inventory: wine.giacenze?.[0]?.giacenza ?? 0,
+        minStock: wine.giacenze?.[0]?.min_stock ?? 0,
         price: wine.vendita?.toString() || '',
         cost: wine.costo || 0,
         vintage: wine.anno?.toString() || '',
@@ -74,7 +74,7 @@ const useWines = () => {
 
     try {
       const { error } = await supabase
-        .from('giacenza')
+        .from('giacenze')
         .upsert({
           vino_id: id,
           giacenza: newInventory,
@@ -120,7 +120,7 @@ const useWines = () => {
 
       if (updates.inventory !== undefined) {
         const { error } = await supabase
-          .from('giacenza')
+          .from('giacenze')
           .upsert({
             vino_id: id,
             giacenza: updates.inventory,
