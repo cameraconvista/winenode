@@ -170,7 +170,11 @@ export default function HomePage() {
   );
 
   return (
-    <div className="h-screen flex flex-col overflow-x-hidden" style={{ background: 'linear-gradient(to bottom right, #1f0202, #2d0505)' }}>
+    <div className="min-h-screen flex flex-col overflow-x-hidden" style={{ 
+      background: 'linear-gradient(to bottom right, #1f0202, #2d0505)',
+      width: '100vw',
+      maxWidth: '100%'
+    }}>
       <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-3 sm:px-4">
           <div className="flex flex-col items-center">
@@ -270,7 +274,7 @@ export default function HomePage() {
 
 
 
-      <main className="flex-1 min-h-0 max-w-4xl mx-auto w-full flex flex-col overflow-x-hidden">
+      <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-x-hidden" style={{ minHeight: 'calc(100vh - 200px)' }}>
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-4">
           {filteredWines.length === 0 ? (
             <p className="text-center text-gray-400">

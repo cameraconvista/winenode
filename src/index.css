@@ -160,8 +160,8 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   flex-shrink: 0;
 }
 
-/* SISTEMA DI ROTAZIONE FORZATA PER TABLET REALI */
-@media screen and (max-width: 1024px) and (min-width: 768px) and (orientation: portrait) and (pointer: coarse) {
+/* SISTEMA DI ROTAZIONE FORZATA SOLO PER TABLET REALI (non smartphone) */
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) and (pointer: coarse) {
   /* Nascondi tutto il contenuto dell'app */
   #root > * {
     display: none !important;
@@ -347,21 +347,64 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
 }
 
 /* Layout specifico per smartphone (mantiene comportamento normale) */
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 767px) {
   body {
-    font-size: 12px;
+    font-size: 14px;
+    background: linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202) !important;
+    min-height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  #root {
+    width: 100vw;
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202) !important;
+    overflow-x: hidden;
+  }
+  
+  /* Assicura visibilità su mobile */
+  .h-screen {
+    min-height: 100vh !important;
+    height: auto !important;
+  }
+  
+  /* Ottimizza header per mobile */
+  header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+  }
+  
+  /* Ottimizza main content per mobile */
+  main {
+    flex: 1 !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
   }
   
   table {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
+    width: 100% !important;
   }
   
   .text-sm {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
   }
   
   .text-xs {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Fix per pulsanti mobile */
+  button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Fix per input mobile */
+  input, select, textarea {
+    font-size: 16px !important; /* Previene zoom su iOS */
   }
 }
 
