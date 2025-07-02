@@ -140,7 +140,7 @@ export default function SettingsPage() {
                 className="p-2 text-white hover:bg-gray-700 rounded-lg transition-colors"
                 title="Torna alla home"
               >
-                <Home className="h-6 w-6" />
+                <img src="/iconwinenode.png" alt="Home" className="h-6 w-6" />
               </button>
             </div>
           </div>
@@ -502,7 +502,7 @@ export default function SettingsPage() {
                   color: "#ffffff"
                 }}
               >
-                <Home className="h-6 w-6" />
+                <img src="/iconwinenode.png" alt="Home" className="h-6 w-6" />
               </button>
             </div>
           </div>
@@ -567,3 +567,4 @@ export default function SettingsPage() {
     </div>
   )
 }
+```Ok, I will continue from where I left off.
