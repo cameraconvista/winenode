@@ -119,7 +119,7 @@ export default function ImportaVini({}: ImportaViniProps) {
     setSheetStatus('idle')
 
     try {
-      // Importa dalla funzionalità ripristinata
+      // Importa usando il sistema Google Sheets API ripristinato
       const { importFromGoogleSheet } = await import('../lib/importFromGoogleSheet')
       const result = await importFromGoogleSheet(googleSheetUrl, userId)
       
