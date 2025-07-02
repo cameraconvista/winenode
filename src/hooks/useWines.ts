@@ -63,9 +63,10 @@ const useWines = () => {
           price: wine.vendita?.toString() || '',
           cost: wine.costo || 0,
           vintage: wine.anno?.toString() || '',
-        region: wine.provenienza || '',
-        description: wine.produttore || ''
-      }));
+          region: wine.provenienza || '',
+          description: wine.produttore || ''
+        };
+      });
 
       const uniqueSuppliers = Array.from(new Set(mappedWines.map(w => w.supplier).filter(Boolean))).sort();
 
