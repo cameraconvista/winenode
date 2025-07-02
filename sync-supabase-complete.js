@@ -11,7 +11,8 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const user_id = 'f5ed5dd6-38fe-4528-9a25-941e0996c0a2'; // Il tuo user ID dai log
+// Usa il tuo user_id dai log della console
+const user_id = '02c85ceb-8026-4bd9-9dc5-c03a74f56346';
 
 const CATEGORIES = {
   'BOLLICINE ITALIANE': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=294419425&single=true&output=csv',
@@ -23,166 +24,17 @@ const CATEGORIES = {
 };
 
 function parseEuro(value) {
-  if (!value || typeof value !== 'string') return null;
-  const cleaned = value.replace(/[^\d.,]/g, '').replace(',', '.');
+  if (!value || value === '' || value === null || value === undefined) return null;
+  
+  // Rimuovi tutto tranne numeri, punti e virgole
+  const cleaned = value.toString().replace(/[^\d.,]/g, '').replace(',', '.');
   const num = parseFloat(cleaned);
   return isNaN(num) ? null : num;
 }
 
-function cleanHeader(header) {
-  return header
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, ' ')
-    .replace(/[^\w\s]/g, '');
-}
-
-async function fetchCSVData(url) {
-  console.log(`📥 Scaricando CSV da: ${url}`);
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`HTTP error ${response.status}`);
-  }
-  return await response.text();
-}
-
-function parseCSVWithHeaders(csvText) {
-  const lines = csvText.split('\n').filter(line => line.trim());
-  if (lines.length < 2) return [];
-
-  // Prendi il primo header valido
-  let headerIndex = 0;
-  let headers = [];
-  
-  for (let i = 0; i < Math.min(5, lines.length); i++) {
-    const testHeaders = lines[i].split(',').map(h => cleanHeader(h.replace(/"/g, '')));
-    if (testHeaders.some(h => h.includes('NOME') || h.includes('VINO'))) {
-      headers = testHeaders;
-      headerIndex = i;
-      break;
-    }
-  }
-
-  if (headers.length === 0) {
-    console.log('⚠️ Nessun header valido trovato, uso header di default');
-    headers = ['NOME VINO', 'ANNO', 'PRODUTTORE', 'PROVENIENZA', 'FORNITORE', 'COSTO', 'VENDITA', 'MARGINE'];
-  }
-
-  console.log('📋 Headers trovati:', headers);
-
-  const dataLines = lines.slice(headerIndex + 1);
-  const results = [];
-
-  for (const line of dataLines) {
-    if (!line.trim()) continue;
-    
-    const values = line.split(',').map(v => v.replace(/"/g, '').trim());
-    const row = {};
-    
-    headers.forEach((header, index) => {
-      row[header] = values[index] || '';
-    });
-
-    // Trova il nome del vino
-    const nomeVino = row['NOME VINO'] || 
-                    row['NOME'] || 
-                    row['VINO'] || 
-                    values[0] || '';
-
-    if (nomeVino && nomeVino.trim() && !nomeVino.toLowerCase().includes('nome')) {
-      results.push({
-        nomeVino: nomeVino.trim(),
-        anno: row['ANNO'] || values[1] || null,
-        produttore: row['PRODUTTORE'] || values[2] || null,
-        provenienza: row['PROVENIENZA'] || values[3] || null,
-        fornitore: row['FORNITORE'] || values[4] || 'Non specificato',
-        costo: parseEuro(row['COSTO'] || values[5]),
-        vendita: parseEuro(row['VENDITA'] || values[6]),
-        margine: parseEuro(row['MARGINE'] || values[7])
-      });
-    }
-  }
-
-  return results;
-}
-
-async function syncCategory(tipo, url) {
-  try {
-    console.log(`\n🔄 Sincronizzando ${tipo}...`);
-
-    const csvText = await fetchCSVData(url);
-    const wines = parseCSVWithHeaders(csvText);
-
-    console.log(`🍷 ${tipo}: ${wines.length} vini estratti`);
-
-    if (wines.length === 0) {
-      console.log(`⚠️ Nessun vino valido trovato per ${tipo}`);
-      return;
-    }
-
-    // Elimina vini esistenti per questa categoria
-    const { error: deleteError } = await supabase
-      .from('vini')
-      .delete()
-      .eq('tipologia', tipo)
-      .eq('user_id', user_id);
-
-    if (deleteError) {
-      console.error(`❌ Errore eliminazione ${tipo}:`, deleteError);
-      return;
-    }
-
-    // Inserisci nuovi vini
-    const winesData = wines.map(wine => ({
-      nome_vino: wine.nomeVino,
-      anno: wine.anno,
-      produttore: wine.produttore,
-      provenienza: wine.provenienza,
-      fornitore: wine.fornitore,
-      costo: wine.costo,
-      vendita: wine.vendita,
-      margine: wine.margine,
-      tipologia: tipo,
-      user_id: user_id,
-    }));
-
-    const { data: insertedWines, error: insertError } = await supabase
-      .from('vini')
-      .insert(winesData)
-      .select('id, nome_vino');
-
-    if (insertError) {
-      console.error(`❌ Errore inserimento ${tipo}:`, insertError);
-      return;
-    }
-
-    console.log(`✅ ${tipo}: ${insertedWines.length} vini inseriti`);
-
-    // Crea giacenze per ogni vino
-    const giacenzeData = insertedWines.map(wine => ({
-      vino_id: wine.id,
-      giacenzaa: Math.floor(Math.random() * 20) + 1, // Giacenza casuale 1-20
-      min_stock: 2,
-      user_id: user_id
-    }));
-
-    const { error: giacenzeError } = await supabase
-      .from('giacenza')
-      .insert(giacenzeData);
-
-    if (giacenzeError) {
-      console.error(`❌ Errore giacenze ${tipo}:`, giacenzeError);
-    } else {
-      console.log(`📦 ${tipo}: ${giacenzeData.length} giacenze create`);
-    }
-
-  } catch (err) {
-    console.error(`❌ Errore generale ${tipo}:`, err.message);
-  }
-}
-
 async function checkDatabaseConnection() {
   try {
+    console.log('🔍 Verifica connessione Supabase...');
     const { data, error } = await supabase.from('vini').select('count').limit(1);
     if (error) throw error;
     console.log('✅ Connessione Supabase OK');
@@ -193,58 +45,222 @@ async function checkDatabaseConnection() {
   }
 }
 
+async function syncCategory(tipo, url) {
+  try {
+    console.log(`\n🔄 Sincronizzando ${tipo}...`);
+
+    // Download CSV
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status} per ${tipo}`);
+    }
+    const csvText = await response.text();
+    console.log(`📥 CSV scaricato per ${tipo}, dimensione: ${csvText.length} caratteri`);
+
+    // Parse CSV
+    const parsed = Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (header) => header.trim().toUpperCase(),
+    });
+
+    console.log(`📊 Righe trovate nel CSV: ${parsed.data.length}`);
+
+    // Filtra e mappa i dati
+    const validRows = parsed.data
+      .filter(row => {
+        const nome = row['NOME VINO']?.trim();
+        return nome && 
+               nome.toUpperCase() !== 'NOME VINO' && 
+               nome.toUpperCase() !== tipo.toUpperCase() &&
+               nome.length > 0;
+      })
+      .map(row => {
+        const nomeVino = row['NOME VINO']?.trim();
+        const anno = row['ANNO']?.trim();
+        const produttore = row['PRODUTTORE']?.trim();
+        const provenienza = row['PROVENIENZA']?.trim();
+        const fornitore = row['FORNITORE']?.trim();
+        const costo = parseEuro(row['COSTO '] ?? row['COSTO']);
+        const vendita = parseEuro(row['VENDITA']);
+        const margine = parseEuro(row['MARGINE']);
+
+        return {
+          nome_vino: nomeVino || null,
+          anno: anno || null,
+          produttore: produttore || null,
+          provenienza: provenienza || null,
+          fornitore: fornitore || 'Non specificato',
+          costo: costo,
+          vendita: vendita,
+          margine: margine,
+          tipologia: tipo,
+          user_id: user_id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+      });
+
+    console.log(`🍷 Vini validi trovati per ${tipo}: ${validRows.length}`);
+
+    if (validRows.length === 0) {
+      console.log(`⚠️ Nessun vino valido trovato per ${tipo}`);
+      return 0;
+    }
+
+    // Elimina i vini esistenti per questa categoria
+    console.log(`🗑️ Eliminazione vini esistenti per ${tipo}...`);
+    const { error: deleteError } = await supabase
+      .from('vini')
+      .delete()
+      .eq('tipologia', tipo)
+      .eq('user_id', user_id);
+    
+    if (deleteError) {
+      console.error(`❌ Errore eliminazione per ${tipo}:`, deleteError);
+      throw deleteError;
+    }
+
+    // Inserisci i nuovi vini
+    console.log(`📝 Inserimento ${validRows.length} vini per ${tipo}...`);
+    const { data: insertedData, error: insertError } = await supabase
+      .from('vini')
+      .insert(validRows)
+      .select('id');
+    
+    if (insertError) {
+      console.error(`❌ Errore inserimento per ${tipo}:`, insertError);
+      throw insertError;
+    }
+
+    // Crea giacenze per i vini inseriti
+    if (insertedData && insertedData.length > 0) {
+      console.log(`📦 Creazione giacenze per ${insertedData.length} vini...`);
+      const giacenze = insertedData.map(wine => ({
+        vino_id: wine.id,
+        giacenza: 0,
+        min_stock: 2,
+        user_id: user_id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }));
+
+      const { error: giacenzaError } = await supabase
+        .from('giacenza')
+        .insert(giacenze);
+
+      if (giacenzaError) {
+        console.error(`❌ Errore creazione giacenze per ${tipo}:`, giacenzaError);
+      } else {
+        console.log(`✅ Giacenze create per ${tipo}`);
+      }
+    }
+
+    console.log(`✅ ${tipo} sincronizzato con successo: ${validRows.length} vini`);
+    return validRows.length;
+
+  } catch (err) {
+    console.error(`❌ Errore sincronizzazione ${tipo}:`, err.message);
+    return 0;
+  }
+}
+
+async function cleanDatabase() {
+  try {
+    console.log('\n🗑️ Pulizia database utente...');
+    
+    // Prima elimina giacenze
+    const { error: giacenzaError } = await supabase
+      .from('giacenza')
+      .delete()
+      .eq('user_id', user_id);
+    
+    if (giacenzaError) {
+      console.error('Errore eliminazione giacenze:', giacenzaError);
+    } else {
+      console.log('✅ Giacenze eliminate');
+    }
+    
+    // Poi elimina vini
+    const { error: viniError } = await supabase
+      .from('vini')
+      .delete()
+      .eq('user_id', user_id);
+    
+    if (viniError) {
+      console.error('Errore eliminazione vini:', viniError);
+    } else {
+      console.log('✅ Vini eliminati');
+    }
+    
+  } catch (err) {
+    console.error('❌ Errore pulizia database:', err.message);
+  }
+}
+
 async function main() {
   console.log('🚀 AVVIO SINCRONIZZAZIONE COMPLETA SUPABASE');
   console.log('👤 User ID:', user_id);
-
+  
   // Verifica connessione
   if (!(await checkDatabaseConnection())) {
+    console.error('❌ Impossibile connettersi a Supabase');
     process.exit(1);
   }
 
-  // Pulisci tutto il database dell'utente
-  console.log('\n🗑️ Pulizia database utente...');
-  await supabase.from('giacenza').delete().eq('user_id', user_id);
-  await supabase.from('vini').delete().eq('user_id', user_id);
-  console.log('✅ Database pulito');
+  // Pulisci database
+  await cleanDatabase();
 
   let totalWines = 0;
   let totalCategories = 0;
 
   // Sincronizza tutte le categorie
   for (const [tipo, url] of Object.entries(CATEGORIES)) {
-    await syncCategory(tipo, url);
-    totalCategories++;
+    const winesInserted = await syncCategory(tipo, url);
+    if (winesInserted > 0) {
+      totalWines += winesInserted;
+      totalCategories++;
+    }
     
-    // Conta vini inseriti
+    // Pausa tra le categorie per evitare rate limiting
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  }
+
+  // Report finale
+  console.log('\n🏁 SINCRONIZZAZIONE COMPLETATA');
+  console.log(`📊 Categorie sincronizzate: ${totalCategories}/${Object.keys(CATEGORIES).length}`);
+  console.log(`🍷 Totale vini importati: ${totalWines}`);
+
+  // Verifica finale
+  try {
     const { count } = await supabase
       .from('vini')
       .select('*', { count: 'exact', head: true })
-      .eq('tipologia', tipo)
       .eq('user_id', user_id);
     
-    totalWines += count || 0;
+    console.log(`✅ Verifica finale: ${count} vini nel database`);
     
-    // Pausa tra le categorie
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Mostra conteggio per categoria
+    const { data: categoryData } = await supabase
+      .from('vini')
+      .select('tipologia', { count: 'exact' })
+      .eq('user_id', user_id);
+    
+    if (categoryData) {
+      console.log('\n📋 Vini per categoria:');
+      for (const [tipo] of Object.entries(CATEGORIES)) {
+        const { count } = await supabase
+          .from('vini')
+          .select('*', { count: 'exact', head: true })
+          .eq('tipologia', tipo)
+          .eq('user_id', user_id);
+        console.log(`  ${tipo}: ${count} vini`);
+      }
+    }
+    
+  } catch (err) {
+    console.error('❌ Errore verifica finale:', err.message);
   }
-
-  console.log('\n🏁 SINCRONIZZAZIONE COMPLETATA');
-  console.log(`📊 Totale categorie: ${totalCategories}`);
-  console.log(`🍷 Totale vini: ${totalWines}`);
-  console.log(`📦 Totale giacenze: ${totalWines}`);
-
-  // Verifica finale
-  const { data: finalCheck } = await supabase
-    .from('vini')
-    .select('tipologia, count(*)')
-    .eq('user_id', user_id);
-
-  console.log('\n📋 RIEPILOGO PER CATEGORIA:');
-  Object.keys(CATEGORIES).forEach(categoria => {
-    const count = finalCheck?.find(c => c.tipologia === categoria)?.count || 0;
-    console.log(`   ${categoria}: ${count} vini`);
-  });
 }
 
 main().catch(console.error);
