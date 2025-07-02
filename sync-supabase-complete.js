@@ -179,7 +179,7 @@ async function syncCategory(tipo, url) {
         return {
           nome_vino: nomeVino || null,
           anno: anno || null,
-          produttore: produttore || null,
+          produttore: produttore || 'Non specificato', // FIX: mai null per evitare vincolo NOT NULL
           provenienza: provenienza || null,
           fornitore: fornitore || 'Non specificato',
           costo: costo,
