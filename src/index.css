@@ -50,6 +50,13 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
   }
+  
+  /* Previeni rotazioni indesiderate */
+  table, .table-container, tbody, thead, tr, td, th {
+    transform: none !important;
+    writing-mode: initial !important;
+    text-orientation: initial !important;
+  }
 }
 
 .text-cream {
@@ -160,65 +167,29 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   flex-shrink: 0;
 }
 
-/* SISTEMA DI ROTAZIONE FORZATA SOLO PER TABLET REALI (non smartphone) */
+/* SISTEMA DI ROTAZIONE FORZATA DISABILITATO - Mantieni layout normale */
 @media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) and (pointer: coarse) {
-  /* Nascondi tutto il contenuto dell'app */
-  #root > * {
-    display: none !important;
+  /* Rimuovi la rotazione forzata - mantieni layout normale */
+  body {
+    font-size: 14px;
+    background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
   }
   
-  /* Mostra solo il messaggio di rotazione */
-  #root::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+  /* Ottimizza per tablet in portrait */
+  table {
+    font-size: 0.8rem;
+    width: 100% !important;
   }
   
-  #root::after {
-    content: '';
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
-    background-image: url('/rotating.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    filter: brightness(1.2) contrast(1.1);
-    z-index: 10000;
-    animation: rotateIcon 2s ease-in-out infinite;
+  table td, table th {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
   }
   
-  /* Aggiungi messaggio testuale */
-  body::before {
-    content: 'Ruota il dispositivo per utilizzare l\'app';
-    position: fixed;
-    top: 60%;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #f8fafc;
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-align: center;
-    z-index: 10001;
-    font-family: 'Inter', system-ui, sans-serif;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  }
-  
-  /* Animazione icona rotazione */
-  @keyframes rotateIcon {
-    0%, 100% { transform: translate(-50%, -50%) rotate(90deg) scale(1); }
-    50% { transform: translate(-50%, -50%) rotate(90deg) scale(1.1); }
+  /* Assicura che le tabelle siano leggibili */
+  .table-responsive {
+    overflow-x: auto;
+    width: 100%;
   }
 }
 
@@ -318,11 +289,21 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   }
 }
 
-/* Fallback per tablet reali in portrait */
+/* Fallback per tablet reali in portrait - NO ROTATION */
 @media screen and (max-width: 1024px) and (min-width: 768px) and (orientation: portrait) and (pointer: coarse) {
-  /* Applica gli stessi stili del landscape */
+  /* Mantieni orientamento normale - nessuna rotazione */
+  * {
+    transform: none !important;
+  }
+  
+  table, tbody, thead, tr, td, th {
+    transform: none !important;
+    writing-mode: initial !important;
+    text-orientation: initial !important;
+  }
+  
   .rounded-lg.shadow-2xl {
-    overflow-x: hidden !important;
+    overflow-x: auto !important;
   }
   
   table.table-fixed {
@@ -330,6 +311,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     min-width: unset !important;
     max-width: 100% !important;
     table-layout: fixed !important;
+    transform: none !important;
   }
   
   table td, table th {
@@ -338,10 +320,12 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     white-space: nowrap !important;
     padding: 0.25rem 0.5rem !important;
     font-size: 0.75rem !important;
+    transform: none !important;
+    writing-mode: initial !important;
   }
   
   .h-full.overflow-x-hidden {
-    overflow-x: hidden !important;
+    overflow-x: auto !important;
     overflow-y: auto !important;
   }
 }
