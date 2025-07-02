@@ -496,13 +496,11 @@ export default function SettingsPage() {
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                   </svg>
                 </button>
-              <button
-                onClick={() => navigate("/")}
-                className="p-2 text-white hover:bg-gray-700 rounded-lg transition-colors"
-                title="Torna alla home"
-              >
-                <Home className="h-6 w-6" />
-              </button>
+              <img 
+                src="/logo 2 CCV.png" 
+                alt="WINENODE" 
+                className="h-32 w-auto object-contain" 
+              />
               <button
                 onClick={() => navigate("/")}
                 className="p-2 text-white hover:text-cream hover:bg-gray-800 rounded-lg transition-colors"
