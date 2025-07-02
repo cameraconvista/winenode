@@ -253,7 +253,7 @@ export default function WineDetailsModal({
                   +
                 </button>
               </div>
-              
+
               {/* Conversione visualizzata */}
               <div className="text-center text-xs text-gray-400 mt-1">
                 <span>{Math.floor((parseInt(formData.ordineMinimo) || 0) / 6)} cartoni = {parseInt(formData.ordineMinimo) || 0} bottiglie</span>
