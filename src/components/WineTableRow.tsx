@@ -30,6 +30,7 @@ export default function WineTableRow({
   onRowClick,
   onCellChange
 }: WineTableRowProps) {
+  const isEmptyRow = row.id.startsWith('empty-');
   const bgColor = isSelected ? "#E6D7B8" : "#F5F0E6";
   const borderW = isSelected ? "2px" : "1px";
   const borderC = isSelected ? "#D97706" : "#92400e";
@@ -40,11 +41,18 @@ export default function WineTableRow({
     return { fontSize: `${adjustedSize}px` };
   };
 
+  // Per le righe vuote, non gestire i click
+  const handleRowClick = (e: React.MouseEvent) => {
+    if (!isEmptyRow) {
+      onRowClick(index, e);
+    }
+  };
+
   return (
     <tr
       key={row.id}
-      onClick={(e) => onRowClick(index, e)}
-      className="cursor-pointer transition-all duration-200 hover:bg-opacity-80"
+      onClick={handleRowClick}
+      className={`transition-all duration-200 ${isEmptyRow ? '' : 'cursor-pointer hover:bg-opacity-80'}`}
       style={{ backgroundColor: bgColor, borderWidth: borderW, borderColor: borderC }}
     >
       <td
@@ -55,7 +63,7 @@ export default function WineTableRow({
           className="w-full px-2 py-2 text-center text-gray-600 font-medium select-none flex items-center justify-center"
           style={{ fontSize: fontSize * 0.7, userSelect: "none", height: 40 }}
         >
-          {index + 1}
+          {isEmptyRow ? '' : index + 1}
         </div>
       </td>
 
@@ -67,7 +75,7 @@ export default function WineTableRow({
           className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
-          {row.nomeVino}
+          {isEmptyRow ? '' : row.nomeVino}
         </div>
       </td>
 
@@ -79,7 +87,7 @@ export default function WineTableRow({
           className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
-          {row.anno}
+          {isEmptyRow ? '' : row.anno}
         </div>
       </td>
 
@@ -91,7 +99,7 @@ export default function WineTableRow({
           className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
-          {row.produttore}
+          {isEmptyRow ? '' : row.produttore}
         </div>
       </td>
 
@@ -103,7 +111,7 @@ export default function WineTableRow({
           className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
-          {row.provenienza}
+          {isEmptyRow ? '' : row.provenienza}
         </div>
       </td>
 
@@ -115,7 +123,7 @@ export default function WineTableRow({
           className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
-          {row.fornitore}
+          {isEmptyRow ? '' : row.fornitore}
         </div>
       </td>
 
@@ -126,8 +134,8 @@ export default function WineTableRow({
         <div className="w-full px-2 py-2 bg-transparent border-none outline-none select-none flex items-center justify-center"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
-          <span className={`text-center w-full ${row.giacenza <= 2 ? 'text-red-600 font-bold' : 'text-gray-600'}`}>
-            {row.giacenza}
+          <span className={`text-center w-full ${!isEmptyRow && row.giacenza <= 2 ? 'text-red-600 font-bold' : 'text-gray-600'}`}>
+            {isEmptyRow ? '' : row.giacenza}
           </span>
         </div>
       </td>

@@ -124,7 +124,7 @@ export default function ArchiviPage() {
 
   // Filtra righe con ricerca e fornitore
   const filteredRows = useMemo(() => {
-    return wineRows.filter(row => {
+    const filtered = wineRows.filter(row => {
       const s = filters.search.toLowerCase();
       const f = filters.fornitore.toLowerCase();
       return (
@@ -132,6 +132,31 @@ export default function ArchiviPage() {
         (!f || row.fornitore.toLowerCase().includes(f))
       );
     });
+
+    // Calcola quante righe vuote aggiungere per riempire la pagina
+    const containerHeight = window.innerHeight - 280; // Altezza disponibile per la tabella
+    const headerHeight = 40; // Altezza header tabella
+    const rowHeight = 40; // Altezza singola riga
+    const availableHeight = containerHeight - headerHeight;
+    const maxVisibleRows = Math.floor(availableHeight / rowHeight);
+    
+    // Se abbiamo meno righe del massimo visibile, aggiungi righe vuote
+    if (filtered.length < maxVisibleRows) {
+      const emptyRowsNeeded = maxVisibleRows - filtered.length;
+      const emptyRows = Array.from({ length: emptyRowsNeeded }, (_, index) => ({
+        id: `empty-${index}`,
+        nomeVino: '',
+        anno: '',
+        produttore: '',
+        provenienza: '',
+        giacenza: 0,
+        fornitore: '',
+        tipologia: ''
+      }));
+      return [...filtered, ...emptyRows];
+    }
+
+    return filtered;
   }, [wineRows, filters]);
 
   // Gestione cambiamenti celle
