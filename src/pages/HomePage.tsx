@@ -292,7 +292,7 @@ export default function HomePage() {
                           {wine.name}
                         </div>
                         {/* Seconda riga: Anno · Produttore · Fornitore € Prezzo */}
-                        <div className="text-xs text-gray-400 truncate overflow-x-hidden">
+                        <div className="text-xs sm:text-xs text-gray-400 truncate overflow-x-hidden" style={{ fontSize: window.innerWidth <= 640 ? '10px' : undefined }}>
                           {wine.vintage && (
                             <>
                               <span className="text-gray-400 font-medium">{wine.vintage}</span>
