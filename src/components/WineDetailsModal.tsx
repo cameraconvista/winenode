@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Wine } from '../../shared/schema';
@@ -25,7 +24,7 @@ export default function WineDetailsModal({
     description: '',
     type: ''
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -80,7 +79,7 @@ export default function WineDetailsModal({
           {/* Info box con produttore e fornitore */}
           <div className="bg-gray-800 border border-gray-600 rounded-lg p-3 space-y-2">
             <div className="text-cream font-semibold text-base leading-tight">{wine.name}</div>
-            
+
             {/* Produttore e Fornitore sulla stessa riga */}
             {(wine.description || wine.supplier) && (
               <div className="text-sm text-gray-300">
@@ -95,18 +94,18 @@ export default function WineDetailsModal({
                 )}
               </div>
             )}
-            
+
             <div className="flex flex-wrap gap-3 text-xs">
               <span className="bg-gray-700 px-2 py-1 rounded text-gray-300">
                 {wine.type || 'Tipologia N/A'}
               </span>
-              
+
               {wine.region && (
                 <span className="bg-gray-700 px-2 py-1 rounded text-gray-300">
                   {wine.region}
                 </span>
               )}
-              
+
               {wine.vintage && (
                 <span className="bg-gray-700 px-2 py-1 rounded text-gray-300">
                   {wine.vintage}
@@ -127,20 +126,6 @@ export default function WineDetailsModal({
               className="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-cream focus:outline-none focus:ring-2 focus:ring-blue-500"
               min="0"
               required
-            />
-          </div>
-
-          {/* Campo modificabile: Prezzo */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Prezzo €
-            </label>
-            <input
-              type="text"
-              value={formData.price}
-              onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-              className="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-cream focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="0.00"
             />
           </div>
 
