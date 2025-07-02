@@ -136,14 +136,21 @@ export default function WineTableRow({
             -
           </button>
 
-          <input
-            type="number"
-            value={row.giacenza}
-            onChange={(e) => onCellChange(index, "giacenza", e.target.value)}
-            className="w-full px-1 py-2 bg-transparent border-none outline-none text-gray-600 focus:bg-white focus:shadow-inner text-center select-none font-bold"
-            style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
-            min="0"
-          />
+          <div className="flex items-center justify-center gap-1">
+            {row.giacenza <= 2 && row.giacenza > 0 && (
+              <svg className="w-3 h-3 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
+              </svg>
+            )}
+            <input
+              type="number"
+              value={row.giacenza}
+              onChange={(e) => onCellChange(index, "giacenza", e.target.value)}
+              className="flex-1 bg-transparent text-center outline-none"
+              style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
+              min="0"
+            />
+          </div>
 
           <button
             onClick={(e) => {
