@@ -12,7 +12,7 @@ const DEFAULT_USER_ID = "02c85ceb-8026-4bd9-9dc5-c03a74f56346";
 // Trova l'ID corretto nell'URL del tuo Google Sheet tra /d/ e /edit
 // Esempio: https://docs.google.com/spreadsheets/d/1ABC123DEF456/edit#gid=0
 // L'ID è: 1ABC123DEF456
-const GOOGLE_SHEET_ID = "1tRershHMvfmA8GHfhmzk5mts6CxLwBl7wH3Q0c9roSA";
+const GOOGLE_SHEET_ID = "1slvYCYuQ78Yf9fsRL1yR5xkW2kshOcQVe8E2HsvGZ8Y";
 
 // 🍷 MAPPATURA FOGLI → TIPOLOGIE
 const TIPOLOGIE_MAPPING = {
