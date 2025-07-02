@@ -267,9 +267,7 @@ export default function ArchiviPage() {
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
             </button>
             <div className="flex-1"></div>
-            <button onClick={() => navigate("/")} className="p-2 text-white hover:text-cream hover:bg-gray-800 rounded-lg transition-colors" title="Vai alla home">
-              <Home className="h-6 w-6" />
-            </button>
+            <div className="w-10"></div>
           </div>
         </div>
       </header>
