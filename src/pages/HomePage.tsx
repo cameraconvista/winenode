@@ -291,15 +291,15 @@ export default function HomePage() {
                         <div className="text-xs text-gray-400 truncate overflow-x-hidden">
                           {wine.vintage ? (
                             <>
-                              <span className="text-cream font-medium">{wine.vintage}</span>
+                              <span className="text-gray-400 font-medium">{wine.vintage}</span>
                               <span className="mx-2">·</span>
                               {wine.description && (
                                 <>
-                                  <span className="text-cream font-medium">{wine.description}</span>
+                                  <span className="text-gray-400 font-medium">{wine.description}</span>
                                   <span className="mx-2">·</span>
                                 </>
                               )}
-                              <span className="text-cream font-medium">
+                              <span className="text-gray-400 font-medium">
                                 {wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'}
                               </span>
                             </>
@@ -307,11 +307,11 @@ export default function HomePage() {
                             <>
                               {wine.description && (
                                 <>
-                                  <span className="text-cream font-medium">{wine.description}</span>
+                                  <span className="text-gray-400 font-medium">{wine.description}</span>
                                   <span className="mx-2">·</span>
                                 </>
                               )}
-                              <span className="text-cream font-medium">
+                              <span className="text-gray-400 font-medium">
                                 {wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'}
                               </span>
                             </>
