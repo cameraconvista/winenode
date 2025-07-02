@@ -67,6 +67,9 @@ export default function WineDetailsModal({
 
         {/* Content */}
         <div className="p-4 space-y-3">
+          {/* Debug log per verificare dati fornitore */}
+          {console.log(`🔍 Wine "${wine.name}" - Supplier: "${wine.supplier}" - Vintage: "${wine.vintage}" - Description: "${wine.description}"`)}
+          
           {/* Info box completo con tutte le informazioni del vino */}
           <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 space-y-3">
             {/* Nome Vino - tutto maiuscolo */}
