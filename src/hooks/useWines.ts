@@ -8,8 +8,6 @@ export interface WineType {
   supplier: string;
   inventory: number;
   minStock: number;
-  price: string;
-  cost?: number;
   vintage: string | null;
   region: string | null;
   description: string | null;
@@ -60,8 +58,6 @@ const useWines = () => {
           supplier: wine.fornitore || '',
           inventory: giacenzaData?.giacenza ?? 0,
           minStock: giacenzaData?.min_stock ?? 2,
-          price: wine.vendita?.toString() || '',
-          cost: wine.costo || 0,
           vintage: wine.anno?.toString() || '',
           region: wine.provenienza || '',
           description: wine.produttore || ''
@@ -118,8 +114,7 @@ const useWines = () => {
       if (updates.type !== undefined) updatesDb.tipologia = updates.type;
       if (updates.supplier !== undefined) updatesDb.fornitore = updates.supplier;
       if (updates.minStock !== undefined) updatesDb.min_stock = updates.minStock;
-      if (updates.price !== undefined) updatesDb.vendita = parseFloat(updates.price);
-      if (updates.cost !== undefined) updatesDb.costo = updates.cost;
+      
       if (updates.vintage !== undefined) updatesDb.anno = updates.vintage;
       if (updates.region !== undefined) updatesDb.provenienza = updates.region;
       if (updates.description !== undefined) updatesDb.produttore = updates.description;

@@ -151,11 +151,7 @@ async function syncCategory(tipo, url) {
                          row['fornitore']?.trim() ||
                          values[4]?.toString().trim(); // Quinta colonna come fallback
         
-        const costo = parseEuro(row['COSTO '] ?? row['COSTO'] ?? row['Costo'] ?? row['costo'] ?? values[5]);
-        const vendita = parseEuro(row['VENDITA'] ?? row['Vendita'] ?? row['vendita'] ?? values[6]);
-        const margine = parseEuro(row['MARGINE'] ?? row['Margine'] ?? row['margine'] ?? values[7]);
-
-        console.log(`📝 Mappatura riga ${index + 1}: ${nomeVino} | ${produttore} | €${vendita}`);
+        console.log(`📝 Mappatura riga ${index + 1}: ${nomeVino} | ${produttore} | ${fornitore}`);
 
         return {
           nome_vino: nomeVino || null,
@@ -163,9 +159,6 @@ async function syncCategory(tipo, url) {
           produttore: produttore || null,
           provenienza: provenienza || null,
           fornitore: fornitore || 'Non specificato',
-          costo: costo,
-          vendita: vendita,
-          margine: margine,
           tipologia: tipo,
           user_id: user_id,
           created_at: new Date().toISOString(),
