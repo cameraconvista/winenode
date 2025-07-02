@@ -1,16 +1,13 @@
 
--- Script per rimuovere le colonne economiche dalla tabella vini
--- Eseguire nel SQL Editor di Supabase
+-- IMPORTANTE: Le colonne economiche devono rimanere nel database
+-- Vengono popolate dal Google Sheet ma NON mostrate nell'UI
 
--- Rimuovi le colonne costo, vendita e margine
-ALTER TABLE public.vini DROP COLUMN IF EXISTS costo;
-ALTER TABLE public.vini DROP COLUMN IF EXISTS vendita; 
-ALTER TABLE public.vini DROP COLUMN IF EXISTS margine;
+-- Questo script è stato annullato
+-- Le colonne costo, vendita, margine rimangono in Supabase
 
--- Messaggio di conferma
 DO $$
 BEGIN
-    RAISE NOTICE '✅ Colonne economiche rimosse dalla tabella vini';
-    RAISE NOTICE '📋 La tabella vini ora contiene solo: nome_vino, anno, produttore, provenienza, fornitore, tipologia';
-    RAISE NOTICE '💰 I dati economici rimangono solo nel Google Sheet';
+    RAISE NOTICE '📋 Le colonne economiche rimangono nel database Supabase';
+    RAISE NOTICE '💰 Sono popolate dal Google Sheet ma nascoste nell''interfaccia utente';
+    RAISE NOTICE '🚫 Non eseguire ALTER TABLE DROP COLUMN su costo, vendita, margine';
 END $$;
