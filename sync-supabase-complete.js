@@ -65,14 +65,27 @@ async function syncCategory(tipo, url) {
 
     console.log(`📊 Righe trovate nel CSV: ${parsed.data.length}`);
 
+    // Debug: mostra le prime righe del CSV
+    console.log(`🔍 Prime 3 righe del CSV per ${tipo}:`);
+    parsed.data.slice(0, 3).forEach((row, idx) => {
+      console.log(`  Riga ${idx + 1}:`, Object.keys(row).slice(0, 5), '...');
+      console.log(`    Esempio dati:`, row);
+    });
+
     // Filtra e mappa i dati
     const validRows = parsed.data
       .filter(row => {
         const nome = row['NOME VINO']?.trim();
-        return nome && 
+        const isValid = nome && 
                nome.toUpperCase() !== 'NOME VINO' && 
                nome.toUpperCase() !== tipo.toUpperCase() &&
                nome.length > 0;
+        
+        if (!isValid && nome) {
+          console.log(`    ❌ Scartata riga con nome: "${nome}" (motivo: ${!nome ? 'vuoto' : nome.toUpperCase() === 'NOME VINO' ? 'header' : 'categoria'})`);
+        }
+        
+        return isValid;
       })
       .map(row => {
         const nomeVino = row['NOME VINO']?.trim();
