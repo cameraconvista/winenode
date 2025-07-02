@@ -60,9 +60,9 @@ const useWines = () => {
           supplier: wine.fornitore || '',
           inventory: giacenzaData?.giacenza ?? 0,
           minStock: giacenzaData?.min_stock ?? 2,
-        price: wine.vendita?.toString() || '',
-        cost: wine.costo || 0,
-        vintage: wine.anno?.toString() || '',
+          price: wine.vendita?.toString() || '',
+          cost: wine.costo || 0,
+          vintage: wine.anno?.toString() || '',
         region: wine.provenienza || '',
         description: wine.produttore || ''
       }));
