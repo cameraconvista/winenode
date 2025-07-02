@@ -8,10 +8,7 @@ const SUPABASE_URL = "https://rtmohyjquscdkbtibdsu.supabase.co";
 const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0bW9oeWpxdXNjZGtidGliZHN1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTQ1NjY4MCwiZXhwIjoyMDY3MDMyNjgwfQ.vdU1ICEONshwgtd636O92_qamM9ohXe2dwljYwjf5hk";
 const DEFAULT_USER_ID = "02c85ceb-8026-4bd9-9dc5-c03a74f56346";
 
-// 📊 CONFIGURAZIONE GOOGLE SHEET - CORREGGI QUESTO ID!
-// Trova l'ID corretto nell'URL del tuo Google Sheet tra /d/ e /edit
-// Esempio: https://docs.google.com/spreadsheets/d/1ABC123DEF456/edit#gid=0
-// L'ID è: 1ABC123DEF456
+// 📊 CONFIGURAZIONE GOOGLE SHEET
 const GOOGLE_SHEET_ID = "1slvYCYuQ78Yf9fsRL1yR5xkW2kshOcQVe8E2HsvGZ8Y";
 
 // 🍷 MAPPATURA FOGLI → TIPOLOGIE
@@ -32,8 +29,33 @@ function parseEuro(value) {
   return isNaN(num) ? null : num;
 }
 
-// 🔍 FUNZIONE PER MAPPARE INTESTAZIONI
+// 🔍 FUNZIONE PER TROVARE LE INTESTAZIONI NELLA PRIMA RIGA NON VUOTA
+function trovaIntestazioni(values) {
+  console.log(`🔎 Analisi righe per trovare intestazioni...`);
+  
+  // Cerca nelle prime 5 righe quella con più dati
+  for (let i = 0; i < Math.min(5, values.length); i++) {
+    const row = values[i];
+    const nonEmptyCells = row.filter(cell => cell && cell.toString().trim() !== '').length;
+    
+    console.log(`📝 Riga ${i + 1}: ${nonEmptyCells} celle non vuote`);
+    console.log(`📝 Contenuto riga ${i + 1}:`, row);
+    
+    if (nonEmptyCells >= 3) { // Almeno 3 celle non vuote
+      console.log(`✅ Usando riga ${i + 1} come intestazioni`);
+      return { headers: row, startRow: i + 1 };
+    }
+  }
+  
+  // Se non trova nulla, usa la prima riga
+  console.log(`⚠️ Nessuna riga con intestazioni valide trovata, uso riga 1`);
+  return { headers: values[0] || [], startRow: 1 };
+}
+
+// 🔍 FUNZIONE PER MAPPARE INTESTAZIONI CON MIGLIORI CONTROLLI
 function mappaIntestazioni(headers) {
+  console.log(`🔍 Mappatura intestazioni:`, headers);
+  
   const mapping = {
     nome_vino: -1,
     anno: -1,
@@ -49,37 +71,40 @@ function mappaIntestazioni(headers) {
     if (!header) return;
     
     const cleanHeader = header.toString().toLowerCase().trim();
+    console.log(`🔤 Colonna ${index}: "${cleanHeader}"`);
     
-    // Mapping più flessibile per le colonne
-    if (cleanHeader.includes('nome') || cleanHeader.includes('vino') || cleanHeader.includes('wine') || cleanHeader === 'name') {
+    // Mappatura più precisa
+    if (cleanHeader.match(/nome|vino|wine|name|denominazione/i)) {
       mapping.nome_vino = index;
-    } else if (cleanHeader.includes('anno') || cleanHeader.includes('year') || cleanHeader.includes('vintage')) {
+    } else if (cleanHeader.match(/anno|year|vintage|annata/i)) {
       mapping.anno = index;
-    } else if (cleanHeader.includes('produttore') || cleanHeader.includes('producer') || cleanHeader.includes('azienda')) {
+    } else if (cleanHeader.match(/produttore|producer|azienda|cantina/i)) {
       mapping.produttore = index;
-    } else if (cleanHeader.includes('provenienza') || cleanHeader.includes('origine') || cleanHeader.includes('region')) {
+    } else if (cleanHeader.match(/provenienza|origine|region|zona|territorio/i)) {
       mapping.provenienza = index;
-    } else if (cleanHeader.includes('fornitore') || cleanHeader.includes('supplier')) {
+    } else if (cleanHeader.match(/fornitore|supplier|distributore/i)) {
       mapping.fornitore = index;
-    } else if (cleanHeader.includes('costo') || cleanHeader.includes('cost') || cleanHeader.includes('prezzo acquisto')) {
+    } else if (cleanHeader.match(/costo|cost|prezzo.*acquisto|acquisto/i)) {
       mapping.costo = index;
-    } else if (cleanHeader.includes('vendita') || cleanHeader.includes('prezzo vendita') || cleanHeader.includes('selling')) {
+    } else if (cleanHeader.match(/vendita|prezzo.*vendita|selling|prezzo$/i)) {
       mapping.vendita = index;
-    } else if (cleanHeader.includes('margine') || cleanHeader.includes('margin')) {
+    } else if (cleanHeader.match(/margine|margin|guadagno/i)) {
       mapping.margine = index;
     }
   });
   
-  // Se non troviamo nome_vino, usa la prima colonna non vuota
+  // Se non trova nome_vino, prova per posizione (spesso è la prima colonna)
   if (mapping.nome_vino === -1) {
-    for (let i = 0; i < headers.length; i++) {
+    for (let i = 0; i < Math.min(3, headers.length); i++) {
       if (headers[i] && headers[i].toString().trim() !== '') {
+        console.log(`📍 Assegno colonna ${i} come nome_vino per posizione`);
         mapping.nome_vino = i;
         break;
       }
     }
   }
   
+  console.log(`🗺️ Mappatura finale:`, mapping);
   return mapping;
 }
 
@@ -88,44 +113,59 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
   try {
     console.log(`🔄 Elaborazione foglio: ${nomeFoglio}`);
     
-    // 1. VERIFICA E APRI IL GOOGLE SHEET
+    // 1. APRI IL GOOGLE SHEET
     let spreadsheet;
     try {
       spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
       console.log(`✅ Google Sheet aperto: ${spreadsheet.getName()}`);
     } catch (error) {
-      console.error(`❌ Errore apertura Google Sheet con ID: ${GOOGLE_SHEET_ID}`);
-      console.error(`❌ Dettagli errore:`, error.toString());
-      console.error(`❌ Verifica che l'ID sia corretto e che il foglio sia condiviso`);
+      console.error(`❌ Errore apertura Google Sheet:`, error.toString());
       return { success: false, wines: 0 };
     }
     
     // 2. TROVA IL FOGLIO
     const foglio = spreadsheet.getSheetByName(nomeFoglio);
     if (!foglio) {
-      console.log(`❌ Foglio '${nomeFoglio}' non trovato nel Google Sheet`);
+      console.log(`❌ Foglio '${nomeFoglio}' non trovato`);
       const foglioDisponibili = spreadsheet.getSheets().map(s => s.getName());
       console.log(`📋 Fogli disponibili:`, foglioDisponibili);
       return { success: false, wines: 0 };
     }
     
     // 3. OTTIENI TUTTI I DATI
-    const dataRange = foglio.getDataRange();
-    const values = dataRange.getValues();
+    const lastRow = foglio.getLastRow();
+    const lastCol = foglio.getLastColumn();
     
-    if (values.length < 2) {
-      console.log(`⚠️ ${nomeFoglio}: Nessun dato disponibile (solo ${values.length} righe)`);
+    if (lastRow < 2 || lastCol < 1) {
+      console.log(`⚠️ ${nomeFoglio}: Foglio vuoto o insufficiente (righe: ${lastRow}, colonne: ${lastCol})`);
       return { success: true, wines: 0 };
     }
     
-    // 4. PROCESSA INTESTAZIONI
-    const headers = values[0].map(h => h ? h.toString().trim() : '');
+    console.log(`📊 ${nomeFoglio}: ${lastRow} righe, ${lastCol} colonne`);
+    
+    const values = foglio.getRange(1, 1, lastRow, lastCol).getValues();
+    
+    if (values.length < 2) {
+      console.log(`⚠️ ${nomeFoglio}: Non ci sono abbastanza dati`);
+      return { success: true, wines: 0 };
+    }
+    
+    // 4. TROVA LE INTESTAZIONI
+    const { headers, startRow } = trovaIntestazioni(values);
     console.log(`📋 Intestazioni trovate:`, headers);
+    console.log(`🏁 Dati partono dalla riga:`, startRow + 1);
     
     const columnMapping = mappaIntestazioni(headers);
     console.log(`🔍 Mappatura colonne:`, columnMapping);
     
-    // 5. ELIMINA VINI ESISTENTI
+    // 5. VERIFICA CHE ABBIAMO ALMENO IL NOME VINO
+    if (columnMapping.nome_vino === -1) {
+      console.log(`❌ ${nomeFoglio}: Impossibile identificare la colonna del nome vino`);
+      console.log(`📋 Intestazioni disponibili:`, headers);
+      return { success: false, wines: 0 };
+    }
+    
+    // 6. ELIMINA VINI ESISTENTI
     try {
       const deleteResponse = UrlFetchApp.fetch(`${SUPABASE_URL}/rest/v1/vini?tipologia=eq.${tipologia}&user_id=eq.${DEFAULT_USER_ID}`, {
         method: 'DELETE',
@@ -139,17 +179,15 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
       
       if (deleteResponse.getResponseCode() === 204) {
         console.log(`✅ Vini esistenti eliminati per ${tipologia}`);
-      } else {
-        console.log(`⚠️ Risposta delete: ${deleteResponse.getResponseCode()}`);
       }
     } catch (deleteError) {
       console.error(`❌ Errore eliminazione vini esistenti:`, deleteError);
     }
     
-    // 6. PROCESSA RIGHE DATI
+    // 7. PROCESSA RIGHE DATI
     const viniDaInserire = [];
     
-    for (let i = 1; i < values.length; i++) {
+    for (let i = startRow; i < values.length; i++) {
       const row = values[i];
       
       // Estrai nome vino
@@ -158,16 +196,29 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
         nomeVino = row[columnMapping.nome_vino].toString().trim();
       }
       
-      // Salta righe vuote o senza nome vino valido
-      if (!nomeVino || nomeVino === '' || nomeVino.toUpperCase() === tipologia.toUpperCase()) {
+      // Debug riga
+      console.log(`📝 Riga ${i + 1}: Nome="${nomeVino}"`);
+      
+      // Salta righe vuote o con nomi non validi
+      if (!nomeVino || 
+          nomeVino === '' || 
+          nomeVino.length < 2 ||
+          nomeVino.toUpperCase() === tipologia.toUpperCase() ||
+          nomeVino.toLowerCase().includes('nome') ||
+          nomeVino.toLowerCase().includes('vino')) {
+        console.log(`⏭️ Riga ${i + 1} saltata: nome non valido`);
         continue;
       }
       
       // Estrai altri dati
-      const anno = columnMapping.anno >= 0 && row[columnMapping.anno] ? row[columnMapping.anno].toString() : null;
-      const produttore = columnMapping.produttore >= 0 && row[columnMapping.produttore] ? row[columnMapping.produttore].toString() : null;
-      const provenienza = columnMapping.provenienza >= 0 && row[columnMapping.provenienza] ? row[columnMapping.provenienza].toString() : null;
-      const fornitore = columnMapping.fornitore >= 0 && row[columnMapping.fornitore] ? row[columnMapping.fornitore].toString() : null;
+      const anno = columnMapping.anno >= 0 && row[columnMapping.anno] ? 
+        row[columnMapping.anno].toString().trim() : null;
+      const produttore = columnMapping.produttore >= 0 && row[columnMapping.produttore] ? 
+        row[columnMapping.produttore].toString().trim() : null;
+      const provenienza = columnMapping.provenienza >= 0 && row[columnMapping.provenienza] ? 
+        row[columnMapping.provenienza].toString().trim() : null;
+      const fornitore = columnMapping.fornitore >= 0 && row[columnMapping.fornitore] ? 
+        row[columnMapping.fornitore].toString().trim() : null;
       const costo = columnMapping.costo >= 0 ? parseEuro(row[columnMapping.costo]) : null;
       const vendita = columnMapping.vendita >= 0 ? parseEuro(row[columnMapping.vendita]) : null;
       const margine = columnMapping.margine >= 0 ? parseEuro(row[columnMapping.margine]) : null;
@@ -189,11 +240,12 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
       };
       
       viniDaInserire.push(vinoData);
+      console.log(`✅ Vino preparato: ${nomeVino}`);
     }
     
     console.log(`📊 ${tipologia}: ${viniDaInserire.length} vini validi da sincronizzare`);
     
-    // 7. INSERISCI VINI IN BATCH
+    // 8. INSERISCI VINI IN BATCH
     let totalInseriti = 0;
     const batchSize = 50;
     
@@ -216,7 +268,7 @@ function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
           totalInseriti += batch.length;
           console.log(`✅ ${tipologia}: Batch ${Math.floor(i/batchSize) + 1} inserito (${batch.length} vini)`);
         } else {
-          console.error(`❌ Errore inserimento batch ${tipologia} (${insertResponse.getResponseCode()}):`, insertResponse.getContentText());
+          console.error(`❌ Errore inserimento batch ${tipologia}:`, insertResponse.getContentText());
         }
         
         // Pausa tra batch
@@ -244,25 +296,13 @@ function sincronizzaAutomatica() {
   console.log('🚀 Avvio sincronizzazione automatica Google Sheets → Supabase');
   
   try {
-    // 1. VERIFICA ID GOOGLE SHEET
-    if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID.length < 20) {
-      console.error('❌ ID Google Sheet non valido. Controlla la configurazione!');
-      return { totalWines: 0, successfulCategories: 0, totalCategories: 0 };
-    }
-    
-    // 2. APRI IL GOOGLE SHEET
+    // 1. APRI IL GOOGLE SHEET
     let spreadsheet;
     try {
       spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
       console.log(`✅ Connesso al Google Sheet: ${spreadsheet.getName()}`);
     } catch (error) {
-      console.error('❌ Impossibile aprire il Google Sheet');
-      console.error(`❌ ID utilizzato: ${GOOGLE_SHEET_ID}`);
-      console.error(`❌ Errore: ${error.toString()}`);
-      console.error('❌ Verifica che:');
-      console.error('   1. L\'ID sia corretto');
-      console.error('   2. Il foglio sia condiviso con questo account');
-      console.error('   3. Il foglio non sia stato eliminato');
+      console.error('❌ Impossibile aprire il Google Sheet:', error.toString());
       return { totalWines: 0, successfulCategories: 0, totalCategories: 0 };
     }
     
@@ -388,16 +428,69 @@ function testConnessioneGoogleSheet() {
     const fogli = spreadsheet.getSheets();
     console.log(`📋 Fogli disponibili (${fogli.length}):`);
     fogli.forEach((foglio, index) => {
-      console.log(`   ${index + 1}. ${foglio.getName()} (${foglio.getDataRange().getNumRows()} righe)`);
+      const lastRow = foglio.getLastRow();
+      const lastCol = foglio.getLastColumn();
+      console.log(`   ${index + 1}. ${foglio.getName()} (${lastRow} righe x ${lastCol} colonne)`);
+      
+      // Mostra un sample dei dati dalle prime righe
+      if (lastRow > 0 && lastCol > 0) {
+        try {
+          const sampleData = foglio.getRange(1, 1, Math.min(3, lastRow), lastCol).getValues();
+          console.log(`      Sample dati:`, sampleData);
+        } catch (e) {
+          console.log(`      Errore lettura sample: ${e}`);
+        }
+      }
     });
     
     return true;
   } catch (error) {
     console.error('❌ Errore connessione Google Sheet:', error.toString());
-    console.error('❌ Suggerimenti:');
-    console.error('   1. Verifica che l\'ID sia corretto');
-    console.error('   2. Condividi il Google Sheet con questo account Google Apps Script');
-    console.error('   3. Assicurati che il foglio non sia stato eliminato');
+    return false;
+  }
+}
+
+// 🔍 FUNZIONE PER ANALIZZARE UN SINGOLO FOGLIO
+function analizzaFoglio(nomeFoglio) {
+  console.log(`🔍 Analisi dettagliata foglio: ${nomeFoglio}`);
+  
+  try {
+    const spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
+    const foglio = spreadsheet.getSheetByName(nomeFoglio);
+    
+    if (!foglio) {
+      console.log(`❌ Foglio '${nomeFoglio}' non trovato`);
+      return false;
+    }
+    
+    const lastRow = foglio.getLastRow();
+    const lastCol = foglio.getLastColumn();
+    
+    console.log(`📊 Dimensioni: ${lastRow} righe x ${lastCol} colonne`);
+    
+    if (lastRow > 0 && lastCol > 0) {
+      // Analizza le prime 5 righe
+      const analyzeRows = Math.min(5, lastRow);
+      const data = foglio.getRange(1, 1, analyzeRows, lastCol).getValues();
+      
+      for (let i = 0; i < analyzeRows; i++) {
+        console.log(`📝 Riga ${i + 1}:`, data[i]);
+        const nonEmpty = data[i].filter(cell => cell && cell.toString().trim() !== '').length;
+        console.log(`   -> ${nonEmpty} celle non vuote`);
+      }
+      
+      // Trova e mappa intestazioni
+      const { headers, startRow } = trovaIntestazioni(data);
+      console.log(`📋 Intestazioni identificate:`, headers);
+      console.log(`🏁 Dati iniziano dalla riga: ${startRow + 1}`);
+      
+      const mapping = mappaIntestazioni(headers);
+      console.log(`🗺️ Mappatura colonne:`, mapping);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error(`❌ Errore analisi foglio:`, error);
     return false;
   }
 }
@@ -406,16 +499,10 @@ function testConnessioneGoogleSheet() {
 // ISTRUZIONI PER L'USO:
 // ============================================
 //
-// 1. **IMPORTANTE**: Modifica GOOGLE_SHEET_ID con l'ID corretto del tuo Google Sheet
-//    - Vai al tuo Google Sheet
-//    - Copia l'URL (es: https://docs.google.com/spreadsheets/d/1ABC123DEF456/edit#gid=0)
-//    - L'ID è la parte tra /d/ e /edit: 1ABC123DEF456
-//
-// 2. Copia questo codice in Google Apps Script
-// 3. Salva il progetto
-// 4. Esegui 'testConnessioneGoogleSheet()' per verificare la connessione
-// 5. Esegui 'testSincronizzazione()' per testare la sincronizzazione
-// 6. Esegui 'configuraTriggersAutomatici()' per attivare sync automatica
-// 7. Usa 'verificaStatoDatabase()' per controllare i dati
+// 1. Esegui 'testConnessioneGoogleSheet()' per verificare la connessione
+// 2. Esegui 'analizzaFoglio("NOME_FOGLIO")' per analizzare un foglio specifico
+// 3. Esegui 'testSincronizzazione()' per testare la sincronizzazione
+// 4. Esegui 'configuraTriggersAutomatici()' per attivare sync automatica
+// 5. Usa 'verificaStatoDatabase()' per controllare i dati
 //
 // ============================================
