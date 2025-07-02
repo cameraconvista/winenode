@@ -76,48 +76,55 @@ export default function WineDetailsModal({
 
         {/* Content */}
         <div className="p-4 space-y-3">
-          {/* Info box con produttore e fornitore */}
-          <div className="bg-gray-800 border border-gray-600 rounded-lg p-3 space-y-2">
-            <div className="text-cream font-semibold text-base leading-tight">{wine.name}</div>
+          {/* Info box completo con tutte le informazioni del vino */}
+          <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 space-y-3">
+            {/* Nome Vino */}
+            <div className="text-cream font-bold text-lg leading-tight">{wine.name}</div>
 
-            {/* Produttore e Fornitore sulla stessa riga */}
-            {(wine.description || wine.supplier) && (
-              <div className="text-sm text-gray-300">
-                {wine.description && (
-                  <span className="text-gray-300">{wine.description}</span>
-                )}
-                {wine.description && wine.supplier && (
-                  <span className="mx-2 text-gray-500">•</span>
-                )}
-                {wine.supplier && (
-                  <span className="text-blue-300 font-medium">{wine.supplier}</span>
-                )}
+            {/* Anno */}
+            {wine.vintage && (
+              <div className="text-sm">
+                <span className="text-gray-400">Anno: </span>
+                <span className="text-cream font-medium">{wine.vintage}</span>
               </div>
             )}
 
-            <div className="flex flex-wrap gap-3 text-xs">
-              <span className="bg-gray-700 px-2 py-1 rounded text-gray-300">
+            {/* Produttore */}
+            {wine.description && (
+              <div className="text-sm">
+                <span className="text-gray-400">Produttore: </span>
+                <span className="text-cream font-medium">{wine.description}</span>
+              </div>
+            )}
+
+            {/* Provenienza */}
+            {wine.region && (
+              <div className="text-sm">
+                <span className="text-gray-400">Provenienza: </span>
+                <span className="text-cream font-medium">{wine.region}</span>
+              </div>
+            )}
+
+            {/* Fornitore */}
+            {wine.supplier && (
+              <div className="text-sm">
+                <span className="text-gray-400">Fornitore: </span>
+                <span className="text-blue-300 font-medium">{wine.supplier}</span>
+              </div>
+            )}
+
+            {/* Tipologia come badge */}
+            <div className="flex flex-wrap gap-2 text-xs pt-2">
+              <span className="bg-gray-700 px-3 py-1.5 rounded-full text-gray-300 font-medium">
                 {wine.type || 'Tipologia N/A'}
               </span>
-
-              {wine.region && (
-                <span className="bg-gray-700 px-2 py-1 rounded text-gray-300">
-                  {wine.region}
-                </span>
-              )}
-
-              {wine.vintage && (
-                <span className="bg-gray-700 px-2 py-1 rounded text-gray-300">
-                  {wine.vintage}
-                </span>
-              )}
             </div>
           </div>
 
-          {/* Campo modificabile: Soglia Minima */}
+          {/* Campo modificabile: Soglia Minima con Giacenza */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              Soglia Minima *
+              Soglia Minima * <span className="text-blue-300 font-normal">(Giacenza attuale: {wine.inventory})</span>
             </label>
             <input
               type="number"
