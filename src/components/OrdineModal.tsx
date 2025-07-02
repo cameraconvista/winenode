@@ -429,43 +429,41 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                 onClick={() => {
                   console.log('Preparazione ordine per WhatsApp:', ordineData);
 
-                  // Genera messaggio WhatsApp ottimizzato per mobile
+                  // Genera messaggio WhatsApp nel formato personalizzato Camera con Vista
                   const dataOrdine = new Date().toLocaleDateString('it-IT');
-                  const oraOrdine = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+                  
+                  // Ottieni i dati dei vini con informazioni aggiuntive
+                  const viniConDettagli = ordineData.vini.map(v => {
+                    const wineInfo = filteredWines.find(w => w.id === v.id);
+                    return {
+                      ...v,
+                      anno: wineInfo?.vintage || '',
+                      produttore: wineInfo?.description || ''
+                    };
+                  });
 
-                  // Versione compatta per mobile
-                  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-                  let messaggio;
-                  if (isMobile) {
-                    // Messaggio compatto per mobile (senza ID ordine perché non ancora salvato)
-                    messaggio = `🍷 NUOVO ORDINE\n` +
-                      `📅 ${dataOrdine} ${oraOrdine}\n` +
-                      `🏪 ${ordineData.fornitore}\n\n` +
-                      ordineData.vini.map((v, index) => 
-                        `${index + 1}. ${v.nome}\n` +
-                        `   ${v.quantita} bot x €${(Number(v.prezzo_unitario) || 0).toFixed(2)} = €${(v.quantita * (Number(v.prezzo_unitario) || 0)).toFixed(2)}`
-                      ).join('\n') +
-                      `\n\n💰 TOTALE: €${ordineData.totale.toFixed(2)} (IVA ESC.)\n` +
-                      `🍾 Tot: ${ordineData.vini.reduce((sum, v) => sum + v.quantita, 0)} bottiglie\n\n` +
-                      `Confermate disponibilità. Grazie!`;
-                  } else {
-                    // Messaggio completo per desktop (senza ID ordine perché non ancora salvato)
-                    messaggio = `🍷 *NUOVO ORDINE*\n\n` +
-                      `📅 *Data:* ${dataOrdine} alle ${oraOrdine}\n` +
-                      `🏪 *Fornitore:* ${ordineData.fornitore}\n\n` +
-                      `*DETTAGLIO ORDINE:*\n` +
-                      ordineData.vini.map((v, index) => 
-                        `${index + 1}. *${v.nome}*\n` +
-                        `   Quantità: ${v.quantita} bottiglie\n` +
-                        `   Costo: €${(Number(v.prezzo_unitario) || 0).toFixed(2)} cad. (IVA esclusa)\n` +
-                        `   Subtotale: €${(v.quantita * (Number(v.prezzo_unitario) || 0)).toFixed(2)}\n`
-                      ).join('\n') +
-                      `\n💰 *TOTALE ORDINE: €${ordineData.totale.toFixed(2)}* (IVA ESCLUSA)\n` +
-                      `🍾 *Totale bottiglie: ${ordineData.vini.reduce((sum, v) => sum + v.quantita, 0)}*\n\n` +
-                      `⚠️ *Nota: Tutti i prezzi sono IVA esclusa*\n\n` +
-                      `Confermate la disponibilità e i tempi di consegna. Grazie! 🙏`;
-                  }
+                  // Formato personalizzato Camera con Vista
+                  const messaggio = `CAMERA CON VISTA - Bistrot\n` +
+                    `Nuovo Ordine del ${dataOrdine}\n\n\n` +
+                    viniConDettagli.map(v => {
+                      const cartoni = Math.floor(v.quantita / 6);
+                      const bottiglieSingole = v.quantita % 6;
+                      
+                      let quantitaText = '';
+                      if (cartoni > 0 && bottiglieSingole > 0) {
+                        quantitaText = `N° ${cartoni} ct + ${bottiglieSingole} bot`;
+                      } else if (cartoni > 0) {
+                        quantitaText = `N° ${cartoni} ct`;
+                      } else {
+                        quantitaText = `N° ${bottiglieSingole} bot`;
+                      }
+                      
+                      return `${quantitaText} ${v.nome.toUpperCase()}\n` +
+                        `${v.anno ? `            ${v.anno} ` : '            '}${v.produttore}`;
+                    }).join('\n\n') +
+                    `\n\n🍾 Tot: ${ordineData.vini.reduce((sum, v) => sum + v.quantita, 0)} bottiglie\n` +
+                    `💰 Totale Ordine €${ordineData.totale.toFixed(2)} (Iva esclusa)\n\n\n` +
+                    `Confermate disponibilità.\nGrazie!`;
 
                   // Encoding sicuro per mobile
                   const encoded = encodeURIComponent(messaggio);
