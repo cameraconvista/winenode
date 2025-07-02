@@ -48,13 +48,54 @@ async function syncCategory(tipo, url, tipologieStandard) {
   try {
     console.log(`\n🔄 Sincronizzando ${tipo}...`);
 
-    // Download CSV
-    const response = await fetch(url);
+    // Download CSV con gestione redirect automatica
+    const response = await fetch(url, {
+      redirect: 'follow',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; WineNode-Sync/1.0)'
+      }
+    });
+    
     if (!response.ok) {
       throw new Error(`HTTP error ${response.status} per ${tipo}`);
     }
+    
     const csvText = await response.text();
     console.log(`📥 CSV scaricato per ${tipo}, dimensione: ${csvText.length} caratteri`);
+    
+    // Verifica che non sia un redirect HTML
+    if (csvText.includes('<HTML>') || csvText.includes('<html>')) {
+      console.log(`⚠️ Ricevuto HTML invece di CSV per ${tipo}, tentativo di estrazione URL redirect...`);
+      
+      // Estrai l'URL del redirect dal HTML
+      const redirectMatch = csvText.match(/HREF="([^"]+)"/i);
+      if (redirectMatch) {
+        const redirectUrl = redirectMatch[1].replace(/&amp;/g, '&');
+        console.log(`🔄 Tentativo di scaricamento da URL redirect: ${redirectUrl}`);
+        
+        const redirectResponse = await fetch(redirectUrl, {
+          redirect: 'follow',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; WineNode-Sync/1.0)'
+          }
+        });
+        
+        if (!redirectResponse.ok) {
+          throw new Error(`HTTP error ${redirectResponse.status} dal redirect per ${tipo}`);
+        }
+        
+        const redirectCsvText = await redirectResponse.text();
+        console.log(`📥 CSV scaricato dal redirect per ${tipo}, dimensione: ${redirectCsvText.length} caratteri`);
+        
+        if (redirectCsvText.includes('<HTML>') || redirectCsvText.includes('<html>')) {
+          throw new Error(`Ancora HTML ricevuto dal redirect per ${tipo}`);
+        }
+        
+        csvText = redirectCsvText;
+      } else {
+        throw new Error(`HTML ricevuto ma nessun URL redirect trovato per ${tipo}`);
+      }
+    }
 
     // Parse CSV
     const parsed = Papa.parse(csvText, {
