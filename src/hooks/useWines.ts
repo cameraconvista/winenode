@@ -28,47 +28,43 @@ const useWines = () => {
       const userId = authManager.getUserId();
       if (!isValid || !userId) throw new Error('Utente non autenticato');
 
-      const { data, error } = await supabase
+      // Fetch wines con join alla giacenza
+      const { data: winesData, error: winesError } = await supabase
         .from('vini')
-        .select(`*, giacenza(giacenzaa, vino_id, user_id)`)
+        .select(`
+          *,
+          giacenza!vino_id(giacenzaa)
+        `)
         .eq('user_id', userId)
         .order('id', { ascending: true });
 
-      if (error) throw error;
+      if (winesError) throw winesError;
 
-      const winesData: WineType[] = (data || []).map((wine: any) => {
-        let inventory = 0;
-        if (Array.isArray(wine.giacenza) && wine.giacenza.length > 0) {
-          inventory = wine.giacenza[0]?.giacenzaa || 0;
-        } else if (typeof wine.giacenza === 'object' && wine.giacenza?.giacenzaa) {
-          inventory = wine.giacenza.giacenzaa;
-        }
-
-        const wineData = {
+      if (winesData) {
+        const mappedWines: WineType[] = winesData.map((wine: any) => ({
           id: wine.id,
           name: wine.nome_vino || '',
           type: wine.tipologia || '',
           supplier: wine.fornitore || '',
-          inventory,
-          minStock: wine.min_stock || 2,
+          inventory: wine.giacenza?.[0]?.giacenzaa || 0,
+          minStock: wine.min_stock || 0,
           price: wine.vendita?.toString() || '',
-          cost: wine.costo,
-          vintage: wine.anno || null,
-          region: wine.provenienza || null,
-          description: wine.produttore || null
-        };
-        
-        // Debug log per verificare tipologia
-        console.log(`🍷 Vino "${wineData.name}" - Tipologia: "${wineData.type}"`);
-        
-        return wineData;
-      });
+          cost: wine.costo || 0,
+          vintage: wine.anno?.toString() || '',
+          region: wine.provenienza || '',
+          description: wine.produttore || ''
+        }));
 
-      const uniqueSuppliers = Array.from(new Set(winesData.map(w => w.supplier).filter(Boolean))).sort();
+        const uniqueSuppliers = Array.from(new Set(mappedWines.map(w => w.supplier).filter(Boolean))).sort();
 
-      setWines(winesData);
-      setSuppliers(uniqueSuppliers);
-      setError(null);
+        setWines(mappedWines);
+        setSuppliers(uniqueSuppliers);
+        setError(null);
+      } else {
+        setWines([]);
+        setSuppliers([]);
+        setError('No wines data found.');
+      }
     } catch (err: any) {
       console.error('❌ Errore caricamento vini:', err.message);
       setError(err.message);
@@ -88,7 +84,7 @@ const useWines = () => {
 
     try {
       console.log('📡 Invio aggiornamento giacenza a Supabase:', { vino_id: id, giacenzaa: newInventory, user_id: userId });
-      
+
       const { data, error } = await supabase
         .from('giacenza')
         .upsert({
@@ -112,7 +108,7 @@ const useWines = () => {
       setWines(prev =>
         prev.map(w => (w.id === id ? { ...w, inventory: newInventory } : w))
       );
-      
+
       return true;
     } catch (err: any) {
       console.error('❌ Errore completo aggiornamento giacenza:', {
