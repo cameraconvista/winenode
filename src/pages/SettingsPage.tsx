@@ -567,4 +567,3 @@ export default function SettingsPage() {
     </div>
   )
 }
-```Ok, I will continue from where I left off.
