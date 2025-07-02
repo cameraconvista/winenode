@@ -265,9 +265,9 @@ export default function ArchiviPage() {
             <button onClick={() => navigate("/settings")} className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200" title="Torna alle impostazioni" style={{ filter: "brightness(1.3)", backgroundColor: "rgba(255, 255, 255, 0.1)", backdropFilter: "blur(10px)", border: "1px solid rgba(255, 255, 255, 0.2)" }}>
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
             </button>
-            <img src="/logo 2 CCV.png" alt="WINENODE" className="h-24 w-auto object-contain" />
+            <div className="flex-1"></div>
             <button onClick={() => navigate("/")} className="p-2 text-white hover:text-cream hover:bg-gray-800 rounded-lg transition-colors" title="Vai alla home">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001 1m-6 0h6" /></svg>
+              <Home className="h-6 w-6" />
             </button>
           </div>
         </div>
