@@ -102,11 +102,53 @@ export default function ImportaVini({}: ImportaViniProps) {
   }
 
   const handleImportFromGoogleSheet = async () => {
-    // Funzione AI completamente disabilitata
-    setIsLoadingSheet(false)
-    setSheetStatus('error')
-    setSheetMessage('❌ Funzionalità AI disabilitata')
-    return
+    const userId = authManager.getUserId()
+    if (!userId) {
+      setSheetStatus('error')
+      setSheetMessage('Utente non autenticato')
+      return
+    }
+
+    if (!googleSheetUrl.trim()) {
+      setSheetStatus('error')
+      setSheetMessage('Inserisci un link al Google Sheet')
+      return
+    }
+
+    setIsLoadingSheet(true)
+    setSheetStatus('idle')
+
+    try {
+      // Importa dalla funzionalità ripristinata
+      const { importFromGoogleSheet } = await import('../lib/importFromGoogleSheet')
+      const result = await importFromGoogleSheet(googleSheetUrl, userId)
+      
+      if (result.success) {
+        setSheetStatus('success')
+        setSheetMessage(result.message)
+        
+        // Salva il link per uso futuro
+        await saveSheetLink()
+        
+        // Aggiorna la lista dei vini
+        if (typeof onImportComplete === 'function') {
+          onImportComplete()
+        }
+      } else {
+        setSheetStatus('error')
+        setSheetMessage(result.message)
+        
+        if (result.errors && result.errors.length > 0) {
+          console.error('Errori importazione:', result.errors)
+        }
+      }
+    } catch (error) {
+      console.error('Errore importazione Google Sheet:', error)
+      setSheetStatus('error')
+      setSheetMessage(`❌ Errore durante l'importazione: ${error.message}`)
+    } finally {
+      setIsLoadingSheet(false)
+    }
   }
 
 
