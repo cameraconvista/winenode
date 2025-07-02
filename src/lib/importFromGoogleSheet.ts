@@ -12,12 +12,15 @@ export interface ImportResult {
 
 const CATEGORY_MAPPINGS = {
   'ROSSI': 'ROSSI',
-  'BIANCHI': 'BIANCHI', 
+  'BIANCHI': 'BIANCHI',
+  'BIANCO': 'BIANCHI',
+  'VINI BIANCHI': 'BIANCHI',
   'BOLLICINE': 'BOLLICINE ITALIANE',
   'BOLLICINE ITALIANE': 'BOLLICINE ITALIANE',
   'BOLLICINE FRANCESI': 'BOLLICINE FRANCESI',
   'ROSATI': 'ROSATI',
   'ROSÉ': 'ROSATI',
+  'ROSATO': 'ROSATI',
   'VINI DOLCI': 'VINI DOLCI',
   'DOLCI': 'VINI DOLCI'
 };
@@ -116,8 +119,12 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
     
     console.log(`📊 Connesso al Google Sheet: ${doc.title}`);
     
+    // Debug: mostra tutti i fogli disponibili
+    const availableSheets = doc.sheetsByIndex.map(sheet => sheet.title);
+    console.log('📋 Fogli disponibili nel Google Sheet:', availableSheets);
+    
     const sheetsToImport = Object.keys(CATEGORY_MAPPINGS);
-    const availableSheets = doc.sheetsByIndex.map(sheet => sheet.title.toUpperCase());
+    console.log('🔍 Fogli da cercare:', sheetsToImport);
     
     let totalWines = 0;
     let totalCategories = 0;
@@ -130,7 +137,7 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
       )?.title;
 
       if (actualSheetTitle) {
-        console.log(`🔄 Importando categoria: ${actualSheetTitle}`);
+        console.log(`🔄 Importando categoria: ${actualSheetTitle} → ${CATEGORY_MAPPINGS[sheetName]}`);
         
         const result = await importCategoryFromSheet(doc, actualSheetTitle, userId);
         totalWines += result.wines;
@@ -143,8 +150,13 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
           allErrors.push(...result.errors);
         }
 
+        console.log(`✅ ${actualSheetTitle}: ${result.wines} vini importati`);
+
         // Pausa tra le importazioni per evitare rate limiting
         await new Promise(resolve => setTimeout(resolve, 500));
+      } else {
+        console.log(`❌ Foglio non trovato: ${sheetName}`);
+        allErrors.push(`Foglio "${sheetName}" non trovato nel Google Sheet`);
       }
     }
 
