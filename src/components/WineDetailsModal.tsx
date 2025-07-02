@@ -32,7 +32,7 @@ export default function WineDetailsModal({
         minStock: wine.minStock.toString(),
         inventory: wine.inventory.toString(),
         ordineMinimo: (wine.ordineMinimo || 12).toString(),
-        unitaOrdine: wine.unitaOrdine || 'bottiglie'
+        unitaOrdine: 'cartoni' // Sempre cartoni per ordine minimo
       });
     }
   }, [wine]);
@@ -47,7 +47,7 @@ export default function WineDetailsModal({
           minStock: parseInt(formData.minStock) || 2,
           inventory: parseInt(formData.inventory) || 0,
           ordineMinimo: parseInt(formData.ordineMinimo) || 12,
-          unitaOrdine: formData.unitaOrdine as 'bottiglie' | 'cartoni'
+          unitaOrdine: 'cartoni' // Sempre cartoni per ordine minimo
         });
       }
       onOpenChange(false);
@@ -212,7 +212,7 @@ export default function WineDetailsModal({
               <label className="block text-sm font-medium text-gray-300 mb-2 text-center">
                 <span className="flex items-center justify-center gap-1">
                   <span className="text-blue-400">📦</span>
-                  Ordine Minimo
+                  Ordine Minimo (Cartoni)
                 </span>
               </label>
               <div className="flex items-center bg-gray-800 border border-gray-600 rounded-md">
@@ -220,9 +220,9 @@ export default function WineDetailsModal({
                   type="button"
                   onClick={() => {
                     const currentValue = parseInt(formData.ordineMinimo) || 0;
-                    const decrement = formData.unitaOrdine === 'cartoni' ? 6 : 1;
-                    if (currentValue >= decrement) {
-                      setFormData(prev => ({ ...prev, ordineMinimo: (currentValue - decrement).toString() }));
+                    // Decrementa sempre di 6 (1 cartone)
+                    if (currentValue >= 6) {
+                      setFormData(prev => ({ ...prev, ordineMinimo: (currentValue - 6).toString() }));
                     }
                   }}
                   className="w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-md border-r border-gray-600 text-xs"
@@ -231,18 +231,11 @@ export default function WineDetailsModal({
                 </button>
                 <input
                   type="number"
-                  value={
-                    formData.unitaOrdine === 'cartoni'
-                      ? Math.floor((parseInt(formData.ordineMinimo) || 0) / 6)
-                      : (parseInt(formData.ordineMinimo) || 0)
-                  }
+                  value={Math.floor((parseInt(formData.ordineMinimo) || 0) / 6)}
                   onChange={(e) => {
                     const inputValue = Math.max(0, parseInt(e.target.value) || 0);
-                    if (formData.unitaOrdine === 'cartoni') {
-                      setFormData(prev => ({ ...prev, ordineMinimo: (inputValue * 6).toString() }));
-                    } else {
-                      setFormData(prev => ({ ...prev, ordineMinimo: inputValue.toString() }));
-                    }
+                    // Converte sempre in bottiglie (cartoni * 6)
+                    setFormData(prev => ({ ...prev, ordineMinimo: (inputValue * 6).toString() }));
                   }}
                   className="flex-1 bg-transparent px-2 py-2 text-cream text-center focus:outline-none min-w-0 text-sm"
                   min="0"
@@ -252,8 +245,8 @@ export default function WineDetailsModal({
                   type="button"
                   onClick={() => {
                     const currentValue = parseInt(formData.ordineMinimo) || 0;
-                    const increment = formData.unitaOrdine === 'cartoni' ? 6 : 1;
-                    setFormData(prev => ({ ...prev, ordineMinimo: (currentValue + increment).toString() }));
+                    // Incrementa sempre di 6 (1 cartone)
+                    setFormData(prev => ({ ...prev, ordineMinimo: (currentValue + 6).toString() }));
                   }}
                   className="w-8 h-8 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-md border-l border-gray-600 text-xs"
                 >
@@ -261,47 +254,9 @@ export default function WineDetailsModal({
                 </button>
               </div>
               
-              {/* Selettore Unità */}
-              <div className="flex bg-gray-700 rounded-lg p-1 mt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (formData.unitaOrdine !== 'bottiglie') {
-                      setFormData(prev => ({ ...prev, unitaOrdine: 'bottiglie' }));
-                    }
-                  }}
-                  className={`flex-1 px-2 py-1 text-xs font-medium rounded-md transition-colors ${
-                    formData.unitaOrdine === 'bottiglie'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
-                  Bottiglie
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (formData.unitaOrdine !== 'cartoni') {
-                      setFormData(prev => ({ ...prev, unitaOrdine: 'cartoni' }));
-                    }
-                  }}
-                  className={`flex-1 px-2 py-1 text-xs font-medium rounded-md transition-colors ${
-                    formData.unitaOrdine === 'cartoni'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
-                  Cartoni
-                </button>
-              </div>
-              
               {/* Conversione visualizzata */}
               <div className="text-center text-xs text-gray-400 mt-1">
-                {formData.unitaOrdine === 'cartoni' ? (
-                  <span>{Math.floor((parseInt(formData.ordineMinimo) || 0) / 6)} cartoni = {parseInt(formData.ordineMinimo) || 0} bottiglie</span>
-                ) : (
-                  <span>{parseInt(formData.ordineMinimo) || 0} bottiglie</span>
-                )}
+                <span>{Math.floor((parseInt(formData.ordineMinimo) || 0) / 6)} cartoni = {parseInt(formData.ordineMinimo) || 0} bottiglie</span>
               </div>
             </div>
           </div>
