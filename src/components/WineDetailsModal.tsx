@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { Wine } from '../../shared/schema';
+import { WineType } from '../hooks/useWines';
 
 interface WineDetailsModalProps {
-  wine: Wine | null;
+  wine: WineType | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpdateWine?: (id: number, updates: Partial<Wine>) => Promise<void>;
+  onUpdateWine?: (id: string, updates: Partial<WineType>) => Promise<void>;
   suppliers?: string[];
 }
 
@@ -19,7 +19,9 @@ export default function WineDetailsModal({
 }: WineDetailsModalProps) {
   const [formData, setFormData] = useState({
     minStock: '',
-    inventory: ''
+    inventory: '',
+    ordineMinimo: '',
+    unitaOrdine: 'bottiglie'
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +30,9 @@ export default function WineDetailsModal({
     if (wine) {
       setFormData({
         minStock: wine.minStock.toString(),
-        inventory: wine.inventory.toString()
+        inventory: wine.inventory.toString(),
+        ordineMinimo: (wine.ordineMinimo || 12).toString(),
+        unitaOrdine: wine.unitaOrdine || 'bottiglie'
       });
     }
   }, [wine]);
@@ -41,7 +45,9 @@ export default function WineDetailsModal({
       if (onUpdateWine) {
         await onUpdateWine(wine.id, {
           minStock: parseInt(formData.minStock) || 2,
-          inventory: parseInt(formData.inventory) || 0
+          inventory: parseInt(formData.inventory) || 0,
+          ordineMinimo: parseInt(formData.ordineMinimo) || 12,
+          unitaOrdine: formData.unitaOrdine as 'bottiglie' | 'cartoni'
         });
       }
       onOpenChange(false);
@@ -119,8 +125,8 @@ export default function WineDetailsModal({
             </div>
           </div>
 
-          {/* Campi modificabili: Soglia Minima e Giacenza */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Campi modificabili: Soglia Minima, Giacenza e Ordine Minimo */}
+          <div className="grid grid-cols-3 gap-3">
             {/* Soglia Minima */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2 text-center">
@@ -198,6 +204,104 @@ export default function WineDetailsModal({
                 >
                   +
                 </button>
+              </div>
+            </div>
+
+            {/* Ordine Minimo */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2 text-center">
+                <span className="flex items-center justify-center gap-1">
+                  <span className="text-blue-400">📦</span>
+                  Ordine Minimo
+                </span>
+              </label>
+              <div className="flex items-center bg-gray-800 border border-gray-600 rounded-md">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentValue = parseInt(formData.ordineMinimo) || 0;
+                    const decrement = formData.unitaOrdine === 'cartoni' ? 6 : 1;
+                    if (currentValue >= decrement) {
+                      setFormData(prev => ({ ...prev, ordineMinimo: (currentValue - decrement).toString() }));
+                    }
+                  }}
+                  className="w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-md border-r border-gray-600 text-xs"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  value={
+                    formData.unitaOrdine === 'cartoni'
+                      ? Math.floor((parseInt(formData.ordineMinimo) || 0) / 6)
+                      : (parseInt(formData.ordineMinimo) || 0)
+                  }
+                  onChange={(e) => {
+                    const inputValue = Math.max(0, parseInt(e.target.value) || 0);
+                    if (formData.unitaOrdine === 'cartoni') {
+                      setFormData(prev => ({ ...prev, ordineMinimo: (inputValue * 6).toString() }));
+                    } else {
+                      setFormData(prev => ({ ...prev, ordineMinimo: inputValue.toString() }));
+                    }
+                  }}
+                  className="flex-1 bg-transparent px-2 py-2 text-cream text-center focus:outline-none min-w-0 text-sm"
+                  min="0"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentValue = parseInt(formData.ordineMinimo) || 0;
+                    const increment = formData.unitaOrdine === 'cartoni' ? 6 : 1;
+                    setFormData(prev => ({ ...prev, ordineMinimo: (currentValue + increment).toString() }));
+                  }}
+                  className="w-8 h-8 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-md border-l border-gray-600 text-xs"
+                >
+                  +
+                </button>
+              </div>
+              
+              {/* Selettore Unità */}
+              <div className="flex bg-gray-700 rounded-lg p-1 mt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (formData.unitaOrdine !== 'bottiglie') {
+                      setFormData(prev => ({ ...prev, unitaOrdine: 'bottiglie' }));
+                    }
+                  }}
+                  className={`flex-1 px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                    formData.unitaOrdine === 'bottiglie'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
+                  Bottiglie
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (formData.unitaOrdine !== 'cartoni') {
+                      setFormData(prev => ({ ...prev, unitaOrdine: 'cartoni' }));
+                    }
+                  }}
+                  className={`flex-1 px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                    formData.unitaOrdine === 'cartoni'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
+                  Cartoni
+                </button>
+              </div>
+              
+              {/* Conversione visualizzata */}
+              <div className="text-center text-xs text-gray-400 mt-1">
+                {formData.unitaOrdine === 'cartoni' ? (
+                  <span>{Math.floor((parseInt(formData.ordineMinimo) || 0) / 6)} cartoni = {parseInt(formData.ordineMinimo) || 0} bottiglie</span>
+                ) : (
+                  <span>{parseInt(formData.ordineMinimo) || 0} bottiglie</span>
+                )}
               </div>
             </div>
           </div>

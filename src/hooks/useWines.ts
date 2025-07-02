@@ -13,6 +13,8 @@ export interface WineType {
   vintage: string | null;
   region: string | null;
   description: string | null;
+  ordineMinimo?: number;
+  unitaOrdine?: 'bottiglie' | 'cartoni';
 }
 
 const useWines = () => {
@@ -64,7 +66,9 @@ const useWines = () => {
           cost: wine.costo || 0,
           vintage: wine.anno?.toString() || '',
           region: wine.provenienza || '',
-          description: wine.produttore || ''
+          description: wine.produttore || '',
+          ordineMinimo: wine.ordine_minimo || 12,
+          unitaOrdine: wine.unita_ordine || 'bottiglie'
         };
       });
 
@@ -123,6 +127,8 @@ const useWines = () => {
       if (updates.vintage !== undefined) updatesDb.anno = updates.vintage;
       if (updates.region !== undefined) updatesDb.provenienza = updates.region;
       if (updates.description !== undefined) updatesDb.produttore = updates.description;
+      if (updates.ordineMinimo !== undefined) updatesDb.ordine_minimo = updates.ordineMinimo;
+      if (updates.unitaOrdine !== undefined) updatesDb.unita_ordine = updates.unitaOrdine;
 
       if (Object.keys(updatesDb).length > 0) {
         const { error } = await supabase
