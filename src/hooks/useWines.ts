@@ -1,5 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase, authManager } from '../lib/supabase';
+
+// ✅ Debounce utility per evitare aggiornamenti troppo rapidi
+const debounce = (func: Function, wait: number) => {
+  let timeout: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(null, args), wait);
+  };
+};
 
 export interface WineType {
   id: string; // ✅ Cambiato da number a string per UUID
@@ -81,23 +90,48 @@ const useWines = () => {
 
   const updateWineInventory = async (id: string, newInventory: number): Promise<boolean> => {
     const userId = authManager.getUserId();
+    if (!userId) {
+      console.error('❌ User ID non disponibile');
+      return false;
+    }
+
     try {
-      const { error } = await supabase
+      console.log('📡 Invio aggiornamento giacenza a Supabase:', { vino_id: id, giacenzaa: newInventory, user_id: userId });
+      
+      const { data, error } = await supabase
         .from('giacenza')
         .upsert({
           vino_id: id,
           giacenzaa: newInventory,
           user_id: userId,
           updated_at: new Date().toISOString()
-        });
-      if (error) throw error;
+        }, {
+          onConflict: 'vino_id,user_id' // ✅ Specifica la chiave di conflitto
+        })
+        .select();
 
+      if (error) {
+        console.error('❌ Errore Supabase:', error);
+        throw error;
+      }
+
+      console.log('✅ Risposta Supabase:', data);
+
+      // Aggiorna lo stato locale solo dopo successo di Supabase
       setWines(prev =>
         prev.map(w => (w.id === id ? { ...w, inventory: newInventory } : w))
       );
+      
       return true;
     } catch (err: any) {
-      console.error('❌ Errore aggiornamento giacenza:', err.message);
+      console.error('❌ Errore completo aggiornamento giacenza:', {
+        error: err,
+        message: err.message,
+        details: err.details,
+        vino_id: id,
+        giacenzaa: newInventory,
+        user_id: userId
+      });
       return false;
     }
   };
@@ -147,6 +181,12 @@ const useWines = () => {
     }
   };
 
+  // ✅ Versione debounced per aggiornamenti rapidi
+  const debouncedUpdateInventory = useCallback(
+    debounce(updateWineInventory, 500), // 500ms di debounce
+    []
+  );
+
   useEffect(() => {
     fetchWines();
   }, []);
@@ -158,7 +198,8 @@ const useWines = () => {
     error,
     refreshWines: fetchWines,
     updateWineInventory,
-    updateWine
+    updateWine,
+    debouncedUpdateInventory // ✅ Funzione debounced per UI rapida
   };
 };
 

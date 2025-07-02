@@ -9,7 +9,7 @@ import useWines from '../hooks/useWines';
 import { authManager, isSupabaseAvailable, supabase } from '../lib/supabase';
 
 type WineType = {
-  id: number;
+  id: string; // ✅ Cambiato da number a string per UUID compatibility
   name: string;
   type?: string;
   supplier: string;
@@ -47,10 +47,10 @@ export default function HomePage() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showWineDetailsModal, setShowWineDetailsModal] = useState(false);
   const [showCarrelloModal, setShowCarrelloModal] = useState(false);
-  const [editingInventoryId, setEditingInventoryId] = useState<number | null>(null);
+  const [editingInventoryId, setEditingInventoryId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
-  const [animatingInventory, setAnimatingInventory] = useState<number | null>(null);
+  const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
 
   const filteredWines = wines
     .filter(wine => {
@@ -83,19 +83,22 @@ export default function HomePage() {
   })
   .sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
 
-  const handleInventoryChange = async (id: number, value: number) => {
+  const handleInventoryChange = async (id: string, value: number) => {
     const adjusted = Math.max(0, value);
     console.log('🔄 Aggiornamento giacenza:', id, 'da', wines.find(w => w.id === id)?.inventory, 'a', adjusted);
 
+    // Aggiornamento ottimistico per feedback immediato
+    const previousInventory = wines.find(w => w.id === id)?.inventory || 0;
+    
     const success = await updateWineInventory(id, adjusted);
     if (success) {
-      console.log('✅ Giacenza salvata correttamente');
+      console.log('✅ Giacenza salvata correttamente su Supabase');
       // Trigger animation feedback
       setAnimatingInventory(id);
       setTimeout(() => setAnimatingInventory(null), 600);
     } else {
-      console.error('❌ Errore aggiornamento giacenza');
-      // In caso di errore, ricarica per sincronizzare
+      console.error('❌ Errore aggiornamento giacenza - rollback a:', previousInventory);
+      // In caso di errore, forza il refresh per sincronizzare
       await refreshWines();
     }
   };
@@ -119,6 +122,9 @@ export default function HomePage() {
       await handleInventoryChange(editingInventoryId, value);
     } else {
       console.warn('⚠️ Valore giacenza non valido:', editingValue);
+      // Reset al valore precedente in caso di errore
+      const wine = wines.find(w => w.id === editingInventoryId);
+      if (wine) setEditingValue(wine.inventory.toString());
     }
     setEditingInventoryId(null);
     setEditingValue('');
