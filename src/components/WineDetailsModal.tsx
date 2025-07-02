@@ -37,7 +37,24 @@ export default function WineDetailsModal({
     }
   }, [wine]);
 
-  if (!open) return null;
+  if (!open || !wine) return null;
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      if (onUpdateWine) {
+        await onUpdateWine(wine.id, {
+          minStock: parseInt(formData.minStock) || 2,
+          inventory: parseInt(formData.inventory) || 0,
+          ordineMinimo: parseInt(formData.ordineMinimo) || 12,
+          unitaOrdine: 'cartoni' // Sempre cartoni per ordine minimo
+        });
+      }
+      onOpenChange(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
