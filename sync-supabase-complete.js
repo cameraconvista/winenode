@@ -101,27 +101,27 @@ async function syncCategory(tipo, url) {
                     row['nome_vino']?.trim() ||
                     row['nome']?.trim() ||
                     Object.values(row)[0]?.toString().trim(); // Prova prima colonna
-        
+
         const isValid = nome && 
                nome.length > 2 &&
                nome.toUpperCase() !== 'NOME VINO' && 
                nome.toUpperCase() !== 'NOME' &&
                nome.toUpperCase() !== tipo.toUpperCase() &&
                !nome.toUpperCase().includes('NOME VINO');
-        
+
         if (!isValid && nome) {
           console.log(`❌ Riga ${index + 1} scartata - Nome: "${nome}" (lunghezza: ${nome.length})`);
         } else if (isValid) {
           console.log(`✅ Riga ${index + 1} valida - Nome: "${nome}"`);
         }
-        
+
         return isValid;
       })
       .map((row, index) => {
         // Se il parsing con header fallisce, usa l'ordine delle colonne
         const keys = Object.keys(row);
         const values = Object.values(row);
-        
+
         // Mappatura flessibile delle colonne
         const nomeVino = row['NOME VINO']?.trim() || 
                         row['NOME']?.trim() || 
@@ -130,32 +130,32 @@ async function syncCategory(tipo, url) {
                         row['nome_vino']?.trim() ||
                         row['nome']?.trim() ||
                         values[0]?.toString().trim(); // Prima colonna come fallback
-        
+
         const anno = row['ANNO']?.trim() || 
                     row['Anno']?.trim() || 
                     row['anno']?.trim() ||
                     values[1]?.toString().trim(); // Seconda colonna come fallback
-        
+
         const produttore = row['PRODUTTORE']?.trim() || 
                           row['Produttore']?.trim() || 
                           row['produttore']?.trim() ||
                           values[2]?.toString().trim(); // Terza colonna come fallback
-        
+
         const provenienza = row['PROVENIENZA']?.trim() || 
                            row['Provenienza']?.trim() || 
                            row['provenienza']?.trim() ||
                            values[3]?.toString().trim(); // Quarta colonna come fallback
-        
+
         const fornitore = row['FORNITORE']?.trim() || 
                          row['Fornitore']?.trim() || 
                          row['fornitore']?.trim() ||
                          values[4]?.toString().trim(); // Quinta colonna come fallback
-        
+
         const costo = parseEuro(row['COSTO '] ?? row['COSTO'] ?? row['Costo'] ?? row['costo'] ?? values[5]);
         const vendita = parseEuro(row['VENDITA'] ?? row['Vendita'] ?? row['vendita'] ?? values[6]);
-        const margine = parseEuro(row['MARGINE'] ?? row['Margine'] ?? row['margine'] ?? values[7]);
+        //const margine = parseEuro(row['MARGINE'] ?? row['Margine'] ?? row['margine'] ?? values[7]);
 
-        console.log(`📝 Mappatura riga ${index + 1}: ${nomeVino} | ${produttore} | €${vendita}`);
+        console.log(`📝 Mappatura riga ${index + 1}: ${nomeVino} | ${produttore} | €${vendita} | Costo: €${costo}`);
 
         return {
           nome_vino: nomeVino || null,
@@ -165,7 +165,7 @@ async function syncCategory(tipo, url) {
           fornitore: fornitore || 'Non specificato',
           costo: costo,
           vendita: vendita,
-          margine: margine,
+          //margine: margine,
           tipologia: tipo,
           user_id: user_id,
           created_at: new Date().toISOString(),
