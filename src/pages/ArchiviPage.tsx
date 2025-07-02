@@ -141,45 +141,33 @@ export default function ArchiviPage() {
     const row = updatedRows[rowIndex];
     if (!row) return;
 
-    // Se si sta modificando la giacenza, salva direttamente su Supabase
+    // Se si sta modificando la giacenza, usa la funzione di useWines per sincronizzazione
     if (field === "giacenza") {
-      console.log('🔄 Salvando giacenza diretta su Supabase:', row.nomeVino, 'Nuova giacenza:', value);
+      console.log('🔄 Aggiornando giacenza tramite useWines:', row.nomeVino, 'Nuova giacenza:', value);
 
-      // Estrai l'ID numerico dalla stringa (formato: "db-123")
-      const numericId = row.id.startsWith('db-') ? parseInt(row.id.replace('db-', '')) : null;
+      // Estrai l'ID dalla stringa (formato: "db-123")
+      const wineId = row.id.startsWith('db-') ? row.id.replace('db-', '') : row.id;
 
-      if (numericId) {
+      if (wineId) {
         try {
-          const userId = authManager.getUserId();
+          // Usa la funzione updateWineInventory di useWines per sincronizzazione completa
+          const success = await updateWineInventory(wineId, Number(value) || 0);
 
-          // Aggiorna la giacenza nella tabella giacenza usando UPSERT
-          const { error } = await supabase
-            .from('giacenza')
-            .upsert({ 
-              vino_id: numericId,
-              giacenzaa: Number(value) || 0,
-              user_id: userId,
-              updated_at: new Date().toISOString()
-            })
-            .eq('vino_id', numericId)
-            .eq('user_id', userId);
-
-          if (error) {
-            console.error('❌ Errore salvataggio giacenza su Supabase:', error.message);
-            return;
+          if (success) {
+            console.log('✅ Giacenza aggiornata correttamente tramite useWines');
+            // Lo stato locale verrà aggiornato automaticamente da useWines via useEffect
+          } else {
+            console.error('❌ Errore aggiornamento giacenza tramite useWines');
+            // Refresh per sincronizzare i dati
+            await refreshWines();
           }
 
-          console.log('✅ Giacenza salvata direttamente su Supabase');
-
-          // Aggiorna solo lo stato locale DOPO il salvataggio riuscito
-          (row as any)[field] = Number(value) || 0;
-          setWineRows(updatedRows);
-
         } catch (err) {
-          console.error('❌ Errore inatteso salvataggio giacenza:', err);
+          console.error('❌ Errore inatteso aggiornamento giacenza:', err);
+          await refreshWines();
         }
       } else {
-        console.error('❌ ID vino non valido per salvataggio giacenza:', row.id);
+        console.error('❌ ID vino non valido per aggiornamento giacenza:', row.id);
       }
     } else {
       // Per altri campi, aggiorna solo lo stato locale
