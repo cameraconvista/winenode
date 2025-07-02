@@ -195,7 +195,7 @@ export default function HomePage() {
                 <button 
                   onClick={() => navigate('/settings/archivi')} 
                   title="Archivi" 
-                  className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center hidden sm:flex"
                 >
                   <Database className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
