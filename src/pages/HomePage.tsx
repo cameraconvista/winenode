@@ -306,14 +306,7 @@ export default function HomePage() {
                             </>
                           )}
                           {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
-                            <>
-                              <span className="text-yellow-200 font-medium">{wine.supplier}</span>
-                              {wine.price && parseFloat(wine.price) > 0 && (
-                                <>
-                                  <span className="mx-3 text-amber-400 font-semibold">€{parseFloat(wine.price).toFixed(2)}</span>
-                                </>
-                              )}
-                            </>
+                            <span className="text-yellow-200 font-medium">{wine.supplier}</span>
                           )}
                         </div>
                       </div>
