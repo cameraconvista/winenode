@@ -583,43 +583,4 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
     </div>
   );
 }
-import React from 'react';
-import { X } from 'lucide-react';
 
-interface OrdineModalProps {
-  open: boolean;
-  onClose: () => void;
-  onFornitoreSelezionato: (fornitore: string) => void;
-}
-
-export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: OrdineModalProps) {
-  if (!open) return null;
-
-  const fornitori = ['Fornitore A', 'Fornitore B', 'Fornitore C'];
-
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 border border-red-900/30 rounded-xl p-6 max-w-md w-full">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-cream">Nuovo Ordine</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        
-        <div className="space-y-3">
-          <p className="text-gray-300 text-sm">Seleziona fornitore:</p>
-          {fornitori.map(fornitore => (
-            <button
-              key={fornitore}
-              onClick={() => onFornitoreSelezionato(fornitore)}
-              className="w-full p-3 bg-black/20 border border-red-900/20 rounded-lg text-cream hover:bg-black/30 transition-colors"
-            >
-              {fornitore}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
