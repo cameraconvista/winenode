@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { WineType } from '../hooks/useWines';
@@ -94,13 +95,13 @@ export default function WineDetailsModal({
         <div className="p-6">
           <div className="grid grid-cols-2 gap-8">
             {/* Colonna sinistra - Controlli */}
-            <div className="space-y-6 max-w-sm">
+            <div className="space-y-6">
               {/* Giacenza */}
               <div>
                 <label className="block text-lg font-medium text-cream mb-3">
                   Giacenza
                 </label>
-                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-32">
+                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg">
                   <button
                     type="button"
                     onClick={() => {
@@ -109,7 +110,7 @@ export default function WineDetailsModal({
                         setFormData(prev => ({ ...prev, inventory: (currentValue - 1).toString() }));
                       }
                     }}
-                    className="w-12 h-12 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-lg border-r border-gray-600 text-xl"
+                    className="w-16 h-16 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-lg border-r border-gray-600 text-2xl"
                   >
                     −
                   </button>
@@ -117,7 +118,7 @@ export default function WineDetailsModal({
                     type="number"
                     value={formData.inventory}
                     onChange={(e) => setFormData(prev => ({ ...prev, inventory: e.target.value }))}
-                    className="flex-1 bg-transparent px-3 py-3 text-cream text-center focus:outline-none text-xl font-bold"
+                    className="flex-1 bg-transparent px-4 py-4 text-cream text-center focus:outline-none text-2xl font-bold"
                     min="0"
                   />
                   <button
@@ -126,7 +127,7 @@ export default function WineDetailsModal({
                       const currentValue = parseInt(formData.inventory) || 0;
                       setFormData(prev => ({ ...prev, inventory: (currentValue + 1).toString() }));
                     }}
-                    className="w-12 h-12 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-lg border-l border-gray-600 text-xl"
+                    className="w-16 h-16 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-lg border-l border-gray-600 text-2xl"
                   >
                     +
                   </button>
@@ -141,7 +142,7 @@ export default function WineDetailsModal({
                     Ordine Minimo
                   </span>
                 </label>
-                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-32">
+                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg">
                   <button
                     type="button"
                     onClick={() => {
@@ -151,7 +152,7 @@ export default function WineDetailsModal({
                         setFormData(prev => ({ ...prev, ordineMinimo: (currentValue - 6).toString() }));
                       }
                     }}
-                    className="w-12 h-12 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-lg border-r border-gray-600 text-xl"
+                    className="w-16 h-16 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-lg border-r border-gray-600 text-2xl"
                   >
                     −
                   </button>
@@ -163,7 +164,7 @@ export default function WineDetailsModal({
                       // Converte sempre in bottiglie (cartoni * 6)
                       setFormData(prev => ({ ...prev, ordineMinimo: (inputValue * 6).toString() }));
                     }}
-                    className="flex-1 bg-transparent px-3 py-3 text-cream text-center focus:outline-none text-xl font-bold"
+                    className="flex-1 bg-transparent px-4 py-4 text-cream text-center focus:outline-none text-2xl font-bold"
                     min="0"
                     required
                   />
@@ -174,7 +175,7 @@ export default function WineDetailsModal({
                       // Incrementa sempre di 6 (1 cartone)
                       setFormData(prev => ({ ...prev, ordineMinimo: (currentValue + 6).toString() }));
                     }}
-                    className="w-12 h-12 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-lg border-l border-gray-600 text-xl"
+                    className="w-16 h-16 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-lg border-l border-gray-600 text-2xl"
                   >
                     +
                   </button>
@@ -193,7 +194,7 @@ export default function WineDetailsModal({
                     Soglia Minima
                   </span>
                 </label>
-                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg w-32">
+                <div className="flex items-center bg-gray-800 border border-gray-600 rounded-lg">
                   <button
                     type="button"
                     onClick={() => {
@@ -202,7 +203,7 @@ export default function WineDetailsModal({
                         setFormData(prev => ({ ...prev, minStock: (currentValue - 1).toString() }));
                       }
                     }}
-                    className="w-12 h-12 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-lg border-r border-gray-600 text-xl"
+                    className="w-16 h-16 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-gray-700 transition-colors rounded-l-lg border-r border-gray-600 text-2xl"
                   >
                     −
                   </button>
@@ -210,7 +211,7 @@ export default function WineDetailsModal({
                     type="number"
                     value={formData.minStock}
                     onChange={(e) => setFormData(prev => ({ ...prev, minStock: e.target.value }))}
-                    className="flex-1 bg-transparent px-3 py-3 text-cream text-center focus:outline-none text-xl font-bold"
+                    className="flex-1 bg-transparent px-4 py-4 text-cream text-center focus:outline-none text-2xl font-bold"
                     min="0"
                     required
                   />
@@ -220,7 +221,7 @@ export default function WineDetailsModal({
                       const currentValue = parseInt(formData.minStock) || 0;
                       setFormData(prev => ({ ...prev, minStock: (currentValue + 1).toString() }));
                     }}
-                    className="w-12 h-12 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-lg border-l border-gray-600 text-xl"
+                    className="w-16 h-16 flex items-center justify-center text-green-400 hover:text-green-300 hover:bg-gray-700 transition-colors rounded-r-lg border-l border-gray-600 text-2xl"
                   >
                     +
                   </button>
