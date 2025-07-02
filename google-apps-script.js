@@ -8,67 +8,99 @@ const SUPABASE_URL = "https://rtmohyjquscdkbtibdsu.supabase.co";
 const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0bW9oeWpxdXNjZGtidGliZHN1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTQ1NjY4MCwiZXhwIjoyMDY3MDMyNjgwfQ.vdU1ICEONshwgtd636O92_qamM9ohXe2dwljYwjf5hk";
 const DEFAULT_USER_ID = "02c85ceb-8026-4bd9-9dc5-c03a74f56346";
 
-// 📊 MAPPATURA CATEGORIE CON URL CSV
-const MAPPATURA_SUPABASE = [
-  { 
-    title: 'BOLLICINE ITALIANE', 
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=294419425&single=true&output=csv' 
-  },
-  { 
-    title: 'BOLLICINE FRANCESI', 
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=700257433&single=true&output=csv' 
-  },
-  { 
-    title: 'BIANCHI', 
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=2127910877&single=true&output=csv' 
-  },
-  { 
-    title: 'ROSSI', 
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=254687727&single=true&output=csv' 
-  },
-  { 
-    title: 'ROSATI', 
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=498630601&single=true&output=csv' 
-  },
-  { 
-    title: 'VINI DOLCI', 
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy/pub?gid=1582691495&single=true&output=csv' 
-  }
-];
+// 📊 CONFIGURAZIONE GOOGLE SHEET
+const GOOGLE_SHEET_ID = "1vQ_DIwWlGmqp3ciC47s5RBnFBPtDR-NodJOJ-BaO4zGnwpsF54l73hi7174Pc9p9ZAn8T2z_z5i7ssy";
+
+// 🍷 MAPPATURA FOGLI → TIPOLOGIE
+const TIPOLOGIE_MAPPING = {
+  'BOLLICINE ITALIANE': 'BOLLICINE ITALIANE',
+  'BOLLICINE FRANCESI': 'BOLLICINE FRANCESI', 
+  'BIANCHI': 'BIANCHI',
+  'ROSSI': 'ROSSI',
+  'ROSATI': 'ROSATI',
+  'VINI DOLCI': 'VINI DOLCI'
+};
 
 // 💰 FUNZIONE PER CONVERTIRE VALORI EURO
 function parseEuro(value) {
-  if (!value || value === '') return null;
-  const cleaned = value.toString().replace(/[^\d.,]/g, '').replace(',', '.');
+  if (!value || value === '' || value === null || value === undefined) return null;
+  const cleaned = value.toString().replace(/[€$\s]/g, '').replace(',', '.');
   const num = parseFloat(cleaned);
   return isNaN(num) ? null : num;
 }
 
-// 🍷 FUNZIONE PER SINCRONIZZARE UNA CATEGORIA
-function sincronizzaCategoria(categoria) {
+// 🔍 FUNZIONE PER MAPPARE INTESTAZIONI
+function mappaIntestazioni(headers) {
+  const mapping = {};
+  
+  headers.forEach((header, index) => {
+    const cleanHeader = header.toString().toLowerCase().trim();
+    
+    // Mapping più flessibile per le colonne
+    if (cleanHeader.includes('nome') || cleanHeader.includes('vino') || cleanHeader.includes('wine')) {
+      mapping.nome_vino = index;
+    } else if (cleanHeader.includes('anno') || cleanHeader.includes('year') || cleanHeader.includes('vintage')) {
+      mapping.anno = index;
+    } else if (cleanHeader.includes('produttore') || cleanHeader.includes('producer') || cleanHeader.includes('azienda')) {
+      mapping.produttore = index;
+    } else if (cleanHeader.includes('provenienza') || cleanHeader.includes('origine') || cleanHeader.includes('region')) {
+      mapping.provenienza = index;
+    } else if (cleanHeader.includes('fornitore') || cleanHeader.includes('supplier')) {
+      mapping.fornitore = index;
+    } else if (cleanHeader.includes('costo') || cleanHeader.includes('cost') || cleanHeader.includes('prezzo acquisto')) {
+      mapping.costo = index;
+    } else if (cleanHeader.includes('vendita') || cleanHeader.includes('prezzo vendita') || cleanHeader.includes('selling')) {
+      mapping.vendita = index;
+    } else if (cleanHeader.includes('margine') || cleanHeader.includes('margin')) {
+      mapping.margine = index;
+    }
+  });
+  
+  // Se non troviamo nome_vino, proviamo con la prima colonna non vuota
+  if (mapping.nome_vino === undefined) {
+    for (let i = 0; i < headers.length; i++) {
+      if (headers[i] && headers[i].toString().trim() !== '') {
+        mapping.nome_vino = i;
+        break;
+      }
+    }
+  }
+  
+  return mapping;
+}
+
+// 🍷 FUNZIONE PER SINCRONIZZARE UN FOGLIO
+function sincronizzaFoglio(nomeSpreadsheet, nomeFoglio, tipologia) {
   try {
-    console.log(`🔄 Sincronizzando ${categoria.title}...`);
+    console.log(`🔄 Elaborazione foglio: ${nomeFoglio}`);
     
-    // 1. SCARICA DATI CSV
-    const response = UrlFetchApp.fetch(categoria.csvUrl);
-    if (response.getResponseCode() !== 200) {
-      throw new Error(`Errore HTTP ${response.getResponseCode()}`);
+    // 1. LEGGI DATI DAL FOGLIO
+    const spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
+    const foglio = spreadsheet.getSheetByName(nomeFoglio);
+    
+    if (!foglio) {
+      console.log(`❌ Foglio '${nomeFoglio}' non trovato`);
+      return { success: false, wines: 0 };
     }
     
-    const csvData = response.getContentText();
-    const lines = csvData.split('\n');
+    // 2. OTTIENI TUTTI I DATI
+    const dataRange = foglio.getDataRange();
+    const values = dataRange.getValues();
     
-    if (lines.length < 2) {
-      console.log(`⚠️ ${categoria.title}: Nessun dato disponibile`);
-      return { success: true, wines: 0, errors: [] };
+    if (values.length < 2) {
+      console.log(`⚠️ ${nomeFoglio}: Nessun dato disponibile`);
+      return { success: true, wines: 0 };
     }
     
-    // 2. PARSE HEADER
-    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim().toUpperCase());
-    console.log(`📋 ${categoria.title} Headers:`, headers);
+    // 3. PROCESSA INTESTAZIONI
+    const headers = values[0].map(h => h ? h.toString().trim() : '');
+    console.log(`📋 Intestazioni trovate:`, headers);
     
-    // 3. ELIMINA VINI ESISTENTI
-    const deleteResponse = UrlFetchApp.fetch(`${SUPABASE_URL}/rest/v1/vini?tipologia=eq.${categoria.title}&user_id=eq.${DEFAULT_USER_ID}`, {
+    const columnMapping = mappaIntestazioni(headers);
+    console.log(`🔍 Mappatura colonne:`, columnMapping);
+    
+    // 4. ELIMINA VINI ESISTENTI
+    const deleteResponse = UrlFetchApp.fetch(`${SUPABASE_URL}/rest/v1/vini?tipologia=eq.${tipologia}&user_id=eq.${DEFAULT_USER_ID}`, {
       method: 'DELETE',
       headers: {
         'apikey': SUPABASE_API_KEY,
@@ -79,43 +111,46 @@ function sincronizzaCategoria(categoria) {
     });
     
     if (deleteResponse.getResponseCode() !== 204) {
-      console.log(`⚠️ Impossibile eliminare vini esistenti per ${categoria.title}`);
+      console.log(`⚠️ Impossibile eliminare vini esistenti per ${tipologia}`);
     }
     
-    // 4. PROCESSA RIGHE DATI
+    // 5. PROCESSA RIGHE DATI
     const viniDaInserire = [];
-    const errori = [];
     
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-      
-      const values = line.split(',').map(v => v.replace(/"/g, '').trim());
-      
-      // Crea oggetto riga
-      const riga = {};
-      headers.forEach((header, index) => {
-        riga[header] = values[index] || '';
-      });
+    for (let i = 1; i < values.length; i++) {
+      const row = values[i];
       
       // Estrai nome vino
-      const nomeVino = riga['NOME VINO'] || riga['NOME'] || riga['NAME'] || '';
-      
-      if (!nomeVino || nomeVino.toUpperCase() === categoria.title.toUpperCase()) {
-        continue; // Salta righe vuote o header duplicati
+      let nomeVino = '';
+      if (columnMapping.nome_vino !== undefined && columnMapping.nome_vino >= 0) {
+        nomeVino = row[columnMapping.nome_vino] ? row[columnMapping.nome_vino].toString().trim() : '';
       }
+      
+      // Salta righe vuote o senza nome vino
+      if (!nomeVino || nomeVino === '' || nomeVino.toUpperCase() === tipologia.toUpperCase()) {
+        continue;
+      }
+      
+      // Estrai altri dati
+      const anno = columnMapping.anno >= 0 && row[columnMapping.anno] ? row[columnMapping.anno].toString() : null;
+      const produttore = columnMapping.produttore >= 0 && row[columnMapping.produttore] ? row[columnMapping.produttore].toString() : null;
+      const provenienza = columnMapping.provenienza >= 0 && row[columnMapping.provenienza] ? row[columnMapping.provenienza].toString() : null;
+      const fornitore = columnMapping.fornitore >= 0 && row[columnMapping.fornitore] ? row[columnMapping.fornitore].toString() : null;
+      const costo = columnMapping.costo >= 0 ? parseEuro(row[columnMapping.costo]) : null;
+      const vendita = columnMapping.vendita >= 0 ? parseEuro(row[columnMapping.vendita]) : null;
+      const margine = columnMapping.margine >= 0 ? parseEuro(row[columnMapping.margine]) : null;
       
       // Prepara dati per inserimento
       const vinoData = {
         nome_vino: nomeVino,
-        anno: riga['ANNO'] || null,
-        produttore: riga['PRODUTTORE'] || null,
-        provenienza: riga['PROVENIENZA'] || null,
-        fornitore: riga['FORNITORE'] || null,
-        costo: parseEuro(riga['COSTO'] || riga['COSTO ']),
-        vendita: parseEuro(riga['VENDITA']),
-        margine: parseEuro(riga['MARGINE']),
-        tipologia: categoria.title,
+        anno: anno,
+        produttore: produttore,
+        provenienza: provenienza,
+        fornitore: fornitore,
+        costo: costo,
+        vendita: vendita,
+        margine: margine,
+        tipologia: tipologia,
         user_id: DEFAULT_USER_ID,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -124,11 +159,11 @@ function sincronizzaCategoria(categoria) {
       viniDaInserire.push(vinoData);
     }
     
-    console.log(`🍷 ${categoria.title}: ${viniDaInserire.length} vini da inserire`);
+    console.log(`📊 ${tipologia}: ${viniDaInserire.length} vini validi da sincronizzare`);
     
-    // 5. INSERISCI VINI IN BATCH (MAX 100 PER VOLTA)
+    // 6. INSERISCI VINI IN BATCH
     let totalInseriti = 0;
-    const batchSize = 100;
+    const batchSize = 50;
     
     for (let i = 0; i < viniDaInserire.length; i += batchSize) {
       const batch = viniDaInserire.slice(i, i + batchSize);
@@ -147,94 +182,87 @@ function sincronizzaCategoria(categoria) {
         
         if (insertResponse.getResponseCode() === 201) {
           totalInseriti += batch.length;
-          console.log(`✅ ${categoria.title}: Batch ${Math.floor(i/batchSize) + 1} inserito (${batch.length} vini)`);
+          console.log(`✅ ${tipologia}: Batch ${Math.floor(i/batchSize) + 1} inserito (${batch.length} vini)`);
         } else {
-          console.error(`❌ Errore inserimento batch ${categoria.title}:`, insertResponse.getContentText());
-          errori.push(`Errore inserimento batch: ${insertResponse.getContentText()}`);
+          console.error(`❌ Errore inserimento batch ${tipologia}:`, insertResponse.getContentText());
         }
         
-        // Pausa tra batch per evitare rate limiting
+        // Pausa tra batch
         if (i + batchSize < viniDaInserire.length) {
-          Utilities.sleep(500);
+          Utilities.sleep(1000);
         }
         
       } catch (batchError) {
-        console.error(`❌ Errore batch ${categoria.title}:`, batchError);
-        errori.push(`Errore batch: ${batchError.toString()}`);
+        console.error(`❌ Errore batch ${tipologia}:`, batchError);
       }
     }
     
-    console.log(`✅ ${categoria.title}: ${totalInseriti} vini sincronizzati con successo`);
+    console.log(`✅ ${tipologia}: ${totalInseriti} vini sincronizzati`);
+    
+    return { success: true, wines: totalInseriti };
+    
+  } catch (error) {
+    console.error(`❌ Errore sincronizzazione ${tipologia}:`, error);
+    return { success: false, wines: 0 };
+  }
+}
+
+// 🚀 FUNZIONE PRINCIPALE
+function sincronizzaAutomatica() {
+  console.log('🚀 Avvio sincronizzazione automatica Google Sheets → Supabase');
+  
+  try {
+    const spreadsheet = SpreadsheetApp.openById(GOOGLE_SHEET_ID);
+    const fogli = spreadsheet.getSheets();
+    
+    console.log(`📋 Trovati ${fogli.length} fogli nel Google Sheet`);
+    
+    let totalVini = 0;
+    let categorieOK = 0;
+    
+    for (const foglio of fogli) {
+      const nomeFoglio = foglio.getName();
+      console.log(`🔍 Controllo foglio: ${nomeFoglio}`);
+      
+      const tipologia = TIPOLOGIE_MAPPING[nomeFoglio];
+      
+      if (tipologia) {
+        console.log(`📊 Sincronizzazione: ${nomeFoglio} → ${tipologia}`);
+        const risultato = sincronizzaFoglio(spreadsheet.getName(), nomeFoglio, tipologia);
+        
+        if (risultato.success) {
+          totalVini += risultato.wines;
+          categorieOK++;
+        }
+        
+        // Pausa tra fogli
+        Utilities.sleep(2000);
+      } else {
+        console.log(`⏭️ Foglio ${nomeFoglio} ignorato (non corrisponde a nessuna categoria)`);
+      }
+    }
+    
+    console.log(`🏁 Sincronizzazione completata: ${totalVini} vini totali`);
     
     return {
-      success: true,
-      wines: totalInseriti,
-      errors: errori
+      totalWines: totalVini,
+      successfulCategories: categorieOK,
+      totalCategories: Object.keys(TIPOLOGIE_MAPPING).length
     };
     
   } catch (error) {
-    console.error(`❌ Errore sincronizzazione ${categoria.title}:`, error);
-    return {
-      success: false,
-      wines: 0,
-      errors: [error.toString()]
-    };
+    console.error('❌ Errore sincronizzazione automatica:', error);
+    return { totalWines: 0, successfulCategories: 0, totalCategories: 0 };
   }
 }
 
-// 🚀 FUNZIONE PRINCIPALE DI SINCRONIZZAZIONE
-function sincronizzaTutteLeCategorie() {
-  console.log('🚀 Avvio sincronizzazione completa...');
-  
-  let totalVini = 0;
-  let categorieOK = 0;
-  const tuttiErrori = [];
-  
-  for (const categoria of MAPPATURA_SUPABASE) {
-    try {
-      const risultato = sincronizzaCategoria(categoria);
-      
-      if (risultato.success) {
-        totalVini += risultato.wines;
-        categorieOK++;
-      }
-      
-      if (risultato.errors && risultato.errors.length > 0) {
-        tuttiErrori.push(...risultato.errors);
-      }
-      
-      // Pausa tra categorie
-      Utilities.sleep(1000);
-      
-    } catch (error) {
-      console.error(`❌ Errore categoria ${categoria.title}:`, error);
-      tuttiErrori.push(`Errore ${categoria.title}: ${error.toString()}`);
-    }
-  }
-  
-  console.log(`🏁 Sincronizzazione completata:`);
-  console.log(`   📊 ${totalVini} vini sincronizzati`);
-  console.log(`   ✅ ${categorieOK}/${MAPPATURA_SUPABASE.length} categorie OK`);
-  
-  if (tuttiErrori.length > 0) {
-    console.log(`   ⚠️ ${tuttiErrori.length} errori:`, tuttiErrori);
-  }
-  
-  return {
-    totalWines: totalVini,
-    successfulCategories: categorieOK,
-    totalCategories: MAPPATURA_SUPABASE.length,
-    errors: tuttiErrori
-  };
-}
-
-// 🔄 FUNZIONE PER TRIGGER AUTOMATICO (ogni minuto)
+// 🔄 FUNZIONE PER TRIGGER AUTOMATICO
 function onTimeBasedTrigger() {
   console.log('⏰ Trigger automatico avviato:', new Date());
-  sincronizzaTutteLeCategorie();
+  sincronizzaAutomatica();
 }
 
-// 🛠️ FUNZIONE PER CONFIGURARE IL TRIGGER AUTOMATICO
+// 🛠️ FUNZIONE PER CONFIGURARE IL TRIGGER
 function configuraTriggersAutomatici() {
   // Elimina trigger esistenti
   const triggers = ScriptApp.getProjectTriggers();
@@ -242,32 +270,27 @@ function configuraTriggersAutomatici() {
     ScriptApp.deleteTrigger(trigger);
   });
   
-  // Crea nuovo trigger ogni minuto
+  // Crea nuovo trigger ogni 5 minuti
   ScriptApp.newTrigger('onTimeBasedTrigger')
     .timeBased()
-    .everyMinutes(1)
+    .everyMinutes(5)
     .create();
   
-  console.log('✅ Trigger automatico configurato (ogni minuto)');
+  console.log('✅ Trigger automatico configurato (ogni 5 minuti)');
 }
 
 // 🧪 FUNZIONE DI TEST
 function testSincronizzazione() {
   console.log('🧪 Test sincronizzazione...');
-  
-  // Test con una sola categoria
-  const testCategoria = MAPPATURA_SUPABASE[0]; // BOLLICINE ITALIANE
-  const risultato = sincronizzaCategoria(testCategoria);
-  
+  const risultato = sincronizzaAutomatica();
   console.log('📊 Risultato test:', risultato);
-  
   return risultato;
 }
 
 // 📋 FUNZIONE PER VERIFICARE STATO DATABASE
 function verificaStatoDatabase() {
   try {
-    const response = UrlFetchApp.fetch(`${SUPABASE_URL}/rest/v1/vini?user_id=eq.${DEFAULT_USER_ID}&select=tipologia,count`, {
+    const response = UrlFetchApp.fetch(`${SUPABASE_URL}/rest/v1/vini?user_id=eq.${DEFAULT_USER_ID}`, {
       headers: {
         'apikey': SUPABASE_API_KEY,
         'Authorization': `Bearer ${SUPABASE_API_KEY}`
@@ -277,6 +300,17 @@ function verificaStatoDatabase() {
     if (response.getResponseCode() === 200) {
       const data = JSON.parse(response.getContentText());
       console.log('📊 Stato database vini:', data.length, 'record trovati');
+      
+      // Raggruppa per tipologia
+      const perTipologia = {};
+      data.forEach(vino => {
+        if (!perTipologia[vino.tipologia]) {
+          perTipologia[vino.tipologia] = 0;
+        }
+        perTipologia[vino.tipologia]++;
+      });
+      
+      console.log('📊 Vini per tipologia:', perTipologia);
       return data;
     } else {
       console.error('❌ Errore verifica database:', response.getContentText());
@@ -293,12 +327,10 @@ function verificaStatoDatabase() {
 // ============================================
 //
 // 1. Copia questo codice in Google Apps Script
-// 2. Sostituisci SUPABASE_URL, SUPABASE_API_KEY e DEFAULT_USER_ID con i tuoi valori
+// 2. Sostituisci GOOGLE_SHEET_ID con l'ID del tuo Google Sheet
 // 3. Salva il progetto
-// 4. Esegui 'configuraTriggersAutomatici()' una volta per attivare la sincronizzazione automatica
-// 5. Usa 'testSincronizzazione()' per testare
-// 6. Usa 'sincronizzaTutteLeCategorie()' per sincronizzazione manuale
-// 7. Usa 'verificaStatoDatabase()' per controllare i dati
+// 4. Esegui 'testSincronizzazione()' per testare
+// 5. Esegui 'configuraTriggersAutomatici()' per attivare sync automatica
+// 6. Usa 'verificaStatoDatabase()' per controllare i dati
 //
-// La sincronizzazione avverrà automaticamente ogni minuto una volta configurata
 // ============================================
