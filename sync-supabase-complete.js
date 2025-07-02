@@ -65,37 +65,53 @@ async function syncCategory(tipo, url) {
 
     console.log(`📊 Righe trovate nel CSV: ${parsed.data.length}`);
 
-    // Debug: mostra le prime righe del CSV
-    console.log(`🔍 Prime 3 righe del CSV per ${tipo}:`);
-    parsed.data.slice(0, 3).forEach((row, idx) => {
-      console.log(`  Riga ${idx + 1}:`, Object.keys(row).slice(0, 5), '...');
-      console.log(`    Esempio dati:`, row);
-    });
-
-    // Filtra e mappa i dati
+    // Filtra e mappa i dati - usa tutti i possibili nomi di colonna
     const validRows = parsed.data
       .filter(row => {
-        const nome = row['NOME VINO']?.trim();
+        // Prova diversi nomi possibili per la colonna del nome vino
+        const nome = row['NOME VINO']?.trim() || 
+                    row['NOME']?.trim() || 
+                    row['Nome Vino']?.trim() || 
+                    row['Nome']?.trim() ||
+                    row['nome_vino']?.trim() ||
+                    row['nome']?.trim();
+        
         const isValid = nome && 
                nome.toUpperCase() !== 'NOME VINO' && 
+               nome.toUpperCase() !== 'NOME' &&
                nome.toUpperCase() !== tipo.toUpperCase() &&
                nome.length > 0;
-        
-        if (!isValid && nome) {
-          console.log(`    ❌ Scartata riga con nome: "${nome}" (motivo: ${!nome ? 'vuoto' : nome.toUpperCase() === 'NOME VINO' ? 'header' : 'categoria'})`);
-        }
         
         return isValid;
       })
       .map(row => {
-        const nomeVino = row['NOME VINO']?.trim();
-        const anno = row['ANNO']?.trim();
-        const produttore = row['PRODUTTORE']?.trim();
-        const provenienza = row['PROVENIENZA']?.trim();
-        const fornitore = row['FORNITORE']?.trim();
-        const costo = parseEuro(row['COSTO '] ?? row['COSTO']);
-        const vendita = parseEuro(row['VENDITA']);
-        const margine = parseEuro(row['MARGINE']);
+        // Mappatura flessibile delle colonne
+        const nomeVino = row['NOME VINO']?.trim() || 
+                        row['NOME']?.trim() || 
+                        row['Nome Vino']?.trim() || 
+                        row['Nome']?.trim() ||
+                        row['nome_vino']?.trim() ||
+                        row['nome']?.trim();
+        
+        const anno = row['ANNO']?.trim() || 
+                    row['Anno']?.trim() || 
+                    row['anno']?.trim();
+        
+        const produttore = row['PRODUTTORE']?.trim() || 
+                          row['Produttore']?.trim() || 
+                          row['produttore']?.trim();
+        
+        const provenienza = row['PROVENIENZA']?.trim() || 
+                           row['Provenienza']?.trim() || 
+                           row['provenienza']?.trim();
+        
+        const fornitore = row['FORNITORE']?.trim() || 
+                         row['Fornitore']?.trim() || 
+                         row['fornitore']?.trim();
+        
+        const costo = parseEuro(row['COSTO '] ?? row['COSTO'] ?? row['Costo'] ?? row['costo']);
+        const vendita = parseEuro(row['VENDITA'] ?? row['Vendita'] ?? row['vendita']);
+        const margine = parseEuro(row['MARGINE'] ?? row['Margine'] ?? row['margine']);
 
         return {
           nome_vino: nomeVino || null,
