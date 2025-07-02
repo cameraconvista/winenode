@@ -283,13 +283,39 @@ export default function HomePage() {
                   <div className="flex items-center justify-between gap-3 overflow-x-hidden">
                     <div className="flex-1 cursor-pointer overflow-x-hidden" onClick={() => handleWineClick(wine)}>
                       <div className="flex flex-col gap-1 overflow-x-hidden">
-                        <div className="text-sm sm:text-base font-semibold truncate overflow-x-hidden" style={{ color: '#fffbe5' }}>
+                        {/* Prima riga: Nome vino tutto maiuscolo */}
+                        <div className="text-sm sm:text-base font-semibold truncate overflow-x-hidden uppercase" style={{ color: '#fffbe5' }}>
                           {wine.name}
                         </div>
+                        {/* Seconda riga: Anno · Produttore · (Fornitore) */}
                         <div className="text-xs text-gray-400 truncate overflow-x-hidden">
-                          {wine.description && wine.vintage 
-                            ? `${wine.description} · ${wine.vintage}` 
-                            : wine.description || wine.vintage || ''}
+                          {wine.vintage ? (
+                            <>
+                              <span className="text-cream font-medium">{wine.vintage}</span>
+                              <span className="mx-2">·</span>
+                              {wine.description && (
+                                <>
+                                  <span className="text-cream font-medium">{wine.description}</span>
+                                  <span className="mx-2">·</span>
+                                </>
+                              )}
+                              <span className="text-blue-300 font-medium">
+                                ({wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'})
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              {wine.description && (
+                                <>
+                                  <span className="text-cream font-medium">{wine.description}</span>
+                                  <span className="mx-2">·</span>
+                                </>
+                              )}
+                              <span className="text-blue-300 font-medium">
+                                ({wine.supplier && wine.supplier.trim() ? wine.supplier : 'FORNITORE N/D'})
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
