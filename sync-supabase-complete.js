@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import fetch from 'node-fetch';
 import Papa from 'papaparse';
