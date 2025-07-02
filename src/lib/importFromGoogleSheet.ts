@@ -135,12 +135,26 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
     const sheetsToImport = Object.keys(CATEGORY_MAPPINGS);
     console.log('🔍 Fogli da cercare:', sheetsToImport);
     
-    // Debug: verifica se il foglio "BOLLICINE ITALIANE" esiste o simile
-    const bollicineSheets = availableSheets.filter(name => 
-      name.toUpperCase().includes('BOLLICINE') || 
-      name.toUpperCase().includes('BOLLICINI')
-    );
-    console.log('🍾 Fogli che contengono "BOLLICINE":', bollicineSheets);
+    // Debug: verifica fogli disponibili per categorie specifiche
+    const categoriesFound = {};
+    for (const categoryKey of sheetsToImport) {
+      const matchingSheets = availableSheets.filter(sheetName => {
+        const upperSheet = sheetName.toUpperCase();
+        const upperCategory = categoryKey.toUpperCase();
+        
+        // Cerca corrispondenze esatte o parziali
+        return upperSheet === upperCategory || 
+               upperSheet.includes(upperCategory.split(' ')[0]) ||
+               (categoryKey === 'BOLLICINE ITALIANE' && (upperSheet.includes('BOLLICINE') || upperSheet.includes('BOLLICINI')));
+      });
+      
+      if (matchingSheets.length > 0) {
+        categoriesFound[categoryKey] = matchingSheets[0]; // Prende il primo match
+        console.log(`🔄 Categoria "${categoryKey}" → Foglio "${matchingSheets[0]}"`);
+      }
+    }
+    
+    console.log('📋 Mapping categorie trovate:', categoriesFound);
     
     let totalWines = 0;
     let totalCategories = 0;
@@ -148,21 +162,7 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
 
     // Importa ogni categoria disponibile
     for (const sheetName of sheetsToImport) {
-      let actualSheetTitle = doc.sheetsByIndex.find(sheet => 
-        sheet.title.toUpperCase() === sheetName
-      )?.title;
-
-      // Se non trova il foglio esatto, cerca nomi simili
-      if (!actualSheetTitle && sheetName === 'BOLLICINE ITALIANE') {
-        actualSheetTitle = doc.sheetsByIndex.find(sheet => 
-          sheet.title.toUpperCase().includes('BOLLICINE') ||
-          sheet.title.toUpperCase().includes('BOLLICINI')
-        )?.title;
-        
-        if (actualSheetTitle) {
-          console.log(`🔄 Trovato foglio simile: "${actualSheetTitle}" per categoria BOLLICINE ITALIANE`);
-        }
-      }
+      let actualSheetTitle = categoriesFound[sheetName];
 
       if (actualSheetTitle) {
         console.log(`🔄 Importando categoria: ${actualSheetTitle} → ${CATEGORY_MAPPINGS[sheetName]}`);
@@ -183,8 +183,8 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
         // Pausa tra le importazioni per evitare rate limiting
         await new Promise(resolve => setTimeout(resolve, 500));
       } else {
-        console.log(`❌ Foglio non trovato: ${sheetName}`);
-        allErrors.push(`Foglio "${sheetName}" non trovato nel Google Sheet`);
+        console.log(`❌ Foglio non trovato per categoria: ${sheetName}`);
+        allErrors.push(`Foglio per categoria "${sheetName}" non trovato nel Google Sheet`);
       }
     }
 

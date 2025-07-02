@@ -50,12 +50,18 @@ export async function getSheetData(doc: GoogleSpreadsheet, sheetTitle: string) {
       return isNaN(parsed) ? null : parsed;
     };
 
+    // Helper per valori di testo che possono essere vuoti
+    const getTextValue = (value: string | undefined | null): string | null => {
+      if (!value || value.trim() === '') return null;
+      return value.trim();
+    };
+
     return {
       nome_vino: row.get('NOME VINO') || row.get('NAME') || '',
-      anno: row.get('ANNO') || row.get('YEAR') || null,
-      produttore: row.get('PRODUTTORE') || row.get('PRODUCER') || null,
-      provenienza: row.get('PROVENIENZA') || row.get('ORIGIN') || null,
-      fornitore: row.get('FORNITORE') || row.get('SUPPLIER') || null,
+      anno: getTextValue(row.get('ANNO')) || getTextValue(row.get('YEAR')),
+      produttore: getTextValue(row.get('PRODUTTORE')) || getTextValue(row.get('PRODUCER')),
+      provenienza: getTextValue(row.get('PROVENIENZA')) || getTextValue(row.get('ORIGIN')),
+      fornitore: getTextValue(row.get('FORNITORE')) || getTextValue(row.get('SUPPLIER')),
       costo: parseNumericValue(row.get('COSTO')),
       vendita: parseNumericValue(row.get('VENDITA')),
       margine: parseNumericValue(row.get('MARGINE')),
