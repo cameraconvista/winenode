@@ -44,16 +44,29 @@ export default function ArchiviPage() {
     return (w <= 1024 && w > 480 && h < w) ? 12 : 14;
   });
 
-  // Adatta font size su resize
+  // Adatta font size su resize e gestisce orientamento mobile
   useEffect(() => {
     const onResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const newSize = (w <= 1024 && w > 480 && h < w) ? 12 : 14;
       setFontSize(prev => prev !== newSize ? newSize : prev);
+      
+      // Forza refresh del layout su mobile per orientamento
+      if (w <= 768) {
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 100);
+      }
     };
+    
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
   }, []);
 
   const normalizeType = (type?: string | null) => {
@@ -231,7 +244,21 @@ export default function ArchiviPage() {
   const rowHeight = fontSize * 2.5;
 
   return (
-    <div className="h-[95vh] flex flex-col" style={{ background: "linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202)", minHeight: "100vh", color: "white" }}>
+    <div className="h-[95vh] flex flex-col" style={{ 
+      background: "linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202)", 
+      minHeight: "100vh", 
+      color: "white",
+      // Forza orientamento landscape su mobile
+      ...(window.innerWidth <= 768 && {
+        transform: window.innerHeight > window.innerWidth ? 'rotate(90deg)' : 'none',
+        transformOrigin: 'center center',
+        width: window.innerHeight > window.innerWidth ? '100vh' : '100vw',
+        height: window.innerHeight > window.innerWidth ? '100vw' : '100vh',
+        position: window.innerHeight > window.innerWidth ? 'fixed' : 'relative',
+        top: window.innerHeight > window.innerWidth ? '0' : 'auto',
+        left: window.innerHeight > window.innerWidth ? '0' : 'auto'
+      })
+    }}>
       <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0 sticky top-0 z-10">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
