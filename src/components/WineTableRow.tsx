@@ -123,7 +123,7 @@ export default function WineTableRow({
         className="border border-amber-900 p-0"
         style={{ backgroundColor: bgColor, width: columnWidths["giacenza"] }}
       >
-        <div className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 select-none flex items-center justify-center"
+        <div className="w-full px-2 py-2 bg-transparent border-none outline-none select-none flex items-center justify-center relative"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
           {row.giacenza <= 2 && row.giacenza > 0 && (
@@ -131,7 +131,9 @@ export default function WineTableRow({
               <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2v-2zm0-6h2v4h-2v-4z"/>
             </svg>
           )}
-          <span className="text-center w-full">{row.giacenza}</span>
+          <span className={`text-center w-full ${row.giacenza <= 2 ? 'text-red-600 font-bold' : 'text-gray-600'}`}>
+            {row.giacenza}
+          </span>
         </div>
       </td>
     </tr>
