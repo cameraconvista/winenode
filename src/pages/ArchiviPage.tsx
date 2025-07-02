@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import useWines from "../hooks/useWines";
-import { useColumnResize } from "../hooks/useColumnResize";
+
 import ImportaVini from "../components/ImportaVini";
 import CategoryTabs from "../components/CategoryTabs";
 import SearchAndFilters from "../components/SearchAndFilters";
@@ -23,7 +23,16 @@ interface WineRow {
 export default function ArchiviPage() {
   const navigate = useNavigate();
   const { wines: existingWines, refreshWines, updateWineInventory } = useWines();
-  const { columnWidths, handleMouseDown } = useColumnResize();
+  // Larghezze colonne ottimizzate per il contenuto
+  const columnWidths = {
+    "#": "4%",
+    nomeVino: "32%", 
+    anno: "7%",
+    produttore: "22%",
+    provenienza: "18%", 
+    fornitore: "15%",
+    giacenza: "8%"
+  };
 
   const [wineRows, setWineRows] = useState<WineRow[]>([]);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -252,7 +261,7 @@ export default function ArchiviPage() {
         <div className="rounded-lg shadow-2xl border border-amber-900 overflow-hidden flex-1" style={{ backgroundColor: "#8B4513", minHeight: "300px" }}>
           <div className="h-full overflow-x-hidden overflow-y-auto" style={{ maxHeight: "calc(100vh - 280px)" }}>
             <table className="w-full table-fixed" style={{ borderCollapse: "collapse" }}>
-              <WineTableHeader columnWidths={columnWidths} fontSize={fontSize} lineHeight={lineHeight} rowHeight={rowHeight} onMouseDown={handleMouseDown} />
+              <WineTableHeader columnWidths={columnWidths} fontSize={fontSize} lineHeight={lineHeight} rowHeight={rowHeight} />
               <tbody>
                 {filteredRows.length === 0 ? (
                   <tr>
