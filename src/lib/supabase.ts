@@ -40,32 +40,57 @@ export class AuthManager {
     if (!supabase) return
 
     try {
+      // 🔄 Recupera la sessione corrente con gestione migliorata
       const { data: { session }, error } = await supabase.auth.getSession()
 
       if (error) {
-        console.warn('Errore nel recupero sessione:', error.message)
-        await supabase.auth.refreshSession()
-        const { data: { session: refreshedSession } } = await supabase.auth.getSession()
-        this.currentSession = refreshedSession
-        this.currentUser = refreshedSession?.user || null
+        console.warn('⚠️ Errore nel recupero sessione:', error.message)
+        // Tenta il refresh automatico
+        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+        if (refreshError) {
+          console.warn('⚠️ Refresh fallito:', refreshError.message)
+          this.currentSession = null
+          this.currentUser = null
+        } else {
+          console.log('✅ Sessione recuperata tramite refresh')
+          this.currentSession = refreshedSession
+          this.currentUser = refreshedSession?.user || null
+        }
       } else {
         this.currentSession = session
         this.currentUser = session?.user || null
+        if (session) {
+          console.log('✅ Sessione esistente trovata:', session.user?.email)
+        }
       }
 
+      // 📡 Listener migliorato per cambio stato autenticazione
       let authTimeout: NodeJS.Timeout | null = null
       supabase.auth.onAuthStateChange((event, session) => {
+        console.log('🔄 Auth state change:', event, session ? 'con sessione' : 'senza sessione')
+        
         if (authTimeout) clearTimeout(authTimeout)
         authTimeout = setTimeout(() => {
           this.currentSession = session
           this.currentUser = session?.user || null
+          
+          // 💾 Verifica persistenza in localStorage
+          if (session && event === 'SIGNED_IN') {
+            console.log('💾 Sessione salvata in localStorage')
+          } else if (event === 'SIGNED_OUT') {
+            console.log('🗑️ Sessione rimossa da localStorage')
+          }
+          
           this.notifyListeners()
         }, 100)
       })
 
       this.notifyListeners()
     } catch (error) {
-      console.error('Errore inizializzazione auth:', error)
+      console.error('❌ Errore inizializzazione auth:', error)
+      this.currentSession = null
+      this.currentUser = null
+      this.notifyListeners()
     }
   }
 
@@ -90,19 +115,50 @@ export class AuthManager {
 
     try {
       const { data: { session }, error } = await supabase.auth.getSession()
+      
       if (error || !session) {
-        console.warn('Sessione non valida, tentativo refresh...')
-        const { error: refreshError } = await supabase.auth.refreshSession()
-        if (refreshError) return false
+        console.warn('⚠️ Sessione non valida, tentativo refresh automatico...')
+        
+        // 🔄 Tenta refresh della sessione
+        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+        
+        if (refreshError) {
+          console.warn('❌ Refresh sessione fallito:', refreshError.message)
+          this.currentSession = null
+          this.currentUser = null
+          return false
+        }
 
-        const { data: { session: newSession } } = await supabase.auth.getSession()
-        this.currentSession = newSession
-        this.currentUser = newSession?.user || null
-        return !!newSession
+        if (refreshedSession) {
+          console.log('✅ Sessione rinnovata con successo')
+          this.currentSession = refreshedSession
+          this.currentUser = refreshedSession.user || null
+          this.notifyListeners()
+          return true
+        }
+        
+        return false
       }
+
+      // 🕒 Verifica scadenza token
+      const now = Math.floor(Date.now() / 1000)
+      const expiresAt = session.expires_at || 0
+      
+      if (expiresAt - now < 300) { // Se scade tra meno di 5 minuti
+        console.log('⏰ Token in scadenza, refresh preventivo...')
+        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+        
+        if (!refreshError && refreshedSession) {
+          console.log('✅ Token rinnovato preventivamente')
+          this.currentSession = refreshedSession
+          this.currentUser = refreshedSession.user || null
+          this.notifyListeners()
+        }
+      }
+
       return true
     } catch (error) {
-      console.error('Errore validazione sessione:', error)
+      console.error('❌ Errore validazione sessione:', error)
       return false
     }
   }

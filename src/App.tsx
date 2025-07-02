@@ -45,25 +45,39 @@ function App() {
     console.log('🌐 Current URL:', window.location.href)
 
     if (!isSupabaseAvailable) {
+      console.log('⚠️ Supabase non disponibile, modalità fallback')
       setFallbackMode(true)
       setLoading(false)
       return
     }
 
+    // 🎯 Gestione migliorata del cambio stato autenticazione
     const unsubscribe = authManager.onAuthStateChange((user) => {
       console.log('👤 Auth state changed:', user ? 'Logged in' : 'Logged out')
+      
+      if (user) {
+        console.log('👤 USER SESSION:', {
+          email: user.email,
+          id: user.id,
+          last_sign_in: user.last_sign_in_at
+        })
+        console.log('🆔 USER ID:', user.id)
+      }
+      
       setIsAuthenticated(!!user)
       setSession(
         user
           ? {
-              access_token: user.token,
+              access_token: user.token || '',
               token_type: 'Bearer',
               expires_in: 3600,
-              refresh_token: user.refreshToken,
+              refresh_token: user.refreshToken || '',
               user: user
             } as Session
           : null
       )
+      
+      // 🚀 Rimuovi loading solo dopo aver processato lo stato dell'utente
       setIsLoading(false)
     })
 
