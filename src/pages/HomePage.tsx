@@ -91,7 +91,7 @@ export default function HomePage() {
         ignorePunctuation: true 
       });
     }
-    // ✅ Per le singole tipologie, mantieni ordine originale del database
+    // ✅ Per le singole tipologie, mantieni ordine originale del database/Google Sheet
     return 0;
   });
 
@@ -215,7 +215,7 @@ export default function HomePage() {
                   <Database className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
                 <button 
-                  onClick={()={() => setShowCarrelloModal(true)} 
+                  onClick={() => setShowCarrelloModal(true)} 
                   title="Nuovo Ordine" 
                   className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
