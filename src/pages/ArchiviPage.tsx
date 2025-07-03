@@ -145,10 +145,10 @@ export default function ArchiviPage() {
         fornitore: wine.supplier || "",
         tipologia: activeTab,
         ordine: idx
-      }))
-      .sort((a, b) => a.nomeVino.localeCompare(b.nomeVino, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
+      }));
+      // ✅ RIMOSSO ordinamento alfabetico - mantiene ordine originale Google Sheet
 
-    console.log(`📋 Vini filtrati per ${activeTab} (A-Z):`, filtered.length);
+    console.log(`📋 Vini filtrati per ${activeTab} (ordine originale):`, filtered.length);
     setWineRows(filtered);
   }, [existingWines, activeTab]);
 
