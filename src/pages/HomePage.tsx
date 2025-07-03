@@ -82,7 +82,14 @@ export default function HomePage() {
 
     return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
   })
-  .sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
+  .sort((a, b) => {
+    // ✅ Ordinamento alfabetico A-Z sempre attivo per tutte le visualizzazioni
+    return a.name.localeCompare(b.name, 'it', { 
+      sensitivity: 'base',
+      numeric: true,
+      ignorePunctuation: true 
+    });
+  });
 
   const handleInventoryChange = async (id: string, value: number) => {
     const adjusted = Math.max(0, value);
