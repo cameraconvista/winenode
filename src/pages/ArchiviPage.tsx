@@ -148,7 +148,7 @@ export default function ArchiviPage() {
       }));
       // ✅ RIMOSSO ordinamento alfabetico - mantiene ordine originale Google Sheet
 
-    console.log(`📋 Vini filtrati per ${activeTab} (ordine originale):`, filtered.length);
+    console.log(`📋 Vini filtrati per ${activeTab} (ordine originale Google Sheet):`, filtered.length);
     setWineRows(filtered);
   }, [existingWines, activeTab]);
 

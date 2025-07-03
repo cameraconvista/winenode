@@ -91,7 +91,7 @@ export default function HomePage() {
         ignorePunctuation: true 
       });
     }
-    // ✅ Per le singole tipologie, mantieni ordine originale del database/Google Sheet
+    // ✅ Per le singole tipologie, mantieni ordine originale del database
     return 0;
   });
 
