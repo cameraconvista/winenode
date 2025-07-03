@@ -118,7 +118,14 @@ export default function ArchiviPage() {
           tipologia: normalizeType(wine.type),
           ordine: idx
         }))
-        .sort((a, b) => a.nomeVino.localeCompare(b.nomeVino, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
+        .sort((a, b) => {
+          // ✅ Ordinamento alfabetico A-Z ottimizzato per TUTTI I VINI
+          return a.nomeVino.localeCompare(b.nomeVino, 'it', { 
+            sensitivity: 'base',
+            numeric: true,
+            ignorePunctuation: true 
+          });
+        });
 
       console.log('📋 Vini filtrati per TUTTI I VINI (A-Z):', filtered.length);
       setWineRows(filtered);
