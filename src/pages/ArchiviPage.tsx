@@ -119,7 +119,7 @@ export default function ArchiviPage() {
           ordine: idx
         }))
         .sort((a, b) => {
-          // ✅ Ordinamento alfabetico A-Z ottimizzato per TUTTI I VINI
+          // ✅ Ordinamento alfabetico A-Z solo per TUTTI I VINI
           return a.nomeVino.localeCompare(b.nomeVino, 'it', { 
             sensitivity: 'base',
             numeric: true,
@@ -132,7 +132,7 @@ export default function ArchiviPage() {
       return;
     }
 
-    // Tab specifica
+    // Tab specifica - ORDINE ORIGINALE Google Sheet
     const filtered = existingWines
       .filter(w => normalizeType(w.type) === activeTab)
       .map((wine, idx) => ({
@@ -145,10 +145,10 @@ export default function ArchiviPage() {
         fornitore: wine.supplier || "",
         tipologia: activeTab,
         ordine: idx
-      }))
-      .sort((a, b) => a.nomeVino.localeCompare(b.nomeVino, 'it', { sensitivity: 'base' })); // ✅ Ordine alfabetico A-Z
+      }));
+      // ✅ Rimosso .sort() - mantiene ordine originale Google Sheet
 
-    console.log(`📋 Vini filtrati per ${activeTab} (A-Z):`, filtered.length);
+    console.log(`📋 Vini filtrati per ${activeTab} (ordine originale):`, filtered.length);
     setWineRows(filtered);
   }, [existingWines, activeTab]);
 

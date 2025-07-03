@@ -83,12 +83,16 @@ export default function HomePage() {
     return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
   })
   .sort((a, b) => {
-    // ✅ Ordinamento alfabetico A-Z sempre attivo per tutte le visualizzazioni
-    return a.name.localeCompare(b.name, 'it', { 
-      sensitivity: 'base',
-      numeric: true,
-      ignorePunctuation: true 
-    });
+    // ✅ Ordinamento alfabetico A-Z SOLO per "TUTTI I VINI"
+    if (activeTab === "TUTTI I VINI") {
+      return a.name.localeCompare(b.name, 'it', { 
+        sensitivity: 'base',
+        numeric: true,
+        ignorePunctuation: true 
+      });
+    }
+    // ✅ Per le singole tipologie, mantieni ordine originale (nessun sort)
+    return 0;
   });
 
   const handleInventoryChange = async (id: string, value: number) => {
