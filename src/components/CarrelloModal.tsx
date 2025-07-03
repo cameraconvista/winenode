@@ -74,14 +74,6 @@ export default function CarrelloModal({ open, onClose, onFornitoreSelezionato }:
               </div>
             </button>
           </div>
-
-          {/* Info */}
-          <div className="mt-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
-            <p className="text-xs text-gray-400">
-              💡 <strong>Nuovo Ordine:</strong> Seleziona un fornitore e crea un nuovo ordine<br/>
-              📋 <strong>Gestisci Ordini:</strong> Visualizza ordini sospesi, inviati, ricevuti e storico
-            </p>
-          </div>
         </div>
       </div>
 
