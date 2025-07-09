@@ -309,24 +309,14 @@ export default function ArchiviPage() {
           
           {/* Box Statistiche - Al centro */}
           <div className="col-span-4 h-full">
-            <div className="bg-black/20 border border-amber-500/30 rounded-lg h-full flex items-center justify-center">
-              <div className="grid grid-cols-3 gap-3 w-full px-2">
-                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center items-center">
-                  <div className="text-lg font-bold text-amber-400">{wineRows.length}</div>
-                  <div className="text-xs text-gray-300 text-center">Vini Totali</div>
-                </div>
-                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center items-center">
-                  <div className="text-lg font-bold text-red-400">
-                    {wineRows.filter(wine => wine.giacenza <= 5).length}
-                  </div>
-                  <div className="text-xs text-gray-300 text-center">In Esaurimento</div>
-                </div>
-                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center items-center">
-                  <div className="text-lg font-bold text-green-400">
-                    {wineRows.filter(wine => wine.giacenza > 5).length}
-                  </div>
-                  <div className="text-xs text-gray-300 text-center">Disponibili</div>
-                </div>
+            <div className="bg-black/20 border border-amber-500/30 rounded-lg h-full flex items-center justify-center px-4">
+              <div className="text-white text-sm font-medium whitespace-nowrap">
+                <span>Vini totali: </span>
+                <span className="text-amber-400 font-bold">{wineRows.length}</span>
+                <span className="mx-4">In Esaurimento: </span>
+                <span className="text-red-400 font-bold">{wineRows.filter(wine => wine.giacenza <= 5).length}</span>
+                <span className="mx-4">Disponibili: </span>
+                <span className="text-green-400 font-bold">{wineRows.filter(wine => wine.giacenza > 5).length}</span>
               </div>
             </div>
           </div>
