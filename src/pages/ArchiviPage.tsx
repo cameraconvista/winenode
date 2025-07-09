@@ -307,17 +307,15 @@ export default function ArchiviPage() {
             />
           </div>
           
-          {/* Box Statistiche - Al centro */}
-          <div className="col-span-4 h-full">
-            <div className="bg-black/20 border border-amber-500/30 rounded-lg h-full flex items-center justify-center px-4">
-              <div className="text-white text-sm font-medium whitespace-nowrap">
-                <span>Vini totali: </span>
-                <span className="text-amber-400 font-bold">{wineRows.length}</span>
-                <span className="mx-4">In Esaurimento: </span>
-                <span className="text-red-400 font-bold">{wineRows.filter(wine => wine.giacenza <= 5).length}</span>
-                <span className="mx-4">Disponibili: </span>
-                <span className="text-green-400 font-bold">{wineRows.filter(wine => wine.giacenza > 5).length}</span>
-              </div>
+          {/* Statistiche - Al centro */}
+          <div className="col-span-4 h-full flex items-center justify-center">
+            <div className="text-white text-sm font-medium whitespace-nowrap">
+              <span>Vini totali: </span>
+              <span className="text-amber-400 font-bold">{wineRows.length}</span>
+              <span className="mx-4">In Esaurimento: </span>
+              <span className="text-red-400 font-bold">{wineRows.filter(wine => wine.giacenza <= 5).length}</span>
+              <span className="mx-4">Disponibili: </span>
+              <span className="text-green-400 font-bold">{wineRows.filter(wine => wine.giacenza > 5).length}</span>
             </div>
           </div>
 
