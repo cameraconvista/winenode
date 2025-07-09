@@ -21,9 +21,9 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
   const [fallbackMode, setFallbackMode] = useState(false)
   const [showSaldo, setShowSaldo] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   // Global saldo command listener
   useEffect(() => {

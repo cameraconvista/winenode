@@ -1,22 +1,62 @@
 import { createClient, type User, type Session } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// ✅ Verifica che le variabili d'ambiente siano presenti
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-export const supabase = supabaseUrl && supabaseKey
-  ? createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        persistSession: true,
-        storage: localStorage,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce'
-      },
-      db: { schema: 'public' }
-    })
-  : null
+console.log('🔍 Verifica variabili Supabase:')
+console.log('URL presente:', !!SUPABASE_URL)
+console.log('KEY presente:', !!SUPABASE_ANON_KEY)
 
-export const isSupabaseAvailable = !!supabase
+let supabase: any = null
+let isSupabaseAvailable = false
+
+if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+  try {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    isSupabaseAvailable = true
+    console.log('✅ Supabase client creato con successo')
+  } catch (error) {
+    console.error('❌ Errore creazione client Supabase:', error)
+    isSupabaseAvailable = false
+  }
+} else {
+  console.warn('⚠️ Variabili Supabase mancanti - modalità fallback')
+  isSupabaseAvailable = false
+}
+
+// Fallback mock per sviluppo locale
+const mockSupabase = {
+  auth: {
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    signInWithPassword: () => Promise.resolve({ data: { session: null }, error: null }),
+    signOut: () => Promise.resolve({ error: null }),
+    onAuthStateChange: () => () => {}
+  },
+  from: () => ({
+    select: () => ({ data: [], error: null }),
+    insert: () => ({ data: null, error: null }),
+    update: () => ({ data: null, error: null }),
+    delete: () => ({ data: null, error: null })
+  })
+}
+
+export { supabase: supabase || mockSupabase, isSupabaseAvailable }
+
+// Auth Manager semplificato
+export const authManager = {
+  onAuthStateChange: (callback: (user: any) => void) => {
+    if (isSupabaseAvailable && supabase) {
+      return supabase.auth.onAuthStateChange((event: string, session: any) => {
+        callback(session?.user || null)
+      }).data.subscription.unsubscribe
+    } else {
+      // Modalità fallback - simula utente loggato
+      setTimeout(() => callback({ id: 'local-user', email: 'local@test.com' }), 100)
+      return () => {}
+    }
+  }
+}
 
 export type AuthUser = User | null
 export type AuthSession = Session | null
@@ -68,19 +108,19 @@ export class AuthManager {
       let authTimeout: NodeJS.Timeout | null = null
       supabase.auth.onAuthStateChange((event, session) => {
         console.log('🔄 Auth state change:', event, session ? 'con sessione' : 'senza sessione')
-        
+
         if (authTimeout) clearTimeout(authTimeout)
         authTimeout = setTimeout(() => {
           this.currentSession = session
           this.currentUser = session?.user || null
-          
+
           // 💾 Verifica persistenza in localStorage
           if (session && event === 'SIGNED_IN') {
             console.log('💾 Sessione salvata in localStorage')
           } else if (event === 'SIGNED_OUT') {
             console.log('🗑️ Sessione rimossa da localStorage')
           }
-          
+
           this.notifyListeners()
         }, 100)
       })
@@ -115,13 +155,13 @@ export class AuthManager {
 
     try {
       const { data: { session }, error } = await supabase.auth.getSession()
-      
+
       if (error || !session) {
         console.warn('⚠️ Sessione non valida, tentativo refresh automatico...')
-        
+
         // 🔄 Tenta refresh della sessione
         const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
-        
+
         if (refreshError) {
           console.warn('❌ Refresh sessione fallito:', refreshError.message)
           this.currentSession = null
@@ -136,18 +176,18 @@ export class AuthManager {
           this.notifyListeners()
           return true
         }
-        
+
         return false
       }
 
       // 🕒 Verifica scadenza token
       const now = Math.floor(Date.now() / 1000)
       const expiresAt = session.expires_at || 0
-      
+
       if (expiresAt - now < 300) { // Se scade tra meno di 5 minuti
         console.log('⏰ Token in scadenza, refresh preventivo...')
         const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
-        
+
         if (!refreshError && refreshedSession) {
           console.log('✅ Token rinnovato preventivamente')
           this.currentSession = refreshedSession
@@ -199,6 +239,6 @@ export class AuthManager {
   }
 }
 
-export const authManager = AuthManager.getInstance()
+export const authManager2 = AuthManager.getInstance()
 
 // Client secondario rimosso per evitare istanze multiple
