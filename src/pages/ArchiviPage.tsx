@@ -297,8 +297,8 @@ export default function ArchiviPage() {
         
 
         <div className="grid grid-cols-12 gap-3 mb-3" style={{ height: '100px' }}>
-          {/* Box Ricerca - Lato sinistro */}
-          <div className="col-span-5 h-full">
+          {/* Box Ricerca - Lato sinistro espanso */}
+          <div className="col-span-8 h-full">
             <SearchAndFilters
               filters={filters}
               fontSize={fontSize}
@@ -306,23 +306,9 @@ export default function ArchiviPage() {
               onFontSizeChange={setFontSize}
             />
           </div>
-          
-          {/* Box Statistiche - Al centro */}
-          <div className="col-span-4 h-full">
-            <div className="bg-black/20 border border-amber-500/30 rounded-lg h-full flex items-center justify-center px-4">
-              <div className="text-white text-sm font-medium whitespace-nowrap">
-                <span>Vini totali: </span>
-                <span className="text-amber-400 font-bold">{wineRows.length}</span>
-                <span className="mx-4">In Esaurimento: </span>
-                <span className="text-red-400 font-bold">{wineRows.filter(wine => wine.giacenza <= 5).length}</span>
-                <span className="mx-4">Disponibili: </span>
-                <span className="text-green-400 font-bold">{wineRows.filter(wine => wine.giacenza > 5).length}</span>
-              </div>
-            </div>
-          </div>
 
           {/* Box Fornitori - Lato destro */}
-          <div className="col-span-3 h-full">
+          <div className="col-span-4 h-full">
             <FornitoreFilter
               fornitore={filters.fornitore}
               fontSize={fontSize}
