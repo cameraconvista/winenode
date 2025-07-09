@@ -368,9 +368,9 @@ export default function ArchiviPage() {
             <div className="text-white text-sm font-medium whitespace-nowrap ml-auto">
               <span>Vini totali: </span>
               <span className="text-amber-400 font-bold">{wineRows.length}</span>
-              <span className="mx-4">In Esaurimento: </span>
+              <span className="mx-3">In Esaurimento: </span>
               <span className="text-red-400 font-bold">{wineRows.filter(wine => wine.giacenza <= 5).length}</span>
-              <span className="mx-4">Disponibili: </span>
+              <span className="mx-3">Disponibili: </span>
               <span className="text-green-400 font-bold">{wineRows.filter(wine => wine.giacenza > 5).length}</span>
             </div>
           </div>
