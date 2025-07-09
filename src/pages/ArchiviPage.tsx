@@ -296,36 +296,83 @@ export default function ArchiviPage() {
 
         
 
-        <div className="grid grid-cols-12 gap-3 mb-3" style={{ height: '100px' }}>
-          {/* Box Ricerca - Lato sinistro */}
-          <div className="col-span-5 h-full">
-            <SearchAndFilters
-              filters={filters}
-              fontSize={fontSize}
-              onFiltersChange={setFilters}
-              onFontSizeChange={setFontSize}
-            />
-          </div>
-          
-          {/* Statistiche - Al centro */}
-          <div className="col-span-4 h-full flex items-center justify-center">
+        <div className="bg-black/20 border border-red-900/30 rounded-lg backdrop-blur-sm p-3 mb-3">
+          <div className="flex items-center gap-4 w-full">
+            {/* 1. Cerca vini */}
+            <div className="flex-1 relative">
+              <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Cerca vino, produttore, regione..."
+                value={filters.search}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                style={{ fontSize: `${fontSize}px` }}
+              />
+            </div>
+
+            {/* 2. Filtro fornitori */}
+            <div className="flex-shrink-0">
+              <select
+                value={filters.fornitore}
+                onChange={(e) => setFilters({ ...filters, fornitore: e.target.value })}
+                className="px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                style={{ fontSize: `${fontSize}px` }}
+              >
+                <option value="">Tutti i fornitori</option>
+                <option value="BOLOGNA VINI">BOLOGNA VINI</option>
+                <option value="ALTRO">ALTRO</option>
+              </select>
+            </div>
+
+            {/* 3. Modifica dimensione testo */}
+            <div className="flex items-center gap-2 bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2">
+              <button
+                onClick={() => setFontSize(Math.max(10, fontSize - 1))}
+                className="text-white hover:text-amber-400 transition-colors"
+                title="Riduci dimensione testo"
+              >
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </button>
+              <span className="text-white text-sm min-w-[20px] text-center">
+                {fontSize}
+              </span>
+              <button
+                onClick={() => setFontSize(Math.min(20, fontSize + 1))}
+                className="text-white hover:text-amber-400 transition-colors"
+                title="Aumenta dimensione testo"
+              >
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </button>
+            </div>
+
+            {/* 4. Esporta excel */}
+            <button
+              className="flex items-center gap-2 px-3 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg transition-colors"
+              onClick={() => window.open("https://docs.google.com/spreadsheets/d/1slvYCYuQ78Yf9fsRL1yR5xkW2kshOcQVe8E2HsvGZ8Y/edit?usp=sharing", "_blank")}
+              title="Apri Google Sheet"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="text-sm">EXCEL</span>
+            </button>
+
+            {/* 5. Statistiche */}
             <div className="text-white text-sm font-medium whitespace-nowrap">
               <span>Vini totali: </span>
               <span className="text-amber-400 font-bold">{wineRows.length}</span>
-              <span className="mx-4">In Esaurimento: </span>
+              <span className="mx-2">In Esaurimento: </span>
               <span className="text-red-400 font-bold">{wineRows.filter(wine => wine.giacenza <= 5).length}</span>
-              <span className="mx-4">Disponibili: </span>
+              <span className="mx-2">Disponibili: </span>
               <span className="text-green-400 font-bold">{wineRows.filter(wine => wine.giacenza > 5).length}</span>
             </div>
-          </div>
-
-          {/* Box Fornitori - Lato destro */}
-          <div className="col-span-3 h-full">
-            <FornitoreFilter
-              fornitore={filters.fornitore}
-              fontSize={fontSize}
-              onFornitoreChange={(value) => setFilters({ ...filters, fornitore: value })}
-            />
           </div>
         </div>
 
