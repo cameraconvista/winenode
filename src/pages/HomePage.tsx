@@ -52,6 +52,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showOrdineModal, setShowOrdineModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredWines = wines
     .filter(wine => {
@@ -79,8 +80,15 @@ export default function HomePage() {
     const matchesType = !filters.wineType || normalizedType === filters.wineType;
     const matchesSupplier = !filters.supplier || wine.supplier === filters.supplier;
     const matchesAlerts = !filters.showAlertsOnly || wine.inventory <= wine.minStock;
+    
+    // Aggiunge il filtro di ricerca
+    const matchesSearch = !searchTerm || 
+      wine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (wine.description && wine.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (wine.supplier && wine.supplier.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (wine.vintage && wine.vintage.toString().includes(searchTerm));
 
-    return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
+    return matchesCategory && matchesType && matchesSupplier && matchesAlerts && matchesSearch;
   })
   .sort((a, b) => {
     // ✅ Ordinamento alfabetico A-Z SOLO per "TUTTI I VINI"
@@ -233,6 +241,32 @@ export default function HomePage() {
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full border border-gray-900 animate-pulse"></span>
                   )}
                 </button>
+              </div>
+
+              {/* Campo di ricerca centrale */}
+              <div className="flex-1 max-w-xs mx-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Cerca vini..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full px-3 py-1.5 pl-8 text-sm bg-black/20 border border-red-900/20 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 min-h-[36px]"
+                  />
+                  <svg className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cream"
+                    >
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Gruppo pulsanti a destra */}
