@@ -10,10 +10,10 @@ interface FornitoreFilterProps {
 
 export function FornitoreFilter({ fornitore, fontSize, onFornitoreChange }: FornitoreFilterProps) {
   return (
-    <div className="bg-black/20 border border-red-900/30 rounded-lg p-3 backdrop-blur-sm h-full">
-      <div className="flex flex-col gap-3 h-full justify-center">
+    <div className="bg-black/20 border border-red-900/30 rounded-lg backdrop-blur-sm h-full flex flex-col justify-center">
+      <div className="p-3">
         <div className="text-center">
-          <div className="text-sm text-gray-300 mb-2">Filtra per Fornitore</div>
+          <div className="text-sm text-gray-300 mb-3">Filtra per Fornitore</div>
           <select
             value={fornitore}
             onChange={(e) => onFornitoreChange(e.target.value)}
@@ -56,11 +56,10 @@ export default function SearchAndFilters({
   
 
   return (
-    <div className="bg-black/20 border border-red-900/30 rounded-lg p-3 backdrop-blur-sm h-full">
-      <div className="flex flex-col gap-3 h-full">
-        {/* Prima riga - Search e Fornitore */}
-        <div className="flex gap-3 items-center">
-          {/* Search Input */}
+    <div className="bg-black/20 border border-red-900/30 rounded-lg backdrop-blur-sm h-full flex flex-col">
+      <div className="flex-1 flex flex-col justify-center p-3">
+        {/* Search Input - Centrato */}
+        <div className="flex gap-3 items-center mb-3">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
@@ -74,18 +73,18 @@ export default function SearchAndFilters({
           </div>
         </div>
 
-        {/* Seconda riga - Font Size Controls e Excel Button */}
+        {/* Font Size Controls e Excel Button - Centrati */}
         <div className="flex gap-3 items-center justify-between">
           {/* Font Size Controls */}
-          <div className="flex items-center gap-2 bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-1">
             <button
               onClick={() => onFontSizeChange(Math.max(10, fontSize - 1))}
               className="text-white hover:text-amber-400 transition-colors"
               title="Riduci dimensione testo"
             >
-              <Zap className="h-4 w-4" />
+              <Zap className="h-3 w-3" />
             </button>
-            <span className="text-white text-sm min-w-[24px] text-center">
+            <span className="text-white text-sm min-w-[20px] text-center">
               {fontSize}
             </span>
             <button
@@ -93,38 +92,37 @@ export default function SearchAndFilters({
               className="text-white hover:text-amber-400 transition-colors"
               title="Aumenta dimensione testo"
             >
-              <Zap className="h-4 w-4" />
+              <Zap className="h-3 w-3" />
             </button>
           </div>
 
           {/* Excel Button */}
           <button
-            className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-1 bg-green-700 hover:bg-green-800 text-white rounded-lg transition-colors"
             onClick={() => window.open("https://docs.google.com/spreadsheets/d/1slvYCYuQ78Yf9fsRL1yR5xkW2kshOcQVe8E2HsvGZ8Y/edit?usp=sharing", "_blank")}
             title="Apri Google Sheet"
           >
-            <FileText className="h-4 w-4" />
-            EXCEL
+            <FileText className="h-3 w-3" />
+            <span className="text-sm">EXCEL</span>
           </button>
         </div>
       </div>
 
       {/* Active Filters Display */}
       {(filters.search || filters.fornitore || filters.tipologia) && (
-        <div className="mt-3 pt-3 border-t border-gray-600">
-          <div className="flex flex-wrap gap-2 text-sm">
-            <span className="text-gray-300">Filtri attivi:</span>
+        <div className="border-t border-gray-600 p-2">
+          <div className="flex flex-wrap gap-1 text-xs">
+            <span className="text-gray-300">Filtri:</span>
             {filters.search && (
-              <span className="bg-amber-600/20 text-amber-400 px-2 py-1 rounded">
-                Ricerca: {filters.search}
+              <span className="bg-amber-600/20 text-amber-400 px-1 py-0.5 rounded text-xs">
+                {filters.search}
               </span>
             )}
             {filters.fornitore && (
-              <span className="bg-blue-600/20 text-blue-400 px-2 py-1 rounded">
-                Fornitore: {filters.fornitore}
+              <span className="bg-blue-600/20 text-blue-400 px-1 py-0.5 rounded text-xs">
+                {filters.fornitore}
               </span>
             )}
-            
           </div>
         </div>
       )}

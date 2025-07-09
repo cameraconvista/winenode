@@ -296,9 +296,9 @@ export default function ArchiviPage() {
 
         
 
-        <div className="grid grid-cols-12 gap-4 mb-3">
+        <div className="grid grid-cols-12 gap-3 mb-3" style={{ height: '100px' }}>
           {/* Box Ricerca - Lato sinistro */}
-          <div className="col-span-5">
+          <div className="col-span-5 h-full">
             <SearchAndFilters
               filters={filters}
               fontSize={fontSize}
@@ -308,31 +308,31 @@ export default function ArchiviPage() {
           </div>
           
           {/* Box Statistiche - Al centro */}
-          <div className="col-span-4">
-            <div className="bg-black/20 border border-amber-500/30 rounded-lg p-4 h-full">
-              <div className="grid grid-cols-3 gap-2 text-center h-full">
-                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center">
+          <div className="col-span-4 h-full">
+            <div className="bg-black/20 border border-amber-500/30 rounded-lg h-full flex items-center justify-center">
+              <div className="grid grid-cols-3 gap-3 w-full px-2">
+                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center items-center">
                   <div className="text-lg font-bold text-amber-400">{wineRows.length}</div>
-                  <div className="text-xs text-gray-300">Vini Totali</div>
+                  <div className="text-xs text-gray-300 text-center">Vini Totali</div>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center">
+                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center items-center">
                   <div className="text-lg font-bold text-red-400">
                     {wineRows.filter(wine => wine.giacenza <= 5).length}
                   </div>
-                  <div className="text-xs text-gray-300">In Esaurimento</div>
+                  <div className="text-xs text-gray-300 text-center">In Esaurimento</div>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center">
+                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center items-center">
                   <div className="text-lg font-bold text-green-400">
                     {wineRows.filter(wine => wine.giacenza > 5).length}
                   </div>
-                  <div className="text-xs text-gray-300">Disponibili</div>
+                  <div className="text-xs text-gray-300 text-center">Disponibili</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Box Fornitori - Lato destro */}
-          <div className="col-span-3">
+          <div className="col-span-3 h-full">
             <FornitoreFilter
               fornitore={filters.fornitore}
               fontSize={fontSize}
