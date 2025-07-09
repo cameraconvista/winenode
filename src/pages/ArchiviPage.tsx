@@ -5,7 +5,7 @@ import useWines from "../hooks/useWines";
 
 import ImportaVini from "../components/ImportaVini";
 import CategoryTabs from "../components/CategoryTabs";
-import SearchAndFilters from "../components/SearchAndFilters";
+import SearchAndFilters, { FornitoreFilter } from "../components/SearchAndFilters";
 import WineTableHeader from "../components/WineTableHeader";
 import WineTableRow from "../components/WineTableRow";
 import { supabase, authManager } from "../lib/supabase";
@@ -296,9 +296,9 @@ export default function ArchiviPage() {
 
         
 
-        <div className="flex gap-4 mb-3">
-          {/* Search and Filters - Lato sinistro */}
-          <div className="flex-1">
+        <div className="grid grid-cols-12 gap-4 mb-3">
+          {/* Box Ricerca - Lato sinistro */}
+          <div className="col-span-5">
             <SearchAndFilters
               filters={filters}
               fontSize={fontSize}
@@ -307,28 +307,37 @@ export default function ArchiviPage() {
             />
           </div>
           
-          {/* Box Statistiche - Lato destro */}
-          <div className="w-80 flex-shrink-0">
+          {/* Box Statistiche - Al centro */}
+          <div className="col-span-4">
             <div className="bg-black/20 border border-amber-500/30 rounded-lg p-4 h-full">
-              <div className="grid grid-cols-3 gap-3 text-center h-full">
-                <div className="bg-gray-800/50 rounded-lg p-3 flex flex-col justify-center">
-                  <div className="text-xl font-bold text-amber-400">{wineRows.length}</div>
+              <div className="grid grid-cols-3 gap-2 text-center h-full">
+                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center">
+                  <div className="text-lg font-bold text-amber-400">{wineRows.length}</div>
                   <div className="text-xs text-gray-300">Vini Totali</div>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-3 flex flex-col justify-center">
-                  <div className="text-xl font-bold text-red-400">
+                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center">
+                  <div className="text-lg font-bold text-red-400">
                     {wineRows.filter(wine => wine.giacenza <= 5).length}
                   </div>
                   <div className="text-xs text-gray-300">In Esaurimento</div>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-3 flex flex-col justify-center">
-                  <div className="text-xl font-bold text-green-400">
+                <div className="bg-gray-800/50 rounded-lg p-2 flex flex-col justify-center">
+                  <div className="text-lg font-bold text-green-400">
                     {wineRows.filter(wine => wine.giacenza > 5).length}
                   </div>
                   <div className="text-xs text-gray-300">Disponibili</div>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Box Fornitori - Lato destro */}
+          <div className="col-span-3">
+            <FornitoreFilter
+              fornitore={filters.fornitore}
+              fontSize={fontSize}
+              onFornitoreChange={(value) => setFilters({ ...filters, fornitore: value })}
+            />
           </div>
         </div>
 

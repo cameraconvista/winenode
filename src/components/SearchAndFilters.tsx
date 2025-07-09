@@ -2,6 +2,34 @@
 import React from 'react';
 import { Search, Filter, FileText, Zap } from 'lucide-react';
 
+interface FornitoreFilterProps {
+  fornitore: string;
+  fontSize: number;
+  onFornitoreChange: (value: string) => void;
+}
+
+export function FornitoreFilter({ fornitore, fontSize, onFornitoreChange }: FornitoreFilterProps) {
+  return (
+    <div className="bg-black/20 border border-red-900/30 rounded-lg p-3 backdrop-blur-sm h-full">
+      <div className="flex flex-col gap-3 h-full justify-center">
+        <div className="text-center">
+          <div className="text-sm text-gray-300 mb-2">Filtra per Fornitore</div>
+          <select
+            value={fornitore}
+            onChange={(e) => onFornitoreChange(e.target.value)}
+            className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+            style={{ fontSize: `${fontSize}px` }}
+          >
+            <option value="">Tutti i fornitori</option>
+            <option value="BOLOGNA VINI">BOLOGNA VINI</option>
+            <option value="ALTRO">ALTRO</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface SearchAndFiltersProps {
   filters: {
     tipologia: string;
@@ -21,10 +49,6 @@ export default function SearchAndFilters({
 }: SearchAndFiltersProps) {
   const handleSearchChange = (value: string) => {
     onFiltersChange({ ...filters, search: value });
-  };
-
-  const handleFornitoreChange = (value: string) => {
-    onFiltersChange({ ...filters, fornitore: value });
   };
 
   
@@ -47,20 +71,6 @@ export default function SearchAndFilters({
               className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
               style={{ fontSize: `${fontSize}px` }}
             />
-          </div>
-
-          {/* Fornitore Filter */}
-          <div className="min-w-[150px]">
-            <select
-              value={filters.fornitore}
-              onChange={(e) => handleFornitoreChange(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-              style={{ fontSize: `${fontSize}px` }}
-            >
-              <option value="">Tutti i fornitori</option>
-              <option value="BOLOGNA VINI">BOLOGNA VINI</option>
-              <option value="ALTRO">ALTRO</option>
-            </select>
           </div>
         </div>
 
