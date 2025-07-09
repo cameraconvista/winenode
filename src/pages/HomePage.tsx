@@ -286,6 +286,34 @@ export default function HomePage() {
 
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-x-hidden" style={{ minHeight: 'calc(100vh - 200px)' }}>
+        {/* Info Box */}
+        <div className="px-3 sm:px-4 py-4">
+          <div className="bg-black/20 border border-amber-500/30 rounded-lg p-4 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-amber-400">{wines.length}</div>
+                <div className="text-xs text-gray-300">Vini Totali</div>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-red-400">
+                  {wines.filter(wine => wine.inventory <= wine.minStock).length}
+                </div>
+                <div className="text-xs text-gray-300">In Esaurimento</div>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-green-400">
+                  {wines.filter(wine => wine.inventory > wine.minStock).length}
+                </div>
+                <div className="text-xs text-gray-300">Disponibili</div>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-blue-400">{suppliers.length}</div>
+                <div className="text-xs text-gray-300">Fornitori</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-4">
           {filteredWines.length === 0 ? (
             <p className="text-center text-gray-400">
