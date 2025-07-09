@@ -365,7 +365,7 @@ export default function ArchiviPage() {
             </button>
 
             {/* 5. Statistiche */}
-            <div className="text-white text-sm font-medium whitespace-nowrap">
+            <div className="text-white text-sm font-medium whitespace-nowrap ml-auto">
               <span>Vini totali: </span>
               <span className="text-amber-400 font-bold">{wineRows.length}</span>
               <span className="mx-2">In Esaurimento: </span>
