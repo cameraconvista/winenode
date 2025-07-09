@@ -13,7 +13,6 @@ export function FornitoreFilter({ fornitore, fontSize, onFornitoreChange }: Forn
     <div className="bg-black/20 border border-red-900/30 rounded-lg backdrop-blur-sm h-full flex flex-col justify-center">
       <div className="p-3">
         <div className="text-center">
-          <div className="text-sm text-gray-300 mb-3">Filtra per Fornitore</div>
           <select
             value={fornitore}
             onChange={(e) => onFornitoreChange(e.target.value)}
