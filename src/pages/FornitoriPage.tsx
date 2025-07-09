@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -208,6 +209,7 @@ export default function FornitoriPage() {
               </button>
             </div>
           </div>
+        </div>
 
         <div className="flex-1"></div>
 
