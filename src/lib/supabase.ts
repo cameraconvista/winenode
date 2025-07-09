@@ -8,12 +8,12 @@ console.log('🔍 Verifica variabili Supabase:')
 console.log('URL presente:', !!SUPABASE_URL)
 console.log('KEY presente:', !!SUPABASE_ANON_KEY)
 
-let supabase: any = null
+let supabaseClient: any = null
 let isSupabaseAvailable = false
 
 if (SUPABASE_URL && SUPABASE_ANON_KEY) {
   try {
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     isSupabaseAvailable = true
     console.log('✅ Supabase client creato con successo')
   } catch (error) {
@@ -41,13 +41,14 @@ const mockSupabase = {
   })
 }
 
-export { supabase: supabase || mockSupabase, isSupabaseAvailable }
+export { isSupabaseAvailable }
+export const supabase = supabaseClient || mockSupabase
 
 // Auth Manager semplificato
 export const authManager = {
   onAuthStateChange: (callback: (user: any) => void) => {
-    if (isSupabaseAvailable && supabase) {
-      return supabase.auth.onAuthStateChange((event: string, session: any) => {
+    if (isSupabaseAvailable && supabaseClient) {
+      return supabaseClient.auth.onAuthStateChange((event: string, session: any) => {
         callback(session?.user || null)
       }).data.subscription.unsubscribe
     } else {
@@ -77,16 +78,16 @@ export class AuthManager {
   }
 
   private async initializeAuth() {
-    if (!supabase) return
+    if (!supabaseClient) return
 
     try {
       // 🔄 Recupera la sessione corrente con gestione migliorata
-      const { data: { session }, error } = await supabase.auth.getSession()
+      const { data: { session }, error } = await supabaseClient.auth.getSession()
 
       if (error) {
         console.warn('⚠️ Errore nel recupero sessione:', error.message)
         // Tenta il refresh automatico
-        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+        const { data: { session: refreshedSession }, error: refreshError } = await supabaseClient.auth.refreshSession()
         if (refreshError) {
           console.warn('⚠️ Refresh fallito:', refreshError.message)
           this.currentSession = null
@@ -106,7 +107,7 @@ export class AuthManager {
 
       // 📡 Listener migliorato per cambio stato autenticazione
       let authTimeout: NodeJS.Timeout | null = null
-      supabase.auth.onAuthStateChange((event, session) => {
+      supabaseClient.auth.onAuthStateChange((event, session) => {
         console.log('🔄 Auth state change:', event, session ? 'con sessione' : 'senza sessione')
 
         if (authTimeout) clearTimeout(authTimeout)
@@ -151,16 +152,16 @@ export class AuthManager {
   }
 
   async validateSession(): Promise<boolean> {
-    if (!supabase) return false
+    if (!supabaseClient) return false
 
     try {
-      const { data: { session }, error } = await supabase.auth.getSession()
+      const { data: { session }, error } = await supabaseClient.auth.getSession()
 
       if (error || !session) {
         console.warn('⚠️ Sessione non valida, tentativo refresh automatico...')
 
         // 🔄 Tenta refresh della sessione
-        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+        const { data: { session: refreshedSession }, error: refreshError } = await supabaseClient.auth.refreshSession()
 
         if (refreshError) {
           console.warn('❌ Refresh sessione fallito:', refreshError.message)
@@ -186,7 +187,7 @@ export class AuthManager {
 
       if (expiresAt - now < 300) { // Se scade tra meno di 5 minuti
         console.log('⏰ Token in scadenza, refresh preventivo...')
-        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+        const { data: { session: refreshedSession }, error: refreshError } = await supabaseClient.auth.refreshSession()
 
         if (!refreshError && refreshedSession) {
           console.log('✅ Token rinnovato preventivamente')
@@ -216,29 +217,28 @@ export class AuthManager {
   }
 
   async signIn(email: string, password: string) {
-    if (!supabase) throw new Error('Supabase non configurato')
+    if (!supabaseClient) throw new Error('Supabase non configurato')
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
     if (error) throw error
     return data
   }
 
   async signOut() {
-    if (!supabase) throw new Error('Supabase non configurato')
+    if (!supabaseClient) throw new Error('Supabase non configurato')
 
-    const { error } = await supabase.auth.signOut()
+    const { error } = await supabaseClient.auth.signOut()
     if (error) throw error
   }
 
   async signUp(email: string, password: string) {
-    if (!supabase) throw new Error('Supabase non configurato')
+    if (!supabaseClient) throw new Error('Supabase non configurato')
 
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabaseClient.auth.signUp({ email, password })
     if (error) throw error
     return data
   }
 }
 
+// Esporta l'istanza singleton di AuthManager
 export const authManager2 = AuthManager.getInstance()
-
-// Client secondario rimosso per evitare istanze multiple
