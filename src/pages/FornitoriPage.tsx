@@ -137,76 +137,77 @@ export default function FornitoriPage() {
             </div>
           </div>
 
-          {/* Pulsante Reset Fornitori */}
-          {suppliers.length > 0 && (
-            <div
-              className="bg-red-800/30 border border-red-700/50 p-4 rounded-xl text-left transition-all duration-200 group hover:bg-red-700/30 hover:border-red-600/50 cursor-pointer"
-              onClick={() => setShowResetConfirm(true)}
-            >
+          {/* Elenco e pulsanti fornitori */}
+          <div className="flex gap-4 items-start">
+            {/* Box Fornitori */}
+            <div className="flex-1 bg-gray-800/50 border border-gray-700 p-4 rounded-xl text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-700/50 rounded-lg group-hover:bg-red-600/50 transition-colors">
-                  <Trash2 className="h-4 w-4 text-red-300" />
+                <div className="p-2 bg-gray-700/50 rounded-lg">
+                  <Truck className="h-4 w-4 text-gray-300" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-red-300">
-                    RESET FORNITORI
+                  <h3 className="text-sm font-bold text-cream">
+                    TUTTI I FORNITORI
                   </h3>
-                  <p className="text-xs text-red-400/70">
-                    Elimina tutti i fornitori
-                  </p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-red-500 group-hover:text-red-400 transition-colors" />
+              </div>
+
+              <div className="mt-4 space-y-2" style={{ maxHeight: "240px", overflowY: "auto" }}>
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-6 h-6 border-2 border-gray-600 border-t-amber-500 rounded-full animate-spin"></div>
+                    <span className="ml-2 text-gray-500">Caricamento fornitori...</span>
+                  </div>
+                ) : error ? (
+                  <div className="bg-red-500/20 border border-red-500/30 text-red-300 p-3 rounded-lg text-sm">
+                    {error}
+                  </div>
+                ) : suppliers.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Truck className="h-12 w-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-500">Nessun fornitore attivo</p>
+                    <p className="text-gray-600 text-sm">Aggiungi il tuo primo fornitore!</p>
+                  </div>
+                ) : (
+                  suppliers.map((supplier) => (
+                    <div
+                      key={supplier.id}
+                      className="bg-gray-800/30 border border-gray-700/50 p-3 rounded-lg text-left transition-all duration-200 group hover:bg-gray-700/30 hover:border-gray-600/50 cursor-pointer"
+                      onClick={() => handleEditSupplier(supplier)}
+                      title="Clicca per modificare le informazioni del fornitore"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-1.5 bg-gray-700/30 rounded-md">
+                          <Truck className="h-3.5 w-3.5 text-gray-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h5 className="text-sm font-medium text-cream uppercase">
+                            {supplier.fornitore.toUpperCase()}
+                          </h5>
+                        </div>
+                        <div className="p-1.5 text-gray-500 rounded-md">
+                          <Edit className="h-3.5 w-3.5" />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
-          )}
 
-          {/* Elenco fornitori */}
-          <div className="mt-6 space-y-2">
-            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-              Fornitori Attivi
-            </h4>
-
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="w-6 h-6 border-2 border-gray-600 border-t-amber-500 rounded-full animate-spin"></div>
-                <span className="ml-2 text-gray-500">Caricamento fornitori...</span>
-              </div>
-            ) : error ? (
-              <div className="bg-red-500/20 border border-red-500/30 text-red-300 p-3 rounded-lg text-sm">
-                {error}
-              </div>
-            ) : suppliers.length === 0 ? (
-              <div className="text-center py-8">
-                <Truck className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-500">Nessun fornitore attivo</p>
-                <p className="text-gray-600 text-sm">Aggiungi il tuo primo fornitore!</p>
-              </div>
-            ) : (
-              suppliers.map((supplier) => (
-                <div
-                  key={supplier.id}
-                  className="bg-gray-800/30 border border-gray-700/50 p-3 rounded-lg text-left transition-all duration-200 group hover:bg-gray-700/30 hover:border-gray-600/50 cursor-pointer"
-                  onClick={() => handleEditSupplier(supplier)}
-                  title="Clicca per modificare le informazioni del fornitore"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-1.5 bg-gray-700/30 rounded-md">
-                      <Truck className="h-3.5 w-3.5 text-gray-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h5 className="text-sm font-medium text-cream uppercase">
-                        {supplier.fornitore.toUpperCase()}
-                      </h5>
-                    </div>
-                    <div className="p-1.5 text-gray-500 rounded-md">
-                      <Edit className="h-3.5 w-3.5" />
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
+            {/* Pulsanti allineati a destra */}
+            <div className="flex flex-col gap-3 min-w-[200px]">
+              <button
+                onClick={() => setShowResetConfirm(true)}
+                disabled={isLoading || suppliers.length === 0}
+                className="bg-red-600/80 hover:bg-red-600 disabled:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                title={suppliers.length === 0 ? "Nessun fornitore da eliminare" : "Elimina tutti i fornitori"}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="text-sm">RESET FORNITORI</span>
+              </button>
+            </div>
           </div>
-        </div>
 
         <div className="flex-1"></div>
 
