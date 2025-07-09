@@ -294,6 +294,30 @@ export default function ArchiviPage() {
       <main className="flex-1 flex flex-col px-3 py-1 min-h-0">
         <div className="pb-1 mb-2"><ImportaVini /></div>
 
+        {/* Box Statistiche */}
+        <div className="px-3 sm:px-4 py-2 mb-2">
+          <div className="bg-black/20 border border-amber-500/30 rounded-lg p-4">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-amber-400">{wineRows.length}</div>
+                <div className="text-xs text-gray-300">Vini Totali</div>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-red-400">
+                  {wineRows.filter(wine => wine.giacenza <= 5).length}
+                </div>
+                <div className="text-xs text-gray-300">In Esaurimento</div>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-green-400">
+                  {wineRows.filter(wine => wine.giacenza > 5).length}
+                </div>
+                <div className="text-xs text-gray-300">Disponibili</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <SearchAndFilters
           filters={filters}
           fontSize={fontSize}
