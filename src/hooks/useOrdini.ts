@@ -102,8 +102,9 @@ export function useOrdini() {
           user_id: userId,
           fornitore: ordineData.fornitore,
           stato: 'sospeso',
-          totale_euro: ordineData.totale,
-          data: new Date().toISOString()
+          totale: ordineData.totale,
+          data: new Date().toISOString(),
+          contenuto: ordineData.vini.map(v => `${v.nome} (${v.quantita})`).join(', ')
         })
         .select()
         .single();

@@ -14,7 +14,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
   const { wines } = useWines();
   const { salvaOrdine } = useOrdini();
   const [selectedFornitore, setSelectedFornitore] = useState<string>("");
-  const [step, setStep] = useState<"fornitore" | "vini" | "riassunto" | "conferma">("fornitore");
+  const [step, setStep] = useState<"fornitore" | "vini" | "riassunto" | "conferma" | "successo">("fornitore");
   const [ordineQuantities, setOrdineQuantities] = useState<Record<number, number>>({});
   const [ordineMode, setOrdineMode] = useState<Record<number, 'bottiglie' | 'cartoni'>>({});
   const [ordineData, setOrdineData] = useState<{
@@ -376,7 +376,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
         {step === "riassunto" && ordineData && (
           <div className="space-y-4 text-white">
             <div className="text-center border-b border-gray-600 pb-4">
-              <h3 className="text-xl font-bold text-green-400">✅ Ordine Confermato!</h3>
+              <h3 className="text-xl font-bold text-amber-400">📋 Riepilogo Ordine</h3>
               <p className="text-gray-300 mt-2">Fornitore: <strong>{ordineData.fornitore}</strong></p>
             </div>
 
@@ -436,11 +436,9 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                     }
 
                     console.log('✅ Ordine confermato e salvato con ID:', ordineId);
-                    alert('✅ Ordine confermato e salvato con successo!');
-
-                    // Chiudi il modale e notifica il parent
-                    onFornitoreSelezionato(ordineData.fornitore);
-                    onClose();
+                    
+                    // Vai al passo di successo
+                    setStep("successo");
                   } catch (error) {
                     console.error('Errore salvataggio ordine:', error);
                     alert('Errore nel salvataggio dell\'ordine. Riprova.');
@@ -610,6 +608,40 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                 className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2"
               >
                 ✅ Sì, Inviato - Salva Ordine
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5: successo dopo salvataggio */}
+        {step === "successo" && ordineData && (
+          <div className="space-y-4 text-white">
+            <div className="text-center border-b border-gray-600 pb-4">
+              <h3 className="text-xl font-bold text-green-400">✅ Ordine Confermato e Salvato!</h3>
+              <p className="text-gray-300 mt-2">L'ordine per <strong>{ordineData.fornitore}</strong> è stato salvato con successo nel sistema.</p>
+            </div>
+
+            <div className="bg-green-900/30 border border-green-600/50 rounded-lg p-4 text-center">
+              <div className="flex justify-center items-center mb-3">
+                <span className="text-3xl text-green-400">🎉</span>
+              </div>
+              <div className="text-sm text-gray-300 space-y-1">
+                <div>Ordine salvato nel database</div>
+                <div>Stato: <span className="text-yellow-400 font-medium">Sospeso</span></div>
+                <div className="text-green-300 font-medium">Pronto per essere gestito</div>
+              </div>
+            </div>
+
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() => {
+                  // Chiudi il modale e notifica il parent
+                  onFornitoreSelezionato(ordineData.fornitore);
+                  onClose();
+                }}
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2 text-lg transition-colors"
+              >
+                ✅ OK, Chiudi
               </button>
             </div>
           </div>
