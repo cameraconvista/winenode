@@ -114,7 +114,10 @@ export default function ArchiviPage() {
           produttore: wine.description || "",
           provenienza: wine.region || "",
           giacenza: wine.inventory || 0,
-          fornitore: wine.supplier || "",
+          fornitore: (wine.supplier && 
+          !wine.supplier.toLowerCase().includes('non specif') &&
+          wine.supplier.toLowerCase() !== 'non specificato') 
+          ? wine.supplier : "",
           tipologia: normalizeType(wine.type),
           ordine: idx
         }))
@@ -142,7 +145,10 @@ export default function ArchiviPage() {
         produttore: wine.description || "",
         provenienza: wine.region || "",
         giacenza: wine.inventory || 0,
-        fornitore: wine.supplier || "",
+        fornitore: (wine.supplier && 
+          !wine.supplier.toLowerCase().includes('non specif') &&
+          wine.supplier.toLowerCase() !== 'non specificato') 
+          ? wine.supplier : "",
         tipologia: activeTab,
         ordine: idx
       }));

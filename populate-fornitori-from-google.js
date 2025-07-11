@@ -92,9 +92,17 @@ async function syncFornitori() {
     const existingNames = existingFornitori.map(f => f.nome.toUpperCase());
     console.log(`📦 Fornitori esistenti in DB: ${existingNames.length}`);
 
-    // Trova fornitori da inserire (solo quelli non vuoti)
+    // Trova fornitori da inserire (solo quelli non vuoti e non "Non specificato")
     const fornitoriToInsert = fornitoriFromSheet.filter(nome => {
-      return nome && nome.length > 0 && !existingNames.some(f => f.nome.toUpperCase() === nome.toUpperCase());
+      const isValidName = nome && 
+        nome.length > 0 && 
+        !nome.toLowerCase().includes('non specif') &&
+        nome.toLowerCase() !== 'non specificato' &&
+        nome.toLowerCase() !== 'nonspecificato';
+      
+      const notExists = !existingNames.some(f => f.nome.toUpperCase() === nome.toUpperCase());
+      
+      return isValidName && notExists;
     });
 
     console.log(`➕ Fornitori da inserire: ${fornitoriToInsert.length}`);

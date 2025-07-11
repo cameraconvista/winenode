@@ -44,7 +44,10 @@ const useWines = () => {
           id: wine.id,
           name: wine.nome_vino || '',
           type: wine.tipologia || '',
-          supplier: wine.fornitore || '',
+          supplier: (wine.fornitore && 
+            !wine.fornitore.toLowerCase().includes('non specif') &&
+            wine.fornitore.toLowerCase() !== 'non specificato') 
+            ? wine.fornitore : '',
           inventory: g?.giacenza ?? 0,
           minStock: g?.min_stock ?? 2,
           price: wine.vendita?.toString() || '',

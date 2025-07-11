@@ -74,9 +74,15 @@ async function syncCategoryFromSheet(doc, sheetName, categoryName) {
       })
       .map(row => {
         let fornitore = getTextValue(row.get('FORNITORE')) || getTextValue(row.get('SUPPLIER'));
-        if (fornitore && fornitore.toLowerCase() === 'non specificato') {
+        // Se il fornitore è "Non specificato" o simile, lo impostiamo a null
+        if (fornitore && (
+          fornitore.toLowerCase() === 'non specificato' ||
+          fornitore.toLowerCase() === 'nonspecificato' ||
+          fornitore.toLowerCase() === 'non_specificato' ||
+          fornitore.toLowerCase().includes('non specif')
+        )) {
           fornitore = null;
-        }
+        }</fornitore>
 
         return {
           nome_vino: (row.get('NOME VINO') || row.get('NAME')).trim(),

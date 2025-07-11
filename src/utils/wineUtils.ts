@@ -48,7 +48,15 @@ export function parseCsvWineRows(data: string[][], categoria: string): WineData[
         anno: row[idxAnno]?.trim() || null,
         produttore: row[idxProduttore]?.trim() || '',
         provenienza: row[idxProvenienza]?.trim() || '',
-        fornitore: row[idxFornitore]?.trim() || null,
+        fornitore: (() => {
+          const fornitore = row[idxFornitore]?.trim();
+          if (!fornitore || 
+              fornitore.toLowerCase() === 'non specificato' ||
+              fornitore.toLowerCase().includes('non specif')) {
+            return null;
+          }
+          return fornitore;
+        })(),
         costo: parseEuro(row[idxCosto]),
         vendita: parseEuro(row[idxVendita]),
         margine: parseEuro(row[idxMargine])
