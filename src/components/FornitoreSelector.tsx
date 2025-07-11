@@ -177,19 +177,7 @@ export default function FornitoreSelector({
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Note
-              </label>
-              <textarea
-                value={newSupplierData.note}
-                onChange={(e) => setNewSupplierData(prev => ({ ...prev, note: e.target.value }))}
-                placeholder="Note aggiuntive..."
-                className="w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none"
-                rows={3}
-                disabled={isAdding}
-              />
-            </div>
+            
 
             <div>
               <label className="block text-sm font-medium text-white mb-1">

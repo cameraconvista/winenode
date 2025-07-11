@@ -19,7 +19,6 @@ export default function EditSupplierModal({
 }: EditSupplierModalProps) {
   const [nome, setNome] = useState('');
   const [minOrdine, setMinOrdine] = useState('');
-  const [note, setNote] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -27,7 +26,6 @@ export default function EditSupplierModal({
     if (supplier) {
       setNome(supplier.fornitore);
       setMinOrdine(supplier.min_ordine_importo.toString());
-      setNote(supplier.note);
     }
   }, [supplier]);
 
@@ -52,8 +50,7 @@ export default function EditSupplierModal({
         .from('fornitori')
         .update({
           fornitore: nome.trim(),
-          min_ordine_importo: parseFloat(minOrdine) || 0,
-          note: note.trim()
+          min_ordine_importo: parseFloat(minOrdine) || 0
         })
         .eq('id', supplier.id)
         .select()
@@ -156,20 +153,7 @@ export default function EditSupplierModal({
             />
           </div>
 
-          {/* Note */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Note
-            </label>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Note aggiuntive..."
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none"
-              rows={3}
-              disabled={isLoading}
-            />
-          </div>
+          
 
           {/* Buttons */}
           <div className="flex gap-3 pt-4">

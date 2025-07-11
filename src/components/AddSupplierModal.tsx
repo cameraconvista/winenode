@@ -17,7 +17,6 @@ export default function AddSupplierModal({
 }: AddSupplierModalProps) {
   const [nome, setNome] = useState('');
   const [minOrdine, setMinOrdine] = useState('');
-  const [note, setNote] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { addSupplier } = useSuppliers();
@@ -47,8 +46,7 @@ export default function AddSupplierModal({
       console.log('🔄 MODAL: Chiamata addSupplier...');
       const success = await addSupplier(
         nome, 
-        parseFloat(minOrdine) || 0, 
-        note
+        parseFloat(minOrdine) || 0
       );
 
       console.log('🔄 MODAL: Risultato addSupplier:', success);
@@ -59,7 +57,6 @@ export default function AddSupplierModal({
         // Reset form
         setNome('');
         setMinOrdine('');
-        setNote('');
 
         // Notifica il parent component
         console.log('🔄 MODAL: Chiamata onSupplierAdded...');
@@ -87,7 +84,6 @@ export default function AddSupplierModal({
     if (!isLoading) {
       setNome('');
       setMinOrdine('');
-      setNote('');
       setError('');
       onClose();
     }
@@ -157,20 +153,7 @@ export default function AddSupplierModal({
             />
           </div>
 
-          {/* Note */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Note
-            </label>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Note aggiuntive..."
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none"
-              rows={3}
-              disabled={isLoading}
-            />
-          </div>
+          
 
           {/* Buttons */}
           <div className="flex gap-3 pt-4">

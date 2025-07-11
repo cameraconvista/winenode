@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
@@ -75,8 +74,7 @@ async function populateFornitori() {
     const nuoviFornitori = fornitoriDaInserire.map(fornitore => ({
       user_id: DEFAULT_USER_ID,
       fornitore: fornitore,
-      min_ordine_importo: 0,
-      note: `Fornitore estratto automaticamente dalla lista vini il ${new Date().toLocaleDateString('it-IT')}`
+      min_ordine_importo: 0
     }));
 
     console.log('📦 Dati da inserire:', nuoviFornitori);

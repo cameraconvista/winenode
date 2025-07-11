@@ -5,7 +5,6 @@ export interface Supplier {
   id: string;
   fornitore: string;
   min_ordine_importo: number;
-  note: string;
   updated_at: string;
 }
 
@@ -110,7 +109,6 @@ const useSuppliers = () => {
         id: `temp-${index}`,
         fornitore: supplierName,
         min_ordine_importo: 0,
-        note: 'Estratto automaticamente dai vini',
         updated_at: new Date().toISOString()
       }));
 
