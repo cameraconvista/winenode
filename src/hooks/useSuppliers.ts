@@ -37,42 +37,98 @@ const useSuppliers = () => {
         return;
       }
 
-      console.log('🔍 Caricamento fornitori dalla tabella vini per user:', userId);
+      const loadSuppliers = async () => {
+    if (!supabase || !authManager.isAuthenticated()) {
+      setSuppliers([]);
+      setIsLoading(false);
+      return;
+    }
 
-      // ✅ RIPRISTINO LOGICA ORIGINALE: leggiamo i fornitori dalla colonna fornitore della tabella vini
-      const { data: wines, error } = await supabase
+    const userId = authManager.getUserId();
+    if (!userId) {
+      setError('ID utente non disponibile');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setError(null);
+      console.log('🔍 Caricamento fornitori dalla tabella fornitori per user:', userId);
+
+      // Carica direttamente dalla tabella fornitori
+      const { data: fornitori, error } = await supabase!
+        .from('fornitori')
+        .select('*')
+        .eq('user_id', userId)
+        .order('fornitore', { ascending: true });
+
+      if (error) {
+        console.error('❌ Errore caricamento fornitori:', error.message);
+        // Se la tabella fornitori è vuota o ha errori, prova a estrarli dai vini come fallback
+        if (error.code === 'PGRST116' || error.message.includes('relation "fornitori" does not exist')) {
+          console.log('⚠️ Tabella fornitori non disponibile, fallback a estrazione da vini');
+          await loadSuppliersFromWines(userId);
+          return;
+        }
+        setError(error.message);
+        setSuppliers([]);
+      } else if (!fornitori || fornitori.length === 0) {
+        console.log('⚠️ Tabella fornitori vuota, provo a popolarla dai vini...');
+        await loadSuppliersFromWines(userId);
+      } else {
+        console.log('✅ Fornitori caricati dalla tabella dedicata:', fornitori.length);
+        setSuppliers(fornitori);
+      }
+    } catch (error) {
+      console.error('❌ Errore inatteso:', error);
+      setError(error instanceof Error ? error.message : 'Errore sconosciuto');
+      setSuppliers([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Funzione di fallback per estrarre fornitori dai vini
+  const loadSuppliersFromWines = async (userId: string) => {
+    try {
+      console.log('🔄 Estrazione fornitori dai vini...');
+
+      const { data: wines, error } = await supabase!
         .from('vini')
         .select('fornitore')
         .eq('user_id', userId)
         .not('fornitore', 'is', null)
         .not('fornitore', 'eq', '');
 
-      if (error) {
-        console.error('❌ Errore caricamento fornitori dai vini:', error.message);
-        setError(error.message);
-        setSuppliers([]);
-      } else {
-        // Estrai fornitori unici dalla colonna fornitore dei vini
-        const allSuppliers = wines?.map(wine => wine.fornitore?.trim()).filter(Boolean) || [];
-        console.log('🔍 Tutti i fornitori grezzi dai vini:', allSuppliers);
-        
-        const uniqueSuppliers = Array.from(new Set(allSuppliers)).sort();
-        console.log('🔍 Fornitori unici dopo filtro:', uniqueSuppliers);
+      if (error) throw error;
 
-        // Crea oggetti Supplier dai nomi dei fornitori estratti dai vini
-        const suppliersData: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
-          id: `wine-supplier-${index}`, // ID artificiale per compatibilità
-          fornitore: supplierName,
-          telefono: '', // Campi vuoti per compatibilità con l'interfaccia
-          contatto_email: '',
-          min_ordine_importo: 0,
-          note: '',
-          updated_at: new Date().toISOString()
-        }));
+      const allSuppliers = wines?.map(wine => wine.fornitore?.trim()).filter(Boolean) || [];
+      const uniqueSuppliers = Array.from(new Set(allSuppliers)).sort();
 
-        console.log('✅ Fornitori estratti dai vini:', suppliersData.length, suppliersData.map(s => s.fornitore));
-        setSuppliers(suppliersData);
-      }
+      console.log('🔍 Fornitori unici estratti dai vini:', uniqueSuppliers.length, uniqueSuppliers);
+
+      // Crea oggetti Supplier temporanei
+      const suppliersData: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
+        id: `temp-${index}`,
+        fornitore: supplierName,
+        telefono: '',
+        contatto_email: '',
+        min_ordine_importo: 0,
+        note: 'Estratto automaticamente dai vini',
+        updated_at: new Date().toISOString()
+      }));
+
+      setSuppliers(suppliersData);
+
+      // Suggerisci di popolare la tabella fornitori
+      console.log('💡 Suggerimento: Esegui lo script populate-fornitori.js per popolare la tabella fornitori');
+    } catch (error) {
+      console.error('❌ Errore nell\'estrazione dai vini:', error);
+      setSuppliers([]);
+    }
+  };
+
+      await loadSuppliers();
     } catch (error) {
       console.error('❌ Errore inatteso:', error);
       setError(error instanceof Error ? error.message : 'Errore sconosciuto');
