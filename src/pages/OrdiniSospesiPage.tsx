@@ -182,12 +182,12 @@ export default function OrdiniSospesiPage() {
                         </div>
                         
                         <div className="text-sm text-gray-400 space-y-1">
-                          <p>📅 Ordinato: {formatDate(ordine.data_ordine)}</p>
+                          <p>📅 Ordinato: {formatDate(ordine.data)}</p>
                           {ordine.data_invio_whatsapp && (
                             <p>📱 Inviato: {formatDate(ordine.data_invio_whatsapp)}</p>
                           )}
                           <p>🍷 Articoli: {ordine.dettagli?.length || 0}</p>
-                          <p>💰 Totale: <span className="text-green-400 font-semibold">€{ordine.totale_euro.toFixed(2)}</span></p>
+                          <p>💰 Totale: <span className="text-green-400 font-semibold">€{ordine.totale.toFixed(2)}</span></p>
                         </div>
                       </div>
 

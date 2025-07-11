@@ -53,7 +53,11 @@ export function useOrdini() {
           totale,
           data,
           stato,
-          user_id
+          user_id,
+          data_invio_whatsapp,
+          data_ricevimento,
+          created_at,
+          updated_at
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
