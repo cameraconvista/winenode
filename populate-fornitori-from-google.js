@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
@@ -33,38 +32,38 @@ async function connectToGoogleSheet() {
 async function extractFornitoriFromAllSheets(doc) {
   const fornitoriSet = new Set();
   const sheetNames = ['ROSSI', 'BIANCHI', 'BOLLICINE ITALIANE', 'BOLLICINE FRANCESI', 'ROSATI', 'VINI DOLCI'];
-  
+
   console.log('📋 Fogli disponibili:', doc.sheetsByIndex.map(s => s.title));
-  
+
   for (const sheetName of sheetNames) {
     try {
       // Cerca il foglio con nome simile
       const sheet = doc.sheetsByTitle[sheetName] || 
                    doc.sheetsByIndex.find(s => s.title.toUpperCase().includes(sheetName.split(' ')[0]));
-      
+
       if (!sheet) {
         console.log(`⚠️ Foglio ${sheetName} non trovato`);
         continue;
       }
-      
+
       console.log(`🔍 Analizzando foglio: ${sheet.title}`);
       await sheet.loadHeaderRow();
       const rows = await sheet.getRows();
-      
+
       rows.forEach(row => {
         const fornitore = row.get('FORNITORE') || row.get('SUPPLIER');
         if (fornitore && fornitore.trim()) {
           fornitoriSet.add(fornitore.trim().toUpperCase());
         }
       });
-      
+
       console.log(`✅ ${sheet.title}: ${rows.length} righe analizzate`);
-      
+
     } catch (error) {
       console.error(`❌ Errore nel foglio ${sheetName}:`, error.message);
     }
   }
-  
+
   return Array.from(fornitoriSet);
 }
 
@@ -72,34 +71,34 @@ async function syncFornitori() {
   try {
     console.log('🚀 Inizio sincronizzazione fornitori dal Google Sheet...');
     console.log('👤 User ID:', user_id);
-    
+
     // Connetti al Google Sheet
     const doc = await connectToGoogleSheet();
     console.log(`📊 Connesso al Google Sheet: ${doc.title}`);
-    
+
     // Estrai tutti i fornitori unici
     const fornitoriFromSheet = await extractFornitoriFromAllSheets(doc);
     console.log(`🏪 Fornitori trovati nel Google Sheet: ${fornitoriFromSheet.length}`);
     console.log('📋 Lista fornitori:', fornitoriFromSheet);
-    
+
     // Controlla fornitori esistenti
     const { data: existingFornitori, error: fetchError } = await supabase
       .from('fornitori')
       .select('nome')
       .eq('user_id', user_id);
-      
+
     if (fetchError) throw fetchError;
-    
+
     const existingNames = existingFornitori.map(f => f.nome.toUpperCase());
     console.log(`📦 Fornitori esistenti in DB: ${existingNames.length}`);
-    
-    // Trova fornitori da inserire
-    const fornitoriToInsert = fornitoriFromSheet.filter(nome => 
-      !existingNames.includes(nome)
-    );
-    
+
+    // Trova fornitori da inserire (solo quelli non vuoti)
+    const fornitoriToInsert = fornitoriFromSheet.filter(nome => {
+      return nome && nome.length > 0 && !existingNames.some(f => f.nome.toUpperCase() === nome.toUpperCase());
+    });
+
     console.log(`➕ Fornitori da inserire: ${fornitoriToInsert.length}`);
-    
+
     if (fornitoriToInsert.length > 0) {
       const fornitoriData = fornitoriToInsert.map(nome => ({
         user_id,
@@ -107,29 +106,29 @@ async function syncFornitori() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }));
-      
+
       const { error: insertError } = await supabase
         .from('fornitori')
         .insert(fornitoriData);
-        
+
       if (insertError) throw insertError;
-      
+
       console.log(`✅ Inseriti ${fornitoriToInsert.length} nuovi fornitori`);
     } else {
       console.log('ℹ️ Nessun nuovo fornitore da inserire');
     }
-    
+
     // Verifica finale
     const { data: finalFornitori, error: finalError } = await supabase
       .from('fornitori')
       .select('nome')
       .eq('user_id', user_id);
-      
+
     if (finalError) throw finalError;
-    
+
     console.log(`🎉 Totale fornitori nel database: ${finalFornitori.length}`);
     finalFornitori.forEach(f => console.log(`  - ${f.nome}`));
-    
+
   } catch (error) {
     console.error('❌ Errore sincronizzazione fornitori:', error);
   }

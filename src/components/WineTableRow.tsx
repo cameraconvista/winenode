@@ -123,7 +123,7 @@ export default function WineTableRow({
           className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
           style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 40, lineHeight: "normal" }}
         >
-          {isEmptyRow ? '' : row.fornitore}
+          {isEmptyRow ? '' : row.fornitore || ''}
         </div>
       </td>
 

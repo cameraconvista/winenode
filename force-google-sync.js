@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
@@ -53,65 +52,72 @@ function getTextValue(value) {
 async function syncCategoryFromSheet(doc, sheetName, categoryName) {
   try {
     console.log(`\n🔄 Sincronizzando ${sheetName} → ${categoryName}`);
-    
+
     const sheet = doc.sheetsByTitle[sheetName] || 
                  doc.sheetsByIndex.find(s => s.title.toUpperCase().includes(sheetName.split(' ')[0]));
-    
+
     if (!sheet) {
       console.log(`❌ Foglio ${sheetName} non trovato`);
       return 0;
     }
-    
+
     await sheet.loadHeaderRow();
     const rows = await sheet.getRows();
-    
+
     console.log(`📊 ${sheet.title}: ${rows.length} righe dal Google Sheet`);
-    
+
     // Prepara i dati
     const validWines = rows
       .filter(row => {
         const nome = row.get('NOME VINO') || row.get('NAME');
         return nome && nome.trim();
       })
-      .map(row => ({
-        nome_vino: (row.get('NOME VINO') || row.get('NAME')).trim(),
-        anno: getTextValue(row.get('ANNO')) || getTextValue(row.get('YEAR')),
-        produttore: getTextValue(row.get('PRODUTTORE')) || getTextValue(row.get('PRODUCER')),
-        provenienza: getTextValue(row.get('PROVENIENZA')) || getTextValue(row.get('ORIGIN')),
-        fornitore: getTextValue(row.get('FORNITORE')) || getTextValue(row.get('SUPPLIER')),
-        costo: parseNumericValue(row.get('COSTO')),
-        vendita: parseNumericValue(row.get('VENDITA')),
-        margine: parseNumericValue(row.get('MARGINE')),
-        tipologia: categoryName,
-        user_id: user_id,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }));
-    
+      .map(row => {
+        let fornitore = getTextValue(row.get('FORNITORE')) || getTextValue(row.get('SUPPLIER'));
+        if (fornitore && fornitore.toLowerCase() === 'non specificato') {
+          fornitore = null;
+        }
+
+        return {
+          nome_vino: (row.get('NOME VINO') || row.get('NAME')).trim(),
+          anno: getTextValue(row.get('ANNO')) || getTextValue(row.get('YEAR')),
+          produttore: getTextValue(row.get('PRODUTTORE')) || getTextValue(row.get('PRODUCER')),
+          provenienza: getTextValue(row.get('PROVENIENZA')) || getTextValue(row.get('ORIGIN')),
+          fornitore: fornitore,
+          costo: parseNumericValue(row.get('COSTO')),
+          vendita: parseNumericValue(row.get('VENDITA')),
+          margine: parseNumericValue(row.get('MARGINE')),
+          tipologia: categoryName,
+          user_id: user_id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+      });
+
     console.log(`✅ Vini validi preparati: ${validWines.length}`);
-    
+
     // Rimuovi vini esistenti per questa categoria
     const { error: deleteError } = await supabase
       .from('vini')
       .delete()
       .eq('tipologia', categoryName)
       .eq('user_id', user_id);
-      
+
     if (deleteError) throw deleteError;
     console.log(`🗑️ Vini esistenti rimossi per categoria ${categoryName}`);
-    
+
     // Inserisci nuovi vini
     if (validWines.length > 0) {
       const { error: insertError } = await supabase
         .from('vini')
         .insert(validWines);
-        
+
       if (insertError) throw insertError;
       console.log(`✅ Inseriti ${validWines.length} vini per ${categoryName}`);
     }
-    
+
     return validWines.length;
-    
+
   } catch (error) {
     console.error(`❌ Errore sincronizzazione ${sheetName}:`, error);
     return 0;
@@ -122,56 +128,56 @@ async function forceSync() {
   try {
     console.log('🚀 FORZATURA SINCRONIZZAZIONE COMPLETA GOOGLE SHEET');
     console.log('👤 User ID:', user_id);
-    
+
     const doc = await connectToGoogleSheet();
     console.log(`📊 Connesso al Google Sheet: ${doc.title}`);
     console.log('📅 Ultimo aggiornamento:', doc.lastUpdatedTime);
-    
+
     const availableSheets = doc.sheetsByIndex.map(sheet => sheet.title);
     console.log('📋 Fogli disponibili:', availableSheets);
-    
+
     let totalWines = 0;
-    
+
     // Sincronizza ogni categoria
     for (const [sheetName, categoryName] of Object.entries(CATEGORY_MAPPINGS)) {
       const winesCount = await syncCategoryFromSheet(doc, sheetName, categoryName);
       totalWines += winesCount;
-      
+
       // Pausa tra le categorie
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-    
+
     console.log(`\n🎉 SINCRONIZZAZIONE COMPLETATA`);
     console.log(`📊 Totale vini sincronizzati: ${totalWines}`);
-    
+
     // Verifica finale
     const { data: finalCount, error } = await supabase
       .from('vini')
       .select('tipologia', { count: 'exact' })
       .eq('user_id', user_id);
-      
+
     if (!error) {
       console.log(`🔍 Verifica finale: ${finalCount.length} vini nel database`);
-      
+
       // Conta per tipologia
       const { data: byCategory } = await supabase
         .from('vini')
         .select('tipologia')
         .eq('user_id', user_id);
-        
+
       if (byCategory) {
         const counts = {};
         byCategory.forEach(v => {
           counts[v.tipologia] = (counts[v.tipologia] || 0) + 1;
         });
-        
+
         console.log('\n📋 VINI PER CATEGORIA:');
         Object.entries(counts).forEach(([cat, count]) => {
           console.log(`  ${cat}: ${count} vini`);
         });
       }
     }
-    
+
   } catch (error) {
     console.error('❌ Errore sincronizzazione forzata:', error);
   }
