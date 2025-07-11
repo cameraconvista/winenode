@@ -13,8 +13,6 @@ export interface WineType {
   vintage: string | null;
   region: string | null;
   description: string | null;
-  ordineMinimo?: number;
-  unitaOrdine?: 'bottiglie' | 'cartoni';
 }
 
 const useWines = () => {
@@ -53,9 +51,7 @@ const useWines = () => {
           cost: wine.costo || 0,
           vintage: wine.anno?.toString() || '',
           region: wine.provenienza || '',
-          description: wine.produttore || '',
-          ordineMinimo: wine.ordine_minimo || 12,
-          unitaOrdine: wine.unita_ordine || 'bottiglie'
+          description: wine.produttore || ''
         };
       });
 
@@ -108,9 +104,7 @@ const useWines = () => {
         ...(updates.cost !== undefined && { costo: updates.cost }),
         ...(updates.vintage !== undefined && { anno: updates.vintage }),
         ...(updates.region !== undefined && { provenienza: updates.region }),
-        ...(updates.description !== undefined && { produttore: updates.description }),
-        ...(updates.ordineMinimo !== undefined && { ordine_minimo: updates.ordineMinimo }),
-        ...(updates.unitaOrdine !== undefined && { unita_ordine: updates.unitaOrdine })
+        ...(updates.description !== undefined && { produttore: updates.description })
       };
 
       if (Object.keys(updatesDb).length > 0) {
