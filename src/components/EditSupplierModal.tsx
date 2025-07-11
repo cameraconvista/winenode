@@ -10,19 +10,18 @@ interface EditSupplierModalProps {
   supplier: Supplier | null;
 }
 
-export default function EditSupplierModal({ 
-  isOpen, 
-  onClose, 
+export default function EditSupplierModal({
+  isOpen,
+  onClose,
   onSupplierUpdated,
-  supplier 
+  supplier
 }: EditSupplierModalProps) {
   const [nome, setNome] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (supplier) {
-      setNome(supplier.nome);
+      setNome(supplier.nome || '');
     }
   }, [supplier]);
 
@@ -30,132 +29,98 @@ export default function EditSupplierModal({
     e.preventDefault();
 
     if (!nome.trim()) {
-      setError('Nome fornitore è obbligatorio');
+      alert('Il nome del fornitore è obbligatorio');
       return;
     }
 
-    if (!isSupabaseAvailable || !authManager.isAuthenticated() || !supplier) {
-      setError('Errore di autenticazione');
+    if (!supplier) {
+      alert('Nessun fornitore selezionato');
+      return;
+    }
+
+    if (!isSupabaseAvailable || !authManager.isAuthenticated()) {
+      alert('Errore: Supabase non configurato o utente non autenticato');
       return;
     }
 
     setIsLoading(true);
-    setError('');
 
     try {
-      const { data, error: supabaseError } = await supabase!
+      const { error } = await supabase
         .from('fornitori')
-        .update({
-          nome: nome.trim().toUpperCase(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', supplier.id)
-        .select()
-        .single();
+        .update({ nome: nome.trim() })
+        .eq('id', supplier.id);
 
-      if (supabaseError) {
-        console.error('Errore Supabase:', supabaseError);
+      if (error) throw error;
 
-        if (supabaseError.code === '23505') {
-          setError('Un fornitore con questo nome esiste già');
-        } else if (supabaseError.code === '42501') {
-          setError('Permessi insufficienti. Verifica la configurazione RLS');
-        } else {
-          setError(`Errore database: ${supabaseError.message}`);
-        }
-        return;
-      }
-
-      console.log('Fornitore modificato con successo:', data);
-
-      // Notifica il parent component
+      console.log('✅ Fornitore aggiornato:', nome);
       onSupplierUpdated();
       onClose();
-
-    } catch (err: any) {
-      console.error('Errore nella modifica del fornitore:', err);
-      setError(`Errore inaspettato: ${err.message || 'Operazione fallita'}`);
+    } catch (error) {
+      console.error('❌ Errore aggiornamento fornitore:', error);
+      alert('Errore durante l\'aggiornamento del fornitore');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleClose = () => {
-    if (!isLoading) {
-      setError('');
-      onClose();
-    }
-  };
-
-  const handleNomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNome(e.target.value.toUpperCase());
-  };
-
   if (!isOpen || !supplier) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-gray-800/90 border border-gray-700 rounded-xl w-full max-w-md mx-auto">
-        {/* Header */}
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-gray-800 rounded-xl border border-gray-700 w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h2 className="text-lg font-bold text-cream">MODIFICA FORNITORE</h2>
+          <div className="flex items-center gap-3">
+            <User className="h-6 w-6 text-amber-400" />
+            <h2 className="text-xl font-semibold text-white">Modifica Fornitore</h2>
+          </div>
           <button
-            onClick={handleClose}
-            disabled={isLoading}
-            className="p-2 text-gray-400 hover:text-cream hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50"
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-6 w-6" />
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && (
-            <div className="bg-red-500/20 border border-red-500/30 text-red-300 p-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* Nome Fornitore */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Nome Fornitore *
             </label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-              <input
-                type="text"
-                value={nome}
-                onChange={handleNomeChange}
-                placeholder="NOME FORNITORE"
-                className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent uppercase"
-                disabled={isLoading}
-                required
-              />
-            </div>
+            <input
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              placeholder="Inserisci nome fornitore"
+              required
+            />
           </div>
 
-          {/* Buttons */}
           <div className="flex gap-3 pt-4">
             <button
               type="button"
-              onClick={handleClose}
-              disabled={isLoading}
-              className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-500 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
             >
               Annulla
             </button>
             <button
               type="submit"
-              disabled={isLoading}
-              className="flex-1 px-4 py-3 bg-amber-500 hover:bg-amber-600 text-black font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              disabled={isLoading || !nome.trim()}
+              className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
             >
               {isLoading ? (
-                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                <>
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  Aggiornamento...
+                </>
               ) : (
-                <Save className="h-4 w-4" />
+                <>
+                  <Save className="h-4 w-4" />
+                  Aggiorna
+                </>
               )}
-              {isLoading ? 'Salvando...' : 'Salva Modifiche'}
             </button>
           </div>
         </form>
