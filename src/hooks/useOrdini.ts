@@ -48,15 +48,7 @@ export function useOrdini() {
       let query = supabase
         .from('ordini')
         .select(`
-          *,
-          ordini_dettaglio (
-            *,
-            vini (
-              nome_vino,
-              produttore,
-              anno
-            )
-          )
+          *
         `)
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
@@ -72,12 +64,7 @@ export function useOrdini() {
       // Trasforma i dati per il frontend
       const ordiniConDettagli = data?.map(ordine => ({
         ...ordine,
-        dettagli: ordine.ordini_dettaglio?.map((det: any) => ({
-          ...det,
-          nome_vino: det.vini?.nome_vino,
-          produttore: det.vini?.produttore,
-          anno: det.vini?.anno
-        }))
+        dettagli: [] // Temporaneamente vuoto fino a fix database
       })) || [];
 
       setOrdini(ordiniConDettagli);
@@ -112,7 +99,7 @@ export function useOrdini() {
           fornitore: ordineData.fornitore,
           stato: 'sospeso',
           totale_euro: ordineData.totale,
-          data_ordine: new Date().toISOString()
+          created_at: new Date().toISOString()
         })
         .select()
         .single();

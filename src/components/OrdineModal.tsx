@@ -384,7 +384,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               <h4 className="font-semibold mb-3 text-amber-400">Dettaglio Ordine:</h4>
               <div className="space-y-2">
                 {ordineData.vini.map((vino) => (
-                  <div className="flex justify-between items-center py-2 border-b border-gray-600/50 last:border-b-0">
+                  <div key={vino.id} className="flex justify-between items-center py-2 border-b border-gray-600/50 last:border-b-0">
                     <div className="flex-1">
                       <p className="font-medium text-sm">{vino.nome}</p>
                       <p className="text-xs text-gray-400">
