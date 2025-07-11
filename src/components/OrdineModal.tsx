@@ -425,22 +425,28 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               
               <button
                 onClick={async () => {
-                  console.log('Conferma ordine diretta - salvataggio:', ordineData);
+                  console.log('✅ Conferma ordine diretta - salvataggio:', ordineData);
                   
-                  // Salva ordine direttamente nel database
-                  const ordineId = await salvaOrdine(ordineData);
-                  if (!ordineId) {
+                  try {
+                    // Salva ordine direttamente nel database
+                    const ordineId = await salvaOrdine(ordineData);
+                    if (!ordineId) {
+                      alert('Errore nel salvataggio dell\'ordine. Riprova.');
+                      return;
+                    }
+
+                    console.log('✅ Ordine confermato e salvato con ID:', ordineId);
+                    alert('✅ Ordine confermato e salvato con successo!');
+
+                    // Chiudi il modale e notifica il parent
+                    onFornitoreSelezionato(ordineData.fornitore);
+                    onClose();
+                  } catch (error) {
+                    console.error('Errore salvataggio ordine:', error);
                     alert('Errore nel salvataggio dell\'ordine. Riprova.');
-                    return;
                   }
-
-                  console.log('✅ Ordine confermato e salvato con ID:', ordineId);
-
-                  // Chiudi il modale e notifica il parent
-                  onFornitoreSelezionato(ordineData.fornitore);
-                  onClose();
                 }}
-                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2 text-lg"
+                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2 text-lg transition-colors"
               >
                 ✅ CONFERMA
               </button>
