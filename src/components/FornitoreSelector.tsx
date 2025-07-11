@@ -21,8 +21,8 @@ export default function FornitoreSelector({
   const [showAddNew, setShowAddNew] = useState(false);
   const [newSupplierData, setNewSupplierData] = useState({
     nome: '',
-    email: '',
-    telefono: ''
+    minOrdine: '',
+    note: ''
   });
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState('');
@@ -43,18 +43,6 @@ export default function FornitoreSelector({
   const handleAddSupplier = async () => {
     if (!newSupplierData.nome.trim()) {
       setError('Nome fornitore obbligatorio');
-      return;
-    }
-
-    if (!newSupplierData.email.trim()) {
-      setError('Email obbligatoria');
-      return;
-    }
-
-    // Validazione email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(newSupplierData.email)) {
-      setError('Email non valida. Deve contenere @ e un dominio valido.');
       return;
     }
 
@@ -176,14 +164,29 @@ export default function FornitoreSelector({
 
             <div>
               <label className="block text-sm font-medium text-white mb-1">
-                Email Fornitore *
+                Importo Minimo Ordine (€)
               </label>
               <input
-                type="email"
-                value={newSupplierData.email}
-                onChange={(e) => setNewSupplierData(prev => ({ ...prev, email: e.target.value }))}
-                placeholder="email@fornitore.com"
+                type="number"
+                step="0.01"
+                value={newSupplierData.minOrdine}
+                onChange={(e) => setNewSupplierData(prev => ({ ...prev, minOrdine: e.target.value }))}
+                placeholder="0.00"
                 className="w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                disabled={isAdding}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-1">
+                Note
+              </label>
+              <textarea
+                value={newSupplierData.note}
+                onChange={(e) => setNewSupplierData(prev => ({ ...prev, note: e.target.value }))}
+                placeholder="Note aggiuntive..."
+                className="w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none"
+                rows={3}
                 disabled={isAdding}
               />
             </div>

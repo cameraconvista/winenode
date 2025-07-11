@@ -4,8 +4,6 @@ import { supabase, authManager } from '../lib/supabase';
 export interface Supplier {
   id: string;
   fornitore: string;
-  telefono: string;
-  contatto_email: string;
   min_ordine_importo: number;
   note: string;
   updated_at: string;
@@ -111,8 +109,6 @@ const useSuppliers = () => {
       const suppliersData: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
         id: `temp-${index}`,
         fornitore: supplierName,
-        telefono: '',
-        contatto_email: '',
         min_ordine_importo: 0,
         note: 'Estratto automaticamente dai vini',
         updated_at: new Date().toISOString()

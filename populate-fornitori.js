@@ -75,8 +75,6 @@ async function populateFornitori() {
     const nuoviFornitori = fornitoriDaInserire.map(fornitore => ({
       user_id: DEFAULT_USER_ID,
       fornitore: fornitore,
-      telefono: '',
-      contatto_email: '',
       min_ordine_importo: 0,
       note: `Fornitore estratto automaticamente dalla lista vini il ${new Date().toLocaleDateString('it-IT')}`
     }));

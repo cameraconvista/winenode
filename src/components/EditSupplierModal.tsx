@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { X, User, Mail, Phone, Save } from 'lucide-react';
+import { X, User, Save } from 'lucide-react';
 import { supabase, authManager, isSupabaseAvailable } from '../lib/supabase';
 import { Supplier } from '../hooks/useSuppliers';
 
@@ -17,24 +18,24 @@ export default function EditSupplierModal({
   supplier 
 }: EditSupplierModalProps) {
   const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefono, setTelefono] = useState('');
+  const [minOrdine, setMinOrdine] = useState('');
+  const [note, setNote] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (supplier) {
-      setNome(supplier.nome);
-      setEmail(supplier.email);
-      setTelefono(supplier.telefono);
+      setNome(supplier.fornitore);
+      setMinOrdine(supplier.min_ordine_importo.toString());
+      setNote(supplier.note);
     }
   }, [supplier]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nome.trim() || !email.trim() || !telefono.trim()) {
-      setError('Tutti i campi sono obbligatori');
+    if (!nome.trim()) {
+      setError('Nome fornitore è obbligatorio');
       return;
     }
 
@@ -50,9 +51,9 @@ export default function EditSupplierModal({
       const { data, error: supabaseError } = await supabase!
         .from('fornitori')
         .update({
-          nome: nome.trim(),
-          email: email.trim(),
-          telefono: telefono.trim()
+          fornitore: nome.trim(),
+          min_ordine_importo: parseFloat(minOrdine) || 0,
+          note: note.trim()
         })
         .eq('id', supplier.id)
         .select()
@@ -139,42 +140,35 @@ export default function EditSupplierModal({
             </div>
           </div>
 
-          {/* Email */}
+          {/* Minimo Ordine */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Email Fornitore *
+              Importo Minimo Ordine (€)
             </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="es: info@cantinagaja.it"
-                className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                disabled={isLoading}
-                required
-              />
-            </div>
+            <input
+              type="number"
+              step="0.01"
+              value={minOrdine}
+              onChange={(e) => setMinOrdine(e.target.value)}
+              placeholder="0.00"
+              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              disabled={isLoading}
+            />
           </div>
 
-          {/* Telefono/WhatsApp */}
+          {/* Note */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Numero WhatsApp *
+              Note
             </label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-              <input
-                type="tel"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-                placeholder="es: 3331234567"
-                className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                disabled={isLoading}
-                required
-              />
-            </div>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Note aggiuntive..."
+              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none"
+              rows={3}
+              disabled={isLoading}
+            />
           </div>
 
           {/* Buttons */}
