@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
@@ -59,8 +60,8 @@ async function populateFornitori() {
     }
 
     // 4. Filtra i fornitori da inserire (esclude quelli già esistenti)
-    const fornitoriEsistenti = new Set(esistenti.map(f => f.nome));
-    const fornitoriDaInserire = fornitoriUnici.filter(f => !fornitoriEsistenti.has(f));
+    const fornitoriEsistenti = new Set(esistenti.map(f => f.nome.toUpperCase()));
+    const fornitoriDaInserire = fornitoriUnici.filter(f => !fornitoriEsistenti.has(f.toUpperCase()));
 
     console.log(`✅ Fornitori già esistenti: ${fornitoriEsistenti.size}`);
     console.log(`➕ Fornitori da inserire: ${fornitoriDaInserire.length}`, fornitoriDaInserire);
@@ -70,10 +71,10 @@ async function populateFornitori() {
       return;
     }
 
-    // 5. Prepara i dati per l'inserimento con struttura corretta
+    // 5. Prepara i dati per l'inserimento
     const nuoviFornitori = fornitoriDaInserire.map(fornitore => ({
       user_id: DEFAULT_USER_ID,
-      nome: fornitore,
+      nome: fornitore.toUpperCase()
     }));
 
     console.log('📦 Dati da inserire:', nuoviFornitori);

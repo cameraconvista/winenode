@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Check, X } from 'lucide-react';
-import { useSuppliers } from '../hooks/useSuppliers';
+import useSuppliers from '../hooks/useSuppliers';
 
 interface FornitoreSelectorProps {
   value: string;
@@ -19,11 +19,7 @@ export default function FornitoreSelector({
 }: FornitoreSelectorProps) {
   const { suppliers, addSupplier, refreshSuppliers } = useSuppliers();
   const [showAddNew, setShowAddNew] = useState(false);
-  const [newSupplierData, setNewSupplierData] = useState({
-    nome: '',
-    minOrdine: '',
-    note: ''
-  });
+  const [newSupplierName, setNewSupplierName] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,20 +37,8 @@ export default function FornitoreSelector({
   };
 
   const handleAddSupplier = async () => {
-    if (!newSupplierData.nome.trim()) {
+    if (!newSupplierName.trim()) {
       setError('Nome fornitore obbligatorio');
-      return;
-    }
-
-    if (!newSupplierData.telefono.trim()) {
-      setError('Numero WhatsApp obbligatorio');
-      return;
-    }
-
-    // Validazione WhatsApp (deve iniziare con numero e avere almeno 9 cifre)
-    const phoneRegex = /^\d{9,}$/;
-    if (!phoneRegex.test(newSupplierData.telefono.replace(/\s+/g, ''))) {
-      setError('Numero WhatsApp non valido. Deve contenere almeno 9 cifre.');
       return;
     }
 
@@ -62,13 +46,9 @@ export default function FornitoreSelector({
     setError('');
 
     try {
-      console.log('🔄 Aggiunta nuovo fornitore:', newSupplierData);
+      console.log('🔄 Aggiunta nuovo fornitore:', newSupplierName);
 
-      const success = await addSupplier(
-        newSupplierData.nome.trim().toUpperCase(),
-        newSupplierData.email.trim(),
-        newSupplierData.telefono.trim()
-      );
+      const success = await addSupplier(newSupplierName.trim());
 
       if (success) {
         console.log('✅ Fornitore aggiunto con successo');
@@ -77,11 +57,11 @@ export default function FornitoreSelector({
         await refreshSuppliers();
 
         // Seleziona automaticamente il nuovo fornitore
-        onChange(newSupplierData.nome.trim().toUpperCase());
+        onChange(newSupplierName.trim().toUpperCase());
 
         // Reset stato
         setShowAddNew(false);
-        setNewSupplierData({ nome: '', email: '', telefono: '' });
+        setNewSupplierName('');
       } else {
         setError('Impossibile aggiungere il fornitore. Potrebbe già esistere.');
       }
@@ -95,7 +75,7 @@ export default function FornitoreSelector({
 
   const handleCancelAdd = () => {
     setShowAddNew(false);
-    setNewSupplierData({ nome: '', email: '', telefono: '' });
+    setNewSupplierName('');
     setError('');
     // Reset select to empty value
     onChange('');
@@ -105,33 +85,31 @@ export default function FornitoreSelector({
     <div className="space-y-2">
       {!showAddNew ? (
         <div className="relative">
-        <select
-          value={value}
-          onChange={(e) => handleSelectChange(e.target.value)}
-          className={`w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 ${className}`}
-          required={required}
-        >
-          <option value="">{placeholder}</option>
-
-          {suppliers.map((supplier) => (
-            <option key={supplier.id} value={supplier.nome}>
-              {supplier.nome}
+          <select
+            value={value}
+            onChange={(e) => handleSelectChange(e.target.value)}
+            className={`w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 ${className}`}
+            required={required}
+          >
+            <option value="">{placeholder}</option>
+            {suppliers.map((supplier) => (
+              <option key={supplier.id} value={supplier.nome}>
+                {supplier.nome}
+              </option>
+            ))}
+            <option 
+              value={ADD_NEW_VALUE} 
+              className="bg-amber-600/20 text-amber-300 font-medium"
+            >
+              ➕ Aggiungi nuovo fornitore
             </option>
-          ))}
-
-          <option 
-                    value={ADD_NEW_VALUE} 
-                    className="bg-amber-600/20 text-amber-300 font-medium"
-                  >
-                    ➕ Aggiungi nuovo fornitore
-                  </option>
-                </select>
-                {/* Icona dropdown */}
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+          </select>
+          {/* Icona dropdown */}
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </div>
       ) : (
         <div className="space-y-3 p-4 bg-amber-950/20 border border-amber-600/30 rounded-lg">
@@ -153,8 +131,8 @@ export default function FornitoreSelector({
               </label>
               <input
                 type="text"
-                value={newSupplierData.nome}
-                onChange={(e) => setNewSupplierData(prev => ({ ...prev, nome: e.target.value.toUpperCase() }))}
+                value={newSupplierName}
+                onChange={(e) => setNewSupplierName(e.target.value.toUpperCase())}
                 placeholder="NOME FORNITORE"
                 className="w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 uppercase"
                 disabled={isAdding}
@@ -162,42 +140,11 @@ export default function FornitoreSelector({
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Importo Minimo Ordine (€)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={newSupplierData.minOrdine}
-                onChange={(e) => setNewSupplierData(prev => ({ ...prev, minOrdine: e.target.value }))}
-                placeholder="0.00"
-                className="w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                disabled={isAdding}
-              />
-            </div>
-
-
-
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Numero WhatsApp *
-              </label>
-              <input
-                type="tel"
-                value={newSupplierData.telefono}
-                onChange={(e) => setNewSupplierData(prev => ({ ...prev, telefono: e.target.value }))}
-                placeholder="3391234567"
-                className="w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                disabled={isAdding}
-              />
-            </div>
-
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleAddSupplier}
-                disabled={isAdding || !newSupplierData.nome.trim() || !newSupplierData.email.trim() || !newSupplierData.telefono.trim()}
+                disabled={isAdding || !newSupplierName.trim()}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
               >
                 {isAdding ? (
@@ -228,4 +175,3 @@ export default function FornitoreSelector({
     </div>
   );
 }
-```

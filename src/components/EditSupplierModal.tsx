@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, User, Save } from 'lucide-react';
 import { supabase, authManager, isSupabaseAvailable } from '../lib/supabase';
@@ -18,14 +17,12 @@ export default function EditSupplierModal({
   supplier 
 }: EditSupplierModalProps) {
   const [nome, setNome] = useState('');
-  const [minOrdine, setMinOrdine] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (supplier) {
       setNome(supplier.nome);
-      setMinOrdine('0'); // Rimosso min_ordine_importo dal DB
     }
   }, [supplier]);
 
@@ -49,7 +46,7 @@ export default function EditSupplierModal({
       const { data, error: supabaseError } = await supabase!
         .from('fornitori')
         .update({
-          nome: nome.trim(),
+          nome: nome.trim().toUpperCase(),
           updated_at: new Date().toISOString()
         })
         .eq('id', supplier.id)
@@ -60,7 +57,7 @@ export default function EditSupplierModal({
         console.error('Errore Supabase:', supabaseError);
 
         if (supabaseError.code === '23505') {
-          setError('Un fornitore con questi dati esiste già');
+          setError('Un fornitore con questo nome esiste già');
         } else if (supabaseError.code === '42501') {
           setError('Permessi insufficienti. Verifica la configurazione RLS');
         } else {
@@ -73,6 +70,7 @@ export default function EditSupplierModal({
 
       // Notifica il parent component
       onSupplierUpdated();
+      onClose();
 
     } catch (err: any) {
       console.error('Errore nella modifica del fornitore:', err);
@@ -136,24 +134,6 @@ export default function EditSupplierModal({
               />
             </div>
           </div>
-
-          {/* Minimo Ordine */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Importo Minimo Ordine (€)
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              value={minOrdine}
-              onChange={(e) => setMinOrdine(e.target.value)}
-              placeholder="0.00"
-              className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              disabled={isLoading}
-            />
-          </div>
-
-          
 
           {/* Buttons */}
           <div className="flex gap-3 pt-4">

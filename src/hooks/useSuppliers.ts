@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
 
@@ -35,40 +36,18 @@ const useSuppliers = () => {
         return;
       }
 
-      const loadSuppliers = async () => {
-    if (!supabase || !authManager.isAuthenticated()) {
-      setSuppliers([]);
-      setIsLoading(false);
-      return;
-    }
-
-    const userId = authManager.getUserId();
-    if (!userId) {
-      setError('ID utente non disponibile');
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setError(null);
       console.log('🔍 Caricamento fornitori dalla tabella fornitori per user:', userId);
 
-      // Carica direttamente dalla tabella fornitori
-      const { data: fornitori, error } = await supabase!
+      // Prima prova a caricare dalla tabella fornitori
+      const { data: fornitori, error: fornitoriError } = await supabase!
         .from('fornitori')
         .select('*')
         .eq('user_id', userId)
-        .order('fornitore', { ascending: true });
+        .order('nome', { ascending: true });
 
-      if (error) {
-        console.error('❌ Errore caricamento fornitori:', error.message);
-        // Se la tabella fornitori è vuota o ha errori, prova a estrarli dai vini come fallback
-        if (error.code === 'PGRST116' || error.message.includes('relation "fornitori" does not exist')) {
-          console.log('⚠️ Tabella fornitori non disponibile, fallback a estrazione da vini');
-          await loadSuppliersFromWines(userId);
-          return;
-        }
-        setError(error.message);
+      if (fornitoriError) {
+        console.error('❌ Errore caricamento fornitori:', fornitoriError.message);
+        setError(fornitoriError.message);
         setSuppliers([]);
       } else if (!fornitori || fornitori.length === 0) {
         console.log('⚠️ Tabella fornitori vuota, provo a popolarla dai vini...');
@@ -105,32 +84,39 @@ const useSuppliers = () => {
 
       console.log('🔍 Fornitori unici estratti dai vini:', uniqueSuppliers.length, uniqueSuppliers);
 
-      // Crea oggetti Supplier temporanei
-      const suppliersData: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
-        id: `temp-${index}`,
-        nome: supplierName,
-        user_id: userId,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }));
+      if (uniqueSuppliers.length > 0) {
+        // Inserisci i fornitori nella tabella fornitori
+        const fornitoriData = uniqueSuppliers.map(nome => ({
+          nome: nome.toUpperCase(),
+          user_id: userId
+        }));
 
-      setSuppliers(suppliersData);
+        const { data: insertedFornitori, error: insertError } = await supabase!
+          .from('fornitori')
+          .insert(fornitoriData)
+          .select();
 
-      // Suggerisci di popolare la tabella fornitori
-      console.log('💡 Suggerimento: Esegui lo script populate-fornitori.js per popolare la tabella fornitori');
+        if (insertError) {
+          console.error('❌ Errore inserimento fornitori:', insertError);
+          // Crea oggetti Supplier temporanei come fallback
+          const tempSuppliers: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
+            id: `temp-${index}`,
+            nome: supplierName.toUpperCase(),
+            user_id: userId,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }));
+          setSuppliers(tempSuppliers);
+        } else {
+          console.log('✅ Fornitori inseriti nella tabella:', insertedFornitori.length);
+          setSuppliers(insertedFornitori);
+        }
+      } else {
+        setSuppliers([]);
+      }
     } catch (error) {
       console.error('❌ Errore nell\'estrazione dai vini:', error);
       setSuppliers([]);
-    }
-  };
-
-      await loadSuppliers();
-    } catch (error) {
-      console.error('❌ Errore inatteso:', error);
-      setError(error instanceof Error ? error.message : 'Errore sconosciuto');
-      setSuppliers([]);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -139,19 +125,74 @@ const useSuppliers = () => {
   }, []);
 
   const refreshSuppliers = () => {
-    setIsLoading(true);
     fetchSuppliers();
   };
 
-  // ✅ DISABILITIAMO le funzioni di modifica perché ora i fornitori derivano dai vini
-  const addSupplier = async (): Promise<boolean> => {
-    console.warn('⚠️ addSupplier disabilitato: i fornitori ora derivano dalla tabella vini');
-    return false;
+  const addSupplier = async (nome: string): Promise<boolean> => {
+    try {
+      if (!authManager.isAuthenticated()) {
+        console.error('❌ Utente non autenticato');
+        return false;
+      }
+
+      const userId = authManager.getUserId();
+      if (!userId) {
+        console.error('❌ ID utente non disponibile');
+        return false;
+      }
+
+      const { data, error } = await supabase!
+        .from('fornitori')
+        .insert({
+          nome: nome.toUpperCase(),
+          user_id: userId
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('❌ Errore inserimento fornitore:', error);
+        return false;
+      }
+
+      console.log('✅ Fornitore aggiunto:', data);
+      await refreshSuppliers();
+      return true;
+    } catch (error) {
+      console.error('❌ Errore addSupplier:', error);
+      return false;
+    }
   };
 
-  const updateSupplier = async (): Promise<boolean> => {
-    console.warn('⚠️ updateSupplier disabilitato: i fornitori ora derivano dalla tabella vini');
-    return false;
+  const updateSupplier = async (id: string, nome: string): Promise<boolean> => {
+    try {
+      if (!authManager.isAuthenticated()) {
+        console.error('❌ Utente non autenticato');
+        return false;
+      }
+
+      const { data, error } = await supabase!
+        .from('fornitori')
+        .update({
+          nome: nome.toUpperCase(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('❌ Errore aggiornamento fornitore:', error);
+        return false;
+      }
+
+      console.log('✅ Fornitore aggiornato:', data);
+      await refreshSuppliers();
+      return true;
+    } catch (error) {
+      console.error('❌ Errore updateSupplier:', error);
+      return false;
+    }
   };
 
   return {
