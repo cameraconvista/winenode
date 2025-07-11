@@ -82,7 +82,7 @@ async function syncCategoryFromSheet(doc, sheetName, categoryName) {
           fornitore.toLowerCase().includes('non specif')
         )) {
           fornitore = null;
-        }</fornitore>
+        }
 
         return {
           nome_vino: (row.get('NOME VINO') || row.get('NAME')).trim(),

@@ -98,7 +98,8 @@ async function syncFornitori() {
         nome.length > 0 && 
         !nome.toLowerCase().includes('non specif') &&
         nome.toLowerCase() !== 'non specificato' &&
-        nome.toLowerCase() !== 'nonspecificato';
+        nome.toLowerCase() !== 'nonspecificato' &&
+        nome.toLowerCase() !== 'null';
       
       const notExists = !existingNames.some(f => f.nome.toUpperCase() === nome.toUpperCase());
       
