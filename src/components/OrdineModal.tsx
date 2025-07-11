@@ -147,9 +147,6 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                               {w.description} {w.vintage && `(${w.vintage})`}
                             </p>
                           )}
-                          {w.region && (
-                            <p className="text-xs text-gray-400">{w.region}</p>
-                          )}
                         </div>
                         <div className="text-right ml-4">
                           <p className={`text-sm font-bold ${isLowStock ? 'text-red-300' : 'text-white'}`}>
