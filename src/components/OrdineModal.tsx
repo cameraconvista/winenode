@@ -91,8 +91,8 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                 </option>
                 {!error &&
                   suppliers.map((f) => (
-                    <option key={f.id} value={f.fornitore}>
-                      {f.fornitore}
+                    <option key={f.id} value={f.nome}>
+                      {f.nome}
                     </option>
                   ))}
               </select>
