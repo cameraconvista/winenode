@@ -47,10 +47,16 @@ const useSuppliers = () => {
 
       if (fornitoriError) {
         console.error('❌ Errore caricamento fornitori:', fornitoriError.message);
-        setError(fornitoriError.message);
-        setSuppliers([]);
+        // Se la tabella non esiste, prova a popolarla dai vini
+        if (fornitoriError.code === '42P01') {
+          console.log('⚠️ Tabella fornitori non trovata, estrazione dai vini...');
+          await loadSuppliersFromWines(userId);
+        } else {
+          setError(fornitoriError.message);
+          setSuppliers([]);
+        }
       } else if (!fornitori || fornitori.length === 0) {
-        console.log('⚠️ Tabella fornitori vuota, provo a popolarla dai vini...');
+        console.log('⚠️ Tabella fornitori vuota, popolo dai vini...');
         await loadSuppliersFromWines(userId);
       } else {
         console.log('✅ Fornitori caricati dalla tabella dedicata:', fornitori.length);
@@ -70,19 +76,34 @@ const useSuppliers = () => {
     try {
       console.log('🔄 Estrazione fornitori dai vini...');
 
-      const { data: wines, error } = await supabase!
-        .from('vini')
-        .select('fornitore')
+      // Prova prima dalla tabella 'giacenze' (nome moderno)
+      let { data: wines, error } = await supabase!
+        .from('giacenze')
+        .select('supplier')
         .eq('user_id', userId)
-        .not('fornitore', 'is', null)
-        .not('fornitore', 'eq', '');
+        .not('supplier', 'is', null)
+        .not('supplier', 'eq', '');
 
-      if (error) throw error;
+      // Se giacenze è vuota o ha errori, prova dalla tabella 'vini' (nome legacy)
+      if (error || !wines || wines.length === 0) {
+        console.log('🔄 Provo dalla tabella vini (legacy)...');
+        const { data: winesLegacy, error: errorLegacy } = await supabase!
+          .from('vini')
+          .select('fornitore')
+          .eq('user_id', userId)
+          .not('fornitore', 'is', null)
+          .not('fornitore', 'eq', '');
 
-      const allSuppliers = wines?.map(wine => wine.fornitore?.trim()).filter(Boolean) || [];
+        if (errorLegacy) throw errorLegacy;
+        
+        // Converti il formato da vini a giacenze
+        wines = winesLegacy?.map(wine => ({ supplier: wine.fornitore })) || [];
+      }
+
+      const allSuppliers = wines?.map(wine => wine.supplier?.trim()).filter(Boolean) || [];
       const uniqueSuppliers = Array.from(new Set(allSuppliers)).sort();
 
-      console.log('🔍 Fornitori unici estratti dai vini:', uniqueSuppliers.length, uniqueSuppliers);
+      console.log('🔍 Fornitori unici estratti:', uniqueSuppliers.length, uniqueSuppliers);
 
       if (uniqueSuppliers.length > 0) {
         // Inserisci i fornitori nella tabella fornitori
@@ -91,6 +112,8 @@ const useSuppliers = () => {
           user_id: userId
         }));
 
+        console.log('💾 Inserimento fornitori in tabella:', fornitoriData);
+
         const { data: insertedFornitori, error: insertError } = await supabase!
           .from('fornitori')
           .insert(fornitoriData)
@@ -98,6 +121,22 @@ const useSuppliers = () => {
 
         if (insertError) {
           console.error('❌ Errore inserimento fornitori:', insertError);
+          
+          // Se l'errore è di duplicato, prova a recuperare i fornitori esistenti
+          if (insertError.code === '23505') {
+            console.log('🔄 Fornitori già esistenti, recupero dalla tabella...');
+            const { data: existingFornitori, error: fetchError } = await supabase!
+              .from('fornitori')
+              .select('*')
+              .eq('user_id', userId)
+              .order('nome', { ascending: true });
+
+            if (!fetchError && existingFornitori) {
+              setSuppliers(existingFornitori);
+              return;
+            }
+          }
+          
           // Crea oggetti Supplier temporanei come fallback
           const tempSuppliers: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
             id: `temp-${index}`,
@@ -108,10 +147,11 @@ const useSuppliers = () => {
           }));
           setSuppliers(tempSuppliers);
         } else {
-          console.log('✅ Fornitori inseriti nella tabella:', insertedFornitori.length);
-          setSuppliers(insertedFornitori);
+          console.log('✅ Fornitori inseriti nella tabella:', insertedFornitori?.length || 0);
+          setSuppliers(insertedFornitori || []);
         }
       } else {
+        console.log('⚠️ Nessun fornitore trovato nei vini');
         setSuppliers([]);
       }
     } catch (error) {
