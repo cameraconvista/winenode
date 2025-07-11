@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, Package, Clock, CheckCircle, Archive, Eye, Check, Truck } from 'lucide-react';
 import { useOrdini } from '../hooks/useOrdini';
@@ -184,14 +183,14 @@ export default function GestisciOrdiniModal({ open, onClose }: GestisciOrdiniMod
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-white">
-                              {ordine.fornitore}
-                            </h3>
+                            <h3 className="font-semibold text-white text-lg">
+                            🏪 {ordine.fornitore_nome || ordine.fornitore}
+                          </h3>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatoColor(ordine.stato)}`}>
                               {ordine.stato.toUpperCase()}
                             </span>
                           </div>
-                          
+
                           <div className="text-sm text-gray-400 space-y-1">
                             <p>📅 Ordinato: {formatDate(ordine.data)}</p>
                             {ordine.data_invio_whatsapp && (

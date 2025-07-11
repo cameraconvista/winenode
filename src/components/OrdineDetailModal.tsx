@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Package, Clock, CheckCircle, Edit3, Save, AlertCircle } from 'lucide-react';
 import { useOrdini } from '../hooks/useOrdini';
@@ -120,7 +119,7 @@ export default function OrdineDetailModal({ ordine, open, onClose, onUpdate }: O
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Fornitore:</span>
-                  <span className="text-white font-medium">{ordine.fornitore}</span>
+                  <span className="text-white font-medium">{ordine.fornitore_nome || ordine.fornitore}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Data Ordine:</span>

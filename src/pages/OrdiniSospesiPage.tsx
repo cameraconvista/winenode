@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Home, Package, Clock, Eye, Check, Edit3 } from 'lucide-react';
@@ -111,7 +110,7 @@ export default function OrdiniSospesiPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
               <div className="flex items-center gap-3">
                 <Package className="h-6 w-6 text-blue-400" />
@@ -172,15 +171,15 @@ export default function OrdiniSospesiPage() {
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-white">
-                            {ordine.fornitore}
+                          <h3 className="font-semibold text-white text-lg">
+                            🏪 {ordine.fornitore_nome || ordine.fornitore}
                           </h3>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getStatoColor(ordine.stato)}`}>
                             {getStatoIcon(ordine.stato)}
                             {ordine.stato.toUpperCase()}
                           </span>
                         </div>
-                        
+
                         <div className="text-sm text-gray-400 space-y-1">
                           <p>📅 Ordinato: {formatDate(ordine.data)}</p>
                           {ordine.data_invio_whatsapp && (

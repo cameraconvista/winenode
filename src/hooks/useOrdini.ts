@@ -18,6 +18,7 @@ export interface Ordine {
   id: string;
   user_id: string;
   fornitore: string;
+  fornitore_nome?: string; // Nome del fornitore per il display
   stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato';
   data: string;
   data_invio_whatsapp?: string;
@@ -27,6 +28,7 @@ export interface Ordine {
   created_at?: string;
   updated_at?: string;
   dettagli?: OrdineDettaglio[];
+  fornitori?: { fornitore: string }; // Join data
 }
 
 export function useOrdini() {
@@ -57,7 +59,8 @@ export function useOrdini() {
           data_invio_whatsapp,
           data_ricevimento,
           created_at,
-          updated_at
+          updated_at,
+          fornitori!inner(fornitore)
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
@@ -73,6 +76,7 @@ export function useOrdini() {
       // Trasforma i dati per il frontend
       const ordiniConDettagli = data?.map(ordine => ({
         ...ordine,
+        fornitore_nome: ordine.fornitori?.fornitore || 'Fornitore sconosciuto',
         dettagli: [] // Temporaneamente vuoto fino a fix database
       })) || [];
 
@@ -82,6 +86,43 @@ export function useOrdini() {
       setError(err instanceof Error ? err.message : 'Errore sconosciuto');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Assicurati che il fornitore esista nella tabella fornitori
+  const assicuraFornitoreEsiste = async (nomeFornitore: string) => {
+    if (!supabase || !userId) return null;
+
+    try {
+      // Prima controlla se esiste già
+      const { data: esistente, error: checkError } = await supabase
+        .from('fornitori')
+        .select('id')
+        .eq('fornitore', nomeFornitore)
+        .eq('user_id', userId)
+        .single();
+
+      if (esistente) {
+        return esistente.id;
+      }
+
+      // Se non esiste, crealo
+      const { data: nuovoFornitore, error: createError } = await supabase
+        .from('fornitori')
+        .insert({
+          user_id: userId,
+          fornitore: nomeFornitore
+        })
+        .select('id')
+        .single();
+
+      if (createError) throw createError;
+
+      console.log('✅ Nuovo fornitore creato:', nomeFornitore, nuovoFornitore.id);
+      return nuovoFornitore.id;
+    } catch (err) {
+      console.error('❌ Errore gestione fornitore:', err);
+      throw err;
     }
   };
 
@@ -100,12 +141,18 @@ export function useOrdini() {
     if (!supabase || !userId) return null;
 
     try {
-      // 1. Inserisci ordine principale
+      // 1. Assicurati che il fornitore esista e ottieni il suo ID
+      const fornitoreId = await assicuraFornitoreEsiste(ordineData.fornitore);
+      if (!fornitoreId) {
+        throw new Error(`Impossibile creare/trovare fornitore "${ordineData.fornitore}"`);
+      }
+
+      // 2. Inserisci ordine principale con l'ID del fornitore
       const { data: ordine, error: ordineError } = await supabase
         .from('ordini')
         .insert({
           user_id: userId,
-          fornitore: ordineData.fornitore,
+          fornitore: fornitoreId, // Usa l'ID UUID del fornitore
           stato: 'sospeso',
           totale: ordineData.totale,
           data: new Date().toISOString().split('T')[0], // Solo data YYYY-MM-DD
@@ -116,7 +163,7 @@ export function useOrdini() {
 
       if (ordineError) throw ordineError;
 
-      // 2. Inserisci dettagli ordine
+      // 3. Inserisci dettagli ordine
       const dettagli = ordineData.vini.map(vino => ({
         ordine_id: ordine.id,
         vino_id: parseInt(vino.id.toString()) || 0, // Assicurati che sia un numero intero
