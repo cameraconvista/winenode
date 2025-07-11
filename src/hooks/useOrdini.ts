@@ -19,13 +19,13 @@ export interface Ordine {
   user_id: string;
   fornitore: string;
   stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato';
-  data_ordine: string;
+  data: string;
   data_invio_whatsapp?: string;
   data_ricevimento?: string;
-  totale_euro: number;
-  note?: string;
-  created_at: string;
-  updated_at: string;
+  totale: number;
+  contenuto: string;
+  created_at?: string;
+  updated_at?: string;
   dettagli?: OrdineDettaglio[];
 }
 
@@ -52,7 +52,8 @@ export function useOrdini() {
           contenuto,
           totale,
           data,
-          stato
+          stato,
+          user_id
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
@@ -103,7 +104,7 @@ export function useOrdini() {
           fornitore: ordineData.fornitore,
           stato: 'sospeso',
           totale: ordineData.totale,
-          data: new Date().toISOString(),
+          data: new Date().toISOString().split('T')[0], // Solo data YYYY-MM-DD
           contenuto: ordineData.vini.map(v => `${v.nome} (${v.quantita})`).join(', ')
         })
         .select()
@@ -144,8 +145,7 @@ export function useOrdini() {
 
     try {
       const updateData: any = { 
-        stato: nuovoStato,
-        updated_at: new Date().toISOString()
+        stato: nuovoStato
       };
 
       if (nuovoStato === 'inviato') {
