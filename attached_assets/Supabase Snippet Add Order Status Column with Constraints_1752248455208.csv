@@ -1,0 +1,12 @@
+column_name,data_type,is_nullable,column_default
+id,uuid,NO,gen_random_uuid()
+data,timestamp without time zone,YES,"timezone('utc'::text, now())"
+fornitore,uuid,YES,null
+contenuto,jsonb,YES,null
+totale,numeric,YES,null
+user_id,uuid,YES,null
+stato,text,NO,'sospeso'::text
+data_invio_whatsapp,timestamp with time zone,YES,null
+data_ricevimento,timestamp with time zone,YES,null
+created_at,timestamp with time zone,YES,now()
+updated_at,timestamp with time zone,YES,now()
