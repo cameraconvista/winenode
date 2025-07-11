@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
 
@@ -48,10 +47,15 @@ export function useOrdini() {
       let query = supabase
         .from('ordini')
         .select(`
-          *
+          id,
+          fornitore,
+          contenuto,
+          totale,
+          data,
+          stato
         `)
         .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .order('data', { ascending: false });
 
       if (stato) {
         query = query.eq('stato', stato);
@@ -99,7 +103,7 @@ export function useOrdini() {
           fornitore: ordineData.fornitore,
           stato: 'sospeso',
           totale_euro: ordineData.totale,
-          created_at: new Date().toISOString()
+          data: new Date().toISOString()
         })
         .select()
         .single();
@@ -121,10 +125,10 @@ export function useOrdini() {
       if (dettagliError) throw dettagliError;
 
       console.log('✅ Ordine salvato con successo:', ordine.id);
-      
+
       // Ricarica gli ordini
       await loadOrdini();
-      
+
       return ordine.id;
     } catch (err) {
       console.error('❌ Errore salvataggio ordine:', err);
