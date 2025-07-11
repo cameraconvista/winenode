@@ -345,7 +345,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                 onClick={() => {
                   const selectedWines = filteredWines.filter(w => ordineQuantities[w.id] > 0);
                   const viniConPrezzo = selectedWines.map(w => ({
-                    id: w.id,
+                    id: parseInt(w.id.toString()) || 0, // Assicurati che sia un numero
                     nome: w.name,
                     quantita: ordineQuantities[w.id],
                     giacenza_attuale: w.inventory,

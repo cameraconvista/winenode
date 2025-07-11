@@ -119,9 +119,10 @@ export function useOrdini() {
       // 2. Inserisci dettagli ordine
       const dettagli = ordineData.vini.map(vino => ({
         ordine_id: ordine.id,
-        vino_id: vino.id,
+        vino_id: parseInt(vino.id.toString()) || 0, // Assicurati che sia un numero intero
         quantita_ordinata: vino.quantita,
-        prezzo_unitario: vino.prezzo_unitario
+        prezzo_unitario: vino.prezzo_unitario,
+        subtotale: vino.quantita * vino.prezzo_unitario
       }));
 
       const { error: dettagliError } = await supabase
