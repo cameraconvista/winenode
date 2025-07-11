@@ -21,7 +21,7 @@ async function populateFornitori() {
     // 1. Verifica se la tabella fornitori esiste ed è vuota
     const { data: esistenti, error: checkError } = await supabase
       .from('fornitori')
-      .select('id, fornitore')
+      .select('id, nome')
       .eq('user_id', DEFAULT_USER_ID);
 
     if (checkError) {
@@ -31,7 +31,7 @@ async function populateFornitori() {
 
     console.log(`📊 Fornitori già esistenti nella tabella: ${esistenti.length}`);
     if (esistenti.length > 0) {
-      console.log('📋 Fornitori esistenti:', esistenti.map(f => f.fornitore));
+      console.log('📋 Fornitori esistenti:', esistenti.map(f => f.nome));
     }
 
     // 2. Ottieni tutti i fornitori unici dalla tabella vini
@@ -59,7 +59,7 @@ async function populateFornitori() {
     }
 
     // 4. Filtra i fornitori da inserire (esclude quelli già esistenti)
-    const fornitoriEsistenti = new Set(esistenti.map(f => f.fornitore));
+    const fornitoriEsistenti = new Set(esistenti.map(f => f.nome));
     const fornitoriDaInserire = fornitoriUnici.filter(f => !fornitoriEsistenti.has(f));
 
     console.log(`✅ Fornitori già esistenti: ${fornitoriEsistenti.size}`);
@@ -73,8 +73,7 @@ async function populateFornitori() {
     // 5. Prepara i dati per l'inserimento con struttura corretta
     const nuoviFornitori = fornitoriDaInserire.map(fornitore => ({
       user_id: DEFAULT_USER_ID,
-      fornitore: fornitore,
-      min_ordine_importo: 0
+      nome: fornitore,
     }));
 
     console.log('📦 Dati da inserire:', nuoviFornitori);
@@ -91,7 +90,7 @@ async function populateFornitori() {
     }
 
     console.log(`✅ Inseriti ${inseriti.length} nuovi fornitori nella tabella`);
-    console.log('📋 Fornitori inseriti:', inseriti.map(f => f.fornitore));
+    console.log('📋 Fornitori inseriti:', inseriti.map(f => f.nome));
 
     // 7. Verifica finale con conteggio totale
     const { data: totali, error: totaliError } = await supabase
@@ -107,7 +106,7 @@ async function populateFornitori() {
     console.log(`📊 Totale fornitori nella tabella: ${totali.length}`);
     console.log('📋 Lista completa fornitori:');
     totali.forEach(f => {
-      console.log(`  - ${f.fornitore} (ID: ${f.id})`);
+      console.log(`  - ${f.nome} (ID: ${f.id})`);
     });
 
     console.log('🏁 Popolamento tabella fornitori completato con successo!');

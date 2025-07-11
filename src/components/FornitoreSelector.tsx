@@ -177,7 +177,7 @@ export default function FornitoreSelector({
               />
             </div>
 
-            
+
 
             <div>
               <label className="block text-sm font-medium text-white mb-1">
@@ -228,3 +228,4 @@ export default function FornitoreSelector({
     </div>
   );
 }
+```

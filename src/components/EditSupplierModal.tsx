@@ -24,8 +24,8 @@ export default function EditSupplierModal({
 
   useEffect(() => {
     if (supplier) {
-      setNome(supplier.fornitore);
-      setMinOrdine(supplier.min_ordine_importo.toString());
+      setNome(supplier.nome);
+      setMinOrdine('0'); // Rimosso min_ordine_importo dal DB
     }
   }, [supplier]);
 
@@ -49,8 +49,8 @@ export default function EditSupplierModal({
       const { data, error: supabaseError } = await supabase!
         .from('fornitori')
         .update({
-          fornitore: nome.trim(),
-          min_ordine_importo: parseFloat(minOrdine) || 0
+          nome: nome.trim(),
+          updated_at: new Date().toISOString()
         })
         .eq('id', supplier.id)
         .select()

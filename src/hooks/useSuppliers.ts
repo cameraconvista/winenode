@@ -3,8 +3,9 @@ import { supabase, authManager } from '../lib/supabase';
 
 export interface Supplier {
   id: string;
-  fornitore: string;
-  min_ordine_importo: number;
+  nome: string;
+  user_id: string;
+  created_at: string;
   updated_at: string;
 }
 
@@ -107,8 +108,9 @@ const useSuppliers = () => {
       // Crea oggetti Supplier temporanei
       const suppliersData: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
         id: `temp-${index}`,
-        fornitore: supplierName,
-        min_ordine_importo: 0,
+        nome: supplierName,
+        user_id: userId,
+        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }));
 
