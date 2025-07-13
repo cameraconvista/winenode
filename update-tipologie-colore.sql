@@ -1,1 +1,0 @@
-ALTER TABLE tipologie ADD COLUMN IF NOT EXISTS colore TEXT DEFAULT '#cccccc';
