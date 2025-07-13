@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, Package, Clock, CheckCircle, Archive, Eye, Check, Truck } from 'lucide-react';
 import { useOrdini } from '../hooks/useOrdini';
@@ -264,9 +263,9 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
                           const contenuto = typeof ordine.contenuto === 'string' 
                             ? JSON.parse(ordine.contenuto) 
                             : ordine.contenuto;
-                          
+
                           if (!Array.isArray(contenuto) || contenuto.length === 0) return null;
-                          
+
                           return (
                             <div className="border-t border-gray-600/50 pt-3">
                               <div className="text-xs text-gray-400 mb-2">Vini ordinati:</div>
