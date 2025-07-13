@@ -200,7 +200,16 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
                             {ordine.data_ricevimento && (
                               <p>📦 Ricevuto: {formatDate(ordine.data_ricevimento)}</p>
                             )}
-                            <p>🍷 Articoli: {ordine.dettagli?.length || 0}</p>
+                            <p>🍷 Articoli: {(() => {
+                              try {
+                                const contenuto = typeof ordine.contenuto === 'string' 
+                                  ? JSON.parse(ordine.contenuto) 
+                                  : ordine.contenuto;
+                                return Array.isArray(contenuto) ? contenuto.length : 0;
+                              } catch {
+                                return 0;
+                              }
+                            })()}</p>
                             <p>💰 Totale: <span className="text-green-400 font-semibold">€{ordine.totale.toFixed(2)}</span></p>
                           </div>
                         </div>
@@ -250,28 +259,40 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
                       </div>
 
                       {/* Quick preview dei vini */}
-                      {ordine.dettagli && ordine.dettagli.length > 0 && (
-                        <div className="border-t border-gray-600/50 pt-3">
-                          <div className="text-xs text-gray-400 mb-2">Vini ordinati:</div>
-                          <div className="space-y-1">
-                            {ordine.dettagli.slice(0, 2).map((dettaglio) => (
-                              <div key={dettaglio.id} className="flex justify-between text-sm">
-                                <span className="text-gray-300">
-                                  {dettaglio.nome_vino} {dettaglio.anno && `(${dettaglio.anno})`}
-                                </span>
-                                <span className="text-gray-400">
-                                  {dettaglio.quantita_ordinata} bot. × €{dettaglio.prezzo_unitario.toFixed(2)}
-                                </span>
+                      {(() => {
+                        try {
+                          const contenuto = typeof ordine.contenuto === 'string' 
+                            ? JSON.parse(ordine.contenuto) 
+                            : ordine.contenuto;
+                          
+                          if (!Array.isArray(contenuto) || contenuto.length === 0) return null;
+                          
+                          return (
+                            <div className="border-t border-gray-600/50 pt-3">
+                              <div className="text-xs text-gray-400 mb-2">Vini ordinati:</div>
+                              <div className="space-y-1">
+                                {contenuto.slice(0, 2).map((vino, index) => (
+                                  <div key={index} className="flex justify-between text-sm">
+                                    <span className="text-gray-300">
+                                      {vino.nome}
+                                    </span>
+                                    <span className="text-gray-400">
+                                      {vino.quantita} bot. × €{(vino.prezzo_unitario || 0).toFixed(2)}
+                                    </span>
+                                  </div>
+                                ))}
+                                {contenuto.length > 2 && (
+                                  <div className="text-xs text-gray-500">
+                                    ... e altri {contenuto.length - 2} vini
+                                  </div>
+                                )}
                               </div>
-                            ))}
-                            {ordine.dettagli.length > 2 && (
-                              <div className="text-xs text-gray-500">
-                                ... e altri {ordine.dettagli.length - 2} vini
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                            </div>
+                          );
+                        } catch {
+                          return null;
+                        }
+                      })()}
                     </div>
                   ))
                 )}
