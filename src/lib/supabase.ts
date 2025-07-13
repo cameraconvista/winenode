@@ -54,20 +54,7 @@ const mockSupabase = {
 export { isSupabaseAvailable }
 export const supabase = supabaseClient || mockSupabase
 
-// Auth Manager semplificato (mantenuto per compatibilità)
-export const authManagerSimple = {
-  onAuthStateChange: (callback: (user: any) => void) => {
-    if (isSupabaseAvailable && supabaseClient) {
-      return supabaseClient.auth.onAuthStateChange((event: string, session: any) => {
-        callback(session?.user || null)
-      }).data.subscription.unsubscribe
-    } else {
-      // Modalità fallback - simula utente loggato
-      setTimeout(() => callback({ id: 'local-user', email: 'local@test.com' }), 100)
-      return () => {}
-    }
-  }
-}
+// authManagerSimple rimosso - usa authManager
 
 export type AuthUser = User | null
 export type AuthSession = Session | null
@@ -251,5 +238,4 @@ export class AuthManager {
 }
 
 // Esporta l'istanza singleton di AuthManager
-export const authManager2 = AuthManager.getInstance()
 export const authManager = AuthManager.getInstance()

@@ -53,7 +53,7 @@ export default function WineCard({ wine, onUpdateInventory, onWineClick }: WineC
             {wine.name}
           </h3>
         </div>
-        
+
         <div className="flex items-center justify-end flex-shrink-0" style={{ minWidth: '60px' }}>
           <span 
             className="text-cream font-medium text-sm cursor-pointer hover:bg-gray-700 px-2 py-1 rounded transition-colors mr-1"

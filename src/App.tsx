@@ -14,8 +14,7 @@ import ImportaPage from './pages/ImportaPage'
 import AccountPage from './pages/AccountPage'
 import PreferenzePage from './pages/PreferenzePage'
 import FoglioExcelPage from './pages/FoglioExcelPage'
-
-import OrdiniSospesiPage from "./pages/OrdiniSospesiPage";
+import OrdiniSospesiPage from './pages/OrdiniSospesiPage'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -23,7 +22,6 @@ function App() {
   const [session, setSession] = useState<Session | null>(null)
   const [fallbackMode, setFallbackMode] = useState(false)
   const [showSaldo, setShowSaldo] = useState(false)
-  const [hasError, setHasError] = useState(false)
 
   // Global saldo command listener
   useEffect(() => {

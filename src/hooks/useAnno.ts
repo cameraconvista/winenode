@@ -1,47 +1,28 @@
-
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
 
-export interface Anno {
-  anno: number;
-}
-
-export function useAnno() {
-  const [anni, setAnni] = useState<Anno[]>([]);
+export const useAnno = () => {
+  const [anni, setAnni] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchAnni = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-
-      // Valida sessione prima di procedere
-      const isValid = await authManager.validateSession();
-      if (!isValid) {
-        console.log('⚠️ Sessione non valida, anni vuoti');
-        setAnni([]);
-        setLoading(false);
-        return;
-      }
-
-      console.log('🔍 Caricamento anni dal database');
+      const userId = authManager.getUserId();
+      if (!userId) return;
 
       const { data, error } = await supabase
-        .from('anno')
+        .from('vini')
         .select('anno')
-        .order('anno', { ascending: false });
+        .eq('user_id', userId)
+        .not('anno', 'is', null);
 
-      if (error) {
-        console.error('❌ Errore caricamento anni:', error.message);
-        setAnni([]);
-      } else {
-        console.log('✅ Anni ricevuti da Supabase:', data);
-        if (data) {
-          setAnni(data);
-          console.log('✅ Anni mappati:', data.length);
-        }
-      }
+      if (error) throw error;
+
+      const uniqueAnni = [...new Set(data?.map(v => v.anno?.toString()).filter(Boolean))].sort();
+      setAnni(uniqueAnni);
     } catch (error) {
-      console.error('❌ Errore nel caricamento anni:', error);
+      console.error('Errore caricamento anni:', error);
       setAnni([]);
     } finally {
       setLoading(false);
@@ -52,9 +33,5 @@ export function useAnno() {
     fetchAnni();
   }, []);
 
-  return { 
-    anni, 
-    loading, 
-    refreshAnni: fetchAnni 
-  };
-}
+  return { anni, loading, refreshAnni: fetchAnni };
+};

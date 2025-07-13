@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
 
@@ -95,7 +94,7 @@ const useSuppliers = () => {
           .not('fornitore', 'eq', '');
 
         if (errorLegacy) throw errorLegacy;
-        
+
         // Converti il formato da vini a giacenze
         wines = winesLegacy?.map(wine => ({ supplier: wine.fornitore })) || [];
       }
@@ -121,7 +120,7 @@ const useSuppliers = () => {
 
         if (insertError) {
           console.error('❌ Errore inserimento fornitori:', insertError);
-          
+
           // Se l'errore è di duplicato, prova a recuperare i fornitori esistenti
           if (insertError.code === '23505') {
             console.log('🔄 Fornitori già esistenti, recupero dalla tabella...');
@@ -136,7 +135,7 @@ const useSuppliers = () => {
               return;
             }
           }
-          
+
           // Crea oggetti Supplier temporanei come fallback
           const tempSuppliers: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
             id: `temp-${index}`,

@@ -144,9 +144,6 @@ export function useWineData() {
       }
 
       const parsed = Papa.parse<string[]>(csvText, { skipEmptyLines: false });
-      console.log(`📊 ${categoria} - CSV parsed: ${parsed.data.length} righe`);
-      console.log(`📄 ${categoria} - Prime 5 righe:`, parsed.data.slice(0, 5));
-      
       const winesFromCsv = parseCsvWineRows(parsed.data, categoria);
       console.log(`🍷 ${categoria} - Vini estratti: ${winesFromCsv.length}`);
 

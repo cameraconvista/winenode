@@ -109,7 +109,7 @@ const useWines = () => {
 
       const results = await Promise.all(updatePromises);
       const hasErrors = results.some(result => result.error);
-      
+
       if (hasErrors) {
         console.error('❌ Errore in alcuni aggiornamenti giacenze');
         return false;

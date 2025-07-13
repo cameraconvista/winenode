@@ -1,2 +1,2 @@
 
-// File vuoto - tutte le funzioni obsolete rimosse
+// File rimosso - tutte le funzioni sono state migrate in altri hook

@@ -36,8 +36,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   return (
     <div className="h-screen flex items-center justify-center p-3 overflow-hidden" style={{ backgroundColor: '#2c0405' }}>
       <div className="rounded-lg p-6 w-full max-w-xs shadow-xl" style={{ backgroundColor: '#24161d', border: '1px solid #374151' }}>
-        
-        
+
+
 
         <div className="text-center mb-6">
           <img 

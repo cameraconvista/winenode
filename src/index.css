@@ -1,4 +1,3 @@
-
 /* Rimuovi controlli spinner dagli input numerici */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -50,7 +49,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
   }
-  
+
   /* Previeni rotazioni indesiderate */
   table, .table-container, tbody, thead, tr, td, th {
     transform: none !important;
@@ -173,17 +172,17 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     font-size: 14px;
     background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505);
   }
-  
+
   table {
     font-size: 0.8rem;
     width: 100%;
   }
-  
+
   table td, table th {
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
   }
-  
+
   .table-responsive {
     overflow-x: auto;
     width: 100%;
@@ -198,27 +197,27 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     overflow-x: auto;
     background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
   }
-  
+
   /* Forza sfondo bordeaux scuro per tutti i contenitori principali */
   #root {
     background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
   }
-  
+
   /* Ottimizza tabelle per tablet orizzontale */
   table {
     font-size: 0.75rem;
     width: 100%;
   }
-  
+
   /* Adatta spaziature */
   .p-4 {
     padding: 0.75rem;
   }
-  
+
   .p-3 {
     padding: 0.5rem;
   }
-  
+
   /* Assicura che tutti i componenti principali mantengano il tema scuro */
   .bg-gray-900, [style*="background"] {
     background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
@@ -231,12 +230,12 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   body, #root, main {
     background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
   }
-  
+
   /* Blocca scroll orizzontale tabella */
   .rounded-lg.shadow-2xl {
     overflow-x: hidden !important;
   }
-  
+
   /* Assicura che la tabella si adatti perfettamente */
   table.table-fixed {
     width: 100% !important;
@@ -244,8 +243,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     max-width: 100% !important;
     table-layout: fixed !important;
   }
-  
-  /* Ottimizza celle per tablet */
+
   table td, table th {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -254,31 +252,31 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     font-size: 0.8rem !important;
     line-height: 1.2 !important;
   }
-  
+
   /* Riduce padding per header */
   table th {
     padding: 0.5rem 0.25rem !important;
     font-size: 0.7rem !important;
   }
-  
+
   /* Altezza righe ottimizzata */
   table tbody tr {
     height: 36px !important;
   }
-  
+
   /* Solo scroll verticale per le righe */
   .h-full.overflow-x-hidden {
     overflow-x: hidden !important;
     overflow-y: auto !important;
   }
-  
+
   /* Ottimizza input e select nelle celle */
   table input, table select {
     font-size: 0.75rem !important;
     padding: 0.25rem !important;
     height: 32px !important;
   }
-  
+
   /* Riduce font size dei pulsanti azioni */
   table button {
     font-size: 0.7rem !important;
@@ -292,17 +290,17 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   * {
     transform: none !important;
   }
-  
+
   table, tbody, thead, tr, td, th {
     transform: none !important;
     writing-mode: initial !important;
     text-orientation: initial !important;
   }
-  
+
   .rounded-lg.shadow-2xl {
     overflow-x: auto !important;
   }
-  
+
   table.table-fixed {
     width: 100% !important;
     min-width: unset !important;
@@ -310,7 +308,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     table-layout: fixed !important;
     transform: none !important;
   }
-  
+
   table td, table th {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -320,7 +318,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     transform: none !important;
     writing-mode: initial !important;
   }
-  
+
   .h-full.overflow-x-hidden {
     overflow-x: auto !important;
     overflow-y: auto !important;
@@ -383,14 +381,14 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     width: 100%;
     overflow-x: hidden;
   }
-  
+
   #root {
     width: 100%;
     min-height: 100vh;
     background: linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202);
     overflow-x: hidden;
   }
-  
+
   /* Header fisso per mobile */
   header {
     position: fixed !important;
@@ -401,7 +399,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
   }
-  
+
   /* Main content compensato per header fisso mobile */
   main {
     margin-top: 132px !important; /* Logo ridotto + pulsantiera mobile */
@@ -410,7 +408,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     overflow: hidden !important;
     padding-top: 8px !important;
   }
-  
+
   /* Scroll container per lista vini mobile */
   main > div {
     height: 100% !important;
@@ -418,20 +416,20 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
   }
-  
+
   table {
     font-size: 0.8rem;
     width: 100% !important;
   }
-  
+
   .text-sm {
     font-size: 0.875rem;
   }
-  
+
   .text-xs {
     font-size: 0.75rem;
   }
-  
+
   /* Fix per pulsanti mobile */
   button {
     touch-action: manipulation;
@@ -439,25 +437,25 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     min-height: 44px; /* Apple guidelines per touch target */
     min-width: 44px;
   }
-  
+
   /* Assicura z-index corretto per header mobile */
   header {
     z-index: 100 !important;
   }
-  
+
   /* Migliora area touch per elementi cliccabili */
   .cursor-pointer {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   /* Fix per input mobile */
   input, select, textarea {
     font-size: 16px !important; /* Previene zoom su iOS */
     -webkit-appearance: none;
     appearance: none;
   }
-  
+
   /* Fix specifici per iOS PWA */
   @supports (-webkit-touch-callout: none) {
     input[type="email"], 
@@ -473,7 +471,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
       -webkit-user-select: text;
       user-select: text;
     }
-    
+
     /* Fix per PWA standalone mode */
     @media (display-mode: standalone) {
       input {
@@ -484,13 +482,13 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
         -webkit-perspective: 1000;
         perspective: 1000;
       }
-      
+
       body {
         -webkit-user-select: text;
         user-select: text;
         -webkit-tap-highlight-color: transparent;
       }
-      
+
       /* Forza la tastiera iOS a comparire */
       input:focus {
         -webkit-user-select: text !important;
@@ -498,7 +496,7 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
         -webkit-touch-callout: default !important;
         touch-callout: default !important;
       }
-      
+
       /* Fix per form in PWA */
       form {
         -webkit-transform: translateZ(0);
@@ -519,14 +517,14 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     z-index: 50;
     backdrop-filter: blur(10px);
   }
-  
+
   /* Main content per tablet */
   main {
     margin-top: 160px;
     min-height: calc(100vh - 160px);
     overflow-x: hidden;
   }
-  
+
   /* Scroll container per tablet */
   main > div {
     min-height: 100%;
@@ -546,14 +544,14 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
     z-index: 50;
     backdrop-filter: blur(12px);
   }
-  
+
   /* Main content per desktop */
   main {
     margin-top: 180px;
     min-height: calc(100vh - 180px);
     overflow-x: hidden;
   }
-  
+
   /* Scroll container per desktop */
   main > div {
     min-height: 100%;
@@ -609,4 +607,22 @@ textarea::placeholder {
     font-size: 0.875rem;
     padding: 0.25rem 0.5rem;
   }
+}
+
+/* Account button compatto */
+.account-button {
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 8px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+}
+
+.account-button * {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: inherit !important;
 }

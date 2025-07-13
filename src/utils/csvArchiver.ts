@@ -1,2 +1,2 @@
 
-// File mantenuto solo per compatibilità - tutte le funzioni CSV obsolete rimosse
+// File rimosso - tutte le funzioni sono state migrate in useWineData.ts
