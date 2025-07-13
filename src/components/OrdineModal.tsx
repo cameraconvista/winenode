@@ -14,11 +14,13 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
   const { wines } = useWines();
   const { salvaOrdine } = useOrdini();
   const [selectedFornitore, setSelectedFornitore] = useState<string>("");
+  const [selectedFornitoreId, setSelectedFornitoreId] = useState<string>("");
   const [step, setStep] = useState<"fornitore" | "vini" | "riassunto" | "conferma" | "successo">("fornitore");
   const [ordineQuantities, setOrdineQuantities] = useState<Record<number, number>>({});
   const [ordineMode, setOrdineMode] = useState<Record<number, 'bottiglie' | 'cartoni'>>({});
   const [ordineData, setOrdineData] = useState<{
     fornitore: string;
+    fornitore_id: string;
     vini: Array<{
       id: number;
       nome: string;
