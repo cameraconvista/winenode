@@ -376,7 +376,7 @@ export default function SettingsPage() {
             return (
               <div
                 key={section.id}
-                className="bg-gray-800/50 border border-gray-700 px-2 py-1.5 rounded-md text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
+                className="bg-gray-800/50 border border-gray-700 px-4 py-2 rounded-lg text-center transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
                 onClick={() => {
                   if (section.id === "account") {
                     navigate('/settings/account');
@@ -391,16 +391,13 @@ export default function SettingsPage() {
                   }
                 }}
               >
-                <div className="flex items-center gap-1.5">
-                  <div className="p-0.5 bg-gray-700/50 rounded-sm group-hover:bg-gray-600/50 transition-colors">
-                    <IconComponent className="h-3 w-3 text-gray-300" />
+                <div className="flex items-center justify-center gap-2">
+                  <div className="p-1 bg-gray-700/50 rounded group-hover:bg-gray-600/50 transition-colors">
+                    <IconComponent className="h-4 w-4 text-gray-300" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xs font-medium text-cream uppercase tracking-wide">
-                      {section.title}
-                    </h3>
-                  </div>
-                  <ChevronRight className="h-3 w-3 text-gray-500 group-hover:text-gray-400 transition-colors" />
+                  <h3 className="text-sm font-medium text-cream uppercase tracking-wide">
+                    {section.title}
+                  </h3>
                 </div>
               </div>
             );
