@@ -330,6 +330,53 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   }
 }
 
+/* === FIX CONSISTENZA PULSANTI SETTINGS === */
+/* Forza dimensioni normali per tutti i pulsanti delle impostazioni */
+.bg-gray-800\/50.border.border-gray-700.p-4.rounded-xl,
+.bg-gray-800\/30.border.border-gray-700\/50.p-3.rounded-lg {
+  padding: 0.75rem !important; /* 12px */
+  min-height: 48px !important;
+  max-height: 52px !important;
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+.bg-gray-800\/50 .flex.items-center.gap-3,
+.bg-gray-800\/30 .flex.items-center.gap-3 {
+  height: 100% !important;
+  align-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.bg-gray-800\/50 h3,
+.bg-gray-800\/30 h5 {
+  font-size: 0.875rem !important; /* 14px */
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Icone dimensioni fisse */
+.bg-gray-800\/50 .p-2,
+.bg-gray-800\/30 .p-1\.5 {
+  padding: 0.5rem !important; /* 8px */
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.bg-gray-800\/50 svg,
+.bg-gray-800\/30 svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
 /* Layout specifico per smartphone (mantiene comportamento normale) */
 @media screen and (max-width: 767px) {
   body {
