@@ -360,10 +360,11 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   
   /* Main content compensato per header fisso mobile */
   main {
-    margin-top: 140px !important; /* Logo + pulsantiera mobile */
-    height: calc(100vh - 140px) !important;
+    margin-top: 132px !important; /* Logo ridotto + pulsantiera mobile */
+    height: calc(100vh - 132px) !important;
     width: 100% !important;
     overflow: hidden !important;
+    padding-top: 8px !important;
   }
   
   /* Scroll container per lista vini mobile */
@@ -389,6 +390,19 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   
   /* Fix per pulsanti mobile */
   button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px; /* Apple guidelines per touch target */
+    min-width: 44px;
+  }
+  
+  /* Assicura z-index corretto per header mobile */
+  header {
+    z-index: 100 !important;
+  }
+  
+  /* Migliora area touch per elementi cliccabili */
+  .cursor-pointer {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }

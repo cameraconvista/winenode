@@ -194,14 +194,14 @@ export default function HomePage() {
       width: '100vw',
       maxWidth: '100%'
     }}>
-      <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0 fixed top-0 left-0 right-0 z-50">
+      <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0 fixed top-0 left-0 right-0 z-[100]">
         <div className="max-w-4xl mx-auto px-3 sm:px-4">
           <div className="flex flex-col items-center">
-            {/* Logo centrato - ridotto del 20% in altezza */}
+            {/* Logo centrato - ottimizzato per mobile */}
             <img 
               src="/logo 2 CCV.png" 
               alt="WINENODE" 
-              className="h-20 sm:h-32 w-auto object-contain -mb-2" 
+              className="h-16 sm:h-24 md:h-32 w-auto object-contain -mb-1" 
             />
 
             {/* Pulsantiera sotto il logo - ottimizzata per mobile */}
@@ -321,8 +321,8 @@ export default function HomePage() {
 
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-hidden" style={{ 
-        marginTop: 'calc(80px + 80px)', // Logo + pulsantiera
-        height: 'calc(100vh - 160px)'
+        marginTop: 'calc(64px + 68px)', // Logo ridotto + pulsantiera mobile
+        height: 'calc(100vh - 132px)'
       }}>
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-4" style={{
           maxHeight: '100%',
