@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Package, Clock, CheckCircle, Archive, Eye, Check, Truck } from 'lucide-react';
 import { useOrdini } from '../hooks/useOrdini';
@@ -10,7 +11,7 @@ interface GestisciOrdiniModalProps {
 
 type TabType = 'sospesi' | 'inviati' | 'ricevuti' | 'storico';
 
-export default function GestisciOrdiniModal({ open, onClose }: GestisciOrdiniModalProps) {
+const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose }) => {
   const { ordini, isLoading, error, loadOrdini, aggiornaStatoOrdine } = useOrdini();
   const [activeTab, setActiveTab] = useState<TabType>('sospesi');
   const [selectedOrdine, setSelectedOrdine] = useState<any>(null);
@@ -184,8 +185,8 @@ export default function GestisciOrdiniModal({ open, onClose }: GestisciOrdiniMod
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <h3 className="font-semibold text-white text-lg">
-                            🏪 {ordine.fornitore_nome || ordine.fornitore}
-                          </h3>
+                              🏪 {ordine.fornitore_nome || ordine.fornitore}
+                            </h3>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatoColor(ordine.stato)}`}>
                               {ordine.stato.toUpperCase()}
                             </span>
@@ -296,4 +297,6 @@ export default function GestisciOrdiniModal({ open, onClose }: GestisciOrdiniMod
       )}
     </>
   );
-}
+};
+
+export default GestisciOrdiniModal;

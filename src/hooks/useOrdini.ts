@@ -28,7 +28,6 @@ export interface Ordine {
   created_at?: string;
   updated_at?: string;
   dettagli?: OrdineDettaglio[];
-  fornitori?: { fornitore: string }; // Join data
 }
 
 export function useOrdini() {
@@ -59,8 +58,7 @@ export function useOrdini() {
           data_invio_whatsapp,
           data_ricevimento,
           created_at,
-          updated_at,
-          fornitori!inner(fornitore)
+          updated_at
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
@@ -76,8 +74,8 @@ export function useOrdini() {
       // Trasforma i dati per il frontend
       const ordiniConDettagli = data?.map(ordine => ({
         ...ordine,
-        fornitore_nome: ordine.fornitori?.fornitore || 'Fornitore sconosciuto',
-        dettagli: [] // Temporaneamente vuoto fino a fix database
+        fornitore_nome: ordine.fornitore || 'Fornitore sconosciuto',
+        dettagli: [] // Temporaneamente vuoto
       })) || [];
 
       setOrdini(ordiniConDettagli);
@@ -86,43 +84,6 @@ export function useOrdini() {
       setError(err instanceof Error ? err.message : 'Errore sconosciuto');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // Assicurati che il fornitore esista nella tabella fornitori
-  const assicuraFornitoreEsiste = async (nomeFornitore: string) => {
-    if (!supabase || !userId) return null;
-
-    try {
-      // Prima controlla se esiste già
-      const { data: esistente, error: checkError } = await supabase
-        .from('fornitori')
-        .select('id')
-        .eq('fornitore', nomeFornitore)
-        .eq('user_id', userId)
-        .single();
-
-      if (esistente) {
-        return esistente.id;
-      }
-
-      // Se non esiste, crealo
-      const { data: nuovoFornitore, error: createError } = await supabase
-        .from('fornitori')
-        .insert({
-          user_id: userId,
-          fornitore: nomeFornitore
-        })
-        .select('id')
-        .single();
-
-      if (createError) throw createError;
-
-      console.log('✅ Nuovo fornitore creato:', nomeFornitore, nuovoFornitore.id);
-      return nuovoFornitore.id;
-    } catch (err) {
-      console.error('❌ Errore gestione fornitore:', err);
-      throw err;
     }
   };
 
@@ -141,42 +102,21 @@ export function useOrdini() {
     if (!supabase || !userId) return null;
 
     try {
-      // 1. Assicurati che il fornitore esista e ottieni il suo ID
-      const fornitoreId = await assicuraFornitoreEsiste(ordineData.fornitore);
-      if (!fornitoreId) {
-        throw new Error(`Impossibile creare/trovare fornitore "${ordineData.fornitore}"`);
-      }
-
-      // 2. Inserisci ordine principale con l'ID del fornitore
+      // Inserisci ordine principale
       const { data: ordine, error: ordineError } = await supabase
         .from('ordini')
         .insert({
           user_id: userId,
-          fornitore: fornitoreId, // Usa l'ID UUID del fornitore
+          fornitore: ordineData.fornitore,
           stato: 'sospeso',
           totale: ordineData.totale,
-          data: new Date().toISOString().split('T')[0], // Solo data YYYY-MM-DD
+          data: new Date().toISOString().split('T')[0],
           contenuto: ordineData.vini.map(v => `${v.nome} (${v.quantita})`).join(', ')
         })
         .select()
         .single();
 
       if (ordineError) throw ordineError;
-
-      // 3. Inserisci dettagli ordine
-      const dettagli = ordineData.vini.map(vino => ({
-        ordine_id: ordine.id,
-        vino_id: parseInt(vino.id.toString()) || 0, // Assicurati che sia un numero intero
-        quantita_ordinata: vino.quantita,
-        prezzo_unitario: vino.prezzo_unitario,
-        subtotale: vino.quantita * vino.prezzo_unitario
-      }));
-
-      const { error: dettagliError } = await supabase
-        .from('ordini_dettaglio')
-        .insert(dettagli);
-
-      if (dettagliError) throw dettagliError;
 
       console.log('✅ Ordine salvato con successo:', ordine.id);
 
@@ -227,71 +167,6 @@ export function useOrdini() {
     }
   };
 
-  // Conferma ricevimento ordine e aggiorna giacenze
-  const confermaRicevimento = async (ordineId: string, quantitaRicevute: Record<string, number>) => {
-    if (!supabase) return false;
-
-    try {
-      // 1. Aggiorna quantità ricevute nei dettagli
-      for (const [dettaglioId, quantita] of Object.entries(quantitaRicevute)) {
-        const { error: dettaglioError } = await supabase
-          .from('ordini_dettaglio')
-          .update({ 
-            quantita_ricevuta: quantita,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', dettaglioId);
-
-        if (dettaglioError) throw dettaglioError;
-      }
-
-      // 2. Ottieni i dettagli completi per aggiornare le giacenze
-      const { data: dettagli, error: dettagliError } = await supabase
-        .from('ordini_dettaglio')
-        .select('vino_id, quantita_ricevuta')
-        .eq('ordine_id', ordineId)
-        .not('quantita_ricevuta', 'is', null);
-
-      if (dettagliError) throw dettagliError;
-
-      // 3. Aggiorna giacenze vini
-      for (const dettaglio of dettagli || []) {
-        const { error: vinoError } = await supabase.rpc('incrementa_giacenza', {
-          p_vino_id: dettaglio.vino_id,
-          p_quantita: dettaglio.quantita_ricevuta
-        });
-
-        if (vinoError) {
-          // Fallback se la funzione RPC non esiste
-          const { data: vino } = await supabase
-            .from('vini')
-            .select('giacenza')
-            .eq('id', dettaglio.vino_id)
-            .single();
-
-          if (vino) {
-            await supabase
-              .from('vini')
-              .update({ 
-                giacenza: (vino.giacenza || 0) + dettaglio.quantita_ricevuta 
-              })
-              .eq('id', dettaglio.vino_id);
-          }
-        }
-      }
-
-      // 4. Aggiorna stato ordine a ricevuto
-      await aggiornaStatoOrdine(ordineId, 'ricevuto');
-
-      console.log('✅ Ricevimento confermato e giacenze aggiornate');
-      return true;
-    } catch (err) {
-      console.error('❌ Errore conferma ricevimento:', err);
-      setError(err instanceof Error ? err.message : 'Errore conferma ricevimento');
-      return false;
-    }
-  };
-
   // Carica ordini all'avvio
   useEffect(() => {
     if (userId) {
@@ -306,7 +181,6 @@ export function useOrdini() {
     loadOrdini,
     salvaOrdine,
     aggiornaStatoOrdine,
-    confermaRicevimento,
     refreshOrdini: () => loadOrdini()
   };
 }
