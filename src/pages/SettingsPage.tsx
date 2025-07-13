@@ -303,7 +303,7 @@ export default function SettingsPage() {
 
           <div className="flex-1"></div>
 
-          
+
         </main>
       </div>
     );
@@ -376,7 +376,7 @@ export default function SettingsPage() {
             return (
               <div
                 key={section.id}
-                className="bg-gray-800/50 border border-gray-700 px-4 py-3 rounded-lg text-center transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
+                className="text-center cursor-pointer"
                 onClick={() => {
                   if (section.id === "account") {
                     navigate('/settings/account');
@@ -392,9 +392,7 @@ export default function SettingsPage() {
                 }}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <div className="p-1 bg-gray-700/50 rounded group-hover:bg-gray-600/50 transition-colors">
-                    <IconComponent className="h-4 w-4 text-gray-300" />
-                  </div>
+                  <IconComponent className="h-4 w-4 text-gray-300" />
                   <h3 className="text-sm font-medium text-cream uppercase tracking-wide">
                     {section.title}
                   </h3>
@@ -408,7 +406,7 @@ export default function SettingsPage() {
 
         <div className="mt-auto text-center">
           <div className="text-gray-400" style={{ fontSize: "8px" }}>
-            
+
           </div>
         </div>
       </main>
