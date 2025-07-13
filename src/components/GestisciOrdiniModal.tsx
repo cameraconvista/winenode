@@ -96,10 +96,12 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
     }
   };
 
-  const handleArchiviaOrdine = async (ordineId: string) => {
-    const success = await aggiornaStatoOrdine(ordineId, 'archiviato');
-    if (success) {
-      console.log('✅ Ordine archiviato');
+  const handleArchiviaOrdine = async (ordineId: string, fornitoreNome: string) => {
+    if (window.confirm(`Sei sicuro di voler archiviare l'ordine di ${fornitoreNome}?`)) {
+      const success = await aggiornaStatoOrdine(ordineId, 'archiviato');
+      if (success) {
+        console.log('✅ Ordine archiviato');
+      }
     }
   };
 
@@ -280,7 +282,7 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
                           {ordine.stato === 'ricevuto' && (
                             <button
-                              onClick={() => handleArchiviaOrdine(ordine.id)}
+                              onClick={() => handleArchiviaOrdine(ordine.id, ordine.fornitore_nome || ordine.fornitore)}
                               className="p-2 bg-gray-600/20 hover:bg-gray-600/40 text-gray-300 rounded-lg transition-colors"
                               title="Archivia ordine"
                             >
