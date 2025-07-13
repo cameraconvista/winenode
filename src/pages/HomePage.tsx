@@ -289,10 +289,11 @@ export default function HomePage() {
                   <select
                     value={activeTab}
                     onChange={(e) => handleTabChange(e.target.value)}
-                    className="bg-black/20 border border-red-900/20 rounded-lg px-2 py-1.5 text-xs sm:text-sm text-cream font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 cursor-pointer hover:bg-black/30 transition-all duration-200 appearance-none min-h-[36px]"
+                    className="bg-black/20 border border-red-900/20 rounded-lg px-2 py-1.5 text-xs text-cream font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 cursor-pointer hover:bg-black/30 transition-all duration-200 appearance-none min-h-[36px]"
                     style={{ 
                       minWidth: '100px',
-                      maxWidth: '130px'
+                      maxWidth: '130px',
+                      fontSize: '11px'
                     }}
                   >
                     <option value="TUTTI I VINI">Tutti i Vini</option>
