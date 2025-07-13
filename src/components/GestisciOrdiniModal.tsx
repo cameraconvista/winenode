@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Package, Clock, CheckCircle, Archive, Eye, Check, Truck } from 'lucide-react';
+import { X, Package, Clock, CheckCircle, Archive, Eye, Check, Truck, Trash2 } from 'lucide-react';
 import { useOrdini } from '../hooks/useOrdini';
 import OrdineDetailModal from './OrdineDetailModal';
 
@@ -98,6 +98,14 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
     const success = await aggiornaStatoOrdine(ordineId, 'archiviato');
     if (success) {
       console.log('✅ Ordine archiviato');
+    }
+  };
+
+  const handleEliminaOrdine = async (ordineId: string, fornitoreNome: string) => {
+    if (window.confirm(`Sei sicuro di voler eliminare l'ordine di ${fornitoreNome}? Questa azione non può essere annullata.`)) {
+      // Qui implementeremo la logica di eliminazione dal database
+      console.log('🗑️ Eliminazione ordine:', ordineId);
+      // TODO: Implementare eliminazione reale dal database
     }
   };
 
@@ -249,6 +257,15 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
                               <Archive className="h-4 w-4" />
                             </button>
                           )}
+
+                          {/* Pulsante elimina ordine - disponibile per tutti gli stati */}
+                          <button
+                            onClick={() => handleEliminaOrdine(ordine.id, ordine.fornitore_nome || ordine.fornitore)}
+                            className="p-2 bg-red-600/20 hover:bg-red-600/40 text-red-300 rounded-lg transition-colors"
+                            title="Elimina ordine"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                         </div>
                       </div>
 
