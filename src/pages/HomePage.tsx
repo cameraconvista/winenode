@@ -189,12 +189,12 @@ export default function HomePage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col overflow-x-hidden" style={{ 
+    <div className="h-screen flex flex-col overflow-hidden" style={{ 
       background: 'linear-gradient(to bottom right, #1f0202, #2d0505)',
       width: '100vw',
       maxWidth: '100%'
     }}>
-      <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0 sticky top-0 z-50">
+      <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0 fixed top-0 left-0 right-0 z-50">
         <div className="max-w-4xl mx-auto px-3 sm:px-4">
           <div className="flex flex-col items-center">
             {/* Logo centrato - ridotto del 20% in altezza */}
@@ -319,8 +319,14 @@ export default function HomePage() {
 
 
 
-      <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-x-hidden" style={{ minHeight: 'calc(100vh - 200px)' }}>
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-4">
+      <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-hidden" style={{ 
+        marginTop: 'calc(80px + 80px)', // Logo + pulsantiera
+        height: 'calc(100vh - 160px)'
+      }}>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-4" style={{
+          maxHeight: '100%',
+          scrollBehavior: 'smooth'
+        }}>
           {filteredWines.length === 0 ? (
             <p className="text-center text-gray-400">
               {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 'Nessun vino trovato con i filtri selezionati'}

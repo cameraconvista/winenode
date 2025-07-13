@@ -335,36 +335,43 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   body {
     font-size: 14px;
     background: linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202) !important;
-    min-height: 100vh;
+    height: 100vh;
     width: 100vw;
-    overflow-x: hidden;
+    overflow: hidden;
   }
   
   #root {
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
     background: linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202) !important;
-    overflow-x: hidden;
+    overflow: hidden;
   }
   
-  /* Assicura visibilità su mobile */
-  .h-screen {
-    min-height: 100vh !important;
-    height: auto !important;
-  }
-  
-  /* Ottimizza header per mobile */
+  /* Header fisso per mobile */
   header {
-    position: sticky !important;
+    position: fixed !important;
     top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     z-index: 50 !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
   }
   
-  /* Ottimizza main content per mobile */
+  /* Main content compensato per header fisso mobile */
   main {
-    flex: 1 !important;
+    margin-top: 140px !important; /* Logo + pulsantiera mobile */
+    height: calc(100vh - 140px) !important;
     width: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  /* Scroll container per lista vini mobile */
+  main > div {
+    height: 100% !important;
+    overflow-y: auto !important;
     overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
   }
   
   table {
@@ -440,6 +447,60 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
         transform: translateZ(0);
       }
     }
+  }
+}
+
+/* Layout per tablet */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* Header fisso per tablet */
+  header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  
+  /* Main content per tablet */
+  main {
+    margin-top: 160px !important; /* Logo + pulsantiera tablet */
+    height: calc(100vh - 160px) !important;
+    overflow: hidden !important;
+  }
+  
+  /* Scroll container per tablet */
+  main > div {
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* Layout per desktop */
+@media screen and (min-width: 1025px) {
+  /* Header fisso per desktop */
+  header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    backdrop-filter: blur(12px) !important;
+  }
+  
+  /* Main content per desktop */
+  main {
+    margin-top: 180px !important; /* Logo + pulsantiera desktop */
+    height: calc(100vh - 180px) !important;
+    overflow: hidden !important;
+  }
+  
+  /* Scroll container per desktop */
+  main > div {
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 }
 
