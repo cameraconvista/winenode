@@ -376,7 +376,7 @@ export default function SettingsPage() {
             return (
               <div
                 key={section.id}
-                className="text-center cursor-pointer"
+                className="bg-gray-800/50 border border-gray-700 px-4 py-3 rounded-lg text-center transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
                 onClick={() => {
                   if (section.id === "account") {
                     navigate('/settings/account');
@@ -392,7 +392,9 @@ export default function SettingsPage() {
                 }}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <IconComponent className="h-4 w-4 text-gray-300" />
+                  <div className="p-1 bg-gray-700/50 rounded group-hover:bg-gray-600/50 transition-colors">
+                    <IconComponent className="h-4 w-4 text-gray-300" />
+                  </div>
                   <h3 className="text-sm font-medium text-cream uppercase tracking-wide">
                     {section.title}
                   </h3>
