@@ -8,11 +8,11 @@ interface GestisciOrdiniModalProps {
   onClose: () => void;
 }
 
-type TabType = 'sospesi' | 'inviati' | 'ricevuti' | 'storico';
+type TabType = 'inviati' | 'ricevuti' | 'storico';
 
 const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose }) => {
   const { ordini, isLoading, error, loadOrdini, aggiornaStatoOrdine } = useOrdini();
-  const [activeTab, setActiveTab] = useState<TabType>('sospesi');
+  const [activeTab, setActiveTab] = useState<TabType>('inviati');
   const [selectedOrdine, setSelectedOrdine] = useState<any>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
@@ -26,7 +26,6 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
   const filteredOrdini = ordini.filter(o => {
     switch (activeTab) {
-      case 'sospesi': return o.stato === 'sospeso';
       case 'inviati': return o.stato === 'inviato';
       case 'ricevuti': return o.stato === 'ricevuto';
       case 'storico': return o.stato === 'archiviato';
@@ -56,7 +55,6 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
   const getTabIcon = (tab: TabType) => {
     switch (tab) {
-      case 'sospesi': return <Clock className="h-4 w-4" />;
       case 'inviati': return <Truck className="h-4 w-4" />;
       case 'ricevuti': return <CheckCircle className="h-4 w-4" />;
       case 'storico': return <Archive className="h-4 w-4" />;
@@ -65,7 +63,6 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
   const getTabLabel = (tab: TabType) => {
     switch (tab) {
-      case 'sospesi': return 'Sospesi';
       case 'inviati': return 'Inviati';
       case 'ricevuti': return 'Ricevuti';
       case 'storico': return 'Storico';
@@ -75,7 +72,6 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
   const getTabCount = (tab: TabType) => {
     return ordini.filter(o => {
       switch (tab) {
-        case 'sospesi': return o.stato === 'sospeso';
         case 'inviati': return o.stato === 'inviato';
         case 'ricevuti': return o.stato === 'ricevuto';
         case 'storico': return o.stato === 'archiviato';
@@ -123,7 +119,7 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
           {/* Tabs */}
           <div className="border-b border-gray-700">
             <div className="flex space-x-1 p-1">
-              {(['sospesi', 'inviati', 'ricevuti', 'storico'] as TabType[]).map((tab) => (
+              {(['inviati', 'ricevuti', 'storico'] as TabType[]).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -168,7 +164,6 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
                       Nessun ordine {getTabLabel(activeTab).toLowerCase()}
                     </h3>
                     <p className="text-gray-500">
-                      {activeTab === 'sospesi' && 'Crea un nuovo ordine per vederlo qui'}
                       {activeTab === 'inviati' && 'Gli ordini inviati appariranno qui'}
                       {activeTab === 'ricevuti' && 'Gli ordini ricevuti appariranno qui'}
                       {activeTab === 'storico' && 'Gli ordini archiviati appariranno qui'}
