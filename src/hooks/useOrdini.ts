@@ -37,7 +37,7 @@ export function useOrdini() {
 
   const userId = authManager.getUserId();
 
-  // Carica tutti gli ordini dell'utente
+  // Carica tutti gli ordini dell'utente con JOIN ai fornitori
   const loadOrdini = async (stato?: string) => {
     if (!supabase || !userId) return;
 
@@ -58,7 +58,8 @@ export function useOrdini() {
           data_invio_whatsapp,
           data_ricevimento,
           created_at,
-          updated_at
+          updated_at,
+          fornitori!inner(nome)
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
@@ -71,13 +72,14 @@ export function useOrdini() {
 
       if (error) throw error;
 
-      // Trasforma i dati per il frontend
+      // Trasforma i dati per il frontend con il nome del fornitore dal JOIN
       const ordiniConDettagli = data?.map(ordine => ({
         ...ordine,
-        fornitore_nome: ordine.fornitore || 'Fornitore sconosciuto', // Il campo 'fornitore' contiene già il nome
+        fornitore_nome: ordine.fornitori?.nome || 'Fornitore sconosciuto',
         dettagli: [] // Temporaneamente vuoto
       })) || [];
 
+      console.log('✅ Ordini caricati:', ordiniConDettagli.length);
       setOrdini(ordiniConDettagli);
     } catch (err) {
       console.error('Errore caricamento ordini:', err);
