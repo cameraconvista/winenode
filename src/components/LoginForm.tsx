@@ -37,17 +37,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     <div className="h-screen flex items-center justify-center p-3 overflow-hidden" style={{ backgroundColor: '#2c0405' }}>
       <div className="rounded-lg p-6 w-full max-w-xs shadow-xl" style={{ backgroundColor: '#24161d', border: '1px solid #374151' }}>
         
-        {/* 📱 PWA Detection e Fix per iOS */}
-        {(window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) && (
-          <div className="mb-4 p-2 bg-blue-900/20 border border-blue-500/30 rounded text-xs text-blue-200">
-            📱 Modalità PWA - Tocca i campi per scrivere
-            {navigator.userAgent.includes('iPhone') && (
-              <div className="mt-1 text-orange-200">
-                🍎 iOS: Se non riesci a scrivere, tocca due volte il campo
-              </div>
-            )}
-          </div>
-        )}
+        
 
         <div className="text-center mb-6">
           <img 
