@@ -371,13 +371,13 @@ export default function SettingsPage() {
 
       <main className="flex-1 flex flex-col max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full overflow-hidden">
         <div className="flex justify-center">
-          <div className="w-64">
+          <div className="w-full max-w-md space-y-3">
           {settingsSections.map((section) => {
             const IconComponent = section.icon;
             return (
               <div
                 key={section.id}
-                className="bg-gray-800/50 border border-gray-700 px-6 py-4 rounded-lg text-center transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer min-h-[60px] flex items-center justify-center"
+                className="bg-gray-800/50 border border-gray-700 p-4 rounded-xl text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
                 onClick={() => {
                   if (section.id === "account") {
                     navigate('/settings/account');
@@ -392,13 +392,15 @@ export default function SettingsPage() {
                   }
                 }}
               >
-                <div className="flex items-center justify-start gap-2">
-                  <div className="p-1 bg-gray-700/50 rounded group-hover:bg-gray-600/50 transition-colors">
-                    <IconComponent className="h-4 w-4 text-gray-300" />
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-700/50 rounded-lg group-hover:bg-gray-600/50 transition-colors">
+                    <IconComponent className="h-5 w-5 text-gray-300" />
                   </div>
-                  <h3 className="text-sm font-medium text-cream uppercase tracking-wide">
-                    {section.title}
-                  </h3>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-cream uppercase tracking-wide">
+                      {section.title}
+                    </h3>
+                  </div>
                 </div>
               </div>
             );
