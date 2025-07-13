@@ -25,6 +25,7 @@ export interface Ordine {
   data_ricevimento?: string;
   totale: number; // NUMERIC(10,2) - campo corretto della tabella
   contenuto: any; // JSONB - può essere oggetto o array, non stringa
+  contenuto_ricevuto?: any; // JSONB - quantità effettivamente ricevute
   created_at?: string;
   updated_at?: string;
   dettagli?: OrdineDettaglio[];
