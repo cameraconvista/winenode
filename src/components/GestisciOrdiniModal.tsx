@@ -87,10 +87,12 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
     }
   };
 
-  const handleMarkAsRicevuto = async (ordineId: string) => {
-    const success = await aggiornaStatoOrdine(ordineId, 'ricevuto');
-    if (success) {
-      console.log('✅ Ordine marcato come ricevuto');
+  const handleMarkAsRicevuto = async (ordineId: string, fornitoreNome: string) => {
+    if (window.confirm(`Sei sicuro di voler marcare come ricevuto l'ordine di ${fornitoreNome}?`)) {
+      const success = await aggiornaStatoOrdine(ordineId, 'ricevuto');
+      if (success) {
+        console.log('✅ Ordine marcato come ricevuto');
+      }
     }
   };
 
@@ -268,7 +270,7 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
                           {ordine.stato === 'inviato' && (
                             <button
-                              onClick={() => handleMarkAsRicevuto(ordine.id)}
+                              onClick={() => handleMarkAsRicevuto(ordine.id, ordine.fornitore_nome || ordine.fornitore)}
                               className="p-2 bg-green-600/20 hover:bg-green-600/40 text-green-300 rounded-lg transition-colors"
                               title="Marca come ricevuto"
                             >
