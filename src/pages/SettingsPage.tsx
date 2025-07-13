@@ -6,8 +6,7 @@ import {
   Database,
   ChevronRight,
   Truck,
-  Home,
-  ShoppingCart
+  Home
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { authManager } from "../lib/supabase";
@@ -27,7 +26,6 @@ export default function SettingsPage() {
 
   const settingsSections = [
     { id: "account", title: "ACCOUNT", icon: User },
-    { id: "ordini", title: "ORDINI", icon: ShoppingCart },
   ];
 
   const handleEditSupplier = (supplier: Supplier) => {
@@ -330,136 +328,7 @@ export default function SettingsPage() {
     );
   }
 
-  if (currentSection === "ordini") {
-    return (
-      <div
-        className="h-screen max-h-screen overflow-hidden flex flex-col"
-        style={{
-          background:
-            "linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202)",
-        }}
-      >
-        <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-20">
-              <div className="flex items-center justify-between w-full">
-                <button
-                  onClick={() => setCurrentSection(null)}
-                  className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200 hover:scale-105"
-                  title="Torna alle impostazioni"
-                  style={{
-                    filter: "brightness(1.3)",
-                    backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    backdropFilter: "blur(10px)",
-                    border: "1px solid rgba(255, 255, 255, 0.2)"
-                  }}
-                >
-                  <svg 
-                    className="h-6 w-6" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                  </svg>
-                </button>
-                <button
-                onClick={() => navigate("/")}
-                className="p-2 text-white hover:bg-gray-700 rounded-lg transition-colors"
-                title="Torna alla home"
-              >
-                <Home className="h-6 w-6" />
-              </button>
-                <div className="w-10"></div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 flex flex-col max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full overflow-hidden">
-          <div className="text-center py-8">
-            <ShoppingCart className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-cream mb-2">ORDINI</h2>
-            <p className="text-gray-400">Gestione ordini e storico</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
-            <div
-              className="bg-gray-800/50 border border-gray-700 p-4 rounded-xl text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
-              onClick={() => navigate('/ordini/sospesi')}
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-700/50 rounded-lg group-hover:bg-gray-600/50 transition-colors">
-                  <ShoppingCart className="h-4 w-4 text-yellow-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-cream">ORDINI SOSPESI</h3>
-                  <p className="text-xs text-gray-400">Ordini in attesa di conferma consegna</p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-gray-500 group-hover:text-gray-400 transition-colors" />
-              </div>
-            </div>
-
-            <div
-              className="bg-gray-800/50 border border-gray-700 p-4 rounded-xl text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
-              onClick={() => {
-                // TODO: Implementare navigazione agli ordini inviati
-                console.log('Navigazione a ordini inviati');
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-700/50 rounded-lg group-hover:bg-gray-600/50 transition-colors">
-                  <ShoppingCart className="h-4 w-4 text-blue-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-cream">ORDINI INVIATI</h3>
-                  <p className="text-xs text-gray-400">Ordini inviati ai fornitori</p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-gray-500 group-hover:text-gray-400 transition-colors" />
-              </div>
-            </div>
-
-            <div
-              className="bg-gray-800/50 border border-gray-700 p-4 rounded-xl text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
-              onClick={() => {
-                // TODO: Implementare navigazione agli ordini archiviati
-                console.log('Navigazione a ordini archiviati');
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-700/50 rounded-lg group-hover:bg-gray-600/50 transition-colors">
-                  <ShoppingCart className="h-4 w-4 text-green-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-cream">ORDINI ARCHIVIATI</h3>
-                  <p className="text-xs text-gray-400">Storico ordini completati</p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-gray-500 group-hover:text-gray-400 transition-colors" />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1"></div>
-
-          <div className="mt-auto text-center">
-            <div className="text-gray-400" style={{ fontSize: "8px" }}>
-              <div className="mb-1">Versione: 1.0.0</div>
-              <div>
-                Ultimo aggiornamento: {new Date().toLocaleDateString("it-IT")} -{" "}
-                {new Date().toLocaleTimeString("it-IT", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  
 
   return (
     <div
@@ -536,8 +405,6 @@ export default function SettingsPage() {
                     navigate('/settings/archivi');
                   } else if (section.id === "general") {
                     navigate('/settings/preferenze');
-                  } else if (section.id === "ordini") {
-                    setCurrentSection("ordini");
                   } else {
                     setCurrentSection(section.id);
                   }
