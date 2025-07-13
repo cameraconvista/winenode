@@ -135,7 +135,7 @@ export default function OrdineDetailModal({ ordine, open, onClose, onUpdate }: O
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Data Ordine:</span>
-                  <span className="text-white">{formatDate(ordine.data_ordine)}</span>
+                  <span className="text-white">{formatDate(ordine.data)}</span>
                 </div>
                 {ordine.data_invio_whatsapp && (
                   <div className="flex justify-between">
@@ -161,17 +161,37 @@ export default function OrdineDetailModal({ ordine, open, onClose, onUpdate }: O
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Articoli:</span>
-                  <span className="text-white">{ordine.dettagli?.length || 0}</span>
+                  <span className="text-white">{(() => {
+                    try {
+                      const contenuto = typeof ordine.contenuto === 'string' 
+                        ? JSON.parse(ordine.contenuto) 
+                        : ordine.contenuto;
+                      return Array.isArray(contenuto) ? contenuto.length : 0;
+                    } catch {
+                      return 0;
+                    }
+                  })()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Bottiglie Totali:</span>
                   <span className="text-white">
-                    {ordine.dettagli?.reduce((sum: number, det: any) => sum + det.quantita_ordinata, 0) || 0}
+                    {(() => {
+                      try {
+                        const contenuto = typeof ordine.contenuto === 'string' 
+                          ? JSON.parse(ordine.contenuto) 
+                          : ordine.contenuto;
+                        return Array.isArray(contenuto) 
+                          ? contenuto.reduce((sum: number, vino: any) => sum + (vino.quantita || 0), 0)
+                          : 0;
+                      } catch {
+                        return 0;
+                      }
+                    })()}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Totale Ordinato:</span>
-                  <span className="text-green-400 font-semibold">€{ordine.totale_euro.toFixed(2)}</span>
+                  <span className="text-green-400 font-semibold">€{ordine.totale.toFixed(2)}</span>
                 </div>
                 {isEditing && (
                   <div className="flex justify-between border-t border-gray-600 pt-2">
