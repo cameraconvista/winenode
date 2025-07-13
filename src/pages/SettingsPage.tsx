@@ -392,7 +392,7 @@ export default function SettingsPage() {
                   }
                 }}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-start gap-2">
                   <div className="p-1 bg-gray-700/50 rounded group-hover:bg-gray-600/50 transition-colors">
                     <IconComponent className="h-4 w-4 text-gray-300" />
                   </div>
