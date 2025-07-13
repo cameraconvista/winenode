@@ -1,20 +1,16 @@
 /* Rimuovi controlli spinner dagli input numerici */
 input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-/* Assicurati che gli input text con inputMode decimal non abbiano controlli */
+input[type="number"]::-webkit-inner-spin-button,
 input[inputMode="decimal"]::-webkit-outer-spin-button,
 input[inputMode="decimal"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type="number"],
+input[inputMode="decimal"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 
@@ -166,31 +162,8 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   flex-shrink: 0;
 }
 
-/* Layout ottimizzato per tablet portrait - compatibile iframe */
-@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-  body {
-    font-size: 14px;
-    background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505);
-  }
-
-  table {
-    font-size: 0.8rem;
-    width: 100%;
-  }
-
-  table td, table th {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  .table-responsive {
-    overflow-x: auto;
-    width: 100%;
-  }
-}
-
-/* Layout ottimizzato per tablet già in orizzontale */
-@media screen and (max-width: 1024px) and (min-width: 481px) and (orientation: landscape) {
+/* Layout ottimizzato per tablet - orientamenti unificati */
+@media screen and (min-width: 481px) and (max-width: 1024px) {
   body {
     font-size: 14px;
     min-height: 100vh;

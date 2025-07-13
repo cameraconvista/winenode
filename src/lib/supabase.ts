@@ -4,9 +4,7 @@ import { createClient, type User, type Session } from '@supabase/supabase-js'
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-console.log('🔍 Verifica variabili Supabase:')
-console.log('URL presente:', !!SUPABASE_URL)
-console.log('KEY presente:', !!SUPABASE_ANON_KEY)
+// Verifica variabili Supabase in silenzio
 
 let supabaseClient: any = null
 let isSupabaseAvailable = false
@@ -25,13 +23,13 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY) {
       }
     })
     isSupabaseAvailable = true
-    console.log('✅ Supabase client creato con successo (mobile-optimized)')
+    // Supabase client creato con successo
   } catch (error) {
-    console.error('❌ Errore creazione client Supabase:', error)
+    console.error('Errore creazione client Supabase:', error)
     isSupabaseAvailable = false
   }
 } else {
-  console.warn('⚠️ Variabili Supabase mancanti - modalità fallback')
+  console.warn('Variabili Supabase mancanti - modalità fallback')
   isSupabaseAvailable = false
 }
 

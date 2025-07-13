@@ -1,52 +1,30 @@
-
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
 
-export interface Anno {
-  anno: number;
-}
-
-export function useAnni() {
-  const [anni, setAnni] = useState<Anno[]>([]);
+export const useAnni = () => {
+  const [anni, setAnni] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchAnni = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const userId = authManager.getUserId();
+      if (!userId) return;
 
-      // Valida sessione prima di procedere
-      const isValid = await authManager.validateSession();
-      if (!isValid) {
-        console.log('⚠️ Sessione non valida, anni vuoti');
-        setAnni([]);
-        setLoading(false);
-        return;
-      }
-
-      console.log('🔍 Caricamento anni dal database');
-
-      // Carica gli anni dalla tabella anno (non filtrata per user_id)
       const { data, error } = await supabase
-        .from('anno')
+        .from('vini')
         .select('anno')
-        .order('anno', { ascending: false });
+        .eq('user_id', userId)
+        .not('anno', 'is', null);
 
-      if (error) {
-        console.error('❌ Errore caricamento anni:', error.message);
-        console.error('❌ Dettagli errore:', error);
-        setAnni([]);
-      } else {
-        console.log('✅ Anni ricevuti da Supabase:', data);
-        if (data) {
-          const anniData = data.map(item => ({
-            anno: item.anno
-          }));
-          setAnni(anniData);
-          console.log('✅ Anni mappati:', anniData.length);
-        }
-      }
+      if (error) throw error;
+
+      const uniqueAnni = [...new Set(
+        data?.map(v => v.anno?.toString()).filter(Boolean)
+      )].sort((a, b) => parseInt(b) - parseInt(a)); // Anni più recenti primi
+
+      setAnni(uniqueAnni);
     } catch (error) {
-      console.error('❌ Errore nel caricamento anni:', error);
       setAnni([]);
     } finally {
       setLoading(false);
@@ -57,9 +35,5 @@ export function useAnni() {
     fetchAnni();
   }, []);
 
-  return { 
-    anni, 
-    loading, 
-    refreshAnni: fetchAnni 
-  };
-}
+  return { anni, loading, refreshAnni: fetchAnni };
+};

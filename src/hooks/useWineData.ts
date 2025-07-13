@@ -133,10 +133,7 @@ export function useWineData() {
   const fetchAndParseCSV = async (url: string, categoria: string) => {
     try {
       let csvText = getCachedData(categoria);
-      if (csvText) {
-        console.log(`✅ Cache per ${categoria}`);
-      } else {
-        console.log(`📥 Download CSV per ${categoria}`);
+      if (!csvText) {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         csvText = await res.text();
@@ -145,7 +142,6 @@ export function useWineData() {
 
       const parsed = Papa.parse<string[]>(csvText, { skipEmptyLines: false });
       const winesFromCsv = parseCsvWineRows(parsed.data, categoria);
-      console.log(`🍷 ${categoria} - Vini estratti: ${winesFromCsv.length}`);
 
       for (const wine of winesFromCsv) {
         if (wine.nomeVino.trim()) await upsertToSupabase(wine, categoria);

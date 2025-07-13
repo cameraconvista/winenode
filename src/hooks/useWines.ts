@@ -63,7 +63,7 @@ const useWines = () => {
       setSuppliers(uniqueSuppliers);
       setError(null);
     } catch (err: any) {
-      console.error('❌ Errore caricamento vini:', err.message);
+      if (process.env.NODE_ENV === 'development') console.error('Errore caricamento vini:', err.message);
       setError(err.message);
       setWines([]);
       setSuppliers([]);
@@ -88,7 +88,7 @@ const useWines = () => {
       setWines(prev => prev.map(w => (w.id === id ? { ...w, inventory: newInventory } : w)));
       return true;
     } catch (err: any) {
-      console.error('❌ Errore aggiornamento giacenza:', err.message);
+      if (process.env.NODE_ENV === 'development') console.error('Errore aggiornamento giacenza:', err.message);
       return false;
     }
   };
@@ -111,7 +111,6 @@ const useWines = () => {
       const hasErrors = results.some(result => result.error);
 
       if (hasErrors) {
-        console.error('❌ Errore in alcuni aggiornamenti giacenze');
         return false;
       }
 

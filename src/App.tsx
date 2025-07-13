@@ -39,8 +39,7 @@ function App() {
   }, [showSaldo])
 
   useEffect(() => {
-    console.log('🔧 App startup - Supabase available:', isSupabaseAvailable)
-    console.log('🌐 Current URL:', window.location.href)
+    // App startup
 
     if (!isSupabaseAvailable) {
       console.log('⚠️ Supabase non disponibile, modalità fallback')
@@ -51,15 +50,8 @@ function App() {
 
     // 🎯 Gestione migliorata del cambio stato autenticazione
     const unsubscribe = authManager.onAuthStateChange((user) => {
-      console.log('👤 Auth state changed:', user ? 'Logged in' : 'Logged out')
-      
-      if (user) {
-        console.log('👤 USER SESSION:', {
-          email: user.email,
-          id: user.id,
-          last_sign_in: user.last_sign_in_at
-        })
-        console.log('🆔 USER ID:', user.id)
+      if (user && process.env.NODE_ENV === 'development') {
+        console.log('Auth state: Logged in as', user.email)
       }
       
       setIsAuthenticated(!!user)

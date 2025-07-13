@@ -40,7 +40,7 @@ export default function WineCard({ wine, onUpdateInventory, onWineClick }: WineC
 
   return (
     <>
-      {/* NO ALERT ICON - CLEAN VERSION 19:24 */}
+      
       <div className="flex items-center justify-between p-3 px-2">
         <div className="flex items-center flex-1 mr-3">
           <div className="mr-3 flex-shrink-0">

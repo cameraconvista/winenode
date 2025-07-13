@@ -35,7 +35,7 @@ const useSuppliers = () => {
         return;
       }
 
-      console.log('🔍 Caricamento fornitori dalla tabella fornitori per user:', userId);
+      // Caricamento fornitori
 
       // Prima prova a caricare dalla tabella fornitori
       const { data: fornitori, error: fornitoriError } = await supabase!
@@ -45,20 +45,15 @@ const useSuppliers = () => {
         .order('nome', { ascending: true });
 
       if (fornitoriError) {
-        console.error('❌ Errore caricamento fornitori:', fornitoriError.message);
-        // Se la tabella non esiste, prova a popolarla dai vini
         if (fornitoriError.code === '42P01') {
-          console.log('⚠️ Tabella fornitori non trovata, estrazione dai vini...');
           await loadSuppliersFromWines(userId);
         } else {
           setError(fornitoriError.message);
           setSuppliers([]);
         }
       } else if (!fornitori || fornitori.length === 0) {
-        console.log('⚠️ Tabella fornitori vuota, popolo dai vini...');
         await loadSuppliersFromWines(userId);
       } else {
-        console.log('✅ Fornitori caricati dalla tabella dedicata:', fornitori.length);
         setSuppliers(fornitori);
       }
     } catch (error) {

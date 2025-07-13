@@ -4,9 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
 
-// Supabase è già inizializzato in lib/supabase.ts
-
-// ✅ Avvia l'app
+// App initialization
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
