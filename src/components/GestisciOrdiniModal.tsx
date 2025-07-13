@@ -96,13 +96,31 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
   };
 
   const handleConfermaRicezione = async (ordineId: string, quantitaRicevute: Record<string, number>) => {
-    // Salva le quantità ricevute effettive
-    const success = await salvaQuantitaRicevute(ordineId, quantitaRicevute);
+    try {
+      console.log('💾 Tentativo salvataggio ricezione ordine:', ordineId);
+      
+      // Salva le quantità ricevute effettive
+      const success = await salvaQuantitaRicevute(ordineId, quantitaRicevute);
 
-    if (success) {
-      console.log('✅ Ordine ricevuto con quantità effettive salvate');
-      setShowRicezioneModal(false);
-      setOrdineInRicezione(null);
+      if (success) {
+        console.log('✅ Ordine ricevuto con quantità effettive salvate');
+        
+        // Chiudi il modal di ricezione
+        setShowRicezioneModal(false);
+        setOrdineInRicezione(null);
+        
+        // Forza il refresh degli ordini
+        await loadOrdini();
+        
+        // Mostra messaggio di successo
+        alert('Ordine ricevuto con successo!');
+      } else {
+        console.error('❌ Salvataggio fallito');
+        alert('Errore nel salvataggio della ricezione. Controlla i log per dettagli.');
+      }
+    } catch (error) {
+      console.error('❌ Errore in handleConfermaRicezione:', error);
+      alert(`Errore durante la ricezione: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
     }
   };
 

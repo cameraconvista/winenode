@@ -72,12 +72,15 @@ const RicezioneOrdineModal: React.FC<RicezioneOrdineModalProps> = ({
     setIsProcessing(true);
     
     try {
+      console.log('🚀 Inizio conferma ricezione ordine:', ordine.id);
+
       // Aggiorna le giacenze dei vini
       for (const vino of viniRicezione) {
         if (vino.vinoId && vino.quantitaRicevuta > 0) {
           const vinoCorrente = wines.find(w => w.id === vino.vinoId);
           if (vinoCorrente) {
             const nuovaGiacenza = vinoCorrente.inventory + vino.quantitaRicevuta;
+            console.log(`📦 Aggiornamento giacenza ${vino.nome}: ${vinoCorrente.inventory} + ${vino.quantitaRicevuta} = ${nuovaGiacenza}`);
             await updateWineInventory(vino.vinoId, nuovaGiacenza);
           }
         }
@@ -85,16 +88,20 @@ const RicezioneOrdineModal: React.FC<RicezioneOrdineModalProps> = ({
 
       // Prepara i dati delle quantità ricevute nel formato corretto
       const quantitaRicevute: Record<string, number> = {};
-      viniRicezione.forEach((vino, index) => {
+      viniRicezione.forEach((vino) => {
         quantitaRicevute[vino.nome] = vino.quantitaRicevuta;
       });
+
+      console.log('📋 Quantità ricevute preparate:', quantitaRicevute);
 
       // Chiama la funzione di conferma del parent
       onConfirm(ordine.id, quantitaRicevute);
       
+      console.log('✅ Ricezione ordine completata con successo');
+      
     } catch (error) {
-      console.error('Errore durante la ricezione ordine:', error);
-      alert('Errore durante l\'aggiornamento delle giacenze. Riprova.');
+      console.error('❌ Errore durante la ricezione ordine:', error);
+      alert(`Errore durante la ricezione: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
     } finally {
       setIsProcessing(false);
     }

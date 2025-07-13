@@ -236,26 +236,45 @@ export function useOrdini() {
 
   // Salva quantità ricevute per un ordine
   const salvaQuantitaRicevute = async (ordineId: string, contenutoRicevuto: any) => {
-    if (!supabase) return false;
+    if (!supabase) {
+      console.error('❌ Supabase client non disponibile');
+      setError('Database non disponibile');
+      return false;
+    }
 
     try {
-      const { error } = await supabase
+      console.log('💾 Salvataggio quantità ricevute per ordine:', ordineId);
+      console.log('📦 Contenuto ricevuto:', contenutoRicevuto);
+
+      const { data, error } = await supabase
         .from('ordini')
         .update({ 
           contenuto_ricevuto: contenutoRicevuto,
           stato: 'ricevuto',
           data_ricevimento: new Date().toISOString()
         })
-        .eq('id', ordineId);
+        .eq('id', ordineId)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Errore Supabase:', error);
+        throw new Error(`Errore database: ${error.message}`);
+      }
 
-      console.log('✅ Quantità ricevute salvate:', ordineId);
+      if (!data || data.length === 0) {
+        console.error('❌ Nessun ordine aggiornato');
+        throw new Error('Ordine non trovato o non aggiornato');
+      }
+
+      console.log('✅ Quantità ricevute salvate con successo:', data[0]);
+      
+      // Ricarica ordini per aggiornare la UI
       await loadOrdini();
       return true;
     } catch (err) {
       console.error('❌ Errore salvataggio quantità ricevute:', err);
-      setError(err instanceof Error ? err.message : 'Errore salvataggio quantità ricevute');
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto durante il salvataggio';
+      setError(errorMessage);
       return false;
     }
   };
