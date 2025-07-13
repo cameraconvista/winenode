@@ -58,10 +58,7 @@ export function useOrdini() {
           data_invio_whatsapp,
           data_ricevimento,
           created_at,
-          updated_at,
-          fornitori:fornitore (
-            nome
-          )
+          updated_at
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
@@ -77,7 +74,7 @@ export function useOrdini() {
       // Trasforma i dati per il frontend
       const ordiniConDettagli = data?.map(ordine => ({
         ...ordine,
-        fornitore_nome: ordine.fornitori?.nome || 'Fornitore sconosciuto',
+        fornitore_nome: ordine.fornitore || 'Fornitore sconosciuto', // Il campo 'fornitore' contiene già il nome
         dettagli: [] // Temporaneamente vuoto
       })) || [];
 
