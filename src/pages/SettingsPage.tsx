@@ -389,13 +389,13 @@ export default function SettingsPage() {
       </header>
 
       <main className="flex-1 flex flex-col max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full overflow-hidden" style={{ marginTop: '64px' }}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-md">
           {settingsSections.map((section) => {
             const IconComponent = section.icon;
             return (
               <div
                 key={section.id}
-                className="bg-gray-800/50 border border-gray-700 px-4 py-3 rounded-lg text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
+                className="bg-gray-800/50 border border-gray-700 px-3 py-2 rounded-lg text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
                 onClick={() => {
                   if (section.id === "account") {
                     navigate('/settings/account');
@@ -410,16 +410,16 @@ export default function SettingsPage() {
                   }
                 }}
               >
-                <div className="flex items-center gap-3">
-                  <div className="p-1.5 bg-gray-700/50 rounded-md group-hover:bg-gray-600/50 transition-colors">
-                    <IconComponent className="h-4 w-4 text-gray-300" />
+                <div className="flex items-center gap-2">
+                  <div className="p-1 bg-gray-700/50 rounded-md group-hover:bg-gray-600/50 transition-colors">
+                    <IconComponent className="h-3.5 w-3.5 text-gray-300" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-cream">
+                    <h3 className="text-xs font-semibold text-cream uppercase tracking-wide">
                       {section.title}
                     </h3>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-500 group-hover:text-gray-400 transition-colors" />
+                  <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-gray-400 transition-colors" />
                 </div>
               </div>
             );
