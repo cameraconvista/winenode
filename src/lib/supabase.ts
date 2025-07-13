@@ -13,9 +13,19 @@ let isSupabaseAvailable = false
 
 if (SUPABASE_URL && SUPABASE_ANON_KEY) {
   try {
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        // 📱 Migliore compatibilità mobile/PWA
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        storageKey: 'supabase.auth.token'
+      }
+    })
     isSupabaseAvailable = true
-    console.log('✅ Supabase client creato con successo')
+    console.log('✅ Supabase client creato con successo (mobile-optimized)')
   } catch (error) {
     console.error('❌ Errore creazione client Supabase:', error)
     isSupabaseAvailable = false

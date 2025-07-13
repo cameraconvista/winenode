@@ -309,8 +309,24 @@ export function useOrdini() {
         
         // 🔄 REFRESH AUTOMATICO GIACENZE anche nel fallback
         console.log('🔄 Refresh automatico giacenze (fallback)...');
-        await refreshWines();
-        console.log('✅ Giacenze aggiornate automaticamente (fallback)!');
+        
+        try {
+          await refreshWines();
+          console.log('✅ Refresh giacenze fallback completato');
+          
+          // 📱 Refresh aggiuntivo per mobile
+          setTimeout(async () => {
+            try {
+              await refreshWines();
+              console.log('✅ Refresh giacenze fallback mobile completato');
+            } catch (err) {
+              console.warn('⚠️ Refresh fallback mobile fallito:', err);
+            }
+          }, 1000);
+          
+        } catch (err) {
+          console.error('❌ Errore refresh giacenze fallback:', err);
+        }
         
         return true;
       }
@@ -327,8 +343,29 @@ export function useOrdini() {
       
       // 🔄 REFRESH AUTOMATICO GIACENZE dopo conferma ricezione
       console.log('🔄 Refresh automatico giacenze dopo conferma ricezione...');
-      await refreshWines();
-      console.log('✅ Giacenze aggiornate automaticamente!');
+      
+      // 📱 Refresh ottimizzato per mobile con doppio tentativo
+      try {
+        await refreshWines();
+        console.log('✅ Primo refresh giacenze completato');
+        
+        // 📱 Secondo refresh dopo delay per mobile
+        setTimeout(async () => {
+          try {
+            await refreshWines();
+            console.log('✅ Secondo refresh giacenze completato (mobile)');
+          } catch (err) {
+            console.warn('⚠️ Secondo refresh fallito:', err);
+          }
+        }, 1000);
+        
+      } catch (err) {
+        console.error('❌ Errore refresh giacenze:', err);
+        // Fallback: forza refresh manuale dopo delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
       
       return true;
 

@@ -36,6 +36,14 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   return (
     <div className="h-screen flex items-center justify-center p-3 overflow-hidden" style={{ backgroundColor: '#2c0405' }}>
       <div className="rounded-lg p-6 w-full max-w-xs shadow-xl" style={{ backgroundColor: '#24161d', border: '1px solid #374151' }}>
+        
+        {/* 📱 PWA Detection e Fix */}
+        {window.navigator.standalone && (
+          <div className="mb-4 p-2 bg-blue-900/20 border border-blue-500/30 rounded text-xs text-blue-200">
+            🚀 App installata - Se hai problemi di login, riapri nel browser
+          </div>
+        )}
+
         <div className="text-center mb-6">
           <img 
             src="/logo 1 CCV.png" 
@@ -43,7 +51,6 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
             className="h-44 w-44 object-contain mx-auto"
           />
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-xs font-medium text-cream mb-1">EMAIL</label>
@@ -54,6 +61,11 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               onChange={e => setEmail(e.target.value)}
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm"
               placeholder="inserisci la tua email"
+              autoComplete="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck="false"
+              inputMode="email"
               required
             />
           </div>
@@ -68,6 +80,10 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
                 onChange={e => setPassword(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all pr-10 text-sm"
                 placeholder="inserisci la password"
+                autoComplete="current-password"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
                 required
               />
               <button
