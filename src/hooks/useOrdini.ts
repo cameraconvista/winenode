@@ -17,14 +17,14 @@ export interface OrdineDettaglio {
 export interface Ordine {
   id: string;
   user_id: string;
-  fornitore: string;
-  fornitore_nome?: string; // Nome del fornitore per il display
+  fornitore: string; // UUID del fornitore
+  fornitore_nome?: string; // Nome del fornitore per il display (da JOIN)
   stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato';
-  data: string;
+  data: string; // CORREZIONE: era data_ordine ma nella tabella è solo 'data'
   data_invio_whatsapp?: string;
   data_ricevimento?: string;
   totale: number;
-  contenuto: string;
+  contenuto: string; // JSONB contenuto
   created_at?: string;
   updated_at?: string;
   dettagli?: OrdineDettaglio[];
@@ -58,7 +58,10 @@ export function useOrdini() {
           data_invio_whatsapp,
           data_ricevimento,
           created_at,
-          updated_at
+          updated_at,
+          fornitori:fornitore (
+            nome
+          )
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
@@ -74,7 +77,7 @@ export function useOrdini() {
       // Trasforma i dati per il frontend
       const ordiniConDettagli = data?.map(ordine => ({
         ...ordine,
-        fornitore_nome: ordine.fornitore || 'Fornitore sconosciuto',
+        fornitore_nome: ordine.fornitori?.nome || 'Fornitore sconosciuto',
         dettagli: [] // Temporaneamente vuoto
       })) || [];
 
@@ -107,11 +110,15 @@ export function useOrdini() {
         .from('ordini')
         .insert({
           user_id: userId,
-          fornitore: ordineData.fornitore,
+          fornitore: ordineData.fornitore, // UUID del fornitore
           stato: 'sospeso',
           totale: ordineData.totale,
-          data: new Date().toISOString().split('T')[0],
-          contenuto: ordineData.vini.map(v => `${v.nome} (${v.quantita})`).join(', ')
+          data: new Date().toISOString(), // CORREZIONE: timestamp completo
+          contenuto: JSON.stringify(ordineData.vini.map(v => ({
+            nome: v.nome,
+            quantita: v.quantita,
+            prezzo_unitario: v.prezzo_unitario
+          }))) // CORREZIONE: salva come JSON strutturato
         })
         .select()
         .single();
