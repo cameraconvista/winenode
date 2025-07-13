@@ -234,6 +234,32 @@ export function useOrdini() {
     }
   };
 
+  // Salva quantità ricevute per un ordine
+  const salvaQuantitaRicevute = async (ordineId: string, contenutoRicevuto: any) => {
+    if (!supabase) return false;
+
+    try {
+      const { error } = await supabase
+        .from('ordini')
+        .update({ 
+          contenuto_ricevuto: contenutoRicevuto,
+          stato: 'ricevuto',
+          data_ricevimento: new Date().toISOString()
+        })
+        .eq('id', ordineId);
+
+      if (error) throw error;
+
+      console.log('✅ Quantità ricevute salvate:', ordineId);
+      await loadOrdini();
+      return true;
+    } catch (err) {
+      console.error('❌ Errore salvataggio quantità ricevute:', err);
+      setError(err instanceof Error ? err.message : 'Errore salvataggio quantità ricevute');
+      return false;
+    }
+  };
+
   // Carica ordini all'avvio
   useEffect(() => {
     if (userId) {
@@ -248,6 +274,7 @@ export function useOrdini() {
     loadOrdini,
     salvaOrdine,
     aggiornaStatoOrdine,
+    salvaQuantitaRicevute,
     refreshOrdini: () => loadOrdini()
   };
 }
