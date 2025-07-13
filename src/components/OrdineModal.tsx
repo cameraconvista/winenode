@@ -460,73 +460,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
           </div>
         )}
 
-        {/* Step 4: conferma dopo invio WhatsApp */}
-        {step === "conferma" && ordineData && (
-          <div className="space-y-4 text-white">
-            <div className="text-center border-b border-gray-600 pb-4">
-              <h3 className="text-xl font-bold text-amber-400">📱 Messaggio WhatsApp Inviato</h3>
-              <p className="text-gray-300 mt-2">Hai inviato il messaggio al fornitore <strong>{ordineData.fornitore}</strong>?</p>
-            </div>
-
-            <div className="bg-gray-700/50 rounded-lg p-4">
-              <p className="text-sm text-gray-300 mb-3">
-                Per completare l'ordine, conferma di aver inviato il messaggio WhatsApp al fornitore.
-                L'ordine verrà salvato nel sistema solo dopo la conferma.
-              </p>
-
-              <div className="text-xs text-gray-400 bg-gray-800/50 rounded p-3">
-                <p className="font-medium text-amber-300 mb-2">📋 Riepilogo ordine da confermare:</p>
-                <p>🏪 Fornitore: {ordineData.fornitore}</p>
-                <p>🍷 Articoli: {ordineData.vini.length}</p>
-                <p>🍾 Bottiglie totali: {ordineData.vini.reduce((sum, v) => sum + v.quantita, 0)}</p>
-                <p>💰 Totale: €{ordineData.totale.toFixed(2)}</p>
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-3 pt-4">
-              <button
-                onClick={() => setStep("riassunto")}
-                className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
-              >
-                ← Torna Indietro
-              </button>
-
-              <button
-                onClick={() => {
-                  // Non inviare, torna al riassunto per reinviare
-                  setStep("riassunto");
-                }}
-                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg"
-              >
-                ❌ Non Inviato
-              </button>
-
-              <button
-                onClick={async () => {
-                  console.log('Conferma invio WhatsApp - salvataggio ordine:', ordineData);
-
-                  // Salva ordine nel database solo dopo conferma invio
-                  const ordineId = await salvaOrdine(ordineData);
-                  if (!ordineId) {
-                    alert('Errore nel salvataggio dell\'ordine. Riprova.');
-                    return;
-                  }
-
-                  console.log('✅ Ordine salvato con ID:', ordineId);
-
-                  // Chiudi il modale e notifica il parent
-                  onFornitoreSelezionato(selectedFornitore);
-                  onClose();
-                }}
-                className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2"
-              >
-                ✅ Sì, Inviato - Salva Ordine
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 5: successo dopo salvataggio */}
+        {/* Step 4: successo dopo salvataggio */}
         {step === "successo" && ordineData && (
           <div className="space-y-4 text-white">
             <div className="text-center border-b border-gray-600 pb-4">
@@ -545,7 +479,99 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               </div>
             </div>
 
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center gap-3 pt-4">
+              <button
+                onClick={() => {
+                  console.log('Preparazione ordine per WhatsApp:', ordineData);
+
+                  // Genera messaggio WhatsApp ottimizzato per mobile
+                  const dataOrdine = new Date().toLocaleDateString('it-IT');
+                  const oraOrdine = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+                  // Versione compatta per mobile
+                  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                  let messaggio;
+                  if (isMobile) {
+                    // Messaggio compatto per mobile
+                    messaggio = `🍷 NUOVO ORDINE\n` +
+                      `📅 ${dataOrdine} ${oraOrdine}\n` +
+                      `🏪 ${ordineData.fornitore}\n\n` +
+                      ordineData.vini.map((v, index) => 
+                        `${index + 1}. ${v.nome}\n` +
+                        `   ${v.quantita} bot x €${(Number(v.prezzo_unitario) || 0).toFixed(2)} = €${(v.quantita * (Number(v.prezzo_unitario) || 0)).toFixed(2)}`
+                      ).join('\n') +
+                      `\n\n💰 TOTALE: €${ordineData.totale.toFixed(2)} (IVA ESC.)\n` +
+                      `🍾 Tot: ${ordineData.vini.reduce((sum, v) => sum + v.quantita, 0)} bottiglie\n\n` +
+                      `Confermate disponibilità. Grazie!`;
+                  } else {
+                    // Messaggio completo per desktop
+                    messaggio = `🍷 *NUOVO ORDINE*\n\n` +
+                      `📅 *Data:* ${dataOrdine} alle ${oraOrdine}\n` +
+                      `🏪 *Fornitore:* ${ordineData.fornitore}\n\n` +
+                      `*DETTAGLIO ORDINE:*\n` +
+                      ordineData.vini.map((v, index) => 
+                        `${index + 1}. *${v.nome}*\n` +
+                        `   Quantità: ${v.quantita} bottiglie\n` +
+                        `   Costo: €${(Number(v.prezzo_unitario) || 0).toFixed(2)} cad. (IVA esclusa)\n` +
+                        `   Subtotale: €${(v.quantita * (Number(v.prezzo_unitario) || 0)).toFixed(2)}\n`
+                      ).join('\n') +
+                      `\n💰 *TOTALE ORDINE: €${ordineData.totale.toFixed(2)}* (IVA ESCLUSA)\n` +
+                      `🍾 *Totale bottiglie: ${ordineData.vini.reduce((sum, v) => sum + v.quantita, 0)}*\n\n` +
+                      `⚠️ *Nota: Tutti i prezzi sono IVA esclusa*\n\n` +
+                      `Confermate la disponibilità e i tempi di consegna. Grazie! 🙏`;
+                  }
+
+                  // Encoding sicuro per mobile
+                  const encoded = encodeURIComponent(messaggio);
+
+                  // Apri WhatsApp con gestione ottimizzata per mobile
+                  if (isMobile) {
+                    // Strategia migliorata per mobile
+                    try {
+                      // Prova prima WhatsApp Web mobile che è più affidabile
+                      const whatsappWebUrl = `https://wa.me/?text=${encoded}`;
+
+                      // Su iOS usa il link diretto
+                      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                        window.location.href = whatsappWebUrl;
+                      } else {
+                        // Su Android prova prima l'app nativa
+                        const whatsappUrl = `whatsapp://send?text=${encoded}`;
+
+                        // Crea un link nascosto per test
+                        const testLink = document.createElement('a');
+                        testLink.href = whatsappUrl;
+                        testLink.style.display = 'none';
+                        document.body.appendChild(testLink);
+
+                        // Tenta di aprire l'app nativa
+                        const startTime = Date.now();
+                        window.location.href = whatsappUrl;
+
+                        // Se dopo 2 secondi siamo ancora nella pagina, apri WhatsApp Web
+                        setTimeout(() => {
+                          if (Date.now() - startTime > 1900) {
+                            window.open(whatsappWebUrl, '_blank');
+                          }
+                          document.body.removeChild(testLink);
+                        }, 2000);
+                      }
+                    } catch (error) {
+                      console.error('Errore apertura WhatsApp mobile:', error);
+                      // Fallback sicuro su WhatsApp Web
+                      window.open(`https://wa.me/?text=${encoded}`, '_blank');
+                    }
+                  } else {
+                    // Su desktop usa WhatsApp Web
+                    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+                  }
+                }}
+                className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg flex items-center gap-2 text-lg transition-colors"
+              >
+                📱 Invia via WhatsApp
+              </button>
+
               <button
                 onClick={() => {
                   // Chiudi il modale e notifica il parent
@@ -554,7 +580,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                 }}
                 className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2 text-lg transition-colors"
               >
-                ✅ OK, Chiudi
+                ✅ Chiudi
               </button>
             </div>
           </div>
