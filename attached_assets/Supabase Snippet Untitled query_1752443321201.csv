@@ -1,0 +1,12 @@
+Colonna,Tipo,Nullable,Default,Lunghezza Massima,Precisione Numerica,Scala Numerica
+id,uuid,NO,gen_random_uuid(),null,null,null
+data,timestamp without time zone,YES,"timezone('utc'::text, now())",null,null,null
+fornitore,uuid,YES,null,null,null,null
+contenuto,jsonb,YES,null,null,null,null
+totale,numeric,YES,null,null,10,2
+user_id,uuid,YES,null,null,null,null
+stato,text,NO,'sospeso'::text,null,null,null
+data_invio_whatsapp,timestamp with time zone,YES,null,null,null,null
+data_ricevimento,timestamp with time zone,YES,null,null,null,null
+created_at,timestamp with time zone,YES,now(),null,null,null
+updated_at,timestamp with time zone,YES,now(),null,null,null
