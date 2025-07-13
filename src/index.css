@@ -403,6 +403,10 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
       border-radius: 6px;
       background-clip: padding-box;
       min-height: 44px; /* Touch target iOS */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: text;
+      user-select: text;
     }
     
     /* Fix per PWA standalone mode */
@@ -410,11 +414,30 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
       input {
         transform: translateZ(0); /* Forza layer compositing */
         -webkit-transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        -webkit-perspective: 1000;
+        perspective: 1000;
       }
       
       body {
         -webkit-user-select: text;
         user-select: text;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      /* Forza la tastiera iOS a comparire */
+      input:focus {
+        -webkit-user-select: text !important;
+        user-select: text !important;
+        -webkit-touch-callout: default !important;
+        touch-callout: default !important;
+      }
+      
+      /* Fix per form in PWA */
+      form {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
       }
     }
   }
