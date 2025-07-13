@@ -12,7 +12,7 @@ interface GestisciOrdiniModalProps {
 type TabType = 'inviati' | 'ricevuti' | 'storico';
 
 const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose }) => {
-  const { ordini, isLoading, error, loadOrdini, aggiornaStatoOrdine } = useOrdini();
+  const { ordini, isLoading, error, loadOrdini, aggiornaStatoOrdine, salvaQuantitaRicevute } = useOrdini();
   const [activeTab, setActiveTab] = useState<TabType>('inviati');
   const [selectedOrdine, setSelectedOrdine] = useState<any>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -96,10 +96,11 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
   };
 
   const handleConfermaRicezione = async (ordineId: string, quantitaRicevute: Record<string, number>) => {
-    const success = await aggiornaStatoOrdine(ordineId, 'ricevuto');
+    // Salva le quantità ricevute effettive
+    const success = await salvaQuantitaRicevute(ordineId, quantitaRicevute);
 
     if (success) {
-      console.log('✅ Ordine ricevuto con aggiornamento giacenze');
+      console.log('✅ Ordine ricevuto con quantità effettive salvate');
       setShowRicezioneModal(false);
       setOrdineInRicezione(null);
     }
