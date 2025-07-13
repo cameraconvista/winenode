@@ -90,6 +90,7 @@ export function useOrdini() {
   // Salva nuovo ordine
   const salvaOrdine = async (ordineData: {
     fornitore: string;
+    fornitore_id?: string;
     vini: Array<{
       id: number;
       nome: string;
@@ -119,7 +120,7 @@ export function useOrdini() {
       // Prepara i dati dell'ordine con la struttura corretta
       const ordine = {
         user_id: (await user).data.user?.id,
-        fornitore: ordineData.fornitore,
+        fornitore: ordineData.fornitore_id || ordineData.fornitore, // Usa l'ID se disponibile
         data: new Date().toISOString(), // Campo 'data' invece di 'data_ordine'
         totale: ordineData.totale,      // Campo 'totale' invece di 'totale_euro'
         stato: 'sospeso',

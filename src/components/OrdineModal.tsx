@@ -43,6 +43,11 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
 
   const handleAvanti = () => {
     if (selectedFornitore) {
+      // Trova l'ID del fornitore selezionato
+      const supplier = suppliers.find(s => s.nome === selectedFornitore);
+      if (supplier) {
+        setSelectedFornitoreId(supplier.id);
+      }
       setStep("vini");
     }
   };
@@ -360,6 +365,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
 
                   setOrdineData({
                     fornitore: selectedFornitore,
+                    fornitore_id: selectedFornitoreId,
                     vini: viniConPrezzo,
                     totale: totale
                   });
