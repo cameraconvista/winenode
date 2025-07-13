@@ -168,7 +168,7 @@ export function useOrdini() {
         fornitore: fornitoreId, // Usa sempre l'ID UUID
         data: new Date().toISOString(), // Campo 'data' invece di 'data_ordine'
         totale: ordineData.totale,      // Campo 'totale' invece di 'totale_euro'
-        stato: 'sospeso',
+        stato: 'inviato',
         contenuto: contenutoJSON        // JSON diretto, non stringificato
       };
 
