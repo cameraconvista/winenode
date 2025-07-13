@@ -17,14 +17,14 @@ export interface OrdineDettaglio {
 export interface Ordine {
   id: string;
   user_id: string;
-  fornitore: string; // UUID del fornitore
+  fornitore: string; // UUID del fornitore (FK verso tabella fornitori)
   fornitore_nome?: string; // Nome del fornitore per il display (da JOIN)
   stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato';
-  data: string; // CORREZIONE: era data_ordine ma nella tabella è solo 'data'
+  data: string; // TIMESTAMP - campo corretto della tabella
   data_invio_whatsapp?: string;
   data_ricevimento?: string;
-  totale: number;
-  contenuto: string; // JSONB contenuto
+  totale: number; // NUMERIC(10,2) - campo corretto della tabella
+  contenuto: any; // JSONB - può essere oggetto o array, non stringa
   created_at?: string;
   updated_at?: string;
   dettagli?: OrdineDettaglio[];
