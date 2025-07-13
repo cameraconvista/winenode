@@ -96,9 +96,7 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
   };
 
   const handleConfermaRicezione = async (ordineId: string, quantitaRicevute: Record<string, number>) => {
-    const success = await aggiornaStatoOrdine(ordineId, 'ricevuto', {
-      quantita_ricevute: quantitaRicevute
-    });
+    const success = await aggiornaStatoOrdine(ordineId, 'ricevuto');
 
     if (success) {
       console.log('✅ Ordine ricevuto con aggiornamento giacenze');
