@@ -247,65 +247,67 @@ export function useOrdini() {
       console.log('💾 Salvataggio quantità ricevute per ordine:', ordineId);
       console.log('📦 Contenuto ricevuto:', contenutoRicevuto);
 
-      // Prima verifica se la colonna contenuto_ricevuto esiste
-      const { data: tableInfo, error: tableError } = await supabase
+      // Verifica che l'ordine esista e appartiene all'utente
+      const { data: ordineEsistente, error: checkError } = await supabase
         .from('ordini')
-        .select('id, contenuto')
+        .select('id, user_id, contenuto')
         .eq('id', ordineId)
+        .eq('user_id', userId)
         .single();
 
-      if (tableError) {
-        console.error('❌ Errore verifica tabella:', tableError);
-        throw new Error(`Errore verifica ordine: ${tableError.message}`);
+      if (checkError || !ordineEsistente) {
+        console.error('❌ Ordine non trovato o non autorizzato:', checkError);
+        throw new Error('Ordine non trovato o accesso negato');
       }
 
-      // Prova prima un aggiornamento con solo stato e data
-      let updateData: any = {
+      // Pulisci e valida il contenuto ricevuto
+      const contenutoRicevutoClean = Array.isArray(contenutoRicevuto) 
+        ? contenutoRicevuto.filter(item => item && typeof item === 'object')
+        : contenutoRicevuto;
+
+      console.log('🧹 Contenuto pulito:', contenutoRicevutoClean);
+
+      // Aggiorna l'ordine con contenuto_ricevuto
+      const updateData = {
         stato: 'ricevuto',
-        data_ricevimento: new Date().toISOString()
+        data_ricevimento: new Date().toISOString(),
+        contenuto_ricevuto: contenutoRicevutoClean
       };
-
-      // Prova ad aggiungere contenuto_ricevuto se possibile
-      try {
-        updateData.contenuto_ricevuto = contenutoRicevuto;
-      } catch (e) {
-        console.warn('⚠️ Impossibile aggiungere contenuto_ricevuto, continuo senza');
-      }
 
       const { data, error } = await supabase
         .from('ordini')
         .update(updateData)
         .eq('id', ordineId)
+        .eq('user_id', userId) // Doppia verifica per sicurezza
         .select();
 
       if (error) {
-        console.error('❌ Errore Supabase:', error);
-        // Se errore su contenuto_ricevuto, prova senza
-        if (error.message.includes('contenuto_ricevuto')) {
-          console.log('🔄 Ritento senza contenuto_ricevuto...');
-          const { data: retryData, error: retryError } = await supabase
-            .from('ordini')
-            .update({ 
-              stato: 'ricevuto',
-              data_ricevimento: new Date().toISOString()
-            })
-            .eq('id', ordineId)
-            .select();
-          
-          if (retryError) {
-            throw new Error(`Errore database: ${retryError.message}`);
-          }
-          
-          console.log('✅ Ordine aggiornato senza contenuto_ricevuto');
-          await loadOrdini();
-          return true;
+        console.error('❌ Errore Supabase durante aggiornamento:', error);
+        
+        // Fallback: prova solo con stato e data
+        console.log('🔄 Fallback: aggiorno solo stato...');
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('ordini')
+          .update({ 
+            stato: 'ricevuto',
+            data_ricevimento: new Date().toISOString()
+          })
+          .eq('id', ordineId)
+          .eq('user_id', userId)
+          .select();
+        
+        if (fallbackError) {
+          throw new Error(`Errore database persistente: ${fallbackError.message}`);
         }
-        throw new Error(`Errore database: ${error.message}`);
+        
+        console.log('⚠️ Ordine aggiornato senza contenuto_ricevuto (fallback)');
+        await loadOrdini();
+        return true;
       }
 
       if (!data || data.length === 0) {
-        console.error('❌ Nessun ordine aggiornato');
-        throw new Error('Ordine non trovato o non aggiornato');
+        console.error('❌ Nessun record aggiornato');
+        throw new Error('Aggiornamento fallito - nessun record modificato');
       }
 
       console.log('✅ Quantità ricevute salvate con successo:', data[0]);
@@ -313,8 +315,9 @@ export function useOrdini() {
       // Ricarica ordini per aggiornare la UI
       await loadOrdini();
       return true;
+
     } catch (err) {
-      console.error('❌ Errore salvataggio quantità ricevute:', err);
+      console.error('❌ Errore completo nel salvataggio:', err);
       const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto durante il salvataggio';
       setError(errorMessage);
       return false;
