@@ -215,14 +215,6 @@ export default function SettingsPage() {
 
           <div className="mt-6 text-center">
             <div className="text-gray-400" style={{ fontSize: "8px" }}>
-              <div className="mb-1">Versione: 1.0.0</div>
-              <div>
-                Ultimo aggiornamento: {new Date().toLocaleDateString("it-IT")} -{" "}
-                {new Date().toLocaleTimeString("it-IT", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
             </div>
           </div>
         </main>
@@ -311,18 +303,7 @@ export default function SettingsPage() {
 
           <div className="flex-1"></div>
 
-          <div className="mt-auto text-center">
-            <div className="text-gray-400" style={{ fontSize: "8px" }}>
-              <div className="mb-1">Versione: 1.0.0</div>
-              <div>
-                Ultimo aggiornamento: {new Date().toLocaleDateString("it-IT")} -{" "}
-                {new Date().toLocaleTimeString("it-IT", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-            </div>
-          </div>
+          
         </main>
       </div>
     );
@@ -430,14 +411,7 @@ export default function SettingsPage() {
 
         <div className="mt-auto text-center">
           <div className="text-gray-400" style={{ fontSize: "8px" }}>
-            <div className="mb-1">Versione: 1.0.0</div>
-            <div>
-              Ultimo aggiornamento: {new Date().toLocaleDateString("it-IT")} -{" "}
-              {new Date().toLocaleTimeString("it-IT", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </div>
+            
           </div>
         </div>
       </main>
