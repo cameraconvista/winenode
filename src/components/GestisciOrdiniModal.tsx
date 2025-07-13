@@ -320,20 +320,50 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
                           if (!Array.isArray(contenuto) || contenuto.length === 0) return null;
 
+                          // Se l'ordine è ricevuto e ha contenuto_ricevuto, usa quelle quantità
+                          const contenutoRicevuto = ordine.contenuto_ricevuto;
+                          const isRicevuto = ordine.stato === 'ricevuto' && contenutoRicevuto;
+
                           return (
                             <div className="border-t border-gray-600/50 pt-3">
-                              <div className="text-xs text-gray-400 mb-2">Vini ordinati:</div>
+                              <div className="text-xs text-gray-400 mb-2">
+                                {isRicevuto ? 'Vini ricevuti:' : 'Vini ordinati:'}
+                              </div>
                               <div className="space-y-1">
-                                {contenuto.slice(0, 2).map((vino, index) => (
-                                  <div key={index} className="flex justify-between text-sm">
-                                    <span className="text-gray-300">
-                                      {vino.nome}
-                                    </span>
-                                    <span className="text-gray-400">
-                                      {vino.quantita} bot. × €{(vino.prezzo_unitario || 0).toFixed(2)}
-                                    </span>
-                                  </div>
-                                ))}
+                                {contenuto.slice(0, 2).map((vino, index) => {
+                                  // Calcola quantità effettiva (ricevuta se disponibile, altrimenti ordinata)
+                                  let quantitaEffettiva = vino.quantita;
+                                  if (isRicevuto && contenutoRicevuto) {
+                                    // Cerca la quantità ricevuta per questo vino
+                                    const vinoRicevuto = Object.entries(contenutoRicevuto).find(([key, value]) => 
+                                      key.includes(vino.nome) || vino.nome.includes(key)
+                                    );
+                                    if (vinoRicevuto) {
+                                      quantitaEffettiva = vinoRicevuto[1] as number;
+                                    }
+                                  }
+
+                                  return (
+                                    <div key={index} className="flex justify-between text-sm">
+                                      <span className="text-gray-300">
+                                        {vino.nome}
+                                      </span>
+                                      <span className="text-gray-400">
+                                        {isRicevuto && quantitaEffettiva !== vino.quantita ? (
+                                          <span>
+                                            <span className="text-green-400">{quantitaEffettiva}</span>
+                                            <span className="text-gray-500 line-through ml-1">({vino.quantita})</span>
+                                            <span> bot. × €{(vino.prezzo_unitario || 0).toFixed(2)}</span>
+                                          </span>
+                                        ) : (
+                                          <span>
+                                            {quantitaEffettiva} bot. × €{(vino.prezzo_unitario || 0).toFixed(2)}
+                                          </span>
+                                        )}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
                                 {contenuto.length > 2 && (
                                   <div className="text-xs text-gray-500">
                                     ... e altri {contenuto.length - 2} vini
