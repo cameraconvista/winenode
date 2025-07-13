@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase, authManager } from '../lib/supabase';
+import { useWines } from './useWines';
 
 export interface OrdineDettaglio {
   id: string;
@@ -37,6 +38,9 @@ export function useOrdini() {
   const [error, setError] = useState<string | null>(null);
 
   const userId = authManager.getUserId();
+  
+  // Hook per aggiornare le giacenze dopo conferma ricezione
+  const { refreshWines } = useWines();
 
   // Carica tutti gli ordini dell'utente con nomi fornitori
   const loadOrdini = async (stato?: string) => {
@@ -302,6 +306,12 @@ export function useOrdini() {
         
         console.log('⚠️ Ordine aggiornato senza contenuto_ricevuto (fallback)');
         await loadOrdini();
+        
+        // 🔄 REFRESH AUTOMATICO GIACENZE anche nel fallback
+        console.log('🔄 Refresh automatico giacenze (fallback)...');
+        await refreshWines();
+        console.log('✅ Giacenze aggiornate automaticamente (fallback)!');
+        
         return true;
       }
 
@@ -314,6 +324,12 @@ export function useOrdini() {
       
       // Ricarica ordini per aggiornare la UI
       await loadOrdini();
+      
+      // 🔄 REFRESH AUTOMATICO GIACENZE dopo conferma ricezione
+      console.log('🔄 Refresh automatico giacenze dopo conferma ricezione...');
+      await refreshWines();
+      console.log('✅ Giacenze aggiornate automaticamente!');
+      
       return true;
 
     } catch (err) {
