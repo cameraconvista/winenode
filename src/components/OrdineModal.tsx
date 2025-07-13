@@ -474,7 +474,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               </div>
               <div className="text-sm text-gray-300 space-y-1">
                 <div>Ordine salvato nel database</div>
-                <div>Stato: <span className="text-yellow-400 font-medium">Sospeso</span></div>
+                <div>Stato: <span className="text-blue-400 font-medium">Inviati</span></div>
                 <div className="text-green-300 font-medium">Pronto per essere gestito</div>
               </div>
             </div>
