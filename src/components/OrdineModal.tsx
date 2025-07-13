@@ -422,11 +422,11 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               >
                 ← Modifica Ordine
               </button>
-              
+
               <button
                 onClick={async () => {
                   console.log('✅ Conferma ordine diretta - salvataggio:', ordineData);
-                  
+
                   try {
                     // Salva ordine direttamente nel database
                     const ordineId = await salvaOrdine(ordineData);
@@ -436,7 +436,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                     }
 
                     console.log('✅ Ordine confermato e salvato con ID:', ordineId);
-                    
+
                     // Vai al passo di successo
                     setStep("successo");
                   } catch (error) {
@@ -602,7 +602,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
                   console.log('✅ Ordine salvato con ID:', ordineId);
 
                   // Chiudi il modale e notifica il parent
-                  onFornitoreSelezionato(ordineData.fornitore);
+                  onFornitoreSelezionato(selectedFornitoreNome);
                   onClose();
                 }}
                 className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2"
@@ -636,7 +636,7 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
               <button
                 onClick={() => {
                   // Chiudi il modale e notifica il parent
-                  onFornitoreSelezionato(ordineData.fornitore);
+                  onFornitoreSelezionato(selectedFornitoreNome);
                   onClose();
                 }}
                 className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg flex items-center gap-2 text-lg transition-colors"
@@ -650,4 +650,3 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
     </div>
   );
 }
-
