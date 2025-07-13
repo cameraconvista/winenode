@@ -90,6 +90,18 @@ export default function OrdineDetailModal({ ordine, open, onClose, onUpdate }: O
     }, 0) || 0;
   };
 
+  // Parsing sicuro del contenuto JSONB
+  const viniOrdinati = (() => {
+    try {
+      const contenuto = typeof ordine.contenuto === 'string' 
+        ? JSON.parse(ordine.contenuto) 
+        : ordine.contenuto;
+      return Array.isArray(contenuto) ? contenuto : [];
+    } catch {
+      return [];
+    }
+  })();
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
@@ -187,90 +199,40 @@ export default function OrdineDetailModal({ ordine, open, onClose, onUpdate }: O
             </div>
 
             <div className="space-y-3">
-              {ordine.dettagli?.map((dettaglio: any) => (
-                <div key={dettaglio.id} className="bg-gray-700/50 rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-3">
+              {viniOrdinati.map((vino, index) => (
+                <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h4 className="font-medium text-white mb-1">
-                        {dettaglio.nome_vino}
+                      <h4 className="font-medium text-white">
+                        {vino.nome}
                       </h4>
-                      {dettaglio.produttore && (
-                        <p className="text-sm text-gray-400">
-                          {dettaglio.produttore} {dettaglio.anno && `(${dettaglio.anno})`}
-                        </p>
-                      )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-400 block">Ordinato:</span>
-                      <span className="text-white font-medium">
-                        {dettaglio.quantita_ordinata} bottiglie
-                      </span>
+                      <p className="text-gray-400">Quantità ordinata</p>
+                      <p className="text-white font-medium">{vino.quantita} bottiglie</p>
                     </div>
-
                     <div>
-                      <span className="text-gray-400 block">Prezzo unitario:</span>
-                      <span className="text-white font-medium">
-                        €{dettaglio.prezzo_unitario.toFixed(2)}
-                      </span>
+                      <p className="text-gray-400">Prezzo unitario</p>
+                      <p className="text-white font-medium">€{(vino.prezzo_unitario || 0).toFixed(2)}</p>
                     </div>
-
-                    {isEditing ? (
+                    <div>
+                      <p className="text-gray-400">Subtotale</p>
+                      <p className="text-green-400 font-bold">
+                        €{(vino.quantita * (vino.prezzo_unitario || 0)).toFixed(2)}
+                      </p>
+                    </div>
+                    {vino.giacenza_attuale !== undefined && (
                       <div>
-                        <span className="text-gray-400 block">Ricevuto:</span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => updateQuantitaRicevuta(dettaglio.id, (quantitaRicevute[dettaglio.id] || 0) - 1)}
-                            className="w-6 h-6 bg-red-600/80 hover:bg-red-700 text-white rounded text-xs flex items-center justify-center"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="number"
-                            min="0"
-                            value={quantitaRicevute[dettaglio.id] || 0}
-                            onChange={(e) => updateQuantitaRicevuta(dettaglio.id, parseInt(e.target.value) || 0)}
-                            className="w-16 h-6 bg-gray-800 border border-gray-600 rounded text-center text-white text-xs"
-                          />
-                          <button
-                            onClick={() => updateQuantitaRicevuta(dettaglio.id, (quantitaRicevute[dettaglio.id] || 0) + 1)}
-                            className="w-6 h-6 bg-green-600/80 hover:bg-green-700 text-white rounded text-xs flex items-center justify-center"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <span className="text-gray-400 block">Ricevuto:</span>
-                        <span className="text-white font-medium">
-                          {dettaglio.quantita_ricevuta !== null ? `${dettaglio.quantita_ricevuta} bottiglie` : 'In attesa'}
-                        </span>
+                        <p className="text-gray-400">Giacenza attuale</p>
+                        <p className="text-white text-sm">{vino.giacenza_attuale}</p>
                       </div>
                     )}
-
-                    <div>
-                      <span className="text-gray-400 block">Subtotale:</span>
-                      <span className="text-green-400 font-medium">
-                        €{dettaglio.subtotale.toFixed(2)}
-                      </span>
-                    </div>
                   </div>
-
-                  {/* Differenze evidenziate */}
-                  {!isEditing && dettaglio.quantita_ricevuta !== null && dettaglio.quantita_ricevuta !== dettaglio.quantita_ordinata && (
-                    <div className="mt-2 p-2 bg-orange-500/10 border border-orange-500/30 rounded text-xs">
-                      <div className="flex items-center gap-1 text-orange-300">
-                        <AlertCircle className="h-3 w-3" />
-                        Differenza: {dettaglio.quantita_ricevuta - dettaglio.quantita_ordinata > 0 ? '+' : ''}
-                        {dettaglio.quantita_ricevuta - dettaglio.quantita_ordinata} bottiglie
-                      </div>
-                    </div>
-                  )}
                 </div>
-              )) || []}
+              ))}
             </div>
           </div>
         </div>
