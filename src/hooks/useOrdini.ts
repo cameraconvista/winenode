@@ -58,8 +58,7 @@ export function useOrdini() {
           data_invio_whatsapp,
           data_ricevimento,
           created_at,
-          updated_at,
-          fornitori!inner(nome)
+          updated_at
         `)
         .eq('user_id', userId)
         .order('data', { ascending: false });
@@ -72,10 +71,26 @@ export function useOrdini() {
 
       if (error) throw error;
 
-      // Trasforma i dati per il frontend con il nome del fornitore dal JOIN
+      // Carica i nomi dei fornitori separatamente
+      const fornitoriIds = [...new Set(data?.map(o => o.fornitore).filter(Boolean))];
+      let fornitoriMap: Record<string, string> = {};
+      
+      if (fornitoriIds.length > 0) {
+        const { data: fornitoriData } = await supabase
+          .from('fornitori')
+          .select('id, nome')
+          .in('id', fornitoriIds);
+        
+        fornitoriMap = fornitoriData?.reduce((acc, f) => {
+          acc[f.id] = f.nome;
+          return acc;
+        }, {} as Record<string, string>) || {};
+      }
+
+      // Trasforma i dati per il frontend
       const ordiniConDettagli = data?.map(ordine => ({
         ...ordine,
-        fornitore_nome: ordine.fornitori?.nome || 'Fornitore sconosciuto',
+        fornitore_nome: fornitoriMap[ordine.fornitore] || 'Fornitore sconosciuto',
         dettagli: [] // Temporaneamente vuoto
       })) || [];
 
