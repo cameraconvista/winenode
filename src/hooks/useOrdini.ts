@@ -102,39 +102,54 @@ export function useOrdini() {
     }>;
     totale: number;
   }) => {
-    if (!supabase || !userId) return null;
-
     try {
-      // Inserisci ordine principale
-      const { data: ordine, error: ordineError } = await supabase
+      setIsLoading(true);
+      console.log('✅ Conferma ordine diretta - salvataggio:', ordineData);
+
+      const user = supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Utente non autenticato');
+      }
+
+      // Prepara il contenuto JSON nel formato corretto
+      const contenutoJSON = ordineData.vini.map(vino => ({
+        nome: vino.nome,
+        quantita: vino.quantita,
+        prezzo_unitario: vino.prezzo_unitario,
+        giacenza_attuale: vino.giacenza_attuale
+      }));
+
+      // Prepara i dati dell'ordine con la struttura corretta
+      const ordine = {
+        user_id: (await user).data.user?.id,
+        fornitore: ordineData.fornitore,
+        data: new Date().toISOString(), // Campo 'data' invece di 'data_ordine'
+        totale: ordineData.totale,      // Campo 'totale' invece di 'totale_euro'
+        stato: 'sospeso',
+        contenuto: contenutoJSON        // JSON diretto, non stringificato
+      };
+
+      const { data: nuovoOrdine, error: ordineError } = await supabase
         .from('ordini')
-        .insert({
-          user_id: userId,
-          fornitore: ordineData.fornitore, // UUID del fornitore
-          stato: 'sospeso',
-          totale: ordineData.totale,
-          data: new Date().toISOString(), // CORREZIONE: timestamp completo
-          contenuto: JSON.stringify(ordineData.vini.map(v => ({
-            nome: v.nome,
-            quantita: v.quantita,
-            prezzo_unitario: v.prezzo_unitario
-          }))) // CORREZIONE: salva come JSON strutturato
-        })
+        .insert([ordine])
         .select()
         .single();
 
-      if (ordineError) throw ordineError;
+      if (ordineError) {
+        console.error('❌ Errore nel salvare l\'ordine:', ordineError);
+        throw ordineError;
+      }
 
-      console.log('✅ Ordine salvato con successo:', ordine.id);
-
-      // Ricarica gli ordini
+      console.log('✅ Ordine salvato con successo:', nuovoOrdine);
       await loadOrdini();
+      return nuovoOrdine;
 
-      return ordine.id;
-    } catch (err) {
-      console.error('❌ Errore salvataggio ordine:', err);
-      setError(err instanceof Error ? err.message : 'Errore salvataggio ordine');
+    } catch (error) {
+      console.error('❌ Errore nel salvataggio ordine:', error);
+      setError(error instanceof Error ? error.message : 'Errore sconosciuto');
       return null;
+    } finally {
+      setIsLoading(false);
     }
   };
 
