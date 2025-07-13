@@ -334,12 +334,9 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
                                   // Calcola quantità effettiva (ricevuta se disponibile, altrimenti ordinata)
                                   let quantitaEffettiva = vino.quantita;
                                   if (isRicevuto && contenutoRicevuto) {
-                                    // Cerca la quantità ricevuta per questo vino
-                                    const vinoRicevuto = Object.entries(contenutoRicevuto).find(([key, value]) => 
-                                      key.includes(vino.nome) || vino.nome.includes(key)
-                                    );
-                                    if (vinoRicevuto) {
-                                      quantitaEffettiva = vinoRicevuto[1] as number;
+                                    // Cerca la quantità ricevuta per questo vino usando il nome esatto
+                                    if (contenutoRicevuto[vino.nome] !== undefined) {
+                                      quantitaEffettiva = contenutoRicevuto[vino.nome] as number;
                                     }
                                   }
 

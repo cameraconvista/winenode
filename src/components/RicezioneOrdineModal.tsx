@@ -83,10 +83,10 @@ const RicezioneOrdineModal: React.FC<RicezioneOrdineModalProps> = ({
         }
       }
 
-      // Prepara i dati delle quantità ricevute
+      // Prepara i dati delle quantità ricevute nel formato corretto
       const quantitaRicevute: Record<string, number> = {};
       viniRicezione.forEach((vino, index) => {
-        quantitaRicevute[index.toString()] = vino.quantitaRicevuta;
+        quantitaRicevute[vino.nome] = vino.quantitaRicevuta;
       });
 
       // Chiama la funzione di conferma del parent
