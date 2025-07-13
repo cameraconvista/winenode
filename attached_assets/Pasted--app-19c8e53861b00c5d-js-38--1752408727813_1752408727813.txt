@@ -1,0 +1,204 @@
+_app-19c8e53861b00c5d.js:38 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+_app-19c8e53861b00c5d.js:38 [LaunchDarkly] LaunchDarkly client initialized
+framework-a205c70e200f4467.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'battery'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'layout-animations'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'navigation-override'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'oversized-images'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'publickey-credentials'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'speaker-selection'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'unoptimized-images'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'unsized-media'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Unrecognized feature: 'pointer-lock'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+framework-a205c70e200f4467.js:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-a205c70e200f4467.js:1
+(anonime) @ framework-a205c70e200f4467.js:1
+uD @ framework-a205c70e200f4467.js:1
+uI @ framework-a205c70e200f4467.js:1
+uM @ framework-a205c70e200f4467.js:1
+uS @ framework-a205c70e200f4467.js:1
+C @ framework-a205c70e200f4467.js:1
+z @ framework-a205c70e200f4467.js:1
+12990463-fb53-4e61-9850-50b604cd8bf0-00-8vqbxrb9rjgy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar4b%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html:32 Unrecognized feature: 'battery'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+Console.js:61 🔍 Verifica variabili Supabase:
+Console.js:61 URL presente: true
+Console.js:61 KEY presente: true
+Console.js:61 ✅ Supabase client creato con successo
+Console.js:61 Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key.
+Mt.forEach.n.<computed> @ Console.js:61
+_GoTrueClient @ @supabase_supabase-js.js?v=5e9ac9bd:5107
+SupabaseAuthClient @ @supabase_supabase-js.js?v=5e9ac9bd:7086
+_initSupabaseAuthClient @ @supabase_supabase-js.js?v=5e9ac9bd:7284
+SupabaseClient @ @supabase_supabase-js.js?v=5e9ac9bd:7157
+createClient @ @supabase_supabase-js.js?v=5e9ac9bd:7324
+(anonime) @ main.tsx:21
+Console.js:61 🔧 App startup - Supabase available: true
+Console.js:61 🌐 Current URL: https://12990463-fb53-4e61-9850-50b604cd8bf0-00-8vqbxrb9rjgy.janeway.replit.dev/
+Console.js:61 👤 Auth state changed: Logged out
+Console.js:61 🔧 App startup - Supabase available: true
+Console.js:61 🌐 Current URL: https://12990463-fb53-4e61-9850-50b604cd8bf0-00-8vqbxrb9rjgy.janeway.replit.dev/
+Console.js:61 👤 Auth state changed: Logged out
+Console.js:61 ✅ Sessione esistente trovata: bistrot@cameraconvista.it
+Console.js:61 👤 Auth state changed: Logged in
+Console.js:61 👤 USER SESSION: {email: 'bistrot@cameraconvista.it', id: '02c85ceb-8026-4bd9-9dc5-c03a74f56346', last_sign_in: '2025-07-13T12:04:26.396934745Z'}
+Console.js:61 🆔 USER ID: 02c85ceb-8026-4bd9-9dc5-c03a74f56346
+Console.js:61 👤 USER SESSION: {access_token: 'eyJhbGciOiJIUzI1NiIsImtpZCI6IjF1ZjgyWEFXWUc3ZTRIU3…sc2V9.fbsgdB4cBZK9KS47zYENp8LVl7Qj3OBl6recpnIOEoE', token_type: 'bearer', expires_in: 3600, expires_at: 1752411866, refresh_token: 'bz2x65kdov2u', …}
+Console.js:61 🆔 USER ID: 02c85ceb-8026-4bd9-9dc5-c03a74f56346
+Console.js:61 🔄 Auth state change: INITIAL_SESSION con sessione
+Console.js:61 👤 Auth state changed: Logged in
+Console.js:61 👤 USER SESSION: {email: 'bistrot@cameraconvista.it', id: '02c85ceb-8026-4bd9-9dc5-c03a74f56346', last_sign_in: '2025-07-13T12:04:26.396934745Z'}
+Console.js:61 🆔 USER ID: 02c85ceb-8026-4bd9-9dc5-c03a74f56346
+new-winenode-ccv:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
