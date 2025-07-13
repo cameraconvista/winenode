@@ -103,9 +103,37 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
   const handleEliminaOrdine = async (ordineId: string, fornitoreNome: string) => {
     if (window.confirm(`Sei sicuro di voler eliminare l'ordine di ${fornitoreNome}? Questa azione non può essere annullata.`)) {
-      // Qui implementeremo la logica di eliminazione dal database
-      console.log('🗑️ Eliminazione ordine:', ordineId);
-      // TODO: Implementare eliminazione reale dal database
+      try {
+        console.log('🗑️ Eliminazione ordine:', ordineId);
+        
+        // Importa supabase client
+        const { supabase } = await import('../lib/supabase');
+        
+        if (!supabase) {
+          throw new Error('Supabase client non disponibile');
+        }
+
+        // Elimina l'ordine dal database
+        const { error } = await supabase
+          .from('ordini')
+          .delete()
+          .eq('id', ordineId);
+
+        if (error) {
+          console.error('❌ Errore eliminazione ordine:', error);
+          alert('Errore durante l\'eliminazione dell\'ordine. Riprova.');
+          return;
+        }
+
+        console.log('✅ Ordine eliminato con successo');
+        
+        // Ricarica la lista degli ordini
+        await loadOrdini();
+        
+      } catch (error) {
+        console.error('❌ Errore eliminazione ordine:', error);
+        alert('Errore durante l\'eliminazione dell\'ordine. Riprova.');
+      }
     }
   };
 
