@@ -389,7 +389,7 @@ export default function SettingsPage() {
       </header>
 
       <main className="flex-1 flex flex-col max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full overflow-hidden" style={{ marginTop: '64px' }}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-xl">
           {settingsSections.map((section) => {
             const IconComponent = section.icon;
             return (
