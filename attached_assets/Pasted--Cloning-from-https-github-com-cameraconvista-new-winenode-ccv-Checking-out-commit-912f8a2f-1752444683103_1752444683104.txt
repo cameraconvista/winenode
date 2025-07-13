@@ -1,0 +1,96 @@
+==> Cloning from https://github.com/cameraconvista/new-winenode-ccv
+==> Checking out commit 912f8a2f283ac32b8f6b16f19c12fee966fa571c in branch main
+==> Installing dependencies with npm...
+==> Using Node.js version 22.16.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Using Bun version 1.1.0 (default)
+==> Docs on specifying a Bun version: https://render.com/docs/bun-version
+added 333 packages, and audited 334 packages in 4s
+59 packages are looking for funding
+  run `npm fund` for details
+5 moderate severity vulnerabilities
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+up to date, audited 334 packages in 693ms
+59 packages are looking for funding
+  run `npm fund` for details
+5 moderate severity vulnerabilities
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+==> Running build command 'npm install && npm run build'...
+up to date, audited 334 packages in 705ms
+59 packages are looking for funding
+  run `npm fund` for details
+5 moderate severity vulnerabilities
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> winenode@1.0.0 build
+> vite build
+vite v4.5.14 building for production...
+transforming...
+[plugin:vite:resolve] Module "child_process" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/googleauth.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "fs" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/googleauth.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "os" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/googleauth.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "path" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/googleauth.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/authclient.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "querystring" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/oauth2client.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/oauth2client.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "querystring" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/refreshclient.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/baseexternalclient.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/downscopedclient.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "https" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gaxios/build/src/gaxios.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "querystring" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gaxios/build/src/gaxios.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gaxios/build/src/gaxios.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gaxios/build/src/gaxios.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gaxios/build/src/common.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "fs" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gcp-metadata/build/src/gcp-residency.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "os" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gcp-metadata/build/src/gcp-residency.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "fs" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gtoken/build/src/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "path" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gtoken/build/src/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "util" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/gtoken/build/src/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "util" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "fs" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "querystring" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/stscredentials.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "child_process" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "fs" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/crypto/node/crypto.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "querystring" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-auth-library/build/src/auth/oauth2common.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "net" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/https-proxy-agent/dist/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "tls" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/https-proxy-agent/dist/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "assert" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/https-proxy-agent/dist/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/https-proxy-agent/dist/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jws/lib/sign-stream.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "util" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jws/lib/sign-stream.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "node:events" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-logging-utils/build/src/logging-utils.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "node:process" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-logging-utils/build/src/logging-utils.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "node:util" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/google-logging-utils/build/src/logging-utils.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jws/lib/verify-stream.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "util" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jws/lib/verify-stream.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "buffer" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/safe-buffer/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "net" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/agent-base/dist/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/agent-base/dist/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "https" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/agent-base/dist/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jwa/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "util" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jwa/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jws/lib/data-stream.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "util" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jws/lib/data-stream.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "buffer" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/jws/lib/tostring.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/agent-base/dist/helpers.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "https" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/agent-base/dist/helpers.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin:vite:resolve] Module "buffer" has been externalized for browser compatibility, imported by "/opt/render/project/src/node_modules/buffer-equal-constant-time/index.js". See http://vitejs.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+✓ 2067 modules transformed.
+rendering chunks...
+[plugin:vite:reporter] 
+(!) /opt/render/project/src/src/lib/supabase.ts is dynamically imported by /opt/render/project/src/src/components/GestisciOrdiniModal.tsx, /opt/render/project/src/src/pages/PreferenzePage.tsx but also statically imported by /opt/render/project/src/src/App.tsx, /opt/render/project/src/src/components/AccountSection.tsx, /opt/render/project/src/src/components/AddSupplierModal.tsx, /opt/render/project/src/src/components/EditSupplierModal.tsx, /opt/render/project/src/src/components/ImportaVini.tsx, /opt/render/project/src/src/components/LoginForm.tsx, /opt/render/project/src/src/components/ProfileManagementModal.tsx, /opt/render/project/src/src/hooks/useOrdini.ts, /opt/render/project/src/src/hooks/useSuppliers.ts, /opt/render/project/src/src/hooks/useWines.ts, /opt/render/project/src/src/lib/importFromGoogleSheet.ts, /opt/render/project/src/src/pages/AccountPage.tsx, /opt/render/project/src/src/pages/FornitoriPage.tsx, /opt/render/project/src/src/pages/HomePage.tsx, /opt/render/project/src/src/pages/ManualWineInsertPage.tsx, /opt/render/project/src/src/pages/PreferenzePage.tsx, dynamic import will not move module into another chunk.
+computing gzip size...
+dist/index.html                                  1.03 kB │ gzip:   0.53 kB
+dist/assets/index-b4ef6051.css                  41.31 kB │ gzip:   7.90 kB
+dist/assets/importFromGoogleSheet-acb2041e.js  287.38 kB │ gzip:  96.22 kB
+dist/assets/index-22e0f41b.js                  490.60 kB │ gzip: 133.64 kB
+✓ built in 5.37s
+==> Uploading build...
+==> Your site is live 🎉
