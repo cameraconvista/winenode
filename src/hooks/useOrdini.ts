@@ -37,7 +37,7 @@ export function useOrdini() {
 
   const userId = authManager.getUserId();
 
-  // Carica tutti gli ordini dell'utente con JOIN ai fornitori
+  // Carica tutti gli ordini dell'utente con nomi fornitori
   const loadOrdini = async (stato?: string) => {
     if (!supabase || !userId) return;
 
@@ -45,21 +45,11 @@ export function useOrdini() {
     setError(null);
 
     try {
+      console.log('🔍 Caricamento ordini per user:', userId);
+      
       let query = supabase
         .from('ordini')
-        .select(`
-          id,
-          fornitore,
-          contenuto,
-          totale,
-          data,
-          stato,
-          user_id,
-          data_invio_whatsapp,
-          data_ricevimento,
-          created_at,
-          updated_at
-        `)
+        .select('*')
         .eq('user_id', userId)
         .order('data', { ascending: false });
 
@@ -67,37 +57,54 @@ export function useOrdini() {
         query = query.eq('stato', stato);
       }
 
-      const { data, error } = await query;
+      const { data: ordiniData, error: ordiniError } = await query;
 
-      if (error) throw error;
+      if (ordiniError) {
+        console.error('❌ Errore caricamento ordini:', ordiniError);
+        throw ordiniError;
+      }
+
+      console.log('✅ Ordini trovati:', ordiniData?.length || 0);
+
+      if (!ordiniData || ordiniData.length === 0) {
+        setOrdini([]);
+        return;
+      }
 
       // Carica i nomi dei fornitori separatamente
-      const fornitoriIds = [...new Set(data?.map(o => o.fornitore).filter(Boolean))];
+      const fornitoriIds = [...new Set(ordiniData.map(o => o.fornitore).filter(Boolean))];
       let fornitoriMap: Record<string, string> = {};
       
       if (fornitoriIds.length > 0) {
-        const { data: fornitoriData } = await supabase
+        console.log('🔍 Caricamento fornitori per IDs:', fornitoriIds);
+        
+        const { data: fornitoriData, error: fornitoriError } = await supabase
           .from('fornitori')
           .select('id, nome')
           .in('id', fornitoriIds);
         
-        fornitoriMap = fornitoriData?.reduce((acc, f) => {
-          acc[f.id] = f.nome;
-          return acc;
-        }, {} as Record<string, string>) || {};
+        if (fornitoriError) {
+          console.warn('⚠️ Errore caricamento fornitori:', fornitoriError);
+        } else {
+          fornitoriMap = fornitoriData?.reduce((acc, f) => {
+            acc[f.id] = f.nome;
+            return acc;
+          }, {} as Record<string, string>) || {};
+          console.log('✅ Fornitori mappati:', Object.keys(fornitoriMap).length);
+        }
       }
 
       // Trasforma i dati per il frontend
-      const ordiniConDettagli = data?.map(ordine => ({
+      const ordiniConDettagli = ordiniData.map(ordine => ({
         ...ordine,
         fornitore_nome: fornitoriMap[ordine.fornitore] || 'Fornitore sconosciuto',
         dettagli: [] // Temporaneamente vuoto
-      })) || [];
+      }));
 
-      console.log('✅ Ordini caricati:', ordiniConDettagli.length);
+      console.log('✅ Ordini trasformati:', ordiniConDettagli.length);
       setOrdini(ordiniConDettagli);
     } catch (err) {
-      console.error('Errore caricamento ordini:', err);
+      console.error('❌ Errore caricamento ordini:', err);
       setError(err instanceof Error ? err.message : 'Errore sconosciuto');
     } finally {
       setIsLoading(false);
