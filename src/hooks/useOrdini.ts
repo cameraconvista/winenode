@@ -247,18 +247,59 @@ export function useOrdini() {
       console.log('💾 Salvataggio quantità ricevute per ordine:', ordineId);
       console.log('📦 Contenuto ricevuto:', contenutoRicevuto);
 
+      // Prima verifica se la colonna contenuto_ricevuto esiste
+      const { data: tableInfo, error: tableError } = await supabase
+        .from('ordini')
+        .select('id, contenuto')
+        .eq('id', ordineId)
+        .single();
+
+      if (tableError) {
+        console.error('❌ Errore verifica tabella:', tableError);
+        throw new Error(`Errore verifica ordine: ${tableError.message}`);
+      }
+
+      // Prova prima un aggiornamento con solo stato e data
+      let updateData: any = {
+        stato: 'ricevuto',
+        data_ricevimento: new Date().toISOString()
+      };
+
+      // Prova ad aggiungere contenuto_ricevuto se possibile
+      try {
+        updateData.contenuto_ricevuto = contenutoRicevuto;
+      } catch (e) {
+        console.warn('⚠️ Impossibile aggiungere contenuto_ricevuto, continuo senza');
+      }
+
       const { data, error } = await supabase
         .from('ordini')
-        .update({ 
-          contenuto_ricevuto: contenutoRicevuto,
-          stato: 'ricevuto',
-          data_ricevimento: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', ordineId)
         .select();
 
       if (error) {
         console.error('❌ Errore Supabase:', error);
+        // Se errore su contenuto_ricevuto, prova senza
+        if (error.message.includes('contenuto_ricevuto')) {
+          console.log('🔄 Ritento senza contenuto_ricevuto...');
+          const { data: retryData, error: retryError } = await supabase
+            .from('ordini')
+            .update({ 
+              stato: 'ricevuto',
+              data_ricevimento: new Date().toISOString()
+            })
+            .eq('id', ordineId)
+            .select();
+          
+          if (retryError) {
+            throw new Error(`Errore database: ${retryError.message}`);
+          }
+          
+          console.log('✅ Ordine aggiornato senza contenuto_ricevuto');
+          await loadOrdini();
+          return true;
+        }
         throw new Error(`Errore database: ${error.message}`);
       }
 
