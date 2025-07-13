@@ -109,6 +109,27 @@ export function useOrdini() {
         throw new Error('Utente non autenticato');
       }
 
+      // Se abbiamo fornitore_id, usalo; altrimenti cerca l'ID dal nome
+      let fornitoreId = ordineData.fornitore_id;
+      
+      if (!fornitoreId) {
+        console.log('🔍 Ricerca ID fornitore per nome:', ordineData.fornitore);
+        const { data: fornitoreData, error: fornitoreError } = await supabase
+          .from('fornitori')
+          .select('id')
+          .eq('nome', ordineData.fornitore)
+          .eq('user_id', (await user).data.user?.id)
+          .single();
+        
+        if (fornitoreError || !fornitoreData) {
+          console.error('❌ Fornitore non trovato:', ordineData.fornitore);
+          throw new Error(`Fornitore "${ordineData.fornitore}" non trovato`);
+        }
+        
+        fornitoreId = fornitoreData.id;
+        console.log('✅ ID fornitore trovato:', fornitoreId);
+      }
+
       // Prepara il contenuto JSON nel formato corretto
       const contenutoJSON = ordineData.vini.map(vino => ({
         nome: vino.nome,
@@ -120,12 +141,14 @@ export function useOrdini() {
       // Prepara i dati dell'ordine con la struttura corretta
       const ordine = {
         user_id: (await user).data.user?.id,
-        fornitore: ordineData.fornitore_id || ordineData.fornitore, // Usa l'ID se disponibile
+        fornitore: fornitoreId, // Usa sempre l'ID UUID
         data: new Date().toISOString(), // Campo 'data' invece di 'data_ordine'
         totale: ordineData.totale,      // Campo 'totale' invece di 'totale_euro'
         stato: 'sospeso',
         contenuto: contenutoJSON        // JSON diretto, non stringificato
       };
+
+      console.log('📝 Dati ordine preparati:', ordine);
 
       const { data: nuovoOrdine, error: ordineError } = await supabase
         .from('ordini')
