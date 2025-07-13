@@ -1,17 +1,28 @@
-
 {
-  "name": "WINENODE",
-  "short_name": "WINENODE",
+  "name": "WineNode CCV",
+  "short_name": "WineNode",
+  "description": "Gestione vini per Camera con Vista",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#2b0000",
-  "theme_color": "#2b0000",
+  "orientation": "portrait",
+  "background_color": "#2c0405",
+  "theme_color": "#d97706",
+  "scope": "/",
   "icons": [
+    {
+      "src": "/iconwinenode.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/iconwinenode.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "it",
+  "dir": "ltr"
 }

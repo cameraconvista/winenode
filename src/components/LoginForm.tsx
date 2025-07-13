@@ -37,10 +37,15 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     <div className="h-screen flex items-center justify-center p-3 overflow-hidden" style={{ backgroundColor: '#2c0405' }}>
       <div className="rounded-lg p-6 w-full max-w-xs shadow-xl" style={{ backgroundColor: '#24161d', border: '1px solid #374151' }}>
         
-        {/* 📱 PWA Detection e Fix */}
-        {window.navigator.standalone && (
+        {/* 📱 PWA Detection e Fix per iOS */}
+        {(window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) && (
           <div className="mb-4 p-2 bg-blue-900/20 border border-blue-500/30 rounded text-xs text-blue-200">
-            🚀 App installata - Se hai problemi di login, riapri nel browser
+            📱 Modalità PWA - Tocca i campi per scrivere
+            {navigator.userAgent.includes('iPhone') && (
+              <div className="mt-1 text-orange-200">
+                🍎 iOS: Se non riesci a scrivere, tocca due volte il campo
+              </div>
+            )}
           </div>
         )}
 
@@ -57,8 +62,14 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
             <input
               type="email"
               id="email"
+              name="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              onFocus={(e) => {
+                // Fix per iOS PWA - forza il focus
+                e.target.setAttribute('readonly', 'readonly');
+                setTimeout(() => e.target.removeAttribute('readonly'), 100);
+              }}
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm"
               placeholder="inserisci la tua email"
               autoComplete="email"
@@ -66,6 +77,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               autoCorrect="off"
               spellCheck="false"
               inputMode="email"
+              style={{ fontSize: '16px' }} // Previene zoom su iOS
               required
             />
           </div>
@@ -76,14 +88,21 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
+                name="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                onFocus={(e) => {
+                  // Fix per iOS PWA - forza il focus
+                  e.target.setAttribute('readonly', 'readonly');
+                  setTimeout(() => e.target.removeAttribute('readonly'), 100);
+                }}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all pr-10 text-sm"
                 placeholder="inserisci la password"
                 autoComplete="current-password"
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck="false"
+                style={{ fontSize: '16px' }} // Previene zoom su iOS
                 required
               />
               <button

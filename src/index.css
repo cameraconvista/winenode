@@ -389,6 +389,34 @@ input[inputMode="decimal"]::-webkit-inner-spin-button {
   /* Fix per input mobile */
   input, select, textarea {
     font-size: 16px !important; /* Previene zoom su iOS */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  /* Fix specifici per iOS PWA */
+  @supports (-webkit-touch-callout: none) {
+    input[type="email"], 
+    input[type="password"], 
+    input[type="text"] {
+      -webkit-appearance: none;
+      -webkit-border-radius: 0;
+      border-radius: 6px;
+      background-clip: padding-box;
+      min-height: 44px; /* Touch target iOS */
+    }
+    
+    /* Fix per PWA standalone mode */
+    @media (display-mode: standalone) {
+      input {
+        transform: translateZ(0); /* Forza layer compositing */
+        -webkit-transform: translateZ(0);
+      }
+      
+      body {
+        -webkit-user-select: text;
+        user-select: text;
+      }
+    }
   }
 }
 
