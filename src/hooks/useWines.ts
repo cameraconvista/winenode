@@ -93,6 +93,41 @@ const useWines = () => {
     }
   };
 
+  const updateMultipleWineInventories = async (updates: Array<{id: string, newInventory: number}>): Promise<boolean> => {
+    const userId = authManager.getUserId();
+    if (!userId) return false;
+
+    try {
+      const updatePromises = updates.map(update => 
+        supabase.from('giacenza').upsert({
+          vino_id: update.id,
+          giacenza: update.newInventory,
+          user_id: userId,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'vino_id,user_id' })
+      );
+
+      const results = await Promise.all(updatePromises);
+      const hasErrors = results.some(result => result.error);
+      
+      if (hasErrors) {
+        console.error('❌ Errore in alcuni aggiornamenti giacenze');
+        return false;
+      }
+
+      // Aggiorna lo stato locale
+      setWines(prev => prev.map(wine => {
+        const update = updates.find(u => u.id === wine.id);
+        return update ? { ...wine, inventory: update.newInventory } : wine;
+      }));
+
+      return true;
+    } catch (err: any) {
+      console.error('❌ Errore aggiornamento giacenze multiple:', err.message);
+      return false;
+    }
+  };
+
   const updateWine = async (id: string, updates: Partial<WineType>): Promise<boolean> => {
     const userId = authManager.getUserId();
     if (!userId) return false;
@@ -144,6 +179,7 @@ const useWines = () => {
     error,
     refreshWines: fetchWines,
     updateWineInventory,
+    updateMultipleWineInventories,
     updateWine
   };
 };

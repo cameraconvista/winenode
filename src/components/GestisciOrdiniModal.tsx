@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Package, Clock, CheckCircle, Archive, Eye, Check, Truck, Trash2 } from 'lucide-react';
 import { useOrdini } from '../hooks/useOrdini';
 import OrdineDetailModal from './OrdineDetailModal';
+import RicezioneOrdineModal from './RicezioneOrdineModal';
 
 interface GestisciOrdiniModalProps {
   open: boolean;
@@ -15,6 +16,8 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
   const [activeTab, setActiveTab] = useState<TabType>('inviati');
   const [selectedOrdine, setSelectedOrdine] = useState<any>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showRicezioneModal, setShowRicezioneModal] = useState(false);
+  const [ordineInRicezione, setOrdineInRicezione] = useState<any>(null);
 
   useEffect(() => {
     if (open) {
@@ -87,12 +90,20 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
     }
   };
 
-  const handleMarkAsRicevuto = async (ordineId: string, fornitoreNome: string) => {
-    if (window.confirm(`Sei sicuro di voler marcare come ricevuto l'ordine di ${fornitoreNome}?`)) {
-      const success = await aggiornaStatoOrdine(ordineId, 'ricevuto');
-      if (success) {
-        console.log('✅ Ordine marcato come ricevuto');
-      }
+  const handleMarkAsRicevuto = async (ordine: any) => {
+    setOrdineInRicezione(ordine);
+    setShowRicezioneModal(true);
+  };
+
+  const handleConfermaRicezione = async (ordineId: string, quantitaRicevute: Record<string, number>) => {
+    const success = await aggiornaStatoOrdine(ordineId, 'ricevuto', {
+      quantita_ricevute: quantitaRicevute
+    });
+    
+    if (success) {
+      console.log('✅ Ordine ricevuto con aggiornamento giacenze');
+      setShowRicezioneModal(false);
+      setOrdineInRicezione(null);
     }
   };
 
@@ -272,7 +283,7 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
 
                           {ordine.stato === 'inviato' && (
                             <button
-                              onClick={() => handleMarkAsRicevuto(ordine.id, ordine.fornitore_nome || ordine.fornitore)}
+                              onClick={() => handleMarkAsRicevuto(ordine)}
                               className="p-2 bg-green-600/20 hover:bg-green-600/40 text-green-300 rounded-lg transition-colors"
                               title="Marca come ricevuto"
                             >
@@ -357,6 +368,19 @@ const GestisciOrdiniModal: React.FC<GestisciOrdiniModalProps> = ({ open, onClose
           onUpdate={() => {
             loadOrdini();
           }}
+        />
+      )}
+
+      {/* Ricezione Modal */}
+      {showRicezioneModal && ordineInRicezione && (
+        <RicezioneOrdineModal
+          ordine={ordineInRicezione}
+          open={showRicezioneModal}
+          onClose={() => {
+            setShowRicezioneModal(false);
+            setOrdineInRicezione(null);
+          }}
+          onConfirm={handleConfermaRicezione}
         />
       )}
     </>
