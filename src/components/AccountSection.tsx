@@ -14,7 +14,7 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
   useEffect(() => {
     const getCurrentUser = async () => {
       if (!isSupabaseAvailable || !supabase) return
-      
+
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
@@ -32,7 +32,7 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
         window.location.href = '/'
         return
       }
-      
+
       const { error } = await supabase.auth.signOut()
       if (error) {
         console.error('Errore durante il logout:', error)
@@ -40,7 +40,7 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
         localStorage.clear()
         sessionStorage.clear()
       }
-      
+
       // Reindirizza sempre alla home dopo il logout
       window.location.href = '/'
     } catch (error) {
@@ -75,14 +75,14 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
         alert('Modifica email non disponibile - servizio di autenticazione non configurato')
         return
       }
-      
+
       // Validazione email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(newEmail)) {
         alert('⚠️ Inserisci un indirizzo email valido')
         return
       }
-      
+
       supabase.auth.updateUser({ email: newEmail })
         .then(({ error }) => {
           if (error) {
@@ -101,12 +101,12 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
         alert('Modifica password non disponibile - servizio di autenticazione non configurato')
         return
       }
-      
+
       if (newPassword.length < 6) {
         alert('⚠️ La password deve essere di almeno 6 caratteri')
         return
       }
-      
+
       supabase.auth.updateUser({ password: newPassword })
         .then(({ error }) => {
           if (error) {
@@ -257,14 +257,14 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
               <div
                 key={option.id}
                 onClick={() => handleOptionClick(option.id)}
-                className="bg-gray-800/50 border border-gray-700 p-4 rounded-xl text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer"
+                className="bg-gray-800/50 border border-gray-700 px-4 py-3 rounded-lg text-left transition-all duration-200 group hover:bg-gray-700/50 hover:border-gray-600 cursor-pointer flex items-center"
               >
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-gray-700/50 rounded-lg group-hover:bg-gray-600/50 transition-colors">
                     <IconComponent className="h-5 w-5 text-gray-300" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-base font-bold text-cream">
+                    <h3 className="text-sm font-medium text-cream uppercase tracking-wide">
                       {option.title}
                     </h3>
                     {option.id === 'email' && user?.email && (
