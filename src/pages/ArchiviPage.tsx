@@ -61,12 +61,20 @@ export default function ArchiviPage() {
       }
     };
 
+    // Gestione errori globali per Promise non gestite
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('🚨 Unhandled promise rejection catturata:', event.reason);
+      event.preventDefault(); // Previene il crash dell'app
+    };
+
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
     };
   }, []);
 
@@ -197,58 +205,80 @@ export default function ArchiviPage() {
 
   // Gestione cambiamenti celle
   const handleCellChange = async (rowIndex: number, field: string, value: string) => {
-    console.log(`handleCellChange chiamata: riga ${rowIndex}, campo ${field}, valore ${value}`);
-    const updatedRows = [...wineRows];
-    const row = updatedRows[rowIndex];
-    if (!row) return;
+    try {
+      console.log(`handleCellChange chiamata: riga ${rowIndex}, campo ${field}, valore ${value}`);
+      const updatedRows = [...wineRows];
+      const row = updatedRows[rowIndex];
+      if (!row) return;
 
-    // Se si sta modificando la giacenza, usa la funzione di useWines per sincronizzazione
-    if (field === "giacenza") {
-      console.log('🔄 Aggiornando giacenza tramite useWines:', row.nomeVino, 'Nuova giacenza:', value);
+      // Se si sta modificando la giacenza, usa la funzione di useWines per sincronizzazione
+      if (field === "giacenza") {
+        console.log('🔄 Aggiornando giacenza tramite useWines:', row.nomeVino, 'Nuova giacenza:', value);
 
-      // Estrai l'ID dalla stringa (formato: "db-123")
-      const wineId = row.id.startsWith('db-') ? row.id.replace('db-', '') : row.id;
+        // Estrai l'ID dalla stringa (formato: "db-123")
+        const wineId = row.id.startsWith('db-') ? row.id.replace('db-', '') : row.id;
 
-      if (wineId) {
-        try {
-          // Usa la funzione updateWineInventory di useWines per sincronizzazione completa
-          const success = await updateWineInventory(wineId, Number(value) || 0);
+        if (wineId && wineId !== 'empty') {
+          try {
+            // Usa la funzione updateWineInventory di useWines per sincronizzazione completa
+            const success = await updateWineInventory(wineId, Number(value) || 0);
 
-          if (success) {
-            console.log('✅ Giacenza aggiornata correttamente tramite useWines');
-            // Lo stato locale verrà aggiornato automaticamente da useWines via useEffect
-          } else {
-            console.error('❌ Errore aggiornamento giacenza tramite useWines');
-            // Refresh per sincronizzare i dati
-            await refreshWines();
+            if (success) {
+              console.log('✅ Giacenza aggiornata correttamente tramite useWines');
+              // Lo stato locale verrà aggiornato automaticamente da useWines via useEffect
+            } else {
+              console.error('❌ Errore aggiornamento giacenza tramite useWines');
+              // Refresh per sincronizzare i dati
+              try {
+                await refreshWines();
+              } catch (refreshErr) {
+                console.error('❌ Errore durante refresh wines:', refreshErr);
+              }
+            }
+
+          } catch (err) {
+            console.error('❌ Errore inatteso aggiornamento giacenza:', err);
+            try {
+              await refreshWines();
+            } catch (refreshErr) {
+              console.error('❌ Errore durante refresh wines fallback:', refreshErr);
+            }
           }
-
-        } catch (err) {
-          console.error('❌ Errore inatteso aggiornamento giacenza:', err);
-          await refreshWines();
+        } else {
+          console.warn('⚠️ ID vino non valido per aggiornamento giacenza:', row.id);
         }
       } else {
-        console.error('❌ ID vino non valido per aggiornamento giacenza:', row.id);
+        // Per altri campi, aggiorna solo lo stato locale
+        (row as any)[field] = value;
+        setWineRows(updatedRows);
       }
-    } else {
-      // Per altri campi, aggiorna solo lo stato locale
-      (row as any)[field] = value;
-      setWineRows(updatedRows);
+    } catch (globalErr) {
+      console.error('❌ Errore globale in handleCellChange:', globalErr);
     }
   };
 
 
 
   const handleRowClick = (index: number, event: React.MouseEvent) => {
-    if (event.ctrlKey || event.metaKey) {
-      setSelectedRows(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
-    } else if (event.shiftKey && selectedRows.length) {
-      const last = selectedRows[selectedRows.length - 1];
-      const start = Math.min(last, index);
-      const end = Math.max(last, index);
-      setSelectedRows(Array.from({ length: end - start + 1 }, (_, i) => start + i));
-    } else {
-      setSelectedRows([index]);
+    try {
+      // Verifica che la riga non sia vuota
+      const row = filteredRows[index];
+      if (!row || row.id.startsWith('empty-')) {
+        return; // Non selezionare righe vuote
+      }
+
+      if (event.ctrlKey || event.metaKey) {
+        setSelectedRows(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
+      } else if (event.shiftKey && selectedRows.length) {
+        const last = selectedRows[selectedRows.length - 1];
+        const start = Math.min(last, index);
+        const end = Math.max(last, index);
+        setSelectedRows(Array.from({ length: end - start + 1 }, (_, i) => start + i));
+      } else {
+        setSelectedRows([index]);
+      }
+    } catch (err) {
+      console.error('❌ Errore in handleRowClick:', err);
     }
   };
 
