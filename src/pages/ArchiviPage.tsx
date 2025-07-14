@@ -236,8 +236,8 @@ export default function ArchiviPage() {
 
     // Calcola quante righe vuote aggiungere per riempire la pagina
     const containerHeight = window.innerHeight - 280; // Altezza disponibile per la tabella
-    const headerHeight = 40; // Altezza header tabella
-    const rowHeight = 40; // Altezza singola riga
+    const headerHeight = 32; // Altezza header tabella
+    const rowHeight = 32; // Altezza singola riga
     const availableHeight = containerHeight - headerHeight;
     const maxVisibleRows = Math.floor(availableHeight / rowHeight);
 
@@ -351,7 +351,7 @@ export default function ArchiviPage() {
 
 
   const lineHeight = fontSize * 1.2;
-  const rowHeight = fontSize * 2.5;
+  const rowHeight = Math.max(32, fontSize * 2.2);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ 
@@ -506,7 +506,7 @@ export default function ArchiviPage() {
               </tbody>
             </table>
             <div className="sticky bottom-0 z-40 bg-[#8B4513] border-t-2 border-amber-900 shadow-lg">
-              <div className="w-full border border-amber-900 p-3" style={{ backgroundColor: "#2d0505", fontSize, height: 40 }}></div>
+              <div className="w-full border border-amber-900 p-2" style={{ backgroundColor: "#2d0505", fontSize, height: 32 }}></div>
             </div>
           </div>
         </div>
