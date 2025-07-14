@@ -90,13 +90,13 @@ function App() {
     <div className="min-h-screen bg-gray-900">
       <Routes>
         <Route path="/" element={
-          (session || fallbackMode) ? <HomePage /> : <LoginForm />
+          (session || fallbackMode || bypassAuth) ? <HomePage /> : <LoginForm />
         } />
         <Route path="/settings" element={
-          (session || fallbackMode) ? <SettingsPage /> : <LoginForm />
+          (session || fallbackMode || bypassAuth) ? <SettingsPage /> : <LoginForm />
         } />
         <Route path="/settings/fornitori" element={
-          (session || fallbackMode) ? <FornitoriPage /> : <LoginForm />
+          (session || fallbackMode || bypassAuth) ? <FornitoriPage /> : <LoginForm />
         } />
         <Route path="/settings/archivi" element={<ArchiviPage />} />
         <Route path="/settings/archivi/importa" element={<ImportaPage />} />
