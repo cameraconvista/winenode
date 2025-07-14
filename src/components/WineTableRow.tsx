@@ -61,7 +61,7 @@ export default function WineTableRow({
       >
         <div
           className="w-full px-2 py-2 text-center text-gray-600 font-medium select-none flex items-center justify-center"
-          style={{ fontSize: fontSize * 0.7, userSelect: "none", height: 40 }}
+          style={{ fontSize: fontSize * 0.7, userSelect: "none", height: 24 }}
         >
           {isEmptyRow ? '' : index + 1}
         </div>
@@ -72,8 +72,8 @@ export default function WineTableRow({
         style={{ backgroundColor: bgColor, width: columnWidths["nomeVino"] }}
       >
         <div
-          className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
-          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 32, lineHeight: "normal" }}
+          className="w-full px-2 py-1 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
+          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 24, lineHeight: "normal" }}
         >
           {isEmptyRow ? '' : row.nomeVino}
         </div>
@@ -84,8 +84,8 @@ export default function WineTableRow({
         style={{ backgroundColor: bgColor, width: columnWidths["anno"] }}
       >
         <div
-          className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
-          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 32, lineHeight: "normal" }}
+          className="w-full px-2 py-1 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
+          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 24, lineHeight: "normal" }}
         >
           {isEmptyRow ? '' : row.anno}
         </div>
@@ -96,8 +96,8 @@ export default function WineTableRow({
         style={{ backgroundColor: bgColor, width: columnWidths["produttore"] }}
       >
         <div
-          className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
-          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 32, lineHeight: "normal" }}
+          className="w-full px-2 py-1 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
+          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 24, lineHeight: "normal" }}
         >
           {isEmptyRow ? '' : row.produttore}
         </div>
@@ -108,8 +108,8 @@ export default function WineTableRow({
         style={{ backgroundColor: bgColor, width: columnWidths["provenienza"] }}
       >
         <div
-          className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
-          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 32, lineHeight: "normal" }}
+          className="w-full px-2 py-1 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
+          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 24, lineHeight: "normal" }}
         >
           {isEmptyRow ? '' : row.provenienza}
         </div>
@@ -120,8 +120,8 @@ export default function WineTableRow({
         style={{ backgroundColor: bgColor, width: columnWidths["fornitore"] }}
       >
         <div
-          className="w-full px-2 py-2 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
-          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 32, lineHeight: "normal" }}
+          className="w-full px-2 py-1 bg-transparent border-none outline-none text-gray-600 text-center select-none flex items-center justify-center"
+          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 24, lineHeight: "normal" }}
         >
           {isEmptyRow ? '' : row.fornitore || ''}
         </div>
@@ -131,8 +131,8 @@ export default function WineTableRow({
         className="border border-amber-900 p-0"
         style={{ backgroundColor: bgColor, width: columnWidths["giacenza"] }}
       >
-        <div className="w-full px-2 py-2 bg-transparent border-none outline-none select-none flex items-center justify-center"
-          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 32, lineHeight: "normal" }}
+        <div className="w-full px-2 py-1 bg-transparent border-none outline-none select-none flex items-center justify-center"
+          style={{ backgroundColor: bgColor, userSelect: "none", ...getFontSizeStyle(), height: 24, lineHeight: "normal" }}
         >
           <span className={`text-center w-full ${!isEmptyRow && row.giacenza <= 2 ? 'text-red-600 font-bold' : 'text-gray-600'}`}>
             {isEmptyRow ? '' : row.giacenza}

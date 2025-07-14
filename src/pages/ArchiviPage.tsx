@@ -237,7 +237,7 @@ export default function ArchiviPage() {
     // Calcola quante righe vuote aggiungere per riempire la pagina
     const containerHeight = window.innerHeight - 280; // Altezza disponibile per la tabella
     const headerHeight = 32; // Altezza header tabella
-    const rowHeight = 32; // Altezza singola riga
+    const rowHeight = 24; // Altezza singola riga ridotta
     const availableHeight = containerHeight - headerHeight;
     const maxVisibleRows = Math.floor(availableHeight / rowHeight);
 
