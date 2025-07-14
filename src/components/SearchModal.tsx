@@ -11,6 +11,27 @@ interface SearchModalProps {
 export default function SearchModal({ open, onOpenChange, searchTerm, onSearchChange }: SearchModalProps) {
   if (!open) return null
 
+  const handleSearchChange = (value: string) => {
+    onSearchChange(value)
+    // Chiudi automaticamente il modal dopo 500ms di typing per vedere i risultati
+    if (value.length > 0) {
+      setTimeout(() => {
+        onOpenChange(false)
+      }, 500)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Chiudi con Escape
+    if (e.key === 'Escape') {
+      onOpenChange(false)
+    }
+    // Chiudi con Enter per vedere i risultati
+    if (e.key === 'Enter' && searchTerm.length > 0) {
+      onOpenChange(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
       <div className="fixed top-16 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-4">
@@ -31,14 +52,20 @@ export default function SearchModal({ open, onOpenChange, searchTerm, onSearchCh
               type="text"
               placeholder="Cerca per nome o fornitore..."
               value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
             />
           </div>
           
           <div className="mt-4 text-sm text-gray-400">
-            Cerca per nome del vino o fornitore
+            Inizia a digitare per cercare • Premi Invio per vedere i risultati
+            {searchTerm && (
+              <div className="mt-2 text-amber-400 font-medium">
+                🔍 Cercando: "{searchTerm}"
+              </div>
+            )}
           </div>
         </div>
       </div>

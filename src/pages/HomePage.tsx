@@ -245,12 +245,17 @@ export default function HomePage() {
                 </button>
                 <button
                   onClick={() => setShowSearchModal(true)}
-                  className="text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className={`text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center relative ${
+                    searchTerm ? 'bg-blue-500/20' : ''
+                  }`}
                   title="Cerca vini"
                 >
                   <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
+                  {searchTerm && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-gray-900 animate-pulse"></span>
+                  )}
                 </button>
               </div>
 
@@ -315,9 +320,32 @@ export default function HomePage() {
           maxHeight: '100%',
           scrollBehavior: 'smooth'
         }}>
+          {/* Indicatore ricerca attiva */}
+          {searchTerm && (
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="h-4 w-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-blue-400 text-sm font-medium">
+                  Cercando: "{searchTerm}" ({filteredWines.length} risultati)
+                </span>
+              </div>
+              <button
+                onClick={() => setSearchTerm('')}
+                className="text-blue-400 hover:text-blue-300 p-1 rounded transition-colors"
+                title="Cancella ricerca"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
           {filteredWines.length === 0 ? (
             <p className="text-center text-gray-400 text-sm">
-              {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 'Nessun vino trovato con i filtri selezionati'}
+              {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 
+               searchTerm ? `Nessun vino trovato per "${searchTerm}"` : 
+               'Nessun vino trovato con i filtri selezionati'}
             </p>
           ) : (
             <div className="space-y-0.5 sm:space-y-1 overflow-x-hidden">
