@@ -31,9 +31,9 @@ export default function ArchiviPage() {
     if (w >= 1200) {
       return {
         "#": "3%",
-        nomeVino: "26%",
-        anno: "5%", 
-        produttore: "23%",
+        nomeVino: "25%",
+        anno: "7%", 
+        produttore: "22%",
         provenienza: "19%",
         fornitore: "14%",
         giacenza: "10%"
@@ -41,9 +41,9 @@ export default function ArchiviPage() {
     } else if (w >= 1025) {
       return {
         "#": "3%",
-        nomeVino: "24%",
-        anno: "5%",
-        produttore: "21%", 
+        nomeVino: "23%",
+        anno: "7%",
+        produttore: "20%", 
         provenienza: "18%",
         fornitore: "18%",
         giacenza: "11%"
@@ -51,8 +51,8 @@ export default function ArchiviPage() {
     } else if (w >= 768) {
       return {
         "#": "4%",
-        nomeVino: "22%",
-        anno: "6%",
+        nomeVino: "21%",
+        anno: "7%",
         produttore: "19%",
         provenienza: "17%", 
         fornitore: "19%",
