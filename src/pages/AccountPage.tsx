@@ -61,6 +61,8 @@ export default function AccountPage() {
       handleProfileManagement()
     } else if (optionId === 'notifications') {
       handleNotifications()
+    } else if (optionId === 'bypass') {
+      handleBypassToggle()
     } else if (optionId === 'reset') {
       handleReset()
     }
@@ -200,6 +202,11 @@ export default function AccountPage() {
       id: 'notifications',
       title: 'NOTIFICHE',
       icon: Bell
+    },
+    {
+      id: 'bypass',
+      title: 'BYPASS AUTH',
+      icon: Lock
     },
     {
       id: 'reset',
