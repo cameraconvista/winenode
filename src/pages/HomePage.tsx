@@ -261,7 +261,7 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setFilters(prev => ({ ...prev, showAlertsOnly: !prev.showAlertsOnly }))}
-                  className={`flex items-center gap-1 px-2 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 min-h-[36px] border
+                  className={`flex items-center justify-center px-2 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 min-h-[36px] min-w-[36px] border
                     ${filters.showAlertsOnly 
                       ? 'bg-black/20 border-red-900/20 text-white hover:bg-black/30' 
                       : 'bg-black/20 border-red-900/20 text-gray-300 hover:bg-black/30'
@@ -270,7 +270,6 @@ export default function HomePage() {
                   title="Mostra solo vini in esaurimento"
                 >
                   <span className="text-xs">⚠️</span>
-                  <span className="hidden sm:inline">ALERT</span>
                 </button>
 
                 <div className="relative">
