@@ -139,10 +139,8 @@ export default function ImportaVini({}: ImportaViniProps) {
   }
 
   const handleImportFromGoogleSheet = async () => {
-    // Test credenziali Google prima di procedere
-    const { testGoogleCredentials } = await import('../utils/testGoogleCredentials')
-    const hasCredentials = testGoogleCredentials()
-
+    // Verifica diretta delle credenziali Google Sheets
+    const hasCredentials = !!(import.meta.env.VITE_GOOGLE_SHEETS_API_KEY && import.meta.env.VITE_GOOGLE_SHEET_ID);
     if (!hasCredentials) {
       setSheetStatus('error')
       setSheetMessage('❌ Credenziali Google Sheets non configurate nelle Secrets')
