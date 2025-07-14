@@ -34,7 +34,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center p-3 overflow-hidden" style={{ backgroundColor: '#2c0405' }}>
+    <div className="login-container h-screen flex items-center justify-center p-3 overflow-hidden" style={{ backgroundColor: '#2c0405' }}>
       <div className="rounded-lg p-6 w-full max-w-xs shadow-xl" style={{ backgroundColor: '#24161d', border: '1px solid #374151' }}>
 
 
@@ -55,26 +55,12 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               name="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              onFocus={(e) => {
-                // Fix avanzato per iOS PWA
+              onFocus={() => {
+                // iOS: scroll smooth per mantenere input visibile
                 if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-                  const input = e.target;
-                  // Metodo 1: Rimuovi readonly temporaneamente
-                  input.setAttribute('readonly', 'readonly');
                   setTimeout(() => {
-                    input.removeAttribute('readonly');
-                    // Metodo 2: Forza il focus dopo rimozione readonly
-                    setTimeout(() => {
-                      input.focus();
-                      input.click();
-                    }, 50);
-                  }, 100);
-                }
-              }}
-              onTouchStart={(e) => {
-                // Fix aggiuntivo per touch iOS
-                if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-                  e.currentTarget.focus();
+                    document.activeElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }, 300);
                 }
               }}
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm"
@@ -98,26 +84,12 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
                 name="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                onFocus={(e) => {
-                  // Fix avanzato per iOS PWA
+                onFocus={() => {
+                  // iOS: scroll smooth per mantenere input visibile
                   if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-                    const input = e.target;
-                    // Metodo 1: Rimuovi readonly temporaneamente
-                    input.setAttribute('readonly', 'readonly');
                     setTimeout(() => {
-                      input.removeAttribute('readonly');
-                      // Metodo 2: Forza il focus dopo rimozione readonly
-                      setTimeout(() => {
-                        input.focus();
-                        input.click();
-                      }, 50);
-                    }, 100);
-                  }
-                }}
-                onTouchStart={(e) => {
-                  // Fix aggiuntivo per touch iOS
-                  if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-                    e.currentTarget.focus();
+                      document.activeElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
                   }
                 }}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all pr-10 text-sm"
