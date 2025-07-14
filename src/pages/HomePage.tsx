@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Filter, Settings, Plus, Database, AlertTriangle } from 'lucide-react';
+import { Filter, Settings, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
