@@ -563,6 +563,7 @@ input[inputMode="decimal"] {
     margin-top: 0;
     min-height: calc(100vh - 140px);
     overflow-x: hidden;
+    padding: 16px 24px !important; /* Padding migliorato per desktop */
   }
 
   /* Scroll container per desktop */
@@ -572,17 +573,69 @@ input[inputMode="decimal"] {
     overflow-x: auto;
   }
 
-  /* Specifico per ArchiviPage - tabelle desktop */
+  /* Specifico per ArchiviPage - tabelle desktop ottimizzate */
+  .rounded-lg.shadow-2xl {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .rounded-lg.shadow-2xl > div {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
   .rounded-lg.shadow-2xl table {
-    min-width: 1200px;
-    table-layout: auto;
+    min-width: 1400px !important;
+    table-layout: auto !important;
+    width: 100% !important;
   }
 
   /* Font size normale per desktop */
   .rounded-lg.shadow-2xl table td,
   .rounded-lg.shadow-2xl table th {
     font-size: 14px !important;
-    padding: 8px 12px !important;
+    padding: 10px 14px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: initial !important;
+  }
+
+  /* Colonne più larghe su desktop */
+  .rounded-lg.shadow-2xl table th:nth-child(2),
+  .rounded-lg.shadow-2xl table td:nth-child(2) {
+    min-width: 280px !important; /* Nome vino */
+  }
+
+  .rounded-lg.shadow-2xl table th:nth-child(4),
+  .rounded-lg.shadow-2xl table td:nth-child(4) {
+    min-width: 200px !important; /* Produttore */
+  }
+
+  .rounded-lg.shadow-2xl table th:nth-child(5),
+  .rounded-lg.shadow-2xl table td:nth-child(5) {
+    min-width: 150px !important; /* Provenienza */
+  }
+
+  /* Altezza righe normale per desktop */
+  .rounded-lg.shadow-2xl table tbody tr {
+    height: auto !important;
+    min-height: 44px !important;
+  }
+
+  /* Input e select dimensioni normali desktop */
+  .rounded-lg.shadow-2xl table input,
+  .rounded-lg.shadow-2xl table select {
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+    height: auto !important;
+    min-height: 36px !important;
+  }
+
+  /* Pulsanti dimensioni normali desktop */
+  .rounded-lg.shadow-2xl table button {
+    font-size: 13px !important;
+    padding: 6px 12px !important;
+    min-height: 36px !important;
   }
 }
 

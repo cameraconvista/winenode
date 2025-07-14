@@ -26,13 +26,13 @@ export default function ArchiviPage() {
   const { wines: existingWines, refreshWines, updateWineInventory } = useWines();
   // Larghezze colonne ottimizzate per il contenuto
   const columnWidths = {
-    "#": "4%",
-    nomeVino: "32%", 
-    anno: "7%",
-    produttore: "22%",
-    provenienza: "18%", 
-    fornitore: "15%",
-    giacenza: "8%"
+    "#": window.innerWidth >= 1025 ? "3%" : "4%",
+    nomeVino: window.innerWidth >= 1025 ? "30%" : "32%", 
+    anno: window.innerWidth >= 1025 ? "6%" : "7%",
+    produttore: window.innerWidth >= 1025 ? "25%" : "22%",
+    provenienza: window.innerWidth >= 1025 ? "20%" : "18%", 
+    fornitore: window.innerWidth >= 1025 ? "12%" : "15%",
+    giacenza: window.innerWidth >= 1025 ? "6%" : "8%"
   };
 
   const [wineRows, setWineRows] = useState<WineRow[]>([]);
@@ -374,8 +374,13 @@ export default function ArchiviPage() {
         <CategoryTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         <div className="rounded-lg shadow-2xl border border-amber-900 overflow-hidden flex-1" style={{ backgroundColor: "#8B4513", minHeight: "500px" }}>
-          <div className="h-full overflow-x-auto overflow-y-auto" style={{ maxHeight: "calc(100vh - 320px)" }}>
-            <table className="w-full table-fixed" style={{ borderCollapse: "collapse" }}>
+          <div className="h-full overflow-x-auto overflow-y-auto" style={{ 
+            maxHeight: window.innerWidth >= 1025 ? "none" : "calc(100vh - 320px)" 
+          }}>
+            <table className="w-full" style={{ 
+              borderCollapse: "collapse",
+              tableLayout: window.innerWidth >= 1025 ? "auto" : "fixed"
+            }}>
               <WineTableHeader columnWidths={columnWidths} fontSize={fontSize} lineHeight={lineHeight} rowHeight={rowHeight} />
               <tbody>
                 {filteredRows.length === 0 ? (
