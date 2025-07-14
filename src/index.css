@@ -445,22 +445,23 @@ input[inputMode="decimal"] {
     line-height: 1.2 !important;
   }
 
-  /* Pulsanti ottimizzati per touch */
+  /* Pulsanti ottimizzati per touch - TONDI */
   button {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     min-height: 44px !important; /* Apple guidelines */
     min-width: 44px !important;
-    border-radius: 8px !important;
+    border-radius: 50% !important; /* TONDI */
     transition: all 0.2s ease !important;
   }
 
-  /* Pulsanti + e - più grandi per mobile */
+  /* Pulsanti + e - più grandi per mobile - TONDI */
   .wine-card button {
     width: 40px !important;
     height: 40px !important;
     font-size: 18px !important;
     font-weight: bold !important;
+    border-radius: 50% !important; /* TONDI */
   }
 
   /* Area giacenza più grande per touch */
@@ -694,6 +695,21 @@ input::placeholder {
 
 textarea::placeholder {
   color: #555555 !important;
+}
+
+/* === FORZA PULSANTI TONDI GLOBALMENTE === */
+button, 
+.wine-card button,
+[role="button"] {
+  border-radius: 50% !important;
+}
+
+/* Eccezioni per pulsanti rettangolari specifici */
+.account-button,
+button.flex-1,
+button[type="submit"],
+.modal-content button {
+  border-radius: 8px !important;
 }
 /* === Ottimizzazioni Mobile Avanzate === */
 @media (max-width: 640px) {
