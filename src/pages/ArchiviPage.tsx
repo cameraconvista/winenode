@@ -64,17 +64,38 @@ export default function ArchiviPage() {
     // Gestione errori globali per Promise non gestite
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       console.error('🚨 Unhandled promise rejection catturata:', event.reason);
+      
+      // Gestione specifica per errori di autenticazione Google
+      if (event.reason && typeof event.reason === 'object') {
+        if (event.reason.message && event.reason.message.includes('process is not defined')) {
+          console.error('❌ Errore critico autenticazione Google - process not defined');
+        } else if (event.reason.message && event.reason.message.includes('google-auth-library')) {
+          console.error('❌ Errore libreria autenticazione Google');
+        }
+      }
+      
       event.preventDefault(); // Previene il crash dell'app
+    };
+
+    // Gestione errori JavaScript generici
+    const handleError = (event: ErrorEvent) => {
+      console.error('🚨 Errore JavaScript catturato:', event.error);
+      if (event.error && event.error.message && event.error.message.includes('process is not defined')) {
+        console.error('❌ Errore critico - process is not defined');
+      }
+      event.preventDefault();
     };
 
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
+    window.addEventListener("error", handleError);
 
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
       window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+      window.removeEventListener("error", handleError);
     };
   }, []);
 
@@ -203,13 +224,13 @@ export default function ArchiviPage() {
     return filtered;
   }, [wineRows, filters]);
 
-  // Gestione cambiamenti celle
+  // Gestione cambiamenti celle con protezione completa
   const handleCellChange = async (rowIndex: number, field: string, value: string) => {
     try {
       console.log(`handleCellChange chiamata: riga ${rowIndex}, campo ${field}, valore ${value}`);
       const updatedRows = [...wineRows];
       const row = updatedRows[rowIndex];
-      if (!row) return;
+      if (!row || !row.id || row.id.startsWith('empty-')) return;
 
       // Se si sta modificando la giacenza, usa la funzione di useWines per sincronizzazione
       if (field === "giacenza") {
@@ -218,10 +239,13 @@ export default function ArchiviPage() {
         // Estrai l'ID dalla stringa (formato: "db-123")
         const wineId = row.id.startsWith('db-') ? row.id.replace('db-', '') : row.id;
 
-        if (wineId && wineId !== 'empty') {
+        if (wineId && wineId !== 'empty' && !isNaN(Number(wineId))) {
           try {
             // Usa la funzione updateWineInventory di useWines per sincronizzazione completa
-            const success = await updateWineInventory(wineId, Number(value) || 0);
+            const success = await updateWineInventory(wineId, Number(value) || 0).catch(err => {
+              console.error('❌ Errore updateWineInventory:', err);
+              return false;
+            });
 
             if (success) {
               console.log('✅ Giacenza aggiornata correttamente tramite useWines');
@@ -230,7 +254,9 @@ export default function ArchiviPage() {
               console.error('❌ Errore aggiornamento giacenza tramite useWines');
               // Refresh per sincronizzare i dati
               try {
-                await refreshWines();
+                await refreshWines().catch(refreshErr => {
+                  console.error('❌ Errore durante refresh wines:', refreshErr);
+                });
               } catch (refreshErr) {
                 console.error('❌ Errore durante refresh wines:', refreshErr);
               }
@@ -239,7 +265,9 @@ export default function ArchiviPage() {
           } catch (err) {
             console.error('❌ Errore inatteso aggiornamento giacenza:', err);
             try {
-              await refreshWines();
+              await refreshWines().catch(refreshErr => {
+                console.error('❌ Errore durante refresh wines fallback:', refreshErr);
+              });
             } catch (refreshErr) {
               console.error('❌ Errore durante refresh wines fallback:', refreshErr);
             }
@@ -254,6 +282,8 @@ export default function ArchiviPage() {
       }
     } catch (globalErr) {
       console.error('❌ Errore globale in handleCellChange:', globalErr);
+      // Previeni propagazione dell'errore
+      return Promise.resolve();
     }
   };
 
@@ -405,7 +435,8 @@ export default function ArchiviPage() {
 
         <div className="rounded-lg shadow-2xl border border-amber-900 overflow-hidden flex-1" style={{ backgroundColor: "#8B4513", minHeight: "500px" }}>
           <div className="h-full overflow-x-auto overflow-y-auto" style={{ 
-            maxHeight: window.innerWidth >= 1025 ? "none" : "calc(100vh - 320px)" 
+            maxHeight: window.innerWidth >= 1025 ? "calc(100vh - 400px)" : "calc(100vh - 320px)",
+            minHeight: window.innerWidth >= 1025 ? "600px" : "500px"
           }}>
             <table className="w-full" style={{ 
               borderCollapse: "collapse",

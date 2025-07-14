@@ -575,13 +575,15 @@ input[inputMode="decimal"] {
 
   /* Specifico per ArchiviPage - tabelle desktop ottimizzate */
   .rounded-lg.shadow-2xl {
-    overflow: visible !important;
-    max-height: none !important;
+    overflow: auto !important;
+    max-height: calc(100vh - 400px) !important;
+    min-height: 600px !important;
   }
 
   .rounded-lg.shadow-2xl > div {
-    overflow: visible !important;
-    max-height: none !important;
+    overflow: auto !important;
+    max-height: calc(100vh - 400px) !important;
+    min-height: 600px !important;
   }
 
   .rounded-lg.shadow-2xl table {
