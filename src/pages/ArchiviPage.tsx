@@ -258,24 +258,13 @@ export default function ArchiviPage() {
   const rowHeight = fontSize * 2.5;
 
   return (
-    <div className="h-[95vh] flex flex-col" style={{ 
+    <div className="min-h-screen flex flex-col" style={{ 
       background: "linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202)", 
-      minHeight: "100vh", 
-      color: "white",
-      // Forza orientamento landscape su mobile
-      ...(window.innerWidth <= 768 && {
-        transform: window.innerHeight > window.innerWidth ? 'rotate(90deg)' : 'none',
-        transformOrigin: 'center center',
-        width: window.innerHeight > window.innerWidth ? '100vh' : '100vw',
-        height: window.innerHeight > window.innerWidth ? '100vw' : '100vh',
-        position: window.innerHeight > window.innerWidth ? 'fixed' : 'relative',
-        top: window.innerHeight > window.innerWidth ? '0' : 'auto',
-        left: window.innerHeight > window.innerWidth ? '0' : 'auto'
-      })
+      color: "white"
     }}>
       <header className="border-b border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0 sticky top-0 z-10">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
             <button onClick={() => navigate("/settings")} className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200" title="Torna alle impostazioni" style={{ filter: "brightness(1.3)", backgroundColor: "rgba(255, 255, 255, 0.1)", backdropFilter: "blur(10px)", border: "1px solid rgba(255, 255, 255, 0.2)" }}>
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
             </button>
@@ -297,8 +286,8 @@ export default function ArchiviPage() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col px-3 py-1 min-h-0">
-        <div className="pb-1 mb-2"><ImportaVini /></div>
+      <main className="flex-1 flex flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 w-full min-h-0">
+        <div className="pb-2 mb-3"><ImportaVini /></div>
 
 
 
@@ -384,8 +373,8 @@ export default function ArchiviPage() {
 
         <CategoryTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-        <div className="rounded-lg shadow-2xl border border-amber-900 overflow-hidden flex-1" style={{ backgroundColor: "#8B4513", minHeight: "300px" }}>
-          <div className="h-full overflow-x-hidden overflow-y-auto" style={{ maxHeight: "calc(100vh - 280px)" }}>
+        <div className="rounded-lg shadow-2xl border border-amber-900 overflow-hidden flex-1" style={{ backgroundColor: "#8B4513", minHeight: "500px" }}>
+          <div className="h-full overflow-x-auto overflow-y-auto" style={{ maxHeight: "calc(100vh - 320px)" }}>
             <table className="w-full table-fixed" style={{ borderCollapse: "collapse" }}>
               <WineTableHeader columnWidths={columnWidths} fontSize={fontSize} lineHeight={lineHeight} rowHeight={rowHeight} />
               <tbody>
@@ -419,8 +408,8 @@ export default function ArchiviPage() {
       </main>
 
       <footer className="border-t border-red-900/30 bg-black/30 backdrop-blur-sm flex-shrink-0">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flexitems-center justify-center h-16 gap-3">{/* Footer content se necessario */}</div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-16 gap-3">{/* Footer content se necessario */}</div>
         </div>
       </footer>
     </div>

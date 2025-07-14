@@ -552,20 +552,16 @@ input[inputMode="decimal"] {
 
 /* Layout per desktop */
 @media screen and (min-width: 1025px) {
-  /* Header fisso per desktop */
+  /* Header normale per desktop - NON FISSO per ArchiviPage */
   header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
+    position: relative;
     backdrop-filter: blur(12px);
   }
 
-  /* Main content per desktop */
+  /* Main content per desktop - normale margin */
   main {
-    margin-top: 180px;
-    min-height: calc(100vh - 180px);
+    margin-top: 0;
+    min-height: calc(100vh - 140px);
     overflow-x: hidden;
   }
 
@@ -573,7 +569,20 @@ input[inputMode="decimal"] {
   main > div {
     min-height: 100%;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
+  }
+
+  /* Specifico per ArchiviPage - tabelle desktop */
+  .rounded-lg.shadow-2xl table {
+    min-width: 1200px;
+    table-layout: auto;
+  }
+
+  /* Font size normale per desktop */
+  .rounded-lg.shadow-2xl table td,
+  .rounded-lg.shadow-2xl table th {
+    font-size: 14px !important;
+    padding: 8px 12px !important;
   }
 }
 
