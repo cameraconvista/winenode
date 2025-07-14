@@ -557,6 +557,42 @@ textarea::placeholder {
 }
 /* === Ottimizzazioni Mobile === */
 @media (max-width: 640px) {
+  body {
+    font-size: 15px; /* Aumentato per migliore leggibilità */
+    line-height: 1.5; /* Migliorato line-height */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Header fisso per mobile - migliorato */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Main content per mobile - ottimizzato */
+  main {
+    margin-top: 140px; /* Spazio aumentato per header */
+    min-height: calc(100vh - 140px);
+    overflow-x: hidden;
+    padding-left: 12px; /* Padding migliorato */
+    padding-right: 12px;
+  }
+
+  /* Scroll container per lista vini mobile - ottimizzato */
+  main > div {
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 8px 0; /* Padding interno migliorato */
+  }
+
   .table-responsive {
     overflow-x: auto;
     display: block;

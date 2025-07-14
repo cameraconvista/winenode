@@ -82,7 +82,7 @@ export default function HomePage() {
     const matchesType = !filters.wineType || normalizedType === filters.wineType;
     const matchesSupplier = !filters.supplier || wine.supplier === filters.supplier;
     const matchesAlerts = !filters.showAlertsOnly || wine.inventory <= wine.minStock;
-    
+
     // Aggiunge il filtro di ricerca
     const matchesSearch = !searchTerm || 
       wine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -203,11 +203,11 @@ export default function HomePage() {
             <img 
               src="/logo 2 CCV.png" 
               alt="WINENODE" 
-              className="h-16 sm:h-24 md:h-32 w-auto object-contain -mb-1" 
+              className="h-18 sm:h-24 md:h-32 w-auto object-contain mb-1" 
             />
 
             {/* Pulsantiera sotto il logo - ottimizzata per mobile */}
-            <div className="flex items-center justify-between w-full pb-2">
+            <div className="flex items-center justify-between w-full pb-3 pt-1">
               {/* Gruppo pulsanti a sinistra */}
               <div className="flex gap-1 sm:gap-2">
                 <button 
@@ -320,10 +320,10 @@ export default function HomePage() {
               {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 'Nessun vino trovato con i filtri selezionati'}
             </p>
           ) : (
-            <div className="space-y-1 overflow-x-hidden">
+            <div className="space-y-2 overflow-x-hidden">
               {filteredWines.map(wine => (
-                <div key={wine.id} className="bg-black/20 border border-red-900/20 rounded-lg p-2 hover:bg-black/30 transition-all duration-200 overflow-x-hidden">
-                  <div className="flex items-center justify-between gap-3 overflow-x-hidden">
+                <div key={wine.id} className="wine-card bg-black/20 border border-red-900/20 rounded-lg p-4 hover:bg-black/30 transition-all duration-200 overflow-x-hidden">
+                  <div className="flex items-center justify-between gap-4 overflow-x-hidden">
                     <div className="flex-1 cursor-pointer overflow-x-hidden" onClick={() => handleWineClick(wine)}>
                       <div className="flex flex-col gap-1 overflow-x-hidden">
                         {/* Prima riga: Nome vino tutto maiuscolo */}
