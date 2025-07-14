@@ -31,42 +31,42 @@ export default function ArchiviPage() {
     if (w >= 1200) {
       return {
         "#": "3%",
-        nomeVino: "28%",
-        anno: "6%", 
-        produttore: "24%",
-        provenienza: "20%",
-        fornitore: "13%",
-        giacenza: "6%"
+        nomeVino: "26%",
+        anno: "5%", 
+        produttore: "23%",
+        provenienza: "19%",
+        fornitore: "14%",
+        giacenza: "10%"
       };
     } else if (w >= 1025) {
       return {
         "#": "3%",
-        nomeVino: "26%",
-        anno: "6%",
-        produttore: "22%", 
-        provenienza: "19%",
+        nomeVino: "24%",
+        anno: "5%",
+        produttore: "21%", 
+        provenienza: "18%",
         fornitore: "18%",
-        giacenza: "6%"
+        giacenza: "11%"
       };
     } else if (w >= 768) {
       return {
         "#": "4%",
-        nomeVino: "24%",
-        anno: "7%",
-        produttore: "20%",
-        provenienza: "18%", 
-        fornitore: "20%",
-        giacenza: "7%"
+        nomeVino: "22%",
+        anno: "6%",
+        produttore: "19%",
+        provenienza: "17%", 
+        fornitore: "19%",
+        giacenza: "13%"
       };
     } else {
       return {
         "#": "5%",
-        nomeVino: "22%",
-        anno: "8%",
-        produttore: "18%",
-        provenienza: "16%",
-        fornitore: "23%",
-        giacenza: "8%"
+        nomeVino: "20%",
+        anno: "7%",
+        produttore: "17%",
+        provenienza: "15%",
+        fornitore: "21%",
+        giacenza: "15%"
       };
     }
   }, []);
