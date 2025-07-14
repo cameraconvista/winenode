@@ -13,12 +13,7 @@ export default function SearchModal({ open, onOpenChange, searchTerm, onSearchCh
 
   const handleSearchChange = (value: string) => {
     onSearchChange(value)
-    // Chiudi automaticamente il modal dopo 500ms di typing per vedere i risultati
-    if (value.length > 0) {
-      setTimeout(() => {
-        onOpenChange(false)
-      }, 500)
-    }
+    // Aggiornamento in tempo reale senza chiudere il modal
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -27,7 +22,7 @@ export default function SearchModal({ open, onOpenChange, searchTerm, onSearchCh
       onOpenChange(false)
     }
     // Chiudi con Enter per vedere i risultati
-    if (e.key === 'Enter' && searchTerm.length > 0) {
+    if (e.key === 'Enter') {
       onOpenChange(false)
     }
   }
@@ -60,10 +55,19 @@ export default function SearchModal({ open, onOpenChange, searchTerm, onSearchCh
           </div>
           
           <div className="mt-4 text-sm text-gray-400">
-            Inizia a digitare per cercare • Premi Invio per vedere i risultati
+            Inizia a digitare per cercare • Chiudi per vedere i risultati
             {searchTerm && (
-              <div className="mt-2 text-amber-400 font-medium">
-                🔍 Cercando: "{searchTerm}"
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-amber-400 font-medium">
+                  🔍 Cercando: "{searchTerm}"
+                </span>
+                <button
+                  onClick={() => onSearchChange('')}
+                  className="text-gray-400 hover:text-red-400 ml-2 px-2 py-1 rounded transition-colors"
+                  title="Cancella ricerca"
+                >
+                  Cancella
+                </button>
               </div>
             )}
           </div>
