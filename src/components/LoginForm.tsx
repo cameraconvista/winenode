@@ -13,6 +13,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,9 +34,64 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     }
   }
 
+  // iOS keyboard stability
+  const handleInputFocus = () => {
+    setIsKeyboardOpen(true)
+    // Previeni scroll del body
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.width = '100%'
+    document.body.style.height = '100%'
+    
+    // Scroll ottimizzato per iOS
+    setTimeout(() => {
+      if (document.activeElement) {
+        document.activeElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest' 
+        })
+      }
+    }, 300)
+  }
+
+  const handleInputBlur = () => {
+    setIsKeyboardOpen(false)
+    // Ripristina scroll del body
+    document.body.style.overflow = ''
+    document.body.style.position = ''
+    document.body.style.width = ''
+    document.body.style.height = ''
+  }
+
   return (
-    <div className="login-container h-screen flex items-center justify-center p-3 overflow-hidden" style={{ backgroundColor: '#2c0405' }}>
-      <div className="rounded-lg p-6 w-full max-w-xs shadow-xl" style={{ backgroundColor: '#24161d', border: '1px solid #374151' }}>
+    <div 
+      className={`login-container ${isKeyboardOpen ? 'keyboard-open' : ''}`}
+      style={{ 
+        backgroundColor: '#2c0405',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: isKeyboardOpen ? 'flex-start' : 'center',
+        justifyContent: 'center',
+        padding: '1rem',
+        paddingTop: isKeyboardOpen ? '2rem' : '1rem',
+        overflow: 'hidden',
+        zIndex: 1000
+      }}
+    >
+      <div 
+        className="rounded-lg p-6 w-full max-w-xs shadow-xl"
+        style={{ 
+          backgroundColor: '#24161d', 
+          border: '1px solid #374151',
+          transform: isKeyboardOpen ? 'translateY(0)' : 'translateY(0)',
+          transition: 'transform 0.3s ease'
+        }}
+      >
 
 
 
@@ -55,14 +111,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               name="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              onFocus={() => {
-                // iOS: scroll smooth per mantenere input visibile
-                if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-                  setTimeout(() => {
-                    document.activeElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }, 300);
-                }
-              }}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm"
               placeholder="inserisci la tua email"
               autoComplete="email"
@@ -70,7 +120,19 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               autoCorrect="off"
               spellCheck="false"
               inputMode="email"
-              style={{ fontSize: '16px' }} // Previene zoom su iOS
+              style={{ 
+                fontSize: '16px',
+                WebkitAppearance: 'none',
+                borderRadius: '6px',
+                WebkitBorderRadius: '6px',
+                backgroundClip: 'padding-box',
+                WebkitBackgroundClip: 'padding-box',
+                transform: 'translateZ(0)',
+                WebkitTransform: 'translateZ(0)',
+                willChange: 'transform',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden'
+              }}
               required
             />
           </div>
@@ -84,21 +146,27 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
                 name="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                onFocus={() => {
-                  // iOS: scroll smooth per mantenere input visibile
-                  if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-                    setTimeout(() => {
-                      document.activeElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
-                  }
-                }}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 text-cream rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all pr-10 text-sm"
                 placeholder="inserisci la password"
                 autoComplete="current-password"
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck="false"
-                style={{ fontSize: '16px' }} // Previene zoom su iOS
+                style={{ 
+                  fontSize: '16px',
+                  WebkitAppearance: 'none',
+                  borderRadius: '6px',
+                  WebkitBorderRadius: '6px',
+                  backgroundClip: 'padding-box',
+                  WebkitBackgroundClip: 'padding-box',
+                  transform: 'translateZ(0)',
+                  WebkitTransform: 'translateZ(0)',
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden'
+                }}
                 required
               />
               <button

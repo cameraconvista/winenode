@@ -491,14 +491,17 @@ input[inputMode="decimal"] {
     transform: translateZ(0);
   }
 
-  /* Fix specifici per iOS PWA - STABILIZZAZIONE TASTIERA */
+  /* Fix specifici per iOS PWA - STABILIZZAZIONE TASTIERA COMPLETA */
   @supports (-webkit-touch-callout: none) {
     /* VIEWPORT FISSO per evitare resize con tastiera */
     body {
       position: fixed !important;
       width: 100% !important;
-      height: 100% !important;
+      height: 100vh !important;
+      height: 100dvh !important; /* Dynamic viewport height */
       overflow: hidden !important;
+      touch-action: manipulation !important;
+      -webkit-overflow-scrolling: touch !important;
     }
     
     #root {
@@ -506,8 +509,9 @@ input[inputMode="decimal"] {
       top: 0 !important;
       left: 0 !important;
       width: 100% !important;
-      height: 100% !important;
-      overflow-y: auto !important;
+      height: 100vh !important;
+      height: 100dvh !important; /* Dynamic viewport height */
+      overflow: hidden !important;
       -webkit-overflow-scrolling: touch !important;
     }
 
@@ -520,30 +524,82 @@ input[inputMode="decimal"] {
       -webkit-border-radius: 8px !important;
       border-radius: 8px !important;
       background-clip: padding-box !important;
+      -webkit-background-clip: padding-box !important;
       min-height: 44px !important;
       font-size: 16px !important; /* CRITICO: previene zoom */
       -webkit-tap-highlight-color: transparent !important;
       -webkit-touch-callout: none !important;
       -webkit-user-select: text !important;
       user-select: text !important;
-      /* STABILIZZAZIONE TASTIERA */
+      /* STABILIZZAZIONE TASTIERA AVANZATA */
       position: relative !important;
-      z-index: 1 !important;
+      z-index: 10 !important;
       transform: translateZ(0) !important;
       -webkit-transform: translateZ(0) !important;
       will-change: transform !important;
+      -webkit-backface-visibility: hidden !important;
+      backface-visibility: hidden !important;
+      /* PREVIENI TRABALLA */
+      -webkit-transform-style: preserve-3d !important;
+      transform-style: preserve-3d !important;
+      -webkit-perspective: 1000px !important;
+      perspective: 1000px !important;
     }
     
-    /* CONTAINER LOGIN STABILIZZATO */
+    /* CONTAINER LOGIN STABILIZZATO COMPLETAMENTE */
     .login-container {
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
       width: 100% !important;
-      height: 100% !important;
-      overflow-y: auto !important;
+      height: 100vh !important;
+      height: 100dvh !important; /* Dynamic viewport height */
+      overflow: hidden !important;
       -webkit-overflow-scrolling: touch !important;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left) !important;
+      z-index: 1000 !important;
+      /* STABILIZZAZIONE HARDWARE */
+      -webkit-transform: translateZ(0) !important;
+      transform: translateZ(0) !important;
+      -webkit-backface-visibility: hidden !important;
+      backface-visibility: hidden !important;
+      will-change: transform !important;
+    }
+
+    /* STATO TASTIERA APERTA */
+    .login-container.keyboard-open {
+      height: 100vh !important;
+      height: 100dvh !important; /* Dynamic viewport height */
+      overflow: hidden !important;
+      padding-top: 2rem !important;
+      padding-bottom: 1rem !important;
+      display: flex !important;
+      align-items: flex-start !important;
+      justify-content: center !important;
+    }
+
+    /* FORM STABILIZZATO */
+    .login-container > div {
+      -webkit-transform: translateZ(0) !important;
+      transform: translateZ(0) !important;
+      -webkit-backface-visibility: hidden !important;
+      backface-visibility: hidden !important;
+      will-change: transform !important;
+      position: relative !important;
+      z-index: 10 !important;
+    }
+
+    /* FOCUS MIGLIORATO */
+    input:focus {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+      touch-callout: default !important;
+      transform: translateZ(0) !important;
+      -webkit-transform: translateZ(0) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 2px #fbbf24 !important;
+      border-color: #fbbf24 !important;
     }
 
     /* PWA standalone mode ottimizzato */
