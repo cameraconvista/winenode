@@ -126,6 +126,11 @@ export default function AccountPage() {
     alert('Funzionalità notifiche in sviluppo')
   }
 
+  const handleBypassToggle = () => {
+    // Segnala che questa funzione richiede props da App.tsx
+    alert('⚠️ Funzionalità bypass in fase di implementazione\n\nPer completare l\'implementazione, è necessario passare le props da App.tsx')
+  }
+
   const handleReset = () => {
     if (confirm('⚠️ ATTENZIONE!\n\nQuesta operazione eliminerà TUTTI i tuoi dati:\n- Vini in archivio\n- Fornitori\n- Impostazioni personalizzate\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler continuare?')) {
       if (confirm('🔴 ULTIMA CONFERMA\n\nStai per eliminare DEFINITIVAMENTE tutti i tuoi dati.\n\nDigita "CONFERMA" per procedere o annulla per tornare indietro.')) {
