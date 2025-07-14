@@ -455,10 +455,10 @@ input[inputMode="decimal"] {
     transition: all 0.2s ease !important;
   }
 
-  /* Pulsanti + e - più grandi per mobile - TONDI */
+  /* Pulsanti + e - ridotti del 40% per mobile - TONDI */
   .wine-card button {
-    width: 40px !important;
-    height: 40px !important;
+    width: 24px !important;
+    height: 24px !important;
     font-size: 18px !important;
     font-weight: bold !important;
     border-radius: 50% !important; /* TONDI */
