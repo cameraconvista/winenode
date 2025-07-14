@@ -22,6 +22,7 @@ function App() {
   const [session, setSession] = useState<Session | null>(null)
   const [fallbackMode, setFallbackMode] = useState(false)
   const [showSaldo, setShowSaldo] = useState(false)
+  const [bypassAuth, setBypassAuth] = useState(false)
 
   // Global saldo command listener
   useEffect(() => {
