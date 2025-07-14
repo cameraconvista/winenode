@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import CarrelloModal from '../components/CarrelloModal';
+import SearchModal from '../components/SearchModal';
 import CategoryTabs from '../components/CategoryTabs';
 import useWines from '../hooks/useWines';
 import { authManager, isSupabaseAvailable, supabase } from '../lib/supabase';
@@ -53,6 +54,7 @@ export default function HomePage() {
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showOrdineModal, setShowOrdineModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const filteredWines = wines
     .filter(wine => {
@@ -243,30 +245,17 @@ export default function HomePage() {
                 </button>
               </div>
 
-              {/* Campo di ricerca centrale */}
-              <div className="flex-1 max-w-xs mx-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Cerca vini..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-3 py-1.5 pl-8 text-sm bg-black/20 border border-red-900/20 rounded-lg text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 min-h-[36px]"
-                  />
-                  <svg className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {/* Pulsante ricerca centrale */}
+              <div className="flex-1 flex justify-center">
+                <button
+                  onClick={() => setShowSearchModal(true)}
+                  className="text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  title="Cerca vini"
+                >
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm('')}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cream"
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
+                </button>
               </div>
 
               {/* Gruppo pulsanti a destra */}
@@ -422,6 +411,12 @@ export default function HomePage() {
         open={showCarrelloModal} 
         onClose={() => setShowCarrelloModal(false)} 
         onFornitoreSelezionato={handleFornitoreSelezionato} 
+      />
+      <SearchModal 
+        open={showSearchModal} 
+        onOpenChange={setShowSearchModal} 
+        searchTerm={searchTerm} 
+        onSearchChange={setSearchTerm} 
       />
     </div>
   );
