@@ -243,10 +243,6 @@ export default function HomePage() {
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full border border-gray-900 animate-pulse"></span>
                   )}
                 </button>
-              </div>
-
-              {/* Pulsante ricerca centrale */}
-              <div className="flex-1 flex justify-center">
                 <button
                   onClick={() => setShowSearchModal(true)}
                   className="text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
@@ -257,6 +253,9 @@ export default function HomePage() {
                   </svg>
                 </button>
               </div>
+
+              {/* Spazio centrale vuoto */}
+              <div className="flex-1"></div>
 
               {/* Gruppo pulsanti a destra */}
               <div className="flex items-center gap-2">
