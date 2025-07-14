@@ -4,7 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import { supabase, isSupabaseAvailable } from '../lib/supabase'
 import ProfileManagementModal from '../components/ProfileManagementModal'
 
-export default function AccountPage() {
+interface AccountPageProps {
+  bypassAuth?: boolean
+  setBypassAuth?: (value: boolean) => void
+}
+
+export default function AccountPage({ bypassAuth = false, setBypassAuth }: AccountPageProps) {
   const navigate = useNavigate()
   const [user, setUser] = useState<any>(null)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
@@ -127,8 +132,19 @@ export default function AccountPage() {
   }
 
   const handleBypassToggle = () => {
-    // Segnala che questa funzione richiede props da App.tsx
-    alert('⚠️ Funzionalità bypass in fase di implementazione\n\nPer completare l\'implementazione, è necessario passare le props da App.tsx')
+    if (!setBypassAuth) {
+      alert('⚠️ Funzione bypass non disponibile')
+      return
+    }
+    
+    const newBypassState = !bypassAuth
+    setBypassAuth(newBypassState)
+    
+    if (newBypassState) {
+      alert('✅ Bypass autenticazione ATTIVATO\n\nL\'app ora funziona senza richiedere login')
+    } else {
+      alert('🔒 Bypass autenticazione DISATTIVATO\n\nL\'app richiederà nuovamente il login')
+    }
   }
 
   const handleReset = () => {
@@ -296,6 +312,11 @@ export default function AccountPage() {
                     {option.id === 'email' && user?.email && (
                       <p className="text-xs text-blue-400 mt-1">
                         Attuale: {user.email}
+                      </p>
+                    )}
+                    {option.id === 'bypass' && (
+                      <p className="text-xs mt-1" style={{ color: bypassAuth ? '#10b981' : '#ef4444' }}>
+                        {bypassAuth ? '✅ ATTIVO' : '🔒 DISATTIVO'}
                       </p>
                     )}
                   </div>

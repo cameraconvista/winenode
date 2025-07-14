@@ -104,7 +104,7 @@ function App() {
 
 
         <Route path="/settings/preferenze" element={<PreferenzePage />} />
-        <Route path="/settings/account" element={<AccountPage />} />
+        <Route path="/settings/account" element={<AccountPage bypassAuth={bypassAuth} setBypassAuth={setBypassAuth} />} />
 
           <Route path="/manual-wine-insert" element={<ManualWineInsertPage />} />
         <Route path="/saldo" element={<SaldoCommand />} />
