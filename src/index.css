@@ -197,6 +197,32 @@ input[inputMode="decimal"] {
   }
 }
 
+/* Tabelle responsive per tutti gli schermi - NO SCROLL ORIZZONTALE */
+@media screen and (max-width: 1199px) {
+  .rounded-lg.shadow-2xl,
+  .rounded-lg.shadow-2xl > div {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+  }
+
+  .rounded-lg.shadow-2xl table {
+    table-layout: fixed !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: unset !important;
+  }
+
+  .rounded-lg.shadow-2xl table td,
+  .rounded-lg.shadow-2xl table th {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    padding: 6px 8px !important;
+    max-width: 0 !important;
+  }
+}
+
 /* Ottimizzazioni specifiche per tablet in orizzontale */
 @media screen and (max-width: 1024px) and (min-width: 481px) and (orientation: landscape) {
   /* Forza sfondo bordeaux per contenitori principali */
@@ -573,33 +599,39 @@ input[inputMode="decimal"] {
     overflow-x: auto;
   }
 
-  /* Specifico per ArchiviPage - tabelle desktop ottimizzate */
+  /* Specifico per ArchiviPage - tabelle desktop ottimizzate SENZA scroll orizzontale */
   .rounded-lg.shadow-2xl {
-    overflow: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
     max-height: calc(100vh - 400px) !important;
     min-height: 600px !important;
-  }
-
-  .rounded-lg.shadow-2xl > div {
-    overflow: auto !important;
-    max-height: calc(100vh - 400px) !important;
-    min-height: 600px !important;
-  }
-
-  .rounded-lg.shadow-2xl table {
-    min-width: 1400px !important;
-    table-layout: auto !important;
     width: 100% !important;
   }
 
-  /* Font size normale per desktop */
+  .rounded-lg.shadow-2xl > div {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 400px) !important;
+    min-height: 600px !important;
+    width: 100% !important;
+  }
+
+  .rounded-lg.shadow-2xl table {
+    table-layout: fixed !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: unset !important;
+  }
+
+  /* Font size normale per desktop con overflow gestito */
   .rounded-lg.shadow-2xl table td,
   .rounded-lg.shadow-2xl table th {
     font-size: 14px !important;
-    padding: 10px 14px !important;
+    padding: 8px 12px !important;
     white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: initial !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 0 !important;
   }
 
   /* Colonne più larghe su desktop */

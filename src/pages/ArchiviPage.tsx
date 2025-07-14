@@ -24,16 +24,52 @@ interface WineRow {
 export default function ArchiviPage() {
   const navigate = useNavigate();
   const { wines: existingWines, refreshWines, updateWineInventory } = useWines();
-  // Larghezze colonne ottimizzate per il contenuto
-  const columnWidths = {
-    "#": window.innerWidth >= 1025 ? "3%" : "4%",
-    nomeVino: window.innerWidth >= 1025 ? "30%" : "32%", 
-    anno: window.innerWidth >= 1025 ? "6%" : "7%",
-    produttore: window.innerWidth >= 1025 ? "25%" : "22%",
-    provenienza: window.innerWidth >= 1025 ? "20%" : "18%", 
-    fornitore: window.innerWidth >= 1025 ? "12%" : "15%",
-    giacenza: window.innerWidth >= 1025 ? "6%" : "8%"
-  };
+  // Larghezze colonne adattive per schermo intero senza scroll orizzontale
+  const columnWidths = useMemo(() => {
+    const w = window.innerWidth;
+    
+    if (w >= 1200) {
+      return {
+        "#": "3%",
+        nomeVino: "28%",
+        anno: "6%", 
+        produttore: "24%",
+        provenienza: "20%",
+        fornitore: "13%",
+        giacenza: "6%"
+      };
+    } else if (w >= 1025) {
+      return {
+        "#": "3%",
+        nomeVino: "26%",
+        anno: "6%",
+        produttore: "22%", 
+        provenienza: "19%",
+        fornitore: "18%",
+        giacenza: "6%"
+      };
+    } else if (w >= 768) {
+      return {
+        "#": "4%",
+        nomeVino: "24%",
+        anno: "7%",
+        produttore: "20%",
+        provenienza: "18%", 
+        fornitore: "20%",
+        giacenza: "7%"
+      };
+    } else {
+      return {
+        "#": "5%",
+        nomeVino: "22%",
+        anno: "8%",
+        produttore: "18%",
+        provenienza: "16%",
+        fornitore: "23%",
+        giacenza: "8%"
+      };
+    }
+  }, []);
 
   const [wineRows, setWineRows] = useState<WineRow[]>([]);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -434,13 +470,16 @@ export default function ArchiviPage() {
         <CategoryTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         <div className="rounded-lg shadow-2xl border border-amber-900 overflow-hidden flex-1" style={{ backgroundColor: "#8B4513", minHeight: "500px" }}>
-          <div className="h-full overflow-x-auto overflow-y-auto" style={{ 
+          <div className="h-full overflow-x-hidden overflow-y-auto" style={{ 
             maxHeight: window.innerWidth >= 1025 ? "calc(100vh - 400px)" : "calc(100vh - 320px)",
-            minHeight: window.innerWidth >= 1025 ? "600px" : "500px"
+            minHeight: window.innerWidth >= 1025 ? "600px" : "500px",
+            width: "100%"
           }}>
             <table className="w-full" style={{ 
               borderCollapse: "collapse",
-              tableLayout: window.innerWidth >= 1025 ? "auto" : "fixed"
+              tableLayout: "fixed",
+              width: "100%",
+              maxWidth: "100%"
             }}>
               <WineTableHeader columnWidths={columnWidths} fontSize={fontSize} lineHeight={lineHeight} rowHeight={rowHeight} />
               <tbody>
