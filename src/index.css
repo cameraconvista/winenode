@@ -508,7 +508,7 @@ input[inputMode="decimal"] {
       touch-action: manipulation !important;
       -webkit-overflow-scrolling: touch !important;
     }
-    
+
     #root {
       position: fixed !important;
       top: 0 !important;
@@ -550,7 +550,7 @@ input[inputMode="decimal"] {
       -webkit-perspective: 1000px !important;
       perspective: 1000px !important;
     }
-    
+
     /* CONTAINER LOGIN STABILIZZATO COMPLETAMENTE */
     .login-container {
       position: fixed !important;
