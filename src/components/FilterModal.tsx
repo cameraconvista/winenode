@@ -33,27 +33,27 @@ export default function FilterModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-      <div className="fixed top-16 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-4">
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-cream">Filtri</h3>
+      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 w-[90%] max-w-xs mx-4">
+        <div className="bg-gray-800/95 border border-gray-600/50 rounded-xl p-3 shadow-2xl backdrop-blur-md">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-base font-semibold text-cream">🔍 Filtri</h3>
             <button
               onClick={() => onOpenChange(false)}
-              className="text-gray-400 hover:text-cream"
+              className="text-gray-400 hover:text-cream p-1 rounded-full hover:bg-gray-700/50 transition-all"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Tipo di vino
+              <label className="block text-xs font-medium text-gray-300 mb-1">
+                🍷 Tipo di vino
               </label>
               <select
                 value={filters.wineType}
                 onChange={(e) => onFiltersChange({ ...filters, wineType: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-cream focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-2 py-1.5 text-sm bg-gray-700/90 border border-gray-600/50 rounded-lg text-cream focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
               >
                 <option value="">Tutti i tipi</option>
                 {wineTypes.map(type => (
@@ -65,13 +65,13 @@ export default function FilterModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Fornitore
+              <label className="block text-xs font-medium text-gray-300 mb-1">
+                🏢 Fornitore
               </label>
               <select
                 value={filters.supplier}
                 onChange={(e) => onFiltersChange({ ...filters, supplier: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-cream focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-2 py-1.5 text-sm bg-gray-700/90 border border-gray-600/50 rounded-lg text-cream focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
               >
                 <option value="">Tutti i fornitori</option>
                 {suppliers
@@ -85,32 +85,32 @@ export default function FilterModal({
               </select>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-2 pt-1">
               <input
                 type="checkbox"
                 id="showAlertsOnly"
                 checked={filters.showAlertsOnly}
                 onChange={(e) => onFiltersChange({ ...filters, showAlertsOnly: e.target.checked })}
-                className="h-4 w-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                className="h-3 w-3 text-amber-500 bg-gray-700 border-gray-600 rounded focus:ring-1 focus:ring-amber-400"
               />
-              <label htmlFor="showAlertsOnly" className="ml-2 text-sm text-gray-300">
-                Solo vini con scorte basse
+              <label htmlFor="showAlertsOnly" className="text-xs text-gray-300">
+                ⚠️ Solo scorte basse
               </label>
             </div>
           </div>
 
-          <div className="mt-6 flex gap-2">
+          <div className="mt-4 flex gap-2">
             <button
               onClick={() => onFiltersChange({ wineType: '', supplier: '', showAlertsOnly: false })}
-              className="flex-1 px-4 py-2 bg-gray-700 text-cream rounded-lg hover:bg-gray-600 transition-colors"
+              className="flex-1 px-3 py-1.5 text-xs bg-gray-700/80 text-cream rounded-lg hover:bg-gray-600 transition-colors border border-gray-600/50"
             >
-              Reset
+              🗑️ Reset
             </button>
             <button
               onClick={() => onOpenChange(false)}
-              className="flex-1 px-4 py-2 bg-blue-600 text-cream rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex-1 px-3 py-1.5 text-xs bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors shadow-lg"
             >
-              Applica
+              ✅ Applica
             </button>
           </div>
         </div>
