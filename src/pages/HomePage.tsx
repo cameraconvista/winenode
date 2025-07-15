@@ -267,7 +267,7 @@ export default function HomePage() {
                       fontSize: '11px'
                     }}
                   >
-                    <option value="TUTTI I VINI">{window.innerWidth <= 640 ? 'TUTTI' : 'Tutti i Vini'}</option>
+                    <option value="TUTTI I VINI">TUTTI</option>
                     <option value="BOLLICINE ITALIANE">Bollicine IT</option>
                     <option value="BOLLICINE FRANCESI">Bollicine FR</option>
                     <option value="BIANCHI">Bianchi</option>
