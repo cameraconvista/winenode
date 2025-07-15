@@ -45,31 +45,35 @@ function App() {
     if (!isSupabaseAvailable) {
       console.log('⚠️ Supabase non disponibile, modalità fallback')
       setFallbackMode(true)
-      setLoading(false)
+      setIsLoading(false)
       return
     }
 
-    // 🎯 Gestione migliorata del cambio stato autenticazione
+    // 🎯 Gestione migliorata del cambio stato autenticazione con persistenza
     const unsubscribe = authManager.onAuthStateChange((user) => {
       if (user && process.env.NODE_ENV === 'development') {
         console.log('Auth state: Logged in as', user.email)
       }
       
       setIsAuthenticated(!!user)
-      setSession(
-        user
-          ? {
-              access_token: user.token || '',
-              token_type: 'Bearer',
-              expires_in: 3600,
-              refresh_token: user.refreshToken || '',
-              user: user
-            } as Session
-          : null
-      )
+      
+      // Crea sessione completa dall'utente autenticato
+      if (user) {
+        const currentSession = authManager.getCurrentSession()
+        setSession(currentSession)
+      } else {
+        setSession(null)
+      }
       
       // 🚀 Rimuovi loading solo dopo aver processato lo stato dell'utente
       setIsLoading(false)
+    })
+
+    // 🔄 Valida immediatamente la sessione esistente
+    authManager.validateSession().then((isValid) => {
+      if (!isValid) {
+        console.log('📝 Nessuna sessione valida trovata, richiesto nuovo login')
+      }
     })
 
     return unsubscribe
@@ -90,26 +94,43 @@ function App() {
     <div className="min-h-screen bg-gray-900">
       <Routes>
         <Route path="/" element={
-          (session || fallbackMode || bypassAuth) ? <HomePage /> : <LoginForm />
+          (isAuthenticated || fallbackMode || bypassAuth) ? <HomePage /> : <LoginForm />
         } />
         <Route path="/settings" element={
-          (session || fallbackMode || bypassAuth) ? <SettingsPage /> : <LoginForm />
+          (isAuthenticated || fallbackMode || bypassAuth) ? <SettingsPage /> : <LoginForm />
         } />
         <Route path="/settings/fornitori" element={
-          (session || fallbackMode || bypassAuth) ? <FornitoriPage /> : <LoginForm />
+          (isAuthenticated || fallbackMode || bypassAuth) ? <FornitoriPage /> : <LoginForm />
         } />
-        <Route path="/settings/archivi" element={<ArchiviPage />} />
-        <Route path="/settings/archivi/importa" element={<ImportaPage />} />
-        <Route path="/settings/archivi/manuale" element={<ManualWineInsertPage />} />
+        <Route path="/settings/archivi" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <ArchiviPage /> : <LoginForm />
+        } />
+        <Route path="/settings/archivi/importa" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <ImportaPage /> : <LoginForm />
+        } />
+        <Route path="/settings/archivi/manuale" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <ManualWineInsertPage /> : <LoginForm />
+        } />
 
+        <Route path="/settings/preferenze" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <PreferenzePage /> : <LoginForm />
+        } />
+        <Route path="/settings/account" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <AccountPage bypassAuth={bypassAuth} setBypassAuth={setBypassAuth} /> : <LoginForm />
+        } />
 
-        <Route path="/settings/preferenze" element={<PreferenzePage />} />
-        <Route path="/settings/account" element={<AccountPage bypassAuth={bypassAuth} setBypassAuth={setBypassAuth} />} />
-
-          <Route path="/manual-wine-insert" element={<ManualWineInsertPage />} />
-        <Route path="/saldo" element={<SaldoCommand />} />
-        <Route path="/foglio-excel" element={<FoglioExcelPage />} />
-        <Route path="/ordini/sospesi" element={<OrdiniSospesiPage />} />
+        <Route path="/manual-wine-insert" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <ManualWineInsertPage /> : <LoginForm />
+        } />
+        <Route path="/saldo" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <SaldoCommand /> : <LoginForm />
+        } />
+        <Route path="/foglio-excel" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <FoglioExcelPage /> : <LoginForm />
+        } />
+        <Route path="/ordini/sospesi" element={
+          (isAuthenticated || fallbackMode || bypassAuth) ? <OrdiniSospesiPage /> : <LoginForm />
+        } />
       </Routes>
 
       {/* Global Saldo Overlay */}
