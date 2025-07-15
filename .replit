@@ -10,10 +10,15 @@ run = ["sh", "-c", "npm run dev"]
 [[ports]]
 localPort = 443
 externalPort = 3000
+exposeLocalhost = true
 
 [[ports]]
 localPort = 5000
 externalPort = 5000
+
+[[ports]]
+localPort = 5001
+externalPort = 3001
 
 [[ports]]
 localPort = 5173
@@ -29,7 +34,15 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pkill -f \"vite\" || true"
+args = 'pkill -f "vite\|node" || true'
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 2"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

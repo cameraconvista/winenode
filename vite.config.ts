@@ -10,15 +10,12 @@ export default defineConfig({
     strictPort: false,
     hmr: {
       port: 443,
-      clientPort: 443
+      clientPort: 443,
+      host: 'localhost'
     },
     allowedHosts: 'all',
     cors: true,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': '*'
-    }
+    origin: 'http://localhost:5000'
   },
   resolve: {
     alias: {
