@@ -4,8 +4,6 @@ import { createClient, type User, type Session } from '@supabase/supabase-js'
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Verifica variabili Supabase in silenzio
-
 let supabaseClient: any = null
 let isSupabaseAvailable = false
 
@@ -16,20 +14,17 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY) {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        flowType: 'pkce',
-        // 📱 Migliore compatibilità mobile/PWA
-        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-        storageKey: 'supabase.auth.token'
+        flowType: 'pkce'
       }
     })
     isSupabaseAvailable = true
-    // Supabase client creato con successo
+    console.log('✅ Supabase client creato con successo')
   } catch (error) {
-    console.error('Errore creazione client Supabase:', error)
+    console.error('❌ Errore creazione client Supabase:', error)
     isSupabaseAvailable = false
   }
 } else {
-  console.warn('Variabili Supabase mancanti - modalità fallback')
+  console.warn('⚠️ Variabili Supabase mancanti - modalità fallback')
   isSupabaseAvailable = false
 }
 
@@ -46,13 +41,15 @@ const mockSupabase = {
     onAuthStateChange: () => () => {}
   },
   from: () => ({
-    select: () => ({ data: [], error: null }),
-    insert: () => ({ data: null, error: null }),
-    update: () => ({ data: null, error: null }),
-    delete: () => ({ data: null, error: null }),
-    eq: () => ({ data: [], error: null }),
-    order: () => ({ data: [], error: null }),
-    limit: () => ({ data: [], error: null })
+    select: () => Promise.resolve({ data: [], error: null }),
+    insert: () => Promise.resolve({ data: null, error: null }),
+    update: () => Promise.resolve({ data: null, error: null }),
+    delete: () => Promise.resolve({ data: null, error: null }),
+    eq: () => Promise.resolve({ data: [], error: null }),
+    order: () => Promise.resolve({ data: [], error: null }),
+    limit: () => Promise.resolve({ data: [], error: null }),
+    single: () => Promise.resolve({ data: null, error: null }),
+    upsert: () => Promise.resolve({ data: null, error: null })
   })
 }
 
@@ -83,22 +80,12 @@ export class AuthManager {
     if (!supabaseClient) return
 
     try {
-      // 🔄 Recupera la sessione corrente con gestione migliorata
       const { data: { session }, error } = await supabaseClient.auth.getSession()
 
       if (error) {
         console.warn('⚠️ Errore nel recupero sessione:', error.message)
-        // Tenta il refresh automatico
-        const { data: { session: refreshedSession }, error: refreshError } = await supabaseClient.auth.refreshSession()
-        if (refreshError) {
-          console.warn('⚠️ Refresh fallito:', refreshError.message)
-          this.currentSession = null
-          this.currentUser = null
-        } else {
-          console.log('✅ Sessione recuperata tramite refresh')
-          this.currentSession = refreshedSession
-          this.currentUser = refreshedSession?.user || null
-        }
+        this.currentSession = null
+        this.currentUser = null
       } else {
         this.currentSession = session
         this.currentUser = session?.user || null
@@ -107,25 +94,11 @@ export class AuthManager {
         }
       }
 
-      // 📡 Listener migliorato per cambio stato autenticazione
-      let authTimeout: NodeJS.Timeout | null = null
       supabaseClient.auth.onAuthStateChange((event, session) => {
-        console.log('🔄 Auth state change:', event, session ? 'con sessione' : 'senza sessione')
-
-        if (authTimeout) clearTimeout(authTimeout)
-        authTimeout = setTimeout(() => {
-          this.currentSession = session
-          this.currentUser = session?.user || null
-
-          // 💾 Verifica persistenza in localStorage
-          if (session && event === 'SIGNED_IN') {
-            console.log('💾 Sessione salvata in localStorage')
-          } else if (event === 'SIGNED_OUT') {
-            console.log('🗑️ Sessione rimossa da localStorage')
-          }
-
-          this.notifyListeners()
-        }, 100)
+        console.log('🔄 Auth state change:', event)
+        this.currentSession = session
+        this.currentUser = session?.user || null
+        this.notifyListeners()
       })
 
       this.notifyListeners()
@@ -160,45 +133,13 @@ export class AuthManager {
       const { data: { session }, error } = await supabaseClient.auth.getSession()
 
       if (error || !session) {
-        console.warn('⚠️ Sessione non valida, tentativo refresh automatico...')
-
-        // 🔄 Tenta refresh della sessione
-        const { data: { session: refreshedSession }, error: refreshError } = await supabaseClient.auth.refreshSession()
-
-        if (refreshError) {
-          console.warn('❌ Refresh sessione fallito:', refreshError.message)
-          this.currentSession = null
-          this.currentUser = null
-          return false
-        }
-
-        if (refreshedSession) {
-          console.log('✅ Sessione rinnovata con successo')
-          this.currentSession = refreshedSession
-          this.currentUser = refreshedSession.user || null
-          this.notifyListeners()
-          return true
-        }
-
+        this.currentSession = null
+        this.currentUser = null
         return false
       }
 
-      // 🕒 Verifica scadenza token
-      const now = Math.floor(Date.now() / 1000)
-      const expiresAt = session.expires_at || 0
-
-      if (expiresAt - now < 300) { // Se scade tra meno di 5 minuti
-        console.log('⏰ Token in scadenza, refresh preventivo...')
-        const { data: { session: refreshedSession }, error: refreshError } = await supabaseClient.auth.refreshSession()
-
-        if (!refreshError && refreshedSession) {
-          console.log('✅ Token rinnovato preventivamente')
-          this.currentSession = refreshedSession
-          this.currentUser = refreshedSession.user || null
-          this.notifyListeners()
-        }
-      }
-
+      this.currentSession = session
+      this.currentUser = session?.user || null
       return true
     } catch (error) {
       console.error('❌ Errore validazione sessione:', error)
