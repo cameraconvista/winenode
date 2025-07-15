@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import CarrelloModal from '../components/CarrelloModal';
-import SearchModal from '../components/SearchModal';
+
 import CategoryTabs from '../components/CategoryTabs';
 import useWines from '../hooks/useWines';
 import { authManager, isSupabaseAvailable, supabase } from '../lib/supabase';
@@ -53,8 +53,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showOrdineModal, setShowOrdineModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showSearchModal, setShowSearchModal] = useState(false);
+  
 
   const filteredWines = wines
     .filter(wine => {
@@ -83,14 +82,7 @@ export default function HomePage() {
     const matchesSupplier = !filters.supplier || wine.supplier === filters.supplier;
     const matchesAlerts = !filters.showAlertsOnly || wine.inventory <= wine.minStock;
 
-    // Aggiunge il filtro di ricerca
-    const matchesSearch = !searchTerm || 
-      wine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (wine.description && wine.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (wine.supplier && wine.supplier.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (wine.vintage && wine.vintage.toString().includes(searchTerm));
-
-    return matchesCategory && matchesType && matchesSupplier && matchesAlerts && matchesSearch;
+    return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
   })
   .sort((a, b) => {
     // ✅ Ordinamento alfabetico A-Z SOLO per "TUTTI I VINI"
@@ -243,20 +235,7 @@ export default function HomePage() {
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full border border-gray-900 animate-pulse"></span>
                   )}
                 </button>
-                <button
-                  onClick={() => setShowSearchModal(true)}
-                  className={`text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center relative ${
-                    searchTerm ? 'bg-blue-500/20' : ''
-                  }`}
-                  title="Cerca vini"
-                >
-                  <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  {searchTerm && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-gray-900 animate-pulse"></span>
-                  )}
-                </button>
+                
               </div>
 
               {/* Spazio centrale vuoto */}
@@ -320,32 +299,11 @@ export default function HomePage() {
           maxHeight: '100%',
           scrollBehavior: 'smooth'
         }}>
-          {/* Indicatore ricerca attiva */}
-          {searchTerm && (
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <svg className="h-4 w-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <span className="text-blue-400 text-sm font-medium">
-                  Cercando: "{searchTerm}" ({filteredWines.length} risultati)
-                </span>
-              </div>
-              <button
-                onClick={() => setSearchTerm('')}
-                className="text-blue-400 hover:text-blue-300 p-1 rounded transition-colors"
-                title="Cancella ricerca"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          )}
+          
 
           {filteredWines.length === 0 ? (
             <p className="text-center text-gray-400 text-sm">
-              {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 
-               searchTerm ? `Nessun vino trovato per "${searchTerm}"` : 
-               'Nessun vino trovato con i filtri selezionati'}
+              {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 'Nessun vino trovato con i filtri selezionati'}
             </p>
           ) : (
             <div className="space-y-0.5 sm:space-y-1 overflow-x-hidden">
@@ -438,12 +396,7 @@ export default function HomePage() {
         onClose={() => setShowCarrelloModal(false)} 
         onFornitoreSelezionato={handleFornitoreSelezionato} 
       />
-      <SearchModal 
-        open={showSearchModal} 
-        onOpenChange={setShowSearchModal} 
-        searchTerm={searchTerm} 
-        onSearchChange={setSearchTerm} 
-      />
+      
     </div>
   );
 }
