@@ -1,83 +1,75 @@
 
-import { Search, X } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 
 interface SearchModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  searchTerm: string
-  onSearchChange: (term: string) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
 }
 
 export default function SearchModal({ open, onOpenChange, searchTerm, onSearchChange }: SearchModalProps) {
-  if (!open) return null
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
-  const handleSearchChange = (value: string) => {
-    // Filtraggio in tempo reale come nella pagina Archivi
-    onSearchChange(value)
-  }
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm);
+  }, [searchTerm]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Chiudi con Escape
-    if (e.key === 'Escape') {
-      onOpenChange(false)
-    }
-    // Chiudi con Enter
-    if (e.key === 'Enter') {
-      onOpenChange(false)
-    }
-  }
+  const handleSearch = () => {
+    onSearchChange(localSearchTerm);
+    onOpenChange(false);
+  };
+
+  const handleClear = () => {
+    setLocalSearchTerm('');
+    onSearchChange('');
+    onOpenChange(false);
+  };
+
+  if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none">
-      <div className="fixed top-24 sm:top-32 lg:top-28 left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-4 pointer-events-auto">
-        <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden shadow-xl">
-          {/* Layout ultra-compatto su una riga */}
-          <div className="flex items-center gap-2 p-2">
-            {/* Icona ricerca */}
-            <Search className="h-4 w-4 text-gray-400 flex-shrink-0" />
-            
-            {/* Input di ricerca */}
-            <input
-              type="text"
-              placeholder="Cerca vino, produttore, fornitore..."
-              value={searchTerm}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="flex-1 py-1.5 px-2 bg-gray-700 border border-gray-600 rounded text-cream placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
-              autoFocus
-            />
-            
-            {/* Pulsante cancella (solo se c'è testo) */}
-            {searchTerm && (
-              <button
-                onClick={() => onSearchChange('')}
-                className="text-gray-400 hover:text-red-400 p-0.5 rounded transition-colors flex-shrink-0"
-                title="Cancella ricerca"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-            
-            {/* Pulsante chiudi */}
+    <div className="fixed inset-0 z-[200]">
+      {/* SearchModal senza background offuscante - posizionato in alto */}
+      <div className="absolute top-0 left-0 right-0 bg-gray-900/95 border-b border-gray-700 shadow-lg">
+        <div className="max-w-4xl mx-auto p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                placeholder="Cerca vini per nome, produttore, fornitore..."
+                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-cream placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                autoFocus
+              />
+            </div>
+
             <button
-              onClick={() => onOpenChange(false)}
-              className="text-gray-400 hover:text-cream p-0.5 rounded transition-colors flex-shrink-0"
-              title="Chiudi"
+              onClick={handleSearch}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
             >
-              <X className="h-4 w-4" />
+              Cerca
+            </button>
+
+            <button
+              onClick={handleClear}
+              className="px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+              title="Cancella ricerca"
+            >
+              <X className="h-5 w-5" />
             </button>
           </div>
-          
-          {/* Indicatore ricerca attiva - più compatto */}
-          {searchTerm && (
-            <div className="px-2 pb-1.5">
-              <div className="text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded px-1.5 py-0.5 inline-block">
-                🔍 "{searchTerm}"
-              </div>
+
+          {localSearchTerm && (
+            <div className="mt-3 text-sm text-gray-400">
+              Premi Invio o clicca "Cerca" per cercare: "{localSearchTerm}"
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }
