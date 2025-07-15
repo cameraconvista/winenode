@@ -191,7 +191,7 @@ export default function HomePage() {
   );
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden" style={{ 
+    <div className="homepage-container h-screen flex flex-col overflow-hidden" style={{ 
       background: 'linear-gradient(to bottom right, #1f0202, #2d0505)',
       width: '100vw',
       maxWidth: '100%'

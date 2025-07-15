@@ -679,7 +679,37 @@ input[inputMode="decimal"] {
     backdrop-filter: blur(12px);
   }
 
-  /* Main content per desktop - normale margin */
+  /* HOMEPAGE: Riduzione altezza header del 25% solo per desktop */
+  .homepage-container header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 100 !important;
+  }
+
+  /* HOMEPAGE: Logo ridotto del 25% su desktop */
+  .homepage-container header img {
+    height: 84px !important; /* da 112px (md:h-28) a 84px (-25%) */
+    width: auto !important;
+    object-fit: contain !important;
+    margin-bottom: -4px !important; /* da -mb-1 ridotto */
+  }
+
+  /* HOMEPAGE: Pulsantiera con padding ridotto del 25% */
+  .homepage-container header .flex.items-center.justify-between.w-full {
+    padding-bottom: 6px !important; /* da pb-2 (8px) a 6px (-25%) */
+  }
+
+  /* HOMEPAGE: Main content compensato per header ridotto */
+  .homepage-container main {
+    margin-top: 99px !important; /* da 132px a 99px (-25%) */
+    height: calc(100vh - 99px) !important; /* da 132px a 99px (-25%) */
+    overflow-x: hidden !important;
+    padding: 16px 24px !important;
+  }
+
+  /* Main content per desktop - normale margin per altre pagine */
   main {
     margin-top: 0;
     min-height: calc(100vh - 140px);
