@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface CategoryTabsProps {
@@ -19,7 +18,7 @@ const categories = [
 export default function CategoryTabs({ activeTab, onTabChange }: CategoryTabsProps) {
   // Rileva se siamo su mobile
   const isMobile = window.innerWidth <= 768;
-  
+
   return (
     <div className={`bg-black/30 border-b border-red-900/30 ${isMobile ? 'px-1 py-1' : 'px-4 py-4'}`}>
       <div className="max-w-full mx-auto">
