@@ -33,8 +33,8 @@ export default function FilterModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-      <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[80%] max-w-[260px] mx-4">
-        <div className="bg-gray-800/95 border border-gray-600/50 rounded-lg p-2 shadow-2xl backdrop-blur-md"></div>
+      <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[75%] max-w-[240px] mx-4">
+        <div className="bg-gray-800/95 border border-gray-600/50 rounded-lg p-2 shadow-2xl backdrop-blur-md">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold text-cream">🔍 Filtri</h3>
             <button
@@ -54,7 +54,7 @@ export default function FilterModal({
                 value={filters.wineType}
                 onChange={(e) => onFiltersChange({ ...filters, wineType: e.target.value })}
                 className="w-full px-2 py-1 text-xs bg-gray-700/90 border border-gray-600/50 rounded-md text-cream focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
-              ></div>
+              >
                 <option value="">Tutti i tipi</option>
                 {wineTypes.map(type => (
                   <option key={type} value={type} className="capitalize">
@@ -72,7 +72,7 @@ export default function FilterModal({
                 value={filters.supplier}
                 onChange={(e) => onFiltersChange({ ...filters, supplier: e.target.value })}
                 className="w-full px-2 py-1 text-xs bg-gray-700/90 border border-gray-600/50 rounded-md text-cream focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
-              ></div>
+              >
                 <option value="">Tutti i fornitori</option>
                 {suppliers
                   .filter(supplier => supplier && supplier.trim()) // Remove empty suppliers
@@ -91,12 +91,12 @@ export default function FilterModal({
                 id="showAlertsOnly"
                 checked={filters.showAlertsOnly}
                 onChange={(e) => onFiltersChange({ ...filters, showAlertsOnly: e.target.checked })}
-                className="h-4 w-4 text-amber-500 bg-gray-700 border-gray-600 rounded focus:ring-1 focus:ring-amber-400"
+                className="h-3.5 w-3.5 text-amber-500 bg-gray-700 border-gray-600 rounded focus:ring-1 focus:ring-amber-400"
               />
               <span className="text-xs text-gray-300 select-none">
                 ⚠️ Solo scorte basse
               </span>
-            </label></div>
+            </label>
           </div>
 
           <div className="mt-2 flex gap-1.5">
@@ -112,7 +112,7 @@ export default function FilterModal({
             >
               ✅ Applica
             </button>
-          </div></div>
+          </div>
         </div>
       </div>
     </div>
