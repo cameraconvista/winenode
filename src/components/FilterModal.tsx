@@ -1,4 +1,5 @@
-import { X } from 'lucide-react'
+import React, { useState, useEffect } from 'react';
+import { X, Filter, ChevronDown } from 'lucide-react';
 
 interface FilterModalProps {
   open: boolean

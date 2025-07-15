@@ -135,6 +135,35 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
   }
 
   const performReset = async () => {
+    const currentUser = authManager.getCurrentUser()
+    if (!currentUser) {
+      alert('❌ Errore: utente non autenticato')
+      return
+    }
+
+    try {
+      // Reset dei dati utente
+      if (isSupabaseAvailable && supabase) {
+        await supabase.from('wines').delete().eq('user_id', currentUser.id)
+        await supabase.from('fornitori').delete().eq('user_id', currentUser.id)
+        await supabase.from('ordini').delete().eq('user_id', currentUser.id)
+      }
+      
+      // Reset localStorage
+      localStorage.clear()
+      sessionStorage.clear()
+      
+      alert('✅ Reset completato con successo!')
+      window.location.reload()
+    } catch (error) {
+      console.error('❌ Errore durante il reset:', error)
+      alert('❌ Errore durante il reset dei dati')
+    }ormReset()
+      }
+    }
+  }
+
+  const performReset = async () => {
     try {
       if (!isSupabaseAvailable || !supabase) {
         // Se Supabase non è disponibile, pulisce solo il localStorage

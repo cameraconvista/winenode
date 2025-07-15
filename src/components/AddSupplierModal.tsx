@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, User, Save } from 'lucide-react';
-import { supabase, authManager, isSupabaseAvailable } from '../lib/supabase';;
+import { supabase, authManager, isSupabaseAvailable } from '../lib/supabase';
 
 interface AddSupplierModalProps {
   isOpen: boolean;
