@@ -693,9 +693,9 @@ input[inputMode="decimal"] {
     z-index: 100 !important;
   }
 
-  /* HOMEPAGE: Logo ridotto del 25% su desktop */
+  /* HOMEPAGE: Logo ingrandito su desktop */
   .homepage-container header img {
-    height: 84px !important; /* da 112px (md:h-28) a 84px (-25%) */
+    height: 120px !important; /* Ingrandito da 84px a 120px */
     width: auto !important;
     object-fit: contain !important;
     margin-bottom: -4px !important; /* da -mb-1 ridotto */
