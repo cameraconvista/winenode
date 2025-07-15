@@ -8,7 +8,13 @@ export default defineConfig({
     port: 5000,
     hmr: {
       port: 443
-    }
+    },
+    allowedHosts: [
+      '.replit.dev',
+      '.replit.co',
+      'localhost',
+      '127.0.0.1'
+    ]
   },
   resolve: {
     alias: {
