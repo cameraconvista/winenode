@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -6,10 +7,18 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5000,
+    strictPort: false,
     hmr: {
-      port: 443
+      port: 443,
+      clientPort: 443
     },
-    allowedHosts: 'all'
+    allowedHosts: 'all',
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': '*'
+    }
   },
   resolve: {
     alias: {
