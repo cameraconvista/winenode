@@ -468,7 +468,6 @@ input[inputMode="decimal"] {
   .wine-card button {
     border-radius: 50% !important; /* TONDI */
   }
-  }
 
   /* Area giacenza più grande per touch */
   .wine-card span[onclick] {
