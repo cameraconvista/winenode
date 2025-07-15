@@ -39,13 +39,20 @@ const mockSupabase = {
     getSession: () => Promise.resolve({ data: { session: null }, error: null }),
     signInWithPassword: () => Promise.resolve({ data: { session: null }, error: null }),
     signOut: () => Promise.resolve({ error: null }),
+    signUp: () => Promise.resolve({ data: { session: null }, error: null }),
+    getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+    updateUser: () => Promise.resolve({ data: { user: null }, error: null }),
+    refreshSession: () => Promise.resolve({ data: { session: null }, error: null }),
     onAuthStateChange: () => () => {}
   },
   from: () => ({
     select: () => ({ data: [], error: null }),
     insert: () => ({ data: null, error: null }),
     update: () => ({ data: null, error: null }),
-    delete: () => ({ data: null, error: null })
+    delete: () => ({ data: null, error: null }),
+    eq: () => ({ data: [], error: null }),
+    order: () => ({ data: [], error: null }),
+    limit: () => ({ data: [], error: null })
   })
 }
 

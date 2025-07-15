@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Mail, Lock, UserCircle, LogOut, ArrowLeft, Home, Bell, RotateCcw } from 'lucide-react'
 import { supabase, isSupabaseAvailable } from '../lib/supabase'
 import ProfileManagementModal from './ProfileManagementModal'
+import { authManager } from '../lib/auth-manager'
 
 interface AccountSectionProps {
   onBack: () => void
@@ -148,66 +149,16 @@ export default function AccountSection({ onBack }: AccountSectionProps) {
         await supabase.from('fornitori').delete().eq('user_id', currentUser.id)
         await supabase.from('ordini').delete().eq('user_id', currentUser.id)
       }
-      
+
       // Reset localStorage
       localStorage.clear()
       sessionStorage.clear()
-      
+
       alert('✅ Reset completato con successo!')
       window.location.reload()
     } catch (error) {
       console.error('❌ Errore durante il reset:', error)
       alert('❌ Errore durante il reset dei dati')
-    }ormReset()
-      }
-    }
-  }
-
-  const performReset = async () => {
-    try {
-      if (!isSupabaseAvailable || !supabase) {
-        // Se Supabase non è disponibile, pulisce solo il localStorage
-        localStorage.clear()
-        sessionStorage.clear()
-        alert('✅ Dati locali puliti con successo!')
-        window.location.href = '/'
-        return
-      }
-
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        alert('❌ Errore: utente non autenticato')
-        return
-      }
-
-      // Elimina tutti i dati dell'utente dal database (le giacenze si cancellano automaticamente per CASCADE)
-      const { error: winesError } = await supabase
-        .from('vini')
-        .delete()
-        .eq('user_id', user.id)
-
-      if (winesError) {
-        console.error('Errore nell\'eliminazione vini:', winesError)
-      }
-
-      const { error: suppliersError } = await supabase
-        .from('fornitori')
-        .delete()
-        .eq('user_id', user.id)
-
-      if (suppliersError) {
-        console.error('Errore nell\'eliminazione fornitori:', suppliersError)
-      }
-
-      // Pulisce anche il localStorage
-      localStorage.clear()
-      sessionStorage.clear()
-
-      alert('✅ Reset completato con successo!\n\nTutti i tuoi dati sono stati eliminati.')
-      window.location.href = '/'
-    } catch (error) {
-      console.error('Errore durante il reset:', error)
-      alert('❌ Errore durante il reset dei dati. Riprova.')
     }
   }
 

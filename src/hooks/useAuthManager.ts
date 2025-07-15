@@ -34,9 +34,8 @@ export function useAuthManager() {
         return user.id
       }
       
-      // Fallback: richiedi utente da Supabase
-      const { data: { user: currentUser } } = await authManager.supabase.auth.getUser()
-      return currentUser?.id || null
+      // Fallback: usa authManager senza accesso diretto a supabase
+      return authManager.getUserId()
     } catch (error) {
       console.error('❌ Error getting user ID:', error)
       return null

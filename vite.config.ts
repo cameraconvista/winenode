@@ -75,8 +75,8 @@ export default defineConfig({
   },
   base: './',
   optimizeDeps: {
-    include: ['react', 'react-dom'],
-    exclude: ['@supabase/supabase-js', '@supabase/postgrest-js', '@supabase/storage-js', '@supabase/realtime-js']
+    include: ['react', 'react-dom', '@supabase/supabase-js'],
+    exclude: ['@supabase/postgrest-js', '@supabase/storage-js', '@supabase/realtime-js', '@supabase/gotrue-js']
   },
   // Riduce errori di sviluppo e polyfill per browser
   define: {
