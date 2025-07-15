@@ -85,13 +85,13 @@ export default function FilterModal({
               </select>
             </div>
 
-            <label htmlFor="showAlertsOnly" className="flex items-center gap-2 pt-0.5 cursor-pointer p-1 -m-1 rounded hover:bg-gray-700/30">
+            <label htmlFor="alerts-checkbox" className="flex items-center gap-2 pt-0.5 cursor-pointer p-1 -m-1 rounded hover:bg-gray-700/30">
               <input
                 type="checkbox"
-                id="showAlertsOnly"
+                id="alerts-checkbox"
                 checked={filters.showAlertsOnly}
                 onChange={(e) => onFiltersChange({ ...filters, showAlertsOnly: e.target.checked })}
-                className="h-3.5 w-3.5 text-amber-500 bg-gray-700 border-gray-600 rounded focus:ring-1 focus:ring-amber-400"
+                className="h-3.5 w-3.5 text-amber-500 bg-gray-700 border border-gray-600 rounded focus:ring-1 focus:ring-amber-400 focus:bg-amber-500 checked:bg-amber-500 checked:border-amber-500"
               />
               <span className="text-xs text-gray-300 select-none">
                 ⚠️ Solo scorte basse
