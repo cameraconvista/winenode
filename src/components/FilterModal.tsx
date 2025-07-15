@@ -1,4 +1,3 @@
-
 import { X } from 'lucide-react'
 
 interface FilterModalProps {
@@ -44,7 +43,7 @@ export default function FilterModal({
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
-          
+
           <div className="space-y-1.5">
             <div>
               <label className="block text-xs font-medium text-gray-300 mb-0.5">
