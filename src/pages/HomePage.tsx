@@ -385,7 +385,7 @@ export default function HomePage() {
                       <button 
                         onClick={e => { e.stopPropagation(); handleInventoryChange(wine.id, wine.inventory - 1); }} 
                         disabled={wine.inventory <= 0} 
-                        className="w-3 h-3 sm:w-5 sm:h-5 bg-red-500/80 hover:bg-red-600/90 disabled:bg-gray-600/70 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-200 touch-manipulation shadow-sm"
+                        className="w-6 h-6 sm:w-8 sm:h-8 bg-red-500/80 hover:bg-red-600/90 disabled:bg-gray-600/70 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
                       >
                         −
                       </button>
@@ -411,7 +411,7 @@ export default function HomePage() {
                       )}
                       <button 
                         onClick={e => { e.stopPropagation(); handleInventoryChange(wine.id, wine.inventory + 1); }} 
-                        className="w-3 h-3 sm:w-5 sm:h-5 bg-green-500/80 hover:bg-green-600/90 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-200 touch-manipulation shadow-sm"
+                        className="w-6 h-6 sm:w-8 sm:h-8 bg-green-500/80 hover:bg-green-600/90 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
                       >
                         +
                       </button>

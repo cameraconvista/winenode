@@ -455,13 +455,19 @@ input[inputMode="decimal"] {
     transition: all 0.2s ease !important;
   }
 
-  /* Pulsanti + e - ridotti del 40% per mobile - TONDI */
+  /* Pulsanti + e - piccoli SOLO su mobile */
+  .mobile-button-small {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 14px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+  }
+
+  /* Reset pulsanti normali */
   .wine-card button {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 18px !important;
-    font-weight: bold !important;
     border-radius: 50% !important; /* TONDI */
+  }
   }
 
   /* Area giacenza più grande per touch */
@@ -826,6 +832,17 @@ button,
 .wine-card button,
 [role="button"] {
   border-radius: 50% !important;
+}
+
+/* Desktop: pulsanti + e - dimensioni normali */
+@media (min-width: 640px) {
+  .mobile-button-small {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 16px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
 }
 
 /* Eccezioni per pulsanti rettangolari specifici */
