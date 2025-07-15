@@ -33,8 +33,8 @@ export default function FilterModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-      <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[85%] max-w-[280px] mx-4">
-        <div className="bg-gray-800/95 border border-gray-600/50 rounded-lg p-2.5 shadow-2xl backdrop-blur-md">
+      <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[80%] max-w-[260px] mx-4">
+        <div className="bg-gray-800/95 border border-gray-600/50 rounded-lg p-2 shadow-2xl backdrop-blur-md"></div>
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold text-cream">🔍 Filtri</h3>
             <button
@@ -45,16 +45,16 @@ export default function FilterModal({
             </button>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-1">
+              <label className="block text-xs font-medium text-gray-300 mb-0.5">
                 🍷 Tipo
               </label>
               <select
                 value={filters.wineType}
                 onChange={(e) => onFiltersChange({ ...filters, wineType: e.target.value })}
                 className="w-full px-2 py-1 text-xs bg-gray-700/90 border border-gray-600/50 rounded-md text-cream focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
-              >
+              ></div>
                 <option value="">Tutti i tipi</option>
                 {wineTypes.map(type => (
                   <option key={type} value={type} className="capitalize">
@@ -65,14 +65,14 @@ export default function FilterModal({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-1">
+              <label className="block text-xs font-medium text-gray-300 mb-0.5">
                 🏢 Fornitore
               </label>
               <select
                 value={filters.supplier}
                 onChange={(e) => onFiltersChange({ ...filters, supplier: e.target.value })}
                 className="w-full px-2 py-1 text-xs bg-gray-700/90 border border-gray-600/50 rounded-md text-cream focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
-              >
+              ></div>
                 <option value="">Tutti i fornitori</option>
                 {suppliers
                   .filter(supplier => supplier && supplier.trim()) // Remove empty suppliers
@@ -85,21 +85,21 @@ export default function FilterModal({
               </select>
             </div>
 
-            <div className="flex items-center gap-2 pt-0.5">
+            <label htmlFor="showAlertsOnly" className="flex items-center gap-2 pt-0.5 cursor-pointer p-1 -m-1 rounded hover:bg-gray-700/30">
               <input
                 type="checkbox"
                 id="showAlertsOnly"
                 checked={filters.showAlertsOnly}
                 onChange={(e) => onFiltersChange({ ...filters, showAlertsOnly: e.target.checked })}
-                className="h-3 w-3 text-amber-500 bg-gray-700 border-gray-600 rounded focus:ring-1 focus:ring-amber-400"
+                className="h-4 w-4 text-amber-500 bg-gray-700 border-gray-600 rounded focus:ring-1 focus:ring-amber-400"
               />
-              <label htmlFor="showAlertsOnly" className="text-xs text-gray-300">
+              <span className="text-xs text-gray-300 select-none">
                 ⚠️ Solo scorte basse
-              </label>
-            </div>
+              </span>
+            </label></div>
           </div>
 
-          <div className="mt-3 flex gap-1.5">
+          <div className="mt-2 flex gap-1.5">
             <button
               onClick={() => onFiltersChange({ wineType: '', supplier: '', showAlertsOnly: false })}
               className="flex-1 px-2 py-1 text-xs bg-gray-700/80 text-cream rounded-md hover:bg-gray-600 transition-colors border border-gray-600/50"
@@ -112,7 +112,7 @@ export default function FilterModal({
             >
               ✅ Applica
             </button>
-          </div>
+          </div></div>
         </div>
       </div>
     </div>
