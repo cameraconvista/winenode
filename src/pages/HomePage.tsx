@@ -313,8 +313,8 @@ export default function HomePage() {
 
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-hidden" style={{ 
-        marginTop: window.innerWidth <= 640 ? '100px' : 'calc(64px + 68px)', // Fix mobile spacing
-        height: window.innerWidth <= 640 ? 'calc(100vh - 100px)' : 'calc(100vh - 132px)'
+        marginTop: window.innerWidth <= 640 ? '85px' : 'calc(64px + 68px)', // Ridotto spazio mobile
+        height: window.innerWidth <= 640 ? 'calc(100vh - 85px)' : 'calc(100vh - 132px)'
       }}>
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3 py-2 sm:py-4" style={{
           maxHeight: '100%',

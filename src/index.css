@@ -408,11 +408,11 @@ input[inputMode="decimal"] {
 
   /* Main content compensato per header fisso mobile - OTTIMIZZATO */
   main {
-    margin-top: 140px !important; /* Spazio aumentato per header */
-    height: calc(100vh - 140px) !important;
+    margin-top: 100px !important; /* Ridotto spazio per header mobile */
+    height: calc(100vh - 100px) !important;
     width: 100% !important;
     overflow: hidden !important;
-    padding: 12px 16px 8px 16px !important; /* Padding laterale migliorato */
+    padding: 8px 16px 8px 16px !important; /* Padding laterale migliorato, ridotto padding top */
   }
 
   /* Scroll container ottimizzato per mobile */
