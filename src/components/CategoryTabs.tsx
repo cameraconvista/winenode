@@ -39,7 +39,7 @@ export default function CategoryTabs({ activeTab, onTabChange }: CategoryTabsPro
               <button
                 key={category}
                 onClick={() => onTabChange(category)}
-                className={`${isMobile ? 'px-1.5 py-1 text-[10px]' : 'px-3 py-1.5 text-xs'} font-semibold rounded-lg transition-all duration-200 border-2 ${
+                className={`${isMobile ? 'px-1.5 py-1 text-[10px]' : 'px-3 py-1.5 text-xs'} font-semibold transition-all duration-200 border-2 ${
                   activeTab === category
                     ? "bg-amber-700 text-cream border-amber-500 shadow-lg"
                     : "bg-brown-800/60 text-cream/80 border-brown-600/40 hover:bg-brown-700/70 hover:border-brown-500/60"
@@ -48,7 +48,8 @@ export default function CategoryTabs({ activeTab, onTabChange }: CategoryTabsPro
                   backgroundColor: activeTab === category ? "#b45309" : "#5d2f0a80",
                   borderColor: activeTab === category ? "#f59e0b" : "#8b4513aa",
                   minWidth: isMobile ? '45px' : 'auto',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  borderRadius: '8px'
                 }}
               >
                 {displayText}

@@ -1,4 +1,3 @@
-
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
@@ -27,7 +26,7 @@ export async function connectToGoogleSheet(spreadsheetId: string) {
 
   const doc = new GoogleSpreadsheet(spreadsheetId, serviceAccountAuth);
   await doc.loadInfo();
-  
+
   return doc;
 }
 
@@ -39,7 +38,7 @@ export async function getSheetData(doc: GoogleSpreadsheet, sheetTitle: string) {
 
   await sheet.loadHeaderRow();
   const rows = await sheet.getRows();
-  
+
   return rows.map(row => {
     // Helper function per parsing sicuro dei numeri
     const parseNumericValue = (value: string | undefined | null): number | null => {
