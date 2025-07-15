@@ -29,8 +29,14 @@ export function useAuthManager() {
 
   const getUserId = async (): Promise<string | null> => {
     try {
-      const { data: { user } } = await authManager.supabase.auth.getUser()
-      return user?.id || null
+      // Prima prova con l'utente corrente
+      if (user?.id) {
+        return user.id
+      }
+      
+      // Fallback: richiedi utente da Supabase
+      const { data: { user: currentUser } } = await authManager.supabase.auth.getUser()
+      return currentUser?.id || null
     } catch (error) {
       console.error('❌ Error getting user ID:', error)
       return null

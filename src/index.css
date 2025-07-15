@@ -699,6 +699,28 @@ input[inputMode="decimal"] {
     width: auto !important;
     object-fit: contain !important;
     margin-bottom: -4px !important; /* da -mb-1 ridotto */
+    z-index: 10 !important;
+  }
+
+  /* Z-INDEX HIERARCHY - Risolve conflitti */
+  .modal-backdrop {
+    z-index: 999 !important;
+  }
+  
+  .modal-content {
+    z-index: 1000 !important;
+  }
+  
+  .dropdown-menu {
+    z-index: 100 !important;
+  }
+  
+  .sticky-header {
+    z-index: 50 !important;
+  }
+  
+  .toast-notification {
+    z-index: 1001 !important;
   }
 
   /* HOMEPAGE: Pulsantiera con padding ridotto del 25% */

@@ -1,20 +1,21 @@
-import { useState, useEffect, Component, ReactNode, createContext, useContext } from 'react'
+import { useState, useEffect, Component, ReactNode, createContext, useContext, Suspense, lazy } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { authManager, isSupabaseAvailable } from './lib/supabase'
-import HomePage from './pages/HomePage'
-import SettingsPage from './pages/SettingsPage'
-
 import LoginForm from './components/LoginForm'
 import SaldoCommand from './components/SaldoCommand'
 import { Session } from '@supabase/supabase-js'
-import ManualWineInsertPage from './pages/ManualWineInsertPage'
-import FornitoriPage from './pages/FornitoriPage'
-import ArchiviPage from './pages/ArchiviPage'
-import ImportaPage from './pages/ImportaPage'
-import AccountPage from './pages/AccountPage'
-import PreferenzePage from './pages/PreferenzePage'
-import FoglioExcelPage from './pages/FoglioExcelPage'
-import OrdiniSospesiPage from './pages/OrdiniSospesiPage'
+
+// Lazy loading per ottimizzare le prestazioni
+const HomePage = lazy(() => import('./pages/HomePage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const ManualWineInsertPage = lazy(() => import('./pages/ManualWineInsertPage'))
+const FornitoriPage = lazy(() => import('./pages/FornitoriPage'))
+const ArchiviPage = lazy(() => import('./pages/ArchiviPage'))
+const ImportaPage = lazy(() => import('./pages/ImportaPage'))
+const AccountPage = lazy(() => import('./pages/AccountPage'))
+const PreferenzePage = lazy(() => import('./pages/PreferenzePage'))
+const FoglioExcelPage = lazy(() => import('./pages/FoglioExcelPage'))
+const OrdiniSospesiPage = lazy(() => import('./pages/OrdiniSospesiPage'))
 
 // AuthContext definition
 interface AuthContextType {
@@ -194,6 +195,14 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <div className="min-h-screen bg-gray-900">
+        <Suspense fallback={
+          <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-cream">Caricamento pagina...</p>
+            </div>
+          </div>
+        }>
         <Routes>
           <Route path="/" element={
             (isAuthenticated || fallbackMode || bypassAuth) ? <HomePage /> : <LoginForm />
@@ -234,6 +243,7 @@ function App() {
             (isAuthenticated || fallbackMode || bypassAuth) ? <OrdiniSospesiPage /> : <LoginForm />
           } />
         </Routes>
+        </Suspense>
 
         {/* Global Saldo Overlay */}
         {showSaldo && (
