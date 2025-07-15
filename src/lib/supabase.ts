@@ -1,12 +1,14 @@
+
 import { createClient, type User, type Session } from '@supabase/supabase-js'
 
-// ✅ Verifica che le variabili d'ambiente siano presenti
+// Configurazione Supabase
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 let supabaseClient: any = null
 let isSupabaseAvailable = false
 
+// Inizializzazione sicura del client
 if (SUPABASE_URL && SUPABASE_ANON_KEY) {
   try {
     supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -15,6 +17,11 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY) {
         autoRefreshToken: true,
         detectSessionInUrl: true,
         flowType: 'pkce'
+      },
+      global: {
+        headers: {
+          'X-Client-Info': 'winenode-app'
+        }
       }
     })
     isSupabaseAvailable = true
@@ -28,8 +35,8 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY) {
   isSupabaseAvailable = false
 }
 
-// Fallback mock per sviluppo locale
-const mockSupabase = {
+// Mock completo per sviluppo locale
+const createMockSupabase = () => ({
   auth: {
     getSession: () => Promise.resolve({ data: { session: null }, error: null }),
     signInWithPassword: () => Promise.resolve({ data: { session: null }, error: null }),
@@ -38,46 +45,63 @@ const mockSupabase = {
     getUser: () => Promise.resolve({ data: { user: null }, error: null }),
     updateUser: () => Promise.resolve({ data: { user: null }, error: null }),
     refreshSession: () => Promise.resolve({ data: { session: null }, error: null }),
-    onAuthStateChange: () => () => {}
+    onAuthStateChange: () => {
+      return {
+        data: { subscription: { unsubscribe: () => {} } },
+        error: null
+      }
+    }
   },
-  from: () => ({
-    select: () => Promise.resolve({ data: [], error: null }),
-    insert: () => Promise.resolve({ data: null, error: null }),
-    update: () => Promise.resolve({ data: null, error: null }),
+  from: (table: string) => ({
+    select: (columns?: string) => Promise.resolve({ data: [], error: null }),
+    insert: (data: any) => Promise.resolve({ data: null, error: null }),
+    update: (data: any) => Promise.resolve({ data: null, error: null }),
     delete: () => Promise.resolve({ data: null, error: null }),
-    eq: () => Promise.resolve({ data: [], error: null }),
-    order: () => Promise.resolve({ data: [], error: null }),
-    limit: () => Promise.resolve({ data: [], error: null }),
+    eq: (column: string, value: any) => ({
+      select: () => Promise.resolve({ data: [], error: null }),
+      update: () => Promise.resolve({ data: null, error: null }),
+      delete: () => Promise.resolve({ data: null, error: null })
+    }),
+    order: (column: string, options?: any) => Promise.resolve({ data: [], error: null }),
+    limit: (count: number) => Promise.resolve({ data: [], error: null }),
     single: () => Promise.resolve({ data: null, error: null }),
-    upsert: () => Promise.resolve({ data: null, error: null })
+    upsert: (data: any) => Promise.resolve({ data: null, error: null })
   })
-}
+})
 
 export { isSupabaseAvailable }
-export const supabase = supabaseClient || mockSupabase
-
-// authManagerSimple rimosso - usa authManager
+export const supabase = supabaseClient || createMockSupabase()
 
 export type AuthUser = User | null
 export type AuthSession = Session | null
 
+// AuthManager singleton con gestione errori migliorata
 export class AuthManager {
   private static instance: AuthManager
   private currentUser: AuthUser = null
   private currentSession: AuthSession = null
   private listeners: ((user: AuthUser) => void)[] = []
+  private isInitialized = false
 
   private constructor() {
     this.initializeAuth()
   }
 
   static getInstance(): AuthManager {
-    if (!AuthManager.instance) AuthManager.instance = new AuthManager()
+    if (!AuthManager.instance) {
+      AuthManager.instance = new AuthManager()
+    }
     return AuthManager.instance
   }
 
   private async initializeAuth() {
-    if (!supabaseClient) return
+    if (this.isInitialized) return
+    
+    if (!supabaseClient) {
+      console.log('📱 Modalità offline - AuthManager in standby')
+      this.isInitialized = true
+      return
+    }
 
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession()
@@ -94,7 +118,7 @@ export class AuthManager {
         }
       }
 
-      supabaseClient.auth.onAuthStateChange((event, session) => {
+      const { data } = supabaseClient.auth.onAuthStateChange((event, session) => {
         console.log('🔄 Auth state change:', event)
         this.currentSession = session
         this.currentUser = session?.user || null
@@ -102,11 +126,13 @@ export class AuthManager {
       })
 
       this.notifyListeners()
+      this.isInitialized = true
     } catch (error) {
       console.error('❌ Errore inizializzazione auth:', error)
       this.currentSession = null
       this.currentUser = null
       this.notifyListeners()
+      this.isInitialized = true
     }
   }
 
@@ -156,13 +182,22 @@ export class AuthManager {
   }
 
   private notifyListeners() {
-    this.listeners.forEach(listener => listener(this.currentUser))
+    this.listeners.forEach(listener => {
+      try {
+        listener(this.currentUser)
+      } catch (error) {
+        console.error('❌ Errore nel listener auth:', error)
+      }
+    })
   }
 
   async signIn(email: string, password: string) {
     if (!supabaseClient) throw new Error('Supabase non configurato')
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ 
+      email, 
+      password 
+    })
     if (error) throw error
     return data
   }
@@ -177,11 +212,27 @@ export class AuthManager {
   async signUp(email: string, password: string) {
     if (!supabaseClient) throw new Error('Supabase non configurato')
 
-    const { data, error } = await supabaseClient.auth.signUp({ email, password })
+    const { data, error } = await supabaseClient.auth.signUp({ 
+      email, 
+      password 
+    })
     if (error) throw error
+
+    // Crea il profilo utente dopo la registrazione
+    const userId = data.user?.id
+    if (userId && supabaseClient) {
+      try {
+        await supabaseClient.from('profiles').insert({
+          id: userId,
+          email: email
+        })
+      } catch (profileError) {
+        console.warn('⚠️ Errore creazione profilo:', profileError)
+      }
+    }
+
     return data
   }
 }
 
-// Esporta l'istanza singleton di AuthManager
 export const authManager = AuthManager.getInstance()
