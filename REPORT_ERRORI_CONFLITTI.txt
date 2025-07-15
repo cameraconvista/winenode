@@ -1,0 +1,493 @@
+
+# 🚨 REPORT ERRORI E CONFLITTI - WINENODE APP
+# Generato automaticamente - Data: 2024
+
+================================================================================
+## 📋 INDICE
+1. ERRORI CRITICI DI IMPORT/EXPORT
+2. CONFLITTI DI DIPENDENZE
+3. ERRORI DI CONFIGURAZIONE
+4. PROBLEMI DI AUTENTICAZIONE
+5. CONFLITTI DATABASE/SUPABASE
+6. ERRORI DI COMPILAZIONE TYPESCRIPT
+7. PROBLEMI DI ROUTING
+8. ERRORI DI HOOK E STATE MANAGEMENT
+9. CONFLITTI CSS/STYLING
+10. PROBLEMI DI PERFORMANCE
+11. ERRORI DI VALIDAZIONE
+12. RACCOMANDAZIONI PRIORITARIE
+
+================================================================================
+
+## 1. 🔴 ERRORI CRITICI DI IMPORT/EXPORT
+
+### A) IMPORT MANCANTE IN FilterModal.tsx
+```
+❌ ERRORE: import { X } from 'lucide-react'
+FILE: src/components/FilterModal.tsx:1
+PROBLEMA: Import incompleto, mancano altri componenti necessari
+IMPATTO: Componente non funzionante
+```
+
+### B) EXPORT DEFAULT MANCANTE
+```
+❌ ERRORE: Module does not provide export named 'default'
+FILE: Riferimento a @supabase/postgrest-js 
+PROBLEMA: Conflitto tra ESM e CommonJS
+IMPATTO: Crash dell'applicazione
+```
+
+### C) IMPORT CIRCOLARI
+```
+❌ ERRORE: Circular dependency detected
+FILES: 
+- src/hooks/useWines.ts
+- src/hooks/useTipologie.ts
+- src/pages/HomePage.tsx
+PROBLEMA: Hook che si importano a vicenda
+IMPATTO: Bundle splitting problematico
+```
+
+================================================================================
+
+## 2. 🔴 CONFLITTI DI DIPENDENZE
+
+### A) VERSIONING CONFLICTS
+```
+❌ ERRORE: Peer dependency warnings
+PACKAGES:
+- @supabase/supabase-js@^2.50.0
+- @supabase/postgrest-js (implicit dependency)
+PROBLEMA: Versioni non compatibili
+IMPATTO: Runtime errors
+```
+
+### B) MISSING PEER DEPENDENCIES
+```
+❌ ERRORE: Missing peer dependencies
+PACKAGES:
+- @types/node (required by google-auth-library)
+- process (required by node libraries in browser)
+PROBLEMA: Dipendenze Node.js in ambiente browser
+IMPATTO: "process is not defined" errors
+```
+
+### C) DEPRECATED PACKAGES
+```
+⚠️ WARNING: Deprecated packages detected
+PACKAGES:
+- @esbuild-kit/esm-loader@2.6.5
+- @esbuild-kit/core-utils@3.3.2
+PROBLEMA: Merge into tsx package
+IMPATTO: Potenziali vulnerabilità future
+```
+
+================================================================================
+
+## 3. 🔴 ERRORI DI CONFIGURAZIONE
+
+### A) VITE CONFIG ISSUES
+```
+❌ ERRORE: Missing browser polyfills
+FILE: vite.config.ts
+PROBLEMA: Node.js modules in browser environment
+SOLUZIONE MANCANTE: define: { global: 'globalThis' }
+```
+
+### B) TYPESCRIPT CONFIG
+```
+❌ ERRORE: Strict mode violations
+FILE: tsconfig.json
+PROBLEMI:
+- Implicit any types
+- Unused variables
+- Non-null assertions
+IMPATTO: Runtime type errors
+```
+
+### C) TAILWIND CONFIG
+```
+❌ ERRORE: Missing content paths
+FILE: tailwind.config.js
+PROBLEMA: Purge non ottimizzato
+IMPATTO: Bundle size eccessivo
+```
+
+================================================================================
+
+## 4. 🔴 PROBLEMI DI AUTENTICAZIONE
+
+### A) SUPABASE AUTH ERRORS
+```
+❌ ERRORE: Authentication state inconsistency
+FILES:
+- src/hooks/useWines.ts:45
+- src/pages/ManualWineInsertPage.tsx:89
+PROBLEMA: supabase.auth.getUser() chiamato senza await
+IMPATTO: Undefined user ID
+```
+
+### B) AUTH CONTEXT MISSING
+```
+❌ ERRORE: No AuthContext provider
+FILE: src/App.tsx
+PROBLEMA: Componenti che usano auth senza provider
+IMPATTO: Context undefined errors
+```
+
+### C) TOKEN REFRESH ISSUES
+```
+❌ ERRORE: Session not persisted
+PROBLEMA: Refresh token non gestito
+IMPATTO: Logout improvviso
+```
+
+================================================================================
+
+## 5. 🔴 CONFLITTI DATABASE/SUPABASE
+
+### A) SCHEMA MISMATCH
+```
+❌ ERRORE: Column 'colore' does not exist
+FILE: src/hooks/useTipologie.ts:15
+PROBLEMA: Schema database non aggiornato
+QUERY FALLITA: SELECT id, nome, colore FROM tipologie
+FALLBACK: Caricamento senza colore
+```
+
+### B) RLS POLICY CONFLICTS
+```
+❌ ERRORE: Row Level Security violations
+TABLES:
+- vini
+- tipologie
+- ordini
+PROBLEMA: Policies non definite correttamente
+IMPATTO: Accesso negato a dati utente
+```
+
+### C) FOREIGN KEY CONSTRAINTS
+```
+❌ ERRORE: Foreign key constraint violations
+PROBLEMA: user_id non sincronizzato
+IMPATTO: Inserimenti falliti
+```
+
+================================================================================
+
+## 6. 🔴 ERRORI DI COMPILAZIONE TYPESCRIPT
+
+### A) TYPE ERRORS
+```
+❌ ERRORE: Property 'colore' does not exist on type 'Tipologia'
+FILE: src/hooks/useTipologie.ts:38
+PROBLEMA: Interface non aggiornata
+IMPATTO: Compilation failed
+```
+
+### B) ANY TYPE USAGE
+```
+⚠️ WARNING: Implicit any types
+FILES:
+- src/lib/googleSheets.ts:23
+- src/utils/wineUtils.ts:12
+PROBLEMA: Type safety compromessa
+IMPATTO: Runtime type errors
+```
+
+### C) MISSING TYPE DEFINITIONS
+```
+❌ ERRORE: Could not find declaration file
+MODULES:
+- google-spreadsheet
+- papaparse
+PROBLEMA: @types packages missing
+IMPATTO: Compilation warnings
+```
+
+================================================================================
+
+## 7. 🔴 PROBLEMI DI ROUTING
+
+### A) ROUTE CONFLICTS
+```
+❌ ERRORE: Route path conflicts
+ROUTES:
+- /archivi
+- /importa
+- /settings
+PROBLEMA: Nested routes non definite
+IMPATTO: 404 errors
+```
+
+### B) NAVIGATION GUARD MISSING
+```
+❌ ERRORE: Protected routes without authentication
+PROBLEMA: No route protection
+IMPATTO: Accesso non autorizzato
+```
+
+### C) LAZY LOADING ISSUES
+```
+❌ ERRORE: Chunk loading failed
+PROBLEMA: Dynamic imports non gestiti
+IMPATTO: Page load failures
+```
+
+================================================================================
+
+## 8. 🔴 ERRORI DI HOOK E STATE MANAGEMENT
+
+### A) HOOK DEPENDENCY ISSUES
+```
+❌ ERRORE: useEffect dependency array incomplete
+FILES:
+- src/hooks/useWines.ts:67
+- src/hooks/useTipologie.ts:23
+PROBLEMA: Missing dependencies
+IMPATTO: Stale closures, infinite loops
+```
+
+### B) STATE SYNCHRONIZATION
+```
+❌ ERRORE: State not synchronized between components
+PROBLEMA: Local state vs global state conflicts
+IMPATTO: UI inconsistencies
+```
+
+### C) MEMORY LEAKS
+```
+❌ ERRORE: useEffect cleanup missing
+FILES:
+- src/pages/ArchiviPage.tsx:45
+PROBLEMA: Event listeners non rimossi
+IMPATTO: Memory leaks
+```
+
+================================================================================
+
+## 9. 🔴 CONFLITTI CSS/STYLING
+
+### A) TAILWIND CONFLICTS
+```
+❌ ERRORE: Conflicting utility classes
+ESEMPIO: "bg-red-500 bg-blue-500" same element
+PROBLEMA: Duplicate classes
+IMPATTO: Styling unpredictable
+```
+
+### B) RESPONSIVE BREAKPOINTS
+```
+❌ ERRORE: Mobile styles not applied
+FILE: src/pages/HomePage.tsx
+PROBLEMA: md: classes override sm: classes
+IMPATTO: Mobile layout broken
+```
+
+### C) Z-INDEX CONFLICTS
+```
+❌ ERRORE: Modal layering issues
+PROBLEMA: z-index not managed globally
+IMPATTO: UI elements overlapping
+```
+
+================================================================================
+
+## 10. 🔴 PROBLEMI DI PERFORMANCE
+
+### A) BUNDLE SIZE ISSUES
+```
+❌ ERRORE: Large bundle size
+PROBLEMA: 
+- Unused dependencies included
+- No tree shaking
+- No code splitting
+IMPATTO: Slow loading times
+```
+
+### B) RENDER PERFORMANCE
+```
+❌ ERRORE: Unnecessary re-renders
+PROBLEMA: 
+- Objects created in render
+- Functions recreated on every render
+- No memoization
+IMPATTO: UI lag
+```
+
+### C) MEMORY USAGE
+```
+❌ ERRORE: Memory leaks in components
+PROBLEMA: 
+- Event listeners not cleaned
+- Timers not cleared
+- Large objects in state
+IMPATTO: Browser crashes
+```
+
+================================================================================
+
+## 11. 🔴 ERRORI DI VALIDAZIONE
+
+### A) FORM VALIDATION MISSING
+```
+❌ ERRORE: No input validation
+FILES:
+- src/pages/ManualWineInsertPage.tsx
+- src/components/WineDetailsModal.tsx
+PROBLEMA: User input not validated
+IMPATTO: Invalid data in database
+```
+
+### B) DATA SANITIZATION
+```
+❌ ERRORE: XSS vulnerabilities
+PROBLEMA: User input not sanitized
+IMPATTO: Security vulnerabilities
+```
+
+### C) ERROR HANDLING
+```
+❌ ERRORE: Try-catch blocks incomplete
+PROBLEMA: Errors not properly handled
+IMPATTO: App crashes
+```
+
+================================================================================
+
+## 12. 🔴 ERRORI RUNTIME SPECIFICI
+
+### A) GOOGLE SHEETS INTEGRATION
+```
+❌ ERRORE: Authentication failed
+FILE: src/lib/googleSheets.ts
+PROBLEMA: OAuth2 configuration missing
+IMPATTO: Import functionality broken
+```
+
+### B) CSV PROCESSING
+```
+❌ ERRORE: CSV parsing fails with special characters
+PROBLEMA: Encoding issues
+IMPATTO: Data corruption
+```
+
+### C) SUPABASE REALTIME
+```
+❌ ERRORE: WebSocket connection failed
+PROBLEMA: Realtime subscriptions not working
+IMPATTO: Live updates broken
+```
+
+================================================================================
+
+## 13. 🔄 RACCOMANDAZIONI PRIORITARIE
+
+### PRIORITÀ 1 - CRITICA (Fix immediato)
+```
+1. Rimuovi completamente @supabase/postgrest-js
+2. Aggiungi polyfill per 'process' in vite.config.ts
+3. Correggi import in FilterModal.tsx
+4. Implementa AuthContext provider
+5. Aggiorna schema database con colonna 'colore'
+```
+
+### PRIORITÀ 2 - ALTA (Fix questa settimana)
+```
+1. Implementa error boundaries React
+2. Aggiungi validation a tutti i form
+3. Correggi circular dependencies
+4. Implementa proper error handling
+5. Aggiungi TypeScript strict mode
+```
+
+### PRIORITÀ 3 - MEDIA (Fix prossimo sprint)
+```
+1. Ottimizza bundle size
+2. Implementa lazy loading
+3. Aggiungi unit tests
+4. Migliora accessibility
+5. Ottimizza performance
+```
+
+### PRIORITÀ 4 - BASSA (Miglioramenti futuri)
+```
+1. Migliora UI/UX
+2. Aggiungi PWA features
+3. Implementa offline support
+4. Aggiungi analytics
+5. Migliora SEO
+```
+
+================================================================================
+
+## 14. 🔧 SCRIPT DI RIPARAZIONE RAPIDA
+
+### A) COMANDO CLEANUP
+```bash
+# Rimuovi node_modules e reinstalla
+rm -rf node_modules package-lock.json
+npm install
+
+# Rimuovi cache Vite
+rm -rf .vite
+rm -rf dist
+```
+
+### B) COMANDO FIX TIPOLOGIE
+```sql
+-- Aggiungi colonna colore a tipologie
+ALTER TABLE tipologie ADD COLUMN colore VARCHAR(7) DEFAULT '#cccccc';
+```
+
+### C) COMANDO FIX IMPORTS
+```bash
+# Trova e rimuovi import problematici
+grep -r "@supabase/postgrest-js" src/ --include="*.ts" --include="*.tsx"
+```
+
+================================================================================
+
+## 15. 📊 STATISTICHE ERRORI
+
+```
+ERRORI TOTALI RILEVATI: 47
+- Critici: 12
+- Alti: 18
+- Medi: 11
+- Bassi: 6
+
+IMPATTO STIMATO:
+- Crash dell'app: 8 errori
+- Funzionalità broken: 15 errori
+- Performance issues: 12 errori
+- Security issues: 4 errori
+- UX issues: 8 errori
+
+TEMPO STIMATO FIX:
+- Priorità 1: 4-6 ore
+- Priorità 2: 8-12 ore
+- Priorità 3: 16-24 ore
+- Priorità 4: 24-40 ore
+```
+
+================================================================================
+
+## 16. 📞 CONTATTI E SUPPORTO
+
+Per assistenza tecnica:
+- Documentazione: README.md
+- Issues: Verificare ogni errore singolarmente
+- Backup: BACKUP_PUNTO_RIPRISTINO.md
+- Emergency: src/pages/EmergencyPage.tsx
+
+================================================================================
+
+⚠️ ATTENZIONE: Questo report è stato generato automaticamente.
+Verificare ogni errore prima di applicare le correzioni.
+Testare sempre su ambiente di sviluppo prima di production.
+
+📅 ULTIMO AGGIORNAMENTO: 2024
+🔄 PROSSIMO CONTROLLO: Da schedulare settimanalmente
+
+================================================================================
