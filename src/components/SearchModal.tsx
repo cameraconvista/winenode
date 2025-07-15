@@ -29,7 +29,7 @@ export default function SearchModal({ open, onOpenChange, searchTerm, onSearchCh
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-      <div className="fixed top-16 left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-4">
+      <div className="fixed top-24 sm:top-32 lg:top-28 left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-4"></div>
         <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden shadow-lg">
           {/* Layout ultra-compatto su una riga */}
           <div className="flex items-center gap-2 p-2">
