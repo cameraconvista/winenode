@@ -960,3 +960,14 @@ button[type="submit"],
   padding: 0 !important;
   line-height: inherit !important;
 }
+
+  /* HOMEPAGE: Select "Tutti i Vini" font ridotto su mobile */
+  @media (max-width: 640px) {
+    .homepage-select-mobile {
+      font-size: 9px !important;
+    }
+
+    .homepage-select-mobile option {
+      font-size: 9px !important;
+    }
+  }
