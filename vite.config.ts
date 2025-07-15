@@ -53,6 +53,8 @@ export default defineConfig({
         if (warning.code === 'THIS_IS_UNDEFINED') return;
         if (warning.code === 'CIRCULAR_DEPENDENCY') return;
         if (warning.code === 'EVAL') return;
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+        if (warning.message && warning.message.includes('(!) Some chunks are larger than 500 kBs')) return;
         warn(warning);
       },
       output: {
@@ -74,10 +76,17 @@ export default defineConfig({
   base: './',
   optimizeDeps: {
     include: ['react', 'react-dom'],
-    exclude: ['@supabase/supabase-js']
+    exclude: ['@supabase/supabase-js', '@supabase/postgrest-js', '@supabase/storage-js', '@supabase/realtime-js']
   },
-  // Riduce errori di sviluppo
+  // Riduce errori di sviluppo e polyfill per browser
   define: {
-    global: 'globalThis'
+    global: 'globalThis',
+    'process.env': {},
+    process: {
+      env: {},
+      cwd: () => '/',
+      nextTick: (fn) => setTimeout(fn, 0),
+      browser: true
+    }
   }
 })

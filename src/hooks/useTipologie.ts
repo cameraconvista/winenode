@@ -4,7 +4,7 @@ import { supabase, authManager } from '../lib/supabase';
 export interface Tipologia {
   id: string;
   nome: string;
-  colore?: string;
+  colore: string;
 }
 
 export function useTipologie() {

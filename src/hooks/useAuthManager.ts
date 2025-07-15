@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { authManager, type AuthUser } from '../lib/supabase'
 
@@ -9,7 +8,7 @@ export function useAuthManager() {
 
   useEffect(() => {
     setIsLoading(true)
-    
+
     // Ottieni l'utente corrente
     const currentUser = authManager.getCurrentUser()
     setUser(currentUser)
@@ -23,8 +22,20 @@ export function useAuthManager() {
       setIsLoading(false)
     })
 
-    return unsubscribe
+    return () => {
+      unsubscribe()
+    }
   }, [])
+
+  const getUserId = async (): Promise<string | null> => {
+    try {
+      const { data: { user } } = await authManager.supabase.auth.getUser()
+      return user?.id || null
+    } catch (error) {
+      console.error('❌ Error getting user ID:', error)
+      return null
+    }
+  }
 
   return {
     user,
@@ -34,6 +45,7 @@ export function useAuthManager() {
     signIn: authManager.signIn.bind(authManager),
     signOut: authManager.signOut.bind(authManager),
     signUp: authManager.signUp.bind(authManager),
-    validateSession: authManager.validateSession.bind(authManager)
+    validateSession: authManager.validateSession.bind(authManager),
+    getUserId,
   }
 }

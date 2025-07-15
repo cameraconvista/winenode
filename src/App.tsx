@@ -1,4 +1,4 @@
-import { useState, useEffect, Component, ReactNode } from 'react'
+import { useState, useEffect, Component, ReactNode, createContext, useContext } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { authManager, isSupabaseAvailable } from './lib/supabase'
 import HomePage from './pages/HomePage'
@@ -15,6 +15,67 @@ import AccountPage from './pages/AccountPage'
 import PreferenzePage from './pages/PreferenzePage'
 import FoglioExcelPage from './pages/FoglioExcelPage'
 import OrdiniSospesiPage from './pages/OrdiniSospesiPage'
+
+// AuthContext definition
+interface AuthContextType {
+  user: any;
+  session: Session | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (!isSupabaseAvailable) {
+      setIsLoading(false);
+      return;
+    }
+
+    const unsubscribe = authManager.onAuthStateChange((currentUser) => {
+      setUser(currentUser);
+      setIsAuthenticated(!!currentUser);
+      
+      if (currentUser) {
+        const currentSession = authManager.getCurrentSession();
+        setSession(currentSession);
+      } else {
+        setSession(null);
+      }
+      
+      setIsLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const value = {
+    user,
+    session,
+    isAuthenticated,
+    isLoading
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 // Error Boundary Component
 class ErrorBoundary extends Component<{children: ReactNode}, {hasError: boolean, error?: Error}> {
@@ -131,7 +192,8 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-900">
+      <AuthProvider>
+        <div className="min-h-screen bg-gray-900">
         <Routes>
           <Route path="/" element={
             (isAuthenticated || fallbackMode || bypassAuth) ? <HomePage /> : <LoginForm />
@@ -192,7 +254,8 @@ function App() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </AuthProvider>
     </ErrorBoundary>
   )
 }

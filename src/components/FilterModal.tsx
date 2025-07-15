@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Filter, ChevronDown } from 'lucide-react';
+import { X, Filter, ChevronDown, Search, Calendar } from 'lucide-react';
 
 interface FilterModalProps {
   open: boolean
