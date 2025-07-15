@@ -826,10 +826,9 @@ textarea::placeholder {
   color: #555555 !important;
 }
 
-/* === FORZA PULSANTI TONDI GLOBALMENTE === */
-button, 
+/* === FORZA PULSANTI TONDI SOLO PER CONTROLLI GIACENZA === */
 .wine-card button,
-[role="button"] {
+.mobile-button-small {
   border-radius: 50% !important;
 }
 
@@ -842,6 +841,12 @@ button,
     min-width: 32px !important;
     min-height: 32px !important;
   }
+}
+
+/* Pulsanti rettangolari per interfaccia normale */
+button,
+[role="button"] {
+  border-radius: 8px !important;
 }
 
 /* Eccezioni per pulsanti rettangolari specifici */
