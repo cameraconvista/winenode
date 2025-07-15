@@ -2,8 +2,8 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
 // Configurazione JWT per Google Sheets API
-const GOOGLE_SERVICE_ACCOUNT_EMAIL = import.meta.env.VITE_GOOGLE_SERVICE_ACCOUNT_EMAIL;
-const GOOGLE_PRIVATE_KEY = import.meta.env.VITE_GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const GOOGLE_SERVICE_ACCOUNT_EMAIL = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_GOOGLE_SERVICE_ACCOUNT_EMAIL : undefined;
+const GOOGLE_PRIVATE_KEY = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GOOGLE_PRIVATE_KEY ? import.meta.env.VITE_GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined;
 
 export interface GoogleSheetsConfig {
   spreadsheetId: string;
