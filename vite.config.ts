@@ -46,13 +46,20 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
     sourcemap: false,
-    minify: true,
+    minify: 'esbuild',
     rollupOptions: {
       onwarn: (warning, warn) => {
         // Silenzia warning non critici
         if (warning.code === 'THIS_IS_UNDEFINED') return;
         if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+        if (warning.code === 'EVAL') return;
         warn(warning);
+      },
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          supabase: ['@supabase/supabase-js']
+        }
       }
     }
   },
@@ -60,7 +67,9 @@ export default defineConfig({
     // Riduce errori di parsing
     logOverride: {
       'this-is-undefined-in-esm': 'silent'
-    }
+    },
+    target: 'es2020',
+    keepNames: true
   },
   base: './',
   optimizeDeps: {
