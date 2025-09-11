@@ -9,13 +9,10 @@ export default defineConfig({
     port: 5000,
     strictPort: false,
     hmr: {
-      port: 443,
-      clientPort: 443,
-      host: 'localhost'
+      port: 5173,
+      clientPort: 5173
     },
-    allowedHosts: 'all',
-    cors: true,
-    origin: 'http://localhost:5000'
+    cors: true
   },
   resolve: {
     alias: {
@@ -24,15 +21,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      external: [
-        '@supabase/postgrest-js',
-        '@supabase/storage-js', 
-        '@supabase/realtime-js',
-        '@supabase/gotrue-js'
-      ]
-    }
+    sourcemap: true
   },
   esbuild: {
     logOverride: {
@@ -43,8 +32,7 @@ export default defineConfig({
   },
   base: './',
   optimizeDeps: {
-    include: ['react', 'react-dom', '@supabase/supabase-js'],
-    exclude: ['@supabase/postgrest-js', '@supabase/storage-js', '@supabase/realtime-js', '@supabase/gotrue-js']
+    include: ['react', 'react-dom', '@supabase/supabase-js']
   },
   define: {
     global: 'globalThis',
