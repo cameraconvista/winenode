@@ -12,7 +12,8 @@ export default defineConfig({
       port: 5173,
       clientPort: 5173
     },
-    cors: true
+    cors: true,
+    allowedHosts: 'all'
   },
   resolve: {
     alias: {
