@@ -1,0 +1,63 @@
+[
+  {
+    "id": "ord-1",
+    "user_id": "demo-user",
+    "fornitore": "ENOTECA CENTRALE",
+    "stato": "sospeso",
+    "data_ordine": "2024-01-20T10:00:00Z",
+    "data_invio_whatsapp": null,
+    "data_ricevimento": null,
+    "totale_euro": 142.00,
+    "contenuto": {
+      "items": [
+        {"nome_vino": "Barolo DOCG 2018", "quantita": 4, "prezzo_unitario": 35.50}
+      ]
+    },
+    "contenuto_ricevuto": null,
+    "note": "Ordine di prova per demo",
+    "created_at": "2024-01-20T10:00:00Z",
+    "updated_at": "2024-01-20T10:00:00Z"
+  },
+  {
+    "id": "ord-2",
+    "user_id": "demo-user",
+    "fornitore": "VINI TOSCANI SRL",
+    "stato": "inviato",
+    "data_ordine": "2024-01-18T14:30:00Z",
+    "data_invio_whatsapp": "2024-01-18T15:00:00Z",
+    "data_ricevimento": null,
+    "totale_euro": 216.00,
+    "contenuto": {
+      "items": [
+        {"nome_vino": "Chianti Classico DOCG 2020", "quantita": 12, "prezzo_unitario": 18.00}
+      ]
+    },
+    "contenuto_ricevuto": null,
+    "note": "Inviato via WhatsApp",
+    "created_at": "2024-01-18T14:30:00Z",
+    "updated_at": "2024-01-18T15:00:00Z"
+  },
+  {
+    "id": "ord-3",
+    "user_id": "demo-user",
+    "fornitore": "BOLLICINE & CO",
+    "stato": "ricevuto",
+    "data_ordine": "2024-01-15T09:00:00Z",
+    "data_invio_whatsapp": "2024-01-15T09:30:00Z",
+    "data_ricevimento": "2024-01-17T16:00:00Z",
+    "totale_euro": 187.50,
+    "contenuto": {
+      "items": [
+        {"nome_vino": "Prosecco di Valdobbiadene DOCG", "quantita": 15, "prezzo_unitario": 12.50}
+      ]
+    },
+    "contenuto_ricevuto": {
+      "items": [
+        {"nome_vino": "Prosecco di Valdobbiadene DOCG", "quantita": 15, "prezzo_unitario": 12.50}
+      ]
+    },
+    "note": "Ordine completato",
+    "created_at": "2024-01-15T09:00:00Z",
+    "updated_at": "2024-01-17T16:00:00Z"
+  }
+]

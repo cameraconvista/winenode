@@ -9,11 +9,15 @@
     "preview": "vite preview",
     "start": "node index.js",
     "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "backup": "node scripts/backup-system.js create",
+    "backup:list": "node scripts/backup-system.js list",
+    "backup:restore": "node scripts/backup-system.js restore",
+    "restore-confirm": "node scripts/backup-system.js restore-confirm"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
-    "@supabase/supabase-js": "^2.50.0",
+    "@supabase/supabase-js": "2.39.8",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/papaparse": "^5.3.16",
@@ -33,7 +37,7 @@
     "papaparse": "^5.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.6.2",
+    "react-router-dom": "6.22.3",
     "react-toastify": "^11.0.5",
     "sonner": "^2.0.5",
     "tailwind-merge": "^1.14.0",

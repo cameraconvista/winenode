@@ -371,6 +371,66 @@ input[inputMode="decimal"] {
   height: 16px !important;
 }
 
+/* PORTRAIT GUARD - Avviso discreto per landscape SMARTPHONE ONLY */
+@media screen and (max-width: 767px) and (orientation: landscape) {
+  body::before {
+    content: "📱 Ruota il dispositivo per un'esperienza migliore";
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(251, 191, 36, 0.95);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease-out;
+    pointer-events: none; /* Non interferisce con touch/click */
+    user-select: none; /* Non selezionabile */
+    -webkit-user-select: none;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* Assicura che elementi critici restino accessibili */
+  button, input, select, [role="button"] {
+    position: relative;
+    z-index: 10;
+  }
+}
+
+/* Layout specifico per smartphone GRANDI 2024-2025 (iPhone 15 Pro Max, S24 Ultra) */
+@media screen and (max-width: 767px) and (min-width: 430px) {
+  body {
+    font-size: 16px; /* Font più grande per schermi grandi */
+    line-height: 1.45;
+  }
+
+  /* Touch targets più generosi su schermi grandi */
+  button, input, select {
+    min-height: 48px !important;
+    min-width: 48px !important;
+  }
+
+  /* Wine cards più spaziose */
+  .wine-card {
+    padding: 16px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* Header ottimizzato per schermi grandi */
+  header img {
+    height: 16px !important; /* Logo più grande per schermi grandi */
+  }
+}
+
 /* Layout specifico per smartphone - OTTIMIZZATO */
 @media screen and (max-width: 767px) {
   body {
@@ -408,11 +468,11 @@ input[inputMode="decimal"] {
 
   /* Main content compensato per header fisso mobile - OTTIMIZZATO */
   main {
-    margin-top: 100px !important; /* Ridotto spazio per header mobile */
-    height: calc(100vh - 100px) !important;
+    margin-top: 95px !important; /* Ottimizzato spazio per header mobile */
+    height: calc(100vh - 95px) !important;
     width: 100% !important;
     overflow: hidden !important;
-    padding: 8px 16px 8px 16px !important; /* Padding laterale migliorato, ridotto padding top */
+    padding: 12px 16px 16px 16px !important; /* Padding migliorato per respirare */
   }
 
   /* Scroll container ottimizzato per mobile */
@@ -422,27 +482,39 @@ input[inputMode="decimal"] {
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior-y: contain;
+    overscroll-behavior-x: none;
     scroll-behavior: smooth;
     padding: 8px 0; /* Padding interno per respirare */
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
-  /* Wine cards ottimizzate per mobile */
+  /* Wine cards ottimizzate per mobile - NO OVERFLOW */
   .wine-card {
-    margin-bottom: 12px !important;
-    padding: 16px !important;
+    margin-bottom: 8px !important;
+    padding: 14px !important;
     border-radius: 12px !important;
     backdrop-filter: blur(8px);
+    min-height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
   }
 
-  /* Testo ottimizzato per mobile */
+  /* Testo ottimizzato per mobile - leggibilità migliorata */
   .wine-card .text-sm {
-    font-size: 16px !important;
-    line-height: 1.3 !important;
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
   }
 
   .wine-card .text-xs {
-    font-size: 13px !important;
-    line-height: 1.2 !important;
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+    font-weight: 400 !important;
   }
 
   /* Pulsanti ottimizzati per touch - TONDI */
@@ -455,13 +527,17 @@ input[inputMode="decimal"] {
     transition: all 0.2s ease !important;
   }
 
-  /* Pulsanti + e - piccoli SOLO su mobile */
+  /* Pulsanti + e - ottimizzati per touch su mobile */
   .mobile-button-small {
-    width: 20px !important;
-    height: 20px !important;
-    font-size: 14px !important;
-    min-width: 20px !important;
-    min-height: 20px !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    font-weight: bold !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   /* Reset pulsanti normali */
@@ -469,18 +545,23 @@ input[inputMode="decimal"] {
     border-radius: 50% !important; /* TONDI */
   }
 
-  /* Area giacenza più grande per touch */
+  /* Area giacenza ottimizzata per touch */
   .wine-card span[onclick] {
-    min-width: 48px !important;
-    min-height: 40px !important;
-    padding: 8px 12px !important;
-    font-size: 18px !important;
-    border-radius: 6px !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    margin: 0 8px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 10px 12px !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    margin: 0 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
-  /* Input ottimizzati per mobile */
+  /* Input ottimizzati per mobile - UX migliorata */
   input, select, textarea {
     font-size: 16px !important; /* Previene zoom su iOS */
     -webkit-appearance: none;
@@ -488,6 +569,19 @@ input[inputMode="decimal"] {
     min-height: 44px !important;
     padding: 12px !important;
     border-radius: 8px !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    color: #f8fafc !important;
+    transition: all 0.2s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* Focus states migliorati per mobile */
+  input:focus, select:focus, textarea:focus {
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2) !important;
+    outline: none !important;
+    background: rgba(0, 0, 0, 0.5) !important;
   }
 
   /* Migliora performance scroll */
@@ -640,11 +734,18 @@ input[inputMode="decimal"] {
     }
   }
 
-  /* Notch e safe area support */
+  /* Notch e safe area support migliorato */
   @supports (padding: max(0px)) {
     header {
       padding-left: max(16px, env(safe-area-inset-left));
       padding-right: max(16px, env(safe-area-inset-right));
+      padding-top: max(8px, env(safe-area-inset-top));
+    }
+
+    main {
+      padding-left: max(16px, env(safe-area-inset-left)) !important;
+      padding-right: max(16px, env(safe-area-inset-right)) !important;
+      padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
     }
   }
 }
@@ -676,9 +777,48 @@ input[inputMode="decimal"] {
   }
 }
 
+/* Layout per dispositivi FOLDABLE 2024-2025 (Galaxy Z Fold, Pixel Fold) */
+@media screen and (min-width: 673px) and (max-width: 748px) {
+  /* Foldable in modalità tablet */
+  body {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Header adattivo per foldable */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  /* Main content per foldable */
+  main {
+    margin-top: 140px;
+    min-height: calc(100vh - 140px);
+    overflow-x: hidden;
+    padding: 12px 20px;
+  }
+
+  /* Wine cards ottimizzate per foldable */
+  .wine-card {
+    padding: 12px;
+    margin-bottom: 6px;
+  }
+
+  /* Touch targets per foldable */
+  button, input, select {
+    min-height: 46px !important;
+    min-width: 46px !important;
+  }
+}
+
 /* Layout per desktop */
 @media screen and (min-width: 1025px) {
-  /* Header normale per desktop - NON FISSO per ArchiviPage */
+  /* Header normale per desktop */
   header {
     position: relative;
     backdrop-filter: blur(12px);
@@ -751,22 +891,7 @@ input[inputMode="decimal"] {
     overflow-x: auto;
   }
 
-  /* Specifico per ArchiviPage - tabelle desktop ottimizzate SENZA scroll orizzontale */
-  .rounded-lg.shadow-2xl {
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    max-height: calc(100vh - 400px) !important;
-    min-height: 600px !important;
-    width: 100% !important;
-  }
-
-  .rounded-lg.shadow-2xl > div {
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    max-height: calc(100vh - 400px) !important;
-    min-height: 600px !important;
-    width: 100% !important;
-  }
+  /* RIMOSSO: CSS specifici ArchiviPage */
 
   .rounded-lg.shadow-2xl table {
     table-layout: fixed !important;
@@ -884,6 +1009,14 @@ button[type="submit"],
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* GPU acceleration per elementi interattivi */
+    will-change: auto;
+  }
+
+  /* Ottimizzazione rendering per elementi animati */
+  .wine-card, button, input, select {
+    will-change: transform, opacity;
+    contain: layout style paint;
   }
 
   body {
@@ -904,7 +1037,7 @@ button[type="submit"],
     scroll-snap-type: x mandatory;
   }
 
-  /* Modal ottimizzati per mobile */
+  /* Modal ottimizzati per mobile - PORTRAIT SAFE */
   .modal-content {
     max-width: 100% !important;
     width: 95% !important;
@@ -912,7 +1045,11 @@ button[type="submit"],
     border-radius: 16px !important;
     margin: 8px !important;
     max-height: calc(100vh - 32px) !important;
+    max-height: calc(100dvh - 32px) !important; /* Dynamic viewport */
     overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
   }
 
   /* Controlli giacenza ottimizzati */
@@ -947,21 +1084,75 @@ button[type="submit"],
     transform: translateZ(0);
   }
 
-  /* Prevenzione zoom accidentale */
+  /* Prevenzione zoom accidentale - tipi input specifici */
   input[type="search"],
   input[type="email"],
   input[type="password"],
   input[type="tel"],
+  input[type="number"],
+  input[type="text"],
   select {
     font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
   }
 
-  /* Focus migliorato per accessibilità */
+  /* Placeholder ottimizzati per mobile */
+  input::placeholder, textarea::placeholder {
+    color: rgba(156, 163, 175, 0.8) !important;
+    font-size: 15px !important;
+    opacity: 1 !important;
+  }
+
+  /* Focus migliorato per accessibilità - MOBILE OTTIMIZZATO */
   input:focus,
   button:focus,
-  select:focus {
-    outline: 2px solid #fbbf24;
-    outline-offset: 2px;
+  select:focus,
+  [role="button"]:focus {
+    outline: 3px solid #fbbf24 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.3) !important;
+  }
+
+  /* Accessibilità touch migliorata */
+  button, [role="button"], input, select {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    position: relative;
+  }
+
+  /* Indicatori visivi per stati interattivi */
+  button:active, [role="button"]:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s ease !important;
+  }
+
+  /* Skip links per screen reader */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .sr-only:focus {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 8px 16px !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+    background: #fbbf24 !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    z-index: 9999 !important;
   }
 }
 
@@ -983,13 +1174,17 @@ button[type="submit"],
   line-height: inherit !important;
 }
 
-  /* HOMEPAGE: Select "Tutti i Vini" font ridotto su mobile */
+  /* HOMEPAGE: Select "Tutti i Vini" font leggibile su mobile */
   @media (max-width: 640px) {
     .homepage-select-mobile {
-      font-size: 9px !important;
+      font-size: 11px !important;
+      min-height: 40px !important;
+      padding: 8px 6px !important;
+      line-height: 1.2 !important;
     }
 
     .homepage-select-mobile option {
-      font-size: 9px !important;
+      font-size: 11px !important;
+      line-height: 1.2 !important;
     }
   }

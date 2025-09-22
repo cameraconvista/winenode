@@ -1,29 +1,77 @@
 # WINENODE - Sistema di Gestione Inventario Vini
 
-Sistema di gestione inventario vini per Camera Con Vista, ottimizzato per dispositivi mobili con interfaccia in italiano.
+Sistema completo di gestione inventario vini con sincronizzazione Google Sheets, autenticazione utenti e gestione ordini.
 
-## 🚀 Deployment su Netlify
+## 🏗️ Architettura
 
-### Metodo 1: Drag & Drop (Consigliato)
-1. Esegui `npm run build` per creare la cartella `dist`
-2. Trascina la cartella `dist` su [Netlify Drop](https://app.netlify.com/drop)
-3. Il sito sarà immediatamente online
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
+- **Backend**: Supabase (PostgreSQL + Auth + API REST)
+- **Integrazione**: Google Sheets per sincronizzazione automatica
+- **Sviluppo**: Ottimizzato per Winsurf Cascade
 
-### Metodo 2: Git Deploy
-1. Carica il progetto su GitHub
-2. Connetti il repository a Netlify
-3. Configura build settings:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
+## 🚀 Setup Sviluppo Locale
+
+### Prerequisiti
+- Node.js >= 18.0.0
+- npm >= 8.0.0
+- Account Supabase (per database e auth)
+
+### Installazione
+```bash
+# Installa dipendenze
+npm install
+
+# Copia template environment variables
+cp .env.example .env
+
+# Configura le variabili in .env:
+# VITE_SUPABASE_URL=https://your-project.supabase.co
+# VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Avvio
+```bash
+# Avvia server di sviluppo (localhost:3000)
+npm run dev
+
+# Build per produzione
+npm run build
+
+# Preview build
+npm run preview
+```
+
+## 🗄️ Configurazione Database Supabase
+
+### 1. Crea Progetto Supabase
+1. Vai su [supabase.com](https://supabase.com/dashboard)
+2. Crea nuovo progetto
+3. Copia URL e ANON KEY dalle Project Settings > API
+
+### 2. Setup Schema Database
+Esegui il file `setup-giacenza-complete.sql` nel SQL Editor di Supabase per creare:
+- Tabelle: `vini`, `giacenza`, `ordini`, `tipologie`, `fornitori`
+- Row Level Security (RLS) policies
+- Indici per performance
+- Trigger automatici
+
+### 3. Variabili Ambiente
+Configura nel file `.env`:
+```bash
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+DATABASE_URL=postgres://user:password@host:port/database
+```
 
 ## 📱 Funzionalità
 
-- **Interfaccia Mobile-First**: Ottimizzata per smartphone (99% degli utenti)
-- **Gestione Inventario**: Monitoraggio scorte con alert automatici
-- **Ricerca Avanzata**: Ricerca per nome vino o fornitore
-- **Filtri Intelligenti**: Filtra per tipo, fornitore e stato scorte
-- **Sincronizzazione CSV**: Importazione dati da file CSV esterni
-- **Design Responsivo**: Funziona perfettamente su tutti i dispositivi
+- **Autenticazione Utenti**: Sistema completo login/registrazione
+- **Gestione Catalogo Vini**: CRUD completo con tipologie
+- **Inventario Scorte**: Monitoraggio giacenze con alert
+- **Sistema Ordini**: Gestione ordini fornitori con stati
+- **Sincronizzazione Google Sheets**: Import automatico da fogli esterni
+- **Interfaccia Mobile-First**: Ottimizzata per smartphone
+- **Ricerca e Filtri**: Ricerca avanzata per nome, fornitore, tipologia
 
 ## 🛠️ Tecnologie
 

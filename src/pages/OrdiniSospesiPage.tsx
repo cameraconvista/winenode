@@ -67,9 +67,9 @@ export default function OrdiniSospesiPage() {
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <button
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/')}
               className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200"
-              title="Torna alle impostazioni"
+              title="Torna alla home"
             >
               <ArrowLeft className="h-6 w-6" />
             </button>

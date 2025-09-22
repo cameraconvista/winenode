@@ -229,9 +229,9 @@ export default function ManualWineInsertPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <button
-              onClick={() => navigate('/settings/archivi')}
+              onClick={() => navigate('/')}
               className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200 hover:scale-105"
-              title="Torna alla pagina archivi"
+              title="Torna alla home"
               style={{
                 filter: "brightness(1.3)",
                 backgroundColor: "rgba(255, 255, 255, 0.1)",

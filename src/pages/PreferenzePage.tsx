@@ -11,7 +11,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { authManager, isSupabaseAvailable } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 
 export default function PreferenzePage() {
   const navigate = useNavigate();
@@ -27,42 +27,34 @@ export default function PreferenzePage() {
   ];
 
   const handleLogout = async () => {
-    const success = await authManager.signOut();
-    if (success) {
-      navigate('/');
-    }
+    // App senza autenticazione - redirect diretto
+    navigate('/');
   };
 
   const handleReset = async () => {
     setIsResetting(true);
     try {
-      if (!isSupabaseAvailable || !authManager.isAuthenticated()) {
-        throw new Error('Supabase non configurato o utente non autenticato');
-      }
-
-      const userId = authManager.getUserId();
-      if (!userId) {
-        throw new Error('ID utente non disponibile');
-      }
+      // Reset dati senza controlli auth (tenant unico)
+      const SERVICE_USER_ID = '00000000-0000-0000-0000-000000000001';
 
       const { supabase } = await import('../lib/supabase');
 
-      // Elimina tutti i vini dell'utente
-      const { error: winesError } = await supabase!
-        .from('giacenze')
+      // Elimina tutti i dati (tenant unico)
+      const { error: winesError } = await supabase
+        .from('vini')
         .delete()
-        .eq('user_id', userId);
+        .neq('id', '');
 
       if (winesError) {
         console.error('Errore nell\'eliminazione vini:', winesError);
         throw winesError;
       }
 
-      // Elimina tutti i fornitori dell'utente
-      const { error: suppliersError } = await supabase!
+      // Elimina tutti i fornitori
+      const { error: suppliersError } = await supabase
         .from('fornitori')
         .delete()
-        .eq('user_id', userId);
+        .neq('id', '');
 
       if (suppliersError) {
         console.error('Errore nell\'eliminazione fornitori:', suppliersError);
@@ -96,9 +88,9 @@ export default function PreferenzePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <button
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/')}
               className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200 hover:scale-105"
-              title="Torna alle impostazioni"
+              title="Torna alla home"
               style={{
                 filter: "brightness(1.3)",
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -175,17 +167,18 @@ export default function PreferenzePage() {
           })}
         </div>
 
-        {isSupabaseAvailable && (
-          <div className="mt-8">
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <LogOut className="h-5 w-5" />
-              DISCONNETTI
-            </button>
-          </div>
-        )}
+        <div className="mt-8">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group"
+          >
+            <div className="flex items-center space-x-3">
+              <LogOut className="w-5 h-5 text-red-600" />
+              <span className="font-medium text-red-600">TORNA ALLA HOME</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-red-400 group-hover:text-red-600 transition-colors" />
+          </button>
+        </div>
 
         <div className="flex-1"></div>
 
@@ -196,7 +189,6 @@ export default function PreferenzePage() {
               Ultimo aggiornamento: {new Date().toLocaleDateString("it-IT")} -{" "}
               {new Date().toLocaleTimeString("it-IT", {
                 hour: "2-digit",
-                minute: "2-digit",
               })}
             </div>
           </div>

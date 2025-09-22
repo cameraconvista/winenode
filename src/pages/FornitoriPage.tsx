@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import AddSupplierModal from "../components/AddSupplierModal";
 import EditSupplierModal from "../components/EditSupplierModal";
 import useSuppliers, { Supplier } from "../hooks/useSuppliers";
-import { supabase, authManager, isSupabaseAvailable } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 
 export default function FornitoriPage() {
   const navigate = useNavigate();
@@ -30,25 +30,16 @@ export default function FornitoriPage() {
   };
 
   const handleResetSuppliers = async () => {
-    if (!isSupabaseAvailable || !authManager.isAuthenticated()) {
-      alert('Errore di autenticazione');
-      return;
-    }
-
-    const userId = authManager.getUserId();
-    if (!userId) {
-      alert('ID utente non disponibile');
-      return;
-    }
+    // Reset fornitori senza controlli auth (tenant unico)
 
     setIsResetting(true);
 
     try {
-      // Elimina tutti i fornitori dell'utente
-      const { error: suppliersError } = await supabase!
+      // Elimina tutti i fornitori (tenant unico)
+      const { error: suppliersError } = await supabase
         .from('fornitori')
         .delete()
-        .eq('user_id', userId);
+        .neq('id', '');
 
       if (suppliersError) {
         console.error('Errore nell\'eliminazione fornitori:', suppliersError);
@@ -81,9 +72,9 @@ export default function FornitoriPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <button
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/')}
               className="p-2 text-white hover:text-cream hover:bg-white/10 rounded-full transition-all duration-200 hover:scale-105"
-              title="Torna alle impostazioni"
+              title="Torna alla home"
               style={{
                 filter: "brightness(1.3)",
                 backgroundColor: "rgba(255, 255, 255, 0.1)",

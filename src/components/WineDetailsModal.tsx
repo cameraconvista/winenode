@@ -52,7 +52,7 @@ export default function WineDetailsModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
-      <div className="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-sm md:max-w-4xl max-h-[95vh] overflow-y-auto">
+      <div className="modal-content bg-gray-900 border border-gray-700 rounded-lg w-full max-w-sm md:max-w-4xl max-h-[95vh] max-h-[95dvh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-700">
           <div>

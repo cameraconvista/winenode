@@ -1,26 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Filter, Settings, Plus, Database, AlertTriangle, X } from 'lucide-react';
+import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import CarrelloModal from '../components/CarrelloModal';
 
-import CategoryTabs from '../components/CategoryTabs';
 import useWines from '../hooks/useWines';
-import { authManager, isSupabaseAvailable, supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
-type WineType = {
-  id: string; // ✅ Cambiato da number a string per UUID compatibility
-  name: string;
-  type?: string;
-  supplier: string;
-  inventory: number;
-  minStock: number;
-  price: string;
-  vintage: string | null;
-  region: string | null;
-  description: string | null;
-};
+import { WineType } from '../hooks/useWines';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -37,10 +25,8 @@ export default function HomePage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = authManager.onAuthStateChange((user) => {
-      setIsAuthenticated(!!user);
-    });
-    return unsubscribe;
+    // App senza autenticazione - sempre autenticato
+    setIsAuthenticated(true);
   }, []);
 
   const [filters, setFilters] = useState({ wineType: '', supplier: '', showAlertsOnly: false });
@@ -154,6 +140,10 @@ export default function HomePage() {
     // TODO: Implementare navigazione a pagina ordine con fornitore preselezionato
   };
 
+  const handleUpdateWine = async (id: string, updates: Partial<WineType>): Promise<void> => {
+    await updateWine(id, updates);
+  };
+
 
 
   if (!isAuthenticated) return (
@@ -202,31 +192,19 @@ export default function HomePage() {
             <div className="flex items-center justify-between w-full pb-1 sm:pb-2">
               {/* Gruppo pulsanti a sinistra */}
               <div className="flex gap-1 sm:gap-2">
-                <button 
-                  onClick={() => navigate('/settings')} 
-                  title="Impostazioni" 
-                  className="text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
-                >
-                  <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
-                <button 
-                  onClick={() => navigate('/settings/archivi')} 
-                  title="Archivi" 
-                  className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center hidden sm:flex"
-                >
-                  <Database className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
+                {/* RIMOSSO: Pulsante Settings - pagina eliminata */}
+                {/* RIMOSSO: Pulsante Archivi - pagina eliminata */}
                 <button 
                   onClick={() => setShowCarrelloModal(true)} 
                   title="Nuovo Ordine" 
-                  className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="text-white hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-2 sm:p-2 transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <span className="text-lg sm:text-xl filter brightness-200 contrast-200">🛒</span>
                 </button>
                 <button 
                   onClick={() => setShowFilterModal(true)} 
                   title="Filtri" 
-                  className={`text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-1.5 sm:p-2 transition-all duration-200 min-h-[36px] min-w-[36px] flex items-center justify-center relative ${
+                  className={`text-cream hover:text-gray-300 hover:bg-gray-700/50 rounded-lg p-2 sm:p-2 transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center relative ${
                     (filters.wineType || filters.supplier) ? 'bg-amber-500/20' : ''
                   }`}
                 >
@@ -245,7 +223,7 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setFilters(prev => ({ ...prev, showAlertsOnly: !prev.showAlertsOnly }))}
-                  className={`flex items-center justify-center px-2 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 min-h-[36px] min-w-[36px] border
+                  className={`flex items-center justify-center px-2 py-2 text-xs font-bold rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px] border
                     ${filters.showAlertsOnly 
                       ? 'bg-black/20 border-red-900/20 text-white hover:bg-black/30' 
                       : 'bg-black/20 border-red-900/20 text-gray-300 hover:bg-black/30'
@@ -260,11 +238,10 @@ export default function HomePage() {
                   <select
                     value={activeTab}
                     onChange={(e) => handleTabChange(e.target.value)}
-                    className="bg-black/20 border border-red-900/20 rounded-lg px-2 py-1.5 text-xs text-cream font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 cursor-pointer hover:bg-black/30 transition-all duration-200 appearance-none min-h-[36px]"
+                    className="bg-black/20 border border-red-900/20 rounded-lg px-2 py-2 text-xs text-cream font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 cursor-pointer hover:bg-black/30 transition-all duration-200 appearance-none min-h-[44px] homepage-select-mobile"
                     style={{ 
                       minWidth: '100px',
-                      maxWidth: '130px',
-                      fontSize: '11px'
+                      maxWidth: '130px'
                     }}
                   >
                     <option value="TUTTI I VINI">TUTTI</option>
@@ -306,12 +283,12 @@ export default function HomePage() {
               {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 'Nessun vino trovato con i filtri selezionati'}
             </p>
           ) : (
-            <div className="space-y-0.5 sm:space-y-1 overflow-x-hidden">
+            <div className="space-y-0.5 sm:space-y-1 overflow-x-hidden w-full">
               {filteredWines.map(wine => (
-                <div key={wine.id} className="bg-black/20 border border-red-900/20 rounded-lg p-1.5 sm:p-2 hover:bg-black/30 transition-all duration-200 overflow-x-hidden">
-                  <div className="flex items-center justify-between gap-2 sm:gap-3 overflow-x-hidden">
-                    <div className="flex-1 cursor-pointer overflow-x-hidden" onClick={() => handleWineClick(wine)}>
-                      <div className="flex flex-col gap-0.5 sm:gap-1 overflow-x-hidden">
+                <div key={wine.id} className="wine-card bg-black/20 border border-red-900/20 rounded-lg p-1.5 sm:p-2 hover:bg-black/30 transition-all duration-200 overflow-x-hidden w-full max-w-full">
+                  <div className="flex items-center justify-between gap-2 sm:gap-3 overflow-x-hidden w-full">
+                    <div className="flex-1 cursor-pointer overflow-x-hidden min-w-0" onClick={() => handleWineClick(wine)}>
+                      <div className="flex flex-col gap-0.5 sm:gap-1 overflow-x-hidden min-w-0">
                         {/* Prima riga: Nome vino tutto maiuscolo */}
                         <div className="text-xs sm:text-sm font-semibold truncate overflow-x-hidden uppercase leading-tight" style={{ color: '#fffbe5' }}>
                           {wine.name}
@@ -339,11 +316,11 @@ export default function HomePage() {
                     {wine.inventory <= wine.minStock && (
                       <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0" />
                     )}
-                    <div className="flex items-center gap-0 flex-shrink-0 ml-auto">
+                    <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
                       <button 
                         onClick={e => { e.stopPropagation(); handleInventoryChange(wine.id, wine.inventory - 1); }} 
                         disabled={wine.inventory <= 0} 
-                        className="w-6 h-6 sm:w-8 sm:h-8 bg-red-500/80 hover:bg-red-600/90 disabled:bg-gray-600/70 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
+                        className="bg-red-500/80 hover:bg-red-600/90 disabled:bg-gray-600/70 rounded-full flex items-center justify-center font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
                       >
                         −
                       </button>
@@ -369,7 +346,7 @@ export default function HomePage() {
                       )}
                       <button 
                         onClick={e => { e.stopPropagation(); handleInventoryChange(wine.id, wine.inventory + 1); }} 
-                        className="w-6 h-6 sm:w-8 sm:h-8 bg-green-500/80 hover:bg-green-600/90 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
+                        className="bg-green-500/80 hover:bg-green-600/90 rounded-full flex items-center justify-center font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
                       >
                         +
                       </button>
@@ -390,7 +367,7 @@ export default function HomePage() {
         suppliers={suppliers}
         wines={wines}
       />
-      <WineDetailsModal wine={selectedWine} open={showWineDetailsModal} onOpenChange={setShowWineDetailsModal} onUpdateWine={updateWine} suppliers={suppliers} />
+      <WineDetailsModal wine={selectedWine} open={showWineDetailsModal} onOpenChange={setShowWineDetailsModal} onUpdateWine={handleUpdateWine} suppliers={suppliers} />
       <CarrelloModal 
         open={showCarrelloModal} 
         onClose={() => setShowCarrelloModal(false)} 

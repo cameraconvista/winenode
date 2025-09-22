@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, authManager } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { useWines } from './useWines';
 
 export interface OrdineDettaglio {
@@ -37,14 +37,15 @@ export function useOrdini() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const userId = authManager.getUserId();
+  // App senza autenticazione - tenant unico
+  const userId = 'default-user'; // User ID fisso per app senza autenticazione
   
   // Hook per aggiornare le giacenze dopo conferma ricezione
   const { refreshWines } = useWines();
 
   // Carica tutti gli ordini dell'utente con nomi fornitori
   const loadOrdini = async (stato?: string) => {
-    if (!supabase || !userId) return;
+    if (!supabase) return;
 
     setIsLoading(true);
     setError(null);
@@ -55,7 +56,7 @@ export function useOrdini() {
       let query = supabase
         .from('ordini')
         .select('*')
-        .eq('user_id', userId)
+        // Nessun filtro user_id (tenant unico)
         .order('data', { ascending: false });
 
       if (stato) {
@@ -133,10 +134,7 @@ export function useOrdini() {
       setIsLoading(true);
       console.log('✅ Conferma ordine diretta - salvataggio:', ordineData);
 
-      const user = supabase.auth.getUser();
-      if (!user) {
-        throw new Error('Utente non autenticato');
-      }
+      // App senza autenticazione - usa userId fisso
 
       // Se abbiamo fornitore_id, usalo; altrimenti cerca l'ID dal nome
       let fornitoreId = ordineData.fornitore_id;
@@ -147,7 +145,7 @@ export function useOrdini() {
           .from('fornitori')
           .select('id')
           .eq('nome', ordineData.fornitore)
-          .eq('user_id', (await user).data.user?.id)
+          // Nessun filtro user_id (tenant unico)
           .single();
         
         if (fornitoreError || !fornitoreData) {
@@ -169,7 +167,7 @@ export function useOrdini() {
 
       // Prepara i dati dell'ordine con la struttura corretta
       const ordine = {
-        user_id: (await user).data.user?.id,
+        user_id: userId, // Usa userId fisso per app senza autenticazione
         fornitore: fornitoreId, // Usa sempre l'ID UUID
         data: new Date().toISOString(), // Campo 'data' invece di 'data_ordine'
         totale: ordineData.totale,      // Campo 'totale' invece di 'totale_euro'
@@ -256,7 +254,7 @@ export function useOrdini() {
         .from('ordini')
         .select('id, user_id, contenuto')
         .eq('id', ordineId)
-        .eq('user_id', userId)
+        // Nessun filtro user_id (tenant unico)
         .single();
 
       if (checkError || !ordineEsistente) {
@@ -282,7 +280,7 @@ export function useOrdini() {
         .from('ordini')
         .update(updateData)
         .eq('id', ordineId)
-        .eq('user_id', userId) // Doppia verifica per sicurezza
+        // Nessun filtro user_id (tenant unico) // Doppia verifica per sicurezza
         .select();
 
       if (error) {
@@ -297,7 +295,7 @@ export function useOrdini() {
             data_ricevimento: new Date().toISOString()
           })
           .eq('id', ordineId)
-          .eq('user_id', userId)
+          // Nessun filtro user_id (tenant unico)
           .select();
         
         if (fallbackError) {

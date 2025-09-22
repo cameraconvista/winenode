@@ -1,6 +1,6 @@
 
 import { connectToGoogleSheet, getSheetData, extractSpreadsheetId } from './googleSheets';
-import { supabase, isSupabaseAvailable } from './supabase';
+import { supabase } from './supabase';
 
 export interface ImportResult {
   success: boolean;
@@ -26,7 +26,7 @@ const CATEGORY_MAPPINGS = {
 };
 
 async function importCategoryFromSheet(doc: any, sheetTitle: string, userId: string) {
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabase || !supabase) {
     throw new Error('Supabase non disponibile');
   }
 
@@ -152,7 +152,7 @@ export function stopAutoSync() {
 }
 
 export async function importFromGoogleSheet(googleSheetUrl: string, userId: string): Promise<ImportResult> {
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabase || !supabase) {
     return {
       success: false,
       message: 'Supabase non disponibile',
@@ -271,7 +271,7 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
 }
 
 export async function saveGoogleSheetLink(userId: string, googleSheetUrl: string) {
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabase || !supabase) {
     throw new Error('Supabase non disponibile');
   }
 
@@ -289,7 +289,7 @@ export async function saveGoogleSheetLink(userId: string, googleSheetUrl: string
 }
 
 export async function getGoogleSheetLink(userId: string): Promise<string | null> {
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabase || !supabase) {
     return null;
   }
 

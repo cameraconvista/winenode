@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Save } from 'lucide-react';
-import { supabase, authManager, isSupabaseAvailable } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { Supplier } from '../hooks/useSuppliers';
 
 interface EditSupplierModalProps {
@@ -38,10 +38,7 @@ export default function EditSupplierModal({
       return;
     }
 
-    if (!isSupabaseAvailable || !authManager.isAuthenticated()) {
-      alert('Errore: Supabase non configurato o utente non autenticato');
-      return;
-    }
+    // App senza autenticazione - aggiornamento diretto
 
     setIsLoading(true);
 

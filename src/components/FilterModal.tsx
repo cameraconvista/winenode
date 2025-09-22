@@ -33,8 +33,8 @@ export default function FilterModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-      <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[75%] max-w-[240px] mx-4">
-        <div className="bg-gray-800/95 border border-gray-600/50 rounded-lg p-2 shadow-2xl backdrop-blur-md">
+      <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[85%] max-w-[280px] mx-4 sm:w-[75%] sm:max-w-[240px]">
+        <div className="modal-content bg-gray-800/95 border border-gray-600/50 rounded-lg p-3 sm:p-2 shadow-2xl backdrop-blur-md">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold text-cream">🔍 Filtri</h3>
             <button

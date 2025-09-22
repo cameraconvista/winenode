@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase, authManager } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export interface Tipologia {
   id: string;
@@ -11,35 +11,22 @@ export function useTipologie() {
   const [tipologie, setTipologie] = useState<Tipologia[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchTipologie = async () => {
+  const loadTipologie = async () => {
+    if (!supabase) return;
+
     try {
       setLoading(true);
 
-      // Valida sessione prima di procedere
-      const isValid = await authManager.validateSession();
-      if (!isValid) {
-        console.log('⚠️ Sessione non valida, tipologie vuote');
-        setTipologie([]);
-        setLoading(false);
-        return;
-      }
+      // Query diretta senza controlli auth (tenant unico)
 
-      const userId = authManager.getUserId();
-      if (!userId) {
-        console.log('⚠️ Utente non autenticato, tipologie vuote');
-        setTipologie([]);
-        setLoading(false);
-        return;
-      }
-
+      const userId = 'default-user'; // User ID fisso per app senza autenticazione
       console.log('🔍 Caricamento tipologie per user:', userId);
 
       // Prima prova a caricare con la colonna colore
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('tipologie')
-        .select('id, nome, colore')
-        .eq('user_id', userId)
-        .order('nome');
+        .select('*')
+        .order('nome', { ascending: true });
 
       // Se la colonna colore non esiste, carica senza di essa
       if (error && error.message.includes('column tipologie.colore does not exist')) {
@@ -47,7 +34,6 @@ export function useTipologie() {
         const result = await supabase
           .from('tipologie')
           .select('id, nome')
-          .eq('user_id', userId)
           .order('nome');
 
         data = result.data;
@@ -103,7 +89,6 @@ export function useTipologie() {
       const { data: existingData, error: checkError } = await supabase
         .from('tipologie')
         .select('id, nome')
-        .eq('user_id', userId)
         .ilike('nome', nome.trim());
 
       if (checkError) {

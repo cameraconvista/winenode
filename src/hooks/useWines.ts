@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, authManager } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export interface WineType {
   id: string;
@@ -24,13 +24,10 @@ const useWines = () => {
   const fetchWines = async () => {
     setLoading(true);
     try {
-      const isValid = await authManager.validateSession();
-      const userId = authManager.getUserId();
-      if (!isValid || !userId) throw new Error('Utente non autenticato');
-
+      // Query diretta DB senza filtri user_id (RLS disabilitata)
       const [{ data: viniData, error: viniError }, { data: giacenzeData, error: giacenzeError }] = await Promise.all([
-        supabase.from('vini').select('*').eq('user_id', userId).order('nome_vino', { ascending: true }),
-        supabase.from('giacenza').select('*').eq('user_id', userId)
+        supabase.from('vini').select('*').order('nome_vino', { ascending: true }),
+        supabase.from('giacenza').select('*')
       ]);
 
       if (viniError) throw viniError;
@@ -73,64 +70,75 @@ const useWines = () => {
   };
 
   const updateWineInventory = async (id: string, newInventory: number): Promise<boolean> => {
-    const userId = authManager.getUserId();
-    if (!userId) return false;
-
     try {
-      const { error } = await supabase.from('giacenza').upsert({
-        vino_id: id,
-        giacenza: newInventory,
-        user_id: userId,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'vino_id,user_id' });
+      // Prima controlla se esiste già un record per questo vino
+      const { data: existingRecord, error: checkError } = await supabase
+        .from('giacenza')
+        .select('id')
+        .eq('vino_id', id)
+        .single();
 
-      if (error) throw error;
+      if (checkError && checkError.code !== 'PGRST116') {
+        // PGRST116 = "The result contains 0 rows" (record non trovato)
+        throw checkError;
+      }
+
+      let result;
+      if (existingRecord) {
+        // Record esiste: aggiorna
+        result = await supabase
+          .from('giacenza')
+          .update({
+            giacenza: newInventory,
+            updated_at: new Date().toISOString()
+          })
+          .eq('vino_id', id);
+      } else {
+        // Record non esiste: inserisci
+        result = await supabase
+          .from('giacenza')
+          .insert({
+            vino_id: id,
+            giacenza: newInventory,
+            user_id: 'default-user', // User ID fisso per app senza autenticazione
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+      }
+
+      if (result.error) throw result.error;
+      
+      // Aggiorna lo stato locale solo se l'operazione DB è riuscita
       setWines(prev => prev.map(w => (w.id === id ? { ...w, inventory: newInventory } : w)));
       return true;
     } catch (err: any) {
-      if (process.env.NODE_ENV === 'development') console.error('Errore aggiornamento giacenza:', err.message);
+      if (import.meta.env.DEV) console.error('Errore aggiornamento giacenza:', err.message);
       return false;
     }
   };
 
   const updateMultipleWineInventories = async (updates: Array<{id: string, newInventory: number}>): Promise<boolean> => {
-    const userId = authManager.getUserId();
-    if (!userId) return false;
-
     try {
+      // Usa la funzione singola per ogni aggiornamento per evitare problemi di constraint
       const updatePromises = updates.map(update => 
-        supabase.from('giacenza').upsert({
-          vino_id: update.id,
-          giacenza: update.newInventory,
-          user_id: userId,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'vino_id,user_id' })
+        updateWineInventory(update.id, update.newInventory)
       );
 
       const results = await Promise.all(updatePromises);
-      const hasErrors = results.some(result => result.error);
+      const hasErrors = results.some(result => !result);
 
       if (hasErrors) {
         return false;
       }
 
-      // Aggiorna lo stato locale
-      setWines(prev => prev.map(wine => {
-        const update = updates.find(u => u.id === wine.id);
-        return update ? { ...wine, inventory: update.newInventory } : wine;
-      }));
-
       return true;
     } catch (err: any) {
-      console.error('❌ Errore aggiornamento giacenze multiple:', err.message);
+      if (import.meta.env.DEV) console.error('❌ Errore aggiornamento giacenze multiple:', err.message);
       return false;
     }
   };
 
   const updateWine = async (id: string, updates: Partial<WineType>): Promise<boolean> => {
-    const userId = authManager.getUserId();
-    if (!userId) return false;
-
     try {
       const updatesDb: any = {
         ...(updates.name !== undefined && { nome_vino: updates.name }),
@@ -145,24 +153,22 @@ const useWines = () => {
       };
 
       if (Object.keys(updatesDb).length > 0) {
-        const { error } = await supabase.from('vini').update(updatesDb).eq('id', id).eq('user_id', userId);
+        const { error } = await supabase.from('vini').update(updatesDb).eq('id', id);
         if (error) throw error;
       }
 
       if (updates.inventory !== undefined) {
-        const { error } = await supabase.from('giacenza').upsert({
-          vino_id: id,
-          giacenza: updates.inventory,
-          user_id: userId,
-          updated_at: new Date().toISOString()
-        });
-        if (error) throw error;
+        // Usa la funzione updateWineInventory per evitare problemi di constraint
+        const inventoryUpdateSuccess = await updateWineInventory(id, updates.inventory);
+        if (!inventoryUpdateSuccess) {
+          throw new Error('Errore aggiornamento giacenza');
+        }
       }
 
       setWines(prev => prev.map(w => (w.id === id ? { ...w, ...updates } : w)));
       return true;
     } catch (err: any) {
-      console.error('❌ Errore aggiornamento vino:', err.message);
+      if (import.meta.env.DEV) console.error('❌ Errore aggiornamento vino:', err.message);
       return false;
     }
   };

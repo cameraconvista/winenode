@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, authManager } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export interface Supplier {
   id: string;
@@ -19,42 +19,20 @@ const useSuppliers = () => {
       setIsLoading(true);
       setError(null);
 
-      const isValid = await authManager.validateSession();
-      if (!isValid) {
-        console.log('⚠️ Sessione non valida, fornitori vuoti');
-        setSuppliers([]);
-        setIsLoading(false);
-        return;
-      }
-
-      const userId = authManager.getUserId();
-      if (!userId) {
-        console.warn('⚠️ Utente non autenticato');
-        setSuppliers([]);
-        setIsLoading(false);
-        return;
-      }
-
-      // Caricamento fornitori
-
-      // Prima prova a caricare dalla tabella fornitori
-      const { data: fornitori, error: fornitoriError } = await supabase!
+      // Query diretta DB senza filtri user_id (RLS disabilitata)
+      const { data: fornitori, error: fornitoriError } = await supabase
         .from('fornitori')
         .select('*')
-        .eq('user_id', userId)
         .order('nome', { ascending: true });
 
       if (fornitoriError) {
         if (fornitoriError.code === '42P01') {
-          await loadSuppliersFromWines(userId);
+          await loadSuppliersFromWines();
         } else {
-          setError(fornitoriError.message);
-          setSuppliers([]);
+          throw fornitoriError;
         }
-      } else if (!fornitori || fornitori.length === 0) {
-        await loadSuppliersFromWines(userId);
       } else {
-        setSuppliers(fornitori);
+        setSuppliers(fornitori || []);
       }
     } catch (error) {
       console.error('❌ Errore inatteso:', error);
@@ -66,7 +44,7 @@ const useSuppliers = () => {
   };
 
   // Funzione di fallback per estrarre fornitori dai vini
-  const loadSuppliersFromWines = async (userId: string) => {
+  const loadSuppliersFromWines = async () => {
     try {
       console.log('🔄 Estrazione fornitori dai vini...');
 
@@ -74,24 +52,21 @@ const useSuppliers = () => {
       let { data: wines, error } = await supabase!
         .from('giacenze')
         .select('supplier')
-        .eq('user_id', userId)
         .not('supplier', 'is', null)
         .not('supplier', 'eq', '');
 
       // Se giacenze è vuota o ha errori, prova dalla tabella 'vini' (nome legacy)
       if (error || !wines || wines.length === 0) {
-        console.log('🔄 Provo dalla tabella vini (legacy)...');
-        const { data: winesLegacy, error: errorLegacy } = await supabase!
+        const { data: viniData, error: viniError } = await supabase
           .from('vini')
           .select('fornitore')
-          .eq('user_id', userId)
           .not('fornitore', 'is', null)
           .not('fornitore', 'eq', '');
 
-        if (errorLegacy) throw errorLegacy;
+        if (viniError) throw viniError;
 
         // Converti il formato da vini a giacenze
-        wines = winesLegacy?.map(wine => ({ supplier: wine.fornitore })) || [];
+        wines = viniData?.map(wine => ({ supplier: wine.fornitore })) || [];
       }
 
       const allSuppliers = wines?.map(wine => wine.supplier?.trim()).filter(Boolean) || [];
@@ -102,8 +77,7 @@ const useSuppliers = () => {
       if (uniqueSuppliers.length > 0) {
         // Inserisci i fornitori nella tabella fornitori
         const fornitoriData = uniqueSuppliers.map(nome => ({
-          nome: nome.toUpperCase(),
-          user_id: userId
+          nome: nome.toUpperCase()
         }));
 
         console.log('💾 Inserimento fornitori in tabella:', fornitoriData);
@@ -119,27 +93,26 @@ const useSuppliers = () => {
           // Se l'errore è di duplicato, prova a recuperare i fornitori esistenti
           if (insertError.code === '23505') {
             console.log('🔄 Fornitori già esistenti, recupero dalla tabella...');
-            const { data: existingFornitori, error: fetchError } = await supabase!
+            const { data: existingFornitori, error: selectError } = await supabase
               .from('fornitori')
               .select('*')
-              .eq('user_id', userId)
               .order('nome', { ascending: true });
 
-            if (!fetchError && existingFornitori) {
+            if (!selectError && existingFornitori) {
               setSuppliers(existingFornitori);
               return;
             }
           }
 
           // Crea oggetti Supplier temporanei come fallback
-          const tempSuppliers: Supplier[] = uniqueSuppliers.map((supplierName, index) => ({
+          const fornitoriWithIds = uniqueSuppliers.map((nome, index) => ({
             id: `temp-${index}`,
-            nome: supplierName.toUpperCase(),
-            user_id: userId,
+            nome: nome.toUpperCase(),
+            user_id: 'service-user',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           }));
-          setSuppliers(tempSuppliers);
+          setSuppliers(fornitoriWithIds);
         } else {
           console.log('✅ Fornitori inseriti nella tabella:', insertedFornitori?.length || 0);
           setSuppliers(insertedFornitori || []);
@@ -164,22 +137,10 @@ const useSuppliers = () => {
 
   const addSupplier = async (nome: string): Promise<boolean> => {
     try {
-      if (!authManager.isAuthenticated()) {
-        console.error('❌ Utente non autenticato');
-        return false;
-      }
-
-      const userId = authManager.getUserId();
-      if (!userId) {
-        console.error('❌ ID utente non disponibile');
-        return false;
-      }
-
-      const { data, error } = await supabase!
+      const { data, error } = await supabase
         .from('fornitori')
         .insert({
-          nome: nome.toUpperCase(),
-          user_id: userId
+          nome: nome.toUpperCase()
         })
         .select()
         .single();
@@ -200,12 +161,7 @@ const useSuppliers = () => {
 
   const updateSupplier = async (id: string, nome: string): Promise<boolean> => {
     try {
-      if (!authManager.isAuthenticated()) {
-        console.error('❌ Utente non autenticato');
-        return false;
-      }
-
-      const { data, error } = await supabase!
+      const { data, error } = await supabase
         .from('fornitori')
         .update({
           nome: nome.toUpperCase(),

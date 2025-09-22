@@ -1,0 +1,58 @@
+{
+  "operation": "CONSOLIDAMENTO DEFINITIVO PAGINA ARCHIVI",
+  "status": "COMPLETATO",
+  "timeline": {
+    "analysis": "2025-09-22T03:12:29+02:00",
+    "removal": "2025-09-22T03:21:18+02:00", 
+    "consolidation": "2025-09-22T03:24:12+02:00"
+  },
+  "summary": {
+    "description": "Pagina /settings/archivi eliminata definitivamente dall'app WineNode",
+    "files_removed": 6,
+    "space_freed": "51KB",
+    "build_status": "SUCCESS",
+    "app_status": "FUNZIONANTE"
+  },
+  "files_eliminated": [
+    "ARCHIVIATI/pages/ArchiviPage.tsx",
+    "ARCHIVIATI/components/ImportaVini.tsx",
+    "ARCHIVIATI/components/CategoryTabs.tsx", 
+    "ARCHIVIATI/components/SearchAndFilters.tsx",
+    "ARCHIVIATI/components/WineTableHeader.tsx",
+    "ARCHIVIATI/components/WineTableRow.tsx"
+  ],
+  "routes_modified": [
+    {
+      "path": "/settings/archivi",
+      "action": "redirect to /settings",
+      "file": "src/App.tsx:29"
+    },
+    {
+      "path": "/settings/archivi/importa", 
+      "action": "redirect to /settings",
+      "file": "src/App.tsx:30"
+    },
+    {
+      "path": "/settings/archivi/manuale",
+      "action": "redirect to /settings", 
+      "file": "src/App.tsx:31"
+    }
+  ],
+  "navigation_updated": [
+    "src/pages/HomePage.tsx:211 - Link Archivi rimosso",
+    "src/pages/SettingsPage.tsx:387 - Redirect database → /settings",
+    "src/pages/ManualWineInsertPage.tsx:232 - Redirect → /settings",
+    "src/pages/ImportaPage.tsx:14 - Redirect → /settings",
+    "src/pages/TabellaViniPage.tsx:98 - Redirect → /settings"
+  ],
+  "preserved_components": [
+    "src/hooks/useWines.ts - MANTENUTO per altre funzionalità",
+    "Database Supabase - INTATTO (vini, giacenza, fornitori)"
+  ],
+  "final_state": {
+    "homepage_status": "OPERATIVA - unica interfaccia gestione vini",
+    "database_status": "INTATTO",
+    "build_status": "SUCCESS",
+    "reversibility": "LIMITATA - solo da backup"
+  }
+}

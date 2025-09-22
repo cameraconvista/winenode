@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Papa from 'papaparse';
-import { supabase, authManager } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { WineRow } from '../lib/constants';
 import { parseCsvWineRows, buildEmptyRows } from '../utils/wineUtils';
 
@@ -75,16 +75,15 @@ export function useWineData() {
 
   const upsertToSupabase = async (wine: WineRow, fallbackTipologia?: string) => {
     try {
-      if (!authManager.isAuthenticated()) return;
-      const userId = authManager.getUserId();
-      if (!userId || !wine.nomeVino?.trim()) return;
+      // App senza autenticazione - inserimento diretto
+      if (!wine.nomeVino?.trim()) return;
 
       const nome = wine.nomeVino.trim();
       const { data: existing } = await supabase
         .from('vini')
         .select('id')
         .eq('nome_vino', nome)
-        .eq('user_id', userId)
+        // Nessun filtro user_id (tenant unico)
         .single();
 
       const wineData = {
@@ -98,7 +97,7 @@ export function useWineData() {
       };
 
       const query = existing
-        ? supabase.from('vini').update(wineData).eq('id', existing.id).eq('user_id', userId)
+        ? supabase.from('vini').update(wineData).eq('id', existing.id)
         : supabase.from('vini').insert(wineData);
 
       const { data: wineResult, error } = await query.select().single();
@@ -119,7 +118,7 @@ export function useWineData() {
             updated_at: new Date().toISOString()
           })
           .eq('vino_id', wineId)
-          .eq('user_id', userId);
+          // Nessun filtro user_id (tenant unico);
 
         if (giacenzaError) {
           console.error('Errore upsert giacenza:', giacenzaError);
@@ -147,8 +146,7 @@ export function useWineData() {
         if (wine.nomeVino.trim()) await upsertToSupabase(wine, categoria);
       }
 
-      const userId = authManager.getUserId();
-      if (!userId) return;
+      // Query diretta senza user_id (tenant unico)
 
       // Ottieni le giacenze dalla tabella giacenza con JOIN ai vini
       const { data: dbGiacenze } = await supabase
@@ -157,7 +155,7 @@ export function useWineData() {
           giacenzaa,
           vini!inner(nome_vino)
         `)
-        .eq('user_id', userId)
+        // Nessun filtro user_id (tenant unico)
         .eq('vini.tipologia', categoria)
         .eq('vini.user_id', userId);
 

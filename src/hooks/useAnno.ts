@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, authManager } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export const useAnno = () => {
   const [anni, setAnni] = useState<string[]>([]);
@@ -8,13 +8,10 @@ export const useAnno = () => {
   const fetchAnni = async () => {
     setLoading(true);
     try {
-      const userId = authManager.getUserId();
-      if (!userId) return;
-
+      // Query diretta senza filtri user_id (tenant unico)
       const { data, error } = await supabase
         .from('vini')
         .select('anno')
-        .eq('user_id', userId)
         .not('anno', 'is', null);
 
       if (error) throw error;

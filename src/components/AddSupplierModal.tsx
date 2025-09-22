@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, User, Save } from 'lucide-react';
-import { supabase, authManager, isSupabaseAvailable } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 interface AddSupplierModalProps {
   isOpen: boolean;
@@ -24,24 +24,16 @@ export default function AddSupplierModal({
       return;
     }
 
-    if (!isSupabaseAvailable || !authManager.isAuthenticated()) {
-      alert('Errore: Supabase non configurato o utente non autenticato');
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const userId = authManager.getUserId();
-      if (!userId) {
-        throw new Error('ID utente non disponibile');
-      }
+      // App senza autenticazione - inserimento diretto
 
       const { error } = await supabase
         .from('fornitori')
         .insert({
-          nome: nome.trim(),
-          user_id: userId
+          nome: nome.trim()
+          // user_id usa DEFAULT dal database (service-user)
         });
 
       if (error) throw error;

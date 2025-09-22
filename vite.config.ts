@@ -5,29 +5,15 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
-    port: 5000,
-    strictPort: false,
-    hmr: {
-      port: 5173,
-      clientPort: 5173
-    },
-    cors: true,
-    allowedHosts: 'all',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
-    }
+    host: 'localhost',
+    port: 3000,
+    open: true,
+    cors: true
   },
   resolve: {
     alias: {
       '@': '/src'
     }
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: true
   },
   esbuild: {
     logOverride: {
@@ -38,7 +24,17 @@ export default defineConfig({
   },
   base: './',
   optimizeDeps: {
-    include: ['react', 'react-dom', '@supabase/supabase-js']
+    include: ['react', 'react-dom', '@supabase/supabase-js', 'react-router-dom', 'react-router']
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+    rollupOptions: {
+      external: ['google-auth-library', 'gcp-metadata', 'child_process', 'fs', 'os', 'path']
+    },
+    commonjsOptions: {
+      include: [/node_modules/]
+    }
   },
   define: {
     global: 'globalThis',
