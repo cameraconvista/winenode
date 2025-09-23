@@ -1,5 +1,14 @@
 # 📋 CHANGELOG - WineNode
 
+## [2025-09-23 16:17] Step 5 — Conversione WebP + Audit Finale
+- **WebP strategico**: Conversione solo asset con reale beneficio (logo1.png: 56K → 25K, -55%)
+- **Fallback sicuro**: `<picture>` element con PNG sempre disponibile per browser legacy
+- **Componenti aggiornati**: HomePage.tsx con WebP + fallback per logo header
+- **Asset analysis**: rotate-phone.png e logoapp.png confermati non referenziati nel runtime
+- **Performance**: +55% caricamento logo principale, supporto browser 100%
+- **Zero regressioni**: build stabile 4.17s, toolbar/PWA icons invariati
+- **Report completo**: DOCS/REPORT_STEP5_WEBP_AUDIT.md
+
 ## [2025-09-23 16:04] Step 4 — Ottimizzazione asset & Pulizia definitiva
 - **Compressione PNG attivi** (near-lossless) con pngquant quality 75-90%:
   - logoapp.png: 272K → 186K (-32%, -86KB)  

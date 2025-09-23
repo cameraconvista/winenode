@@ -181,10 +181,14 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto px-3 sm:px-4">
           <div className="logo-wrap">
             {/* Logo brand fuori dalla status bar */}
-            <img 
-              src="/logo1.png" 
-              alt="WINENODE" 
-            />
+            <picture>
+              <source type="image/webp" srcSet="/logo1.webp" />
+              <img 
+                src="/logo1.png" 
+                alt="WINENODE"
+                loading="eager"
+              />
+            </picture>
           </div>
         </div>
       </header>
