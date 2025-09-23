@@ -26,7 +26,7 @@
   font-weight: normal; /* SOLO font-weight da grassetto a regolare */
 }
 
-/* Campanella dentro i box vino con colore brand scuro - OTTIMIZZATO MOBILE */
+/* Campanella dentro i box vino con colore brand scuro - FORZATO IN TUTTI GLI STATI */
 .wine-item .alert-icon, 
 .card-vino .alert-icon,
 .alert-icon,
@@ -35,15 +35,33 @@ div[class*="alert"],
 .alert-triangle {
   width: 18px !important;
   height: 18px !important;
-  background: var(--brand-primary) !important; /* RGB per compatibilità mobile */
-  background: #541111 !important; /* fallback hex */
+  background: #541111 !important; /* FORZATO: colore brand in tutti gli stati */
   -webkit-mask: url("/allert.png") center/contain no-repeat !important;
   mask: url("/allert.png") center/contain no-repeat !important;
   display: inline-block !important;
   color: transparent !important;
-  fill: var(--brand-primary) !important;
-  stroke: var(--brand-primary) !important;
+  fill: #541111 !important;
+  stroke: #541111 !important;
   /* Mantieni la stessa posizione/margini del vecchio simbolo */
+}
+
+/* Forza #541111 anche negli stati interattivi */
+.wine-item .alert-icon:hover,
+.wine-item .alert-icon:active,
+.wine-item .alert-icon:focus,
+.card-vino .alert-icon:hover,
+.card-vino .alert-icon:active,
+.card-vino .alert-icon:focus,
+.alert-icon:hover,
+.alert-icon:active,
+.alert-icon:focus,
+span[class*="alert"]:hover,
+span[class*="alert"]:active,
+span[class*="alert"]:focus {
+  background: #541111 !important;
+  fill: #541111 !important;
+  stroke: #541111 !important;
+  color: transparent !important;
 }
 
 /* Disattiva eventuale triangolo precedente */

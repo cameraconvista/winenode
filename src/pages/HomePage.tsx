@@ -253,12 +253,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     {wine.inventory <= wine.minStock && (
-                      <span className="alert-icon flex-shrink-0" style={{ 
-                        width: '18px', 
-                        height: '18px', 
-                        background: 'url("/allert.png") center/contain no-repeat',
-                        display: 'inline-block'
-                      }}></span>
+                      <span className="alert-icon flex-shrink-0"></span>
                     )}
                     <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
                       <button 
