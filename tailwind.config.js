@@ -15,6 +15,7 @@ export default {
         'app-surface-hover': 'var(--surface-hover)',
         'app-border': 'var(--border)',
         'app-muted': 'var(--muted)',
+        'app-muted-text': 'var(--muted-text)',
         'app-toolbar-bg': 'var(--toolbar-bg)',
         'app-accent': 'var(--accent)',
         'app-danger': 'var(--danger)',

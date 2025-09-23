@@ -30,6 +30,7 @@ input[inputMode="decimal"] {
   --surface-hover: #ffeaa0; /* Hover / liste alternate */
   --border: #e2d6aa;       /* Divider, outline soft */
   --muted: #7a4a30;        /* Testo secondario/label su chiaro */
+  --muted-text: #9b9b9b;   /* grigio chiaro leggibile per produttore/anno */
   --toolbar-bg: #fff7d1;   /* NUOVO: toolbar bottom, leggermente distinta */
 
   /* Stato/azioni (mantieni brand attuale) */
@@ -83,31 +84,33 @@ input[inputMode="decimal"] {
   }
 }
 
-/* === TOOLBAR BASSA — STILE "APP" COERENTE === */
+/* === TOOLBAR IN BASSO — PIÙ IN ALTO + ICONE UNIFORMI === */
 .bottom-toolbar {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: calc(env(safe-area-inset-bottom) + 6px); /* ↑ sollevata */
   z-index: 50;
   background: var(--bg);
   border-top: 1px solid var(--border);
-  padding: 8px calc(12px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  padding: 8px 12px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+  border-radius: 14px 14px 0 0; /* leggero distacco visivo */
 }
 
+/* Pulsanti stile app coerente */
 .bottom-toolbar .nav-btn {
   height: 56px;
+  background: transparent;
+  border: none;
+  outline: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: transparent;
-  border: none;
-  outline: none;
   color: var(--text); /* #541111 */
   cursor: pointer;
   position: relative;
@@ -116,11 +119,12 @@ input[inputMode="decimal"] {
 .bottom-toolbar .nav-btn .icon {
   width: 24px;
   height: 24px;
+  background: var(--text);
 }
 
 .bottom-toolbar .nav-btn .label {
   font-size: 12px;
-  line-height: 1;
+  line-height: 1.05;
   color: var(--text);
 }
 
@@ -129,37 +133,54 @@ input[inputMode="decimal"] {
   border-radius: 10px;
 }
 
-/* "Ordine" = logo brand */
+/* ORDINE → icona carrello.png */
 .bottom-toolbar .btn-ordine .icon {
-  background: url("/logo1.png") center/contain no-repeat;
+  -webkit-mask: url("/carrello.png") center/contain no-repeat;
+  mask: url("/carrello.png") center/contain no-repeat;
+  background: var(--text);
 }
 
-/* "Filtri" come riferimento estetico; nessun grigio/contorno */
+/* FILTRI (se esiste png/svg) — stesso colore */
 .bottom-toolbar .btn-filtri .icon {
-  filter: none;
+  /* Manteniamo l'icona Lucide React ma con colore uniforme */
+  background: transparent;
   color: var(--text);
 }
 
-/* "Allert" (ex Avvisi): icona campanella + label "Allert" */
+/* ALLERT (ex Avvisi) → campanella allert.png + label "Allert" */
 .bottom-toolbar .btn-allert .icon {
-  background: url("/allert.png") center/contain no-repeat;
+  -webkit-mask: url("/allert.png") center/contain no-repeat;
+  mask: url("/allert.png") center/contain no-repeat;
+  background: var(--text);
 }
 
-/* "TUTTI": solo testo + chevron, senza sfondo */
+/* TUTTI VINI → due righe + piccola freccia SU sopra al testo, nessuno sfondo */
 .bottom-toolbar .btn-tutti {
   background: transparent;
 }
 
 .bottom-toolbar .btn-tutti .label {
   font-weight: 600;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.05;
 }
 
-.bottom-toolbar .btn-tutti .chevron {
+.bottom-toolbar .btn-tutti .label::before {
+  content: "";
+  display: block;
+  margin: 0 auto 3px auto;
+  width: 8px;
+  height: 8px;
   border: solid var(--text);
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 3px;
-  transform: rotate(45deg) translateY(-1px);
+  border-width: 2px 2px 0 0;
+  transform: rotate(-45deg); /* freccia su */
+}
+
+@media (max-width: 480px) {
+  .bottom-toolbar .btn-tutti .label {
+    font-size: 11px;
+  }
 }
 
 /* Badge notifiche */
@@ -174,28 +195,55 @@ input[inputMode="decimal"] {
   border: 1px solid var(--bg);
 }
 
-/* === SOSTITUZIONE SIMBOLI ALERT NEI BOX VINO === */
+/* === LISTA VINI — TESTI GRIGI + CAMPANELLA #541111 === */
+.wine-item .producer, 
+.wine-item .vintage,
+.card-vino .producer, 
+.card-vino .vintage {
+  color: var(--muted-text);
+}
+
+/* Campanella dentro i box vino con colore brand scuro */
 .wine-item .alert-icon, 
 .card-vino .alert-icon,
 .alert-icon {
   width: 18px;
   height: 18px;
-  background: url("/allert.png") center/contain no-repeat;
-  color: transparent;         /* se prima era un'icona font */
-  fill: none;
-  stroke: none;   /* se SVG inline */
+  background: var(--text);
+  -webkit-mask: url("/allert.png") center/contain no-repeat;
+  mask: url("/allert.png") center/contain no-repeat;
   display: inline-block;
   /* Mantieni la stessa posizione/margini del vecchio simbolo */
 }
 
-/* === TOPBAR PULITO === */
-.header, 
-.app-topbar {
-  border-bottom: none !important;
-  box-shadow: none !important;
-  background: var(--bg);
+/* Disattiva eventuale triangolo precedente */
+.wine-item .alert-triangle, 
+.card-vino .alert-triangle {
+  display: none !important;
 }
 
+/* === LOGO IN ALTO — FUORI DALLA STATUS BAR === */
+.app-topbar {
+  background: var(--bg);
+  border-bottom: none;
+  box-shadow: none;
+}
+
+/* Sposta il contenuto del logo sotto la status bar senza cambiare l'altezza del container */
+.app-topbar .logo-wrap {
+  padding-top: calc(env(safe-area-inset-top) + 6px); /* ↓ spinge sotto la status bar */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.app-topbar .logo-wrap img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Fallback per compatibilità */
 .app-topbar .logo {
   margin: 0 auto;
   height: 28px;
@@ -209,11 +257,25 @@ input[inputMode="decimal"] {
 }
 
 /* === EVITA SOVRAPPOSIZIONI CON LA LISTA === */
+/* Aumenta lo spazio in fondo alla lista per non essere coperta */
 .lista-vini-scroll, 
 .page-content-scroll, 
 .main-scroll,
 .homepage-container main {
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  padding-bottom: 110px; /* toolbar height + margine sicurezza */
+}
+
+/* === NIENTE SCROLLBAR DESTRA (conservando lo scroll) === */
+.lista-vini-scroll, 
+.page-content-scroll, 
+.main-scroll {
+  scrollbar-width: none;
+}
+
+.lista-vini-scroll::-webkit-scrollbar,
+.page-content-scroll::-webkit-scrollbar,
+.main-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 /* === OTTIMIZZAZIONI MOBILE/TABLET SPECIFICHE === */

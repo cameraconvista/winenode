@@ -177,17 +177,14 @@ export default function HomePage() {
       width: '100vw',
       maxWidth: '100%'
     }}>
-      <header className="app-topbar flex-shrink-0 fixed top-0 left-0 right-0 z-[100]" style={{ background: 'var(--bg)', border: 'none', boxShadow: 'none' }}>
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-2">
-          <div className="flex justify-center">
-            {/* Logo brand pulito */}
-            <div className="logo" style={{ margin: '0 auto', height: '28px', display: 'block' }}>
-              <img 
-                src="/logo1.png" 
-                alt="WINENODE" 
-                style={{ height: '100%', width: 'auto', objectFit: 'contain' }}
-              />
-            </div>
+      <header className="app-topbar flex-shrink-0 fixed top-0 left-0 right-0 z-[100]">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4">
+          <div className="logo-wrap">
+            {/* Logo brand fuori dalla status bar */}
+            <img 
+              src="/logo1.png" 
+              alt="WINENODE" 
+            />
           </div>
         </div>
       </header>
@@ -223,17 +220,17 @@ export default function HomePage() {
                           {wine.name}
                         </div>
                         {/* Seconda riga: Anno · Produttore · Fornitore € Prezzo */}
-                        <div className="text-xs text-app-muted truncate overflow-x-hidden leading-tight" style={{ fontSize: '10px' }}>
+                        <div className="text-xs truncate overflow-x-hidden leading-tight" style={{ fontSize: '10px' }}>
                           {wine.vintage && (
                             <>
-                              <span className="text-app-muted font-medium">{wine.vintage}</span>
-                              <span className="mx-2">·</span>
+                              <span className="vintage font-medium" style={{ color: 'var(--muted-text)' }}>{wine.vintage}</span>
+                              <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
                             </>
                           )}
                           {wine.description && (
                             <>
-                              <span className="text-app-muted font-medium">{wine.description}</span>
-                              <span className="mx-2">·</span>
+                              <span className="producer font-medium" style={{ color: 'var(--muted-text)' }}>{wine.description}</span>
+                              <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
                             </>
                           )}
                           {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
@@ -293,7 +290,7 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* TOOLBAR FISSA IN BASSO - STILE APP COERENTE */}
+      {/* TOOLBAR FISSA IN BASSO - UI POLISH v5 */}
       <footer className="bottom-toolbar">
         <button 
           onClick={() => setShowCarrelloModal(true)} 
@@ -333,16 +330,9 @@ export default function HomePage() {
           className="nav-btn btn-tutti"
           title="Seleziona categoria"
         >
-          <span className="label" style={{ fontWeight: 600 }}>
-            {activeTab === 'TUTTI I VINI' ? 'TUTTI' : 
-             activeTab === 'BOLLICINE ITALIANE' ? 'Bollicine IT' :
-             activeTab === 'BOLLICINE FRANCESI' ? 'Bollicine FR' :
-             activeTab === 'BIANCHI' ? 'Bianchi' :
-             activeTab === 'ROSSI' ? 'Rossi' :
-             activeTab === 'ROSATI' ? 'Rosati' :
-             activeTab === 'VINI DOLCI' ? 'Vini Dolci' : 'TUTTI'}
+          <span className="label">
+            TUTTI<br/>VINI
           </span>
-          <span className="chevron"></span>
           <select
             value={activeTab}
             onChange={(e) => handleTabChange(e.target.value)}
