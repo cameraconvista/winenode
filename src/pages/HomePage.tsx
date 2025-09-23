@@ -177,15 +177,17 @@ export default function HomePage() {
       width: '100vw',
       maxWidth: '100%'
     }}>
-      <header className="border-b border-app-border bg-app-surface/80 backdrop-blur-sm flex-shrink-0 fixed top-0 left-0 right-0 z-[100]">
+      <header className="app-topbar flex-shrink-0 fixed top-0 left-0 right-0 z-[100]" style={{ background: 'var(--bg)', border: 'none', boxShadow: 'none' }}>
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-2">
           <div className="flex justify-center">
-            {/* Logo centrato - ottimizzato per mobile/tablet */}
-            <img 
-              src="/logo 2 CCV.png" 
-              alt="WINENODE" 
-              className="h-10 sm:h-12 w-auto object-contain" 
-            />
+            {/* Logo brand pulito */}
+            <div className="logo" style={{ margin: '0 auto', height: '28px', display: 'block' }}>
+              <img 
+                src="/logo1.png" 
+                alt="WINENODE" 
+                style={{ height: '100%', width: 'auto', objectFit: 'contain' }}
+              />
+            </div>
           </div>
         </div>
       </header>
@@ -241,7 +243,12 @@ export default function HomePage() {
                       </div>
                     </div>
                     {wine.inventory <= wine.minStock && (
-                      <AlertTriangle className="w-4 h-4 text-app-warn flex-shrink-0" />
+                      <span className="alert-icon flex-shrink-0" style={{ 
+                        width: '18px', 
+                        height: '18px', 
+                        background: 'url("/allert.png") center/contain no-repeat',
+                        display: 'inline-block'
+                      }}></span>
                     )}
                     <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
                       <button 
@@ -286,25 +293,24 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* TOOLBAR FISSA IN BASSO - MOBILE/TABLET OPTIMIZED */}
+      {/* TOOLBAR FISSA IN BASSO - STILE APP COERENTE */}
       <footer className="bottom-toolbar">
         <button 
           onClick={() => setShowCarrelloModal(true)} 
-          className="nav-btn"
+          className="nav-btn btn-ordine"
           title="Nuovo Ordine"
         >
-          <span className="emoji">🛒</span>
-          <span>Ordine</span>
+          <div className="icon"></div>
+          <span className="label">Ordine</span>
         </button>
         
         <button 
           onClick={() => setShowFilterModal(true)} 
-          className="nav-btn"
+          className="nav-btn btn-filtri"
           title="Filtri"
-          style={{ position: 'relative' }}
         >
-          <Filter size={20} />
-          <span>Filtri</span>
+          <Filter className="icon" size={24} />
+          <span className="label">Filtri</span>
           {(filters.wineType || filters.supplier) && (
             <div className="badge"></div>
           )}
@@ -312,30 +318,53 @@ export default function HomePage() {
         
         <button
           onClick={() => setFilters(prev => ({ ...prev, showAlertsOnly: !prev.showAlertsOnly }))}
-          className="nav-btn"
+          className="nav-btn btn-allert"
           title="Mostra solo vini in esaurimento"
           style={{ 
             background: filters.showAlertsOnly ? 'var(--surface-hover)' : 'transparent'
           }}
         >
-          <span className="emoji">⚠️</span>
-          <span>Avvisi</span>
+          <div className="icon"></div>
+          <span className="label">Allert</span>
         </button>
         
-        <select
-          value={activeTab}
-          onChange={(e) => handleTabChange(e.target.value)}
-          className="nav-btn"
+        <button
+          onClick={() => {/* Toggle dropdown logic */}}
+          className="nav-btn btn-tutti"
           title="Seleziona categoria"
         >
-          <option value="TUTTI I VINI">TUTTI</option>
-          <option value="BOLLICINE ITALIANE">Bollicine IT</option>
-          <option value="BOLLICINE FRANCESI">Bollicine FR</option>
-          <option value="BIANCHI">Bianchi</option>
-          <option value="ROSSI">Rossi</option>
-          <option value="ROSATI">Rosati</option>
-          <option value="VINI DOLCI">Vini Dolci</option>
-        </select>
+          <span className="label" style={{ fontWeight: 600 }}>
+            {activeTab === 'TUTTI I VINI' ? 'TUTTI' : 
+             activeTab === 'BOLLICINE ITALIANE' ? 'Bollicine IT' :
+             activeTab === 'BOLLICINE FRANCESI' ? 'Bollicine FR' :
+             activeTab === 'BIANCHI' ? 'Bianchi' :
+             activeTab === 'ROSSI' ? 'Rossi' :
+             activeTab === 'ROSATI' ? 'Rosati' :
+             activeTab === 'VINI DOLCI' ? 'Vini Dolci' : 'TUTTI'}
+          </span>
+          <span className="chevron"></span>
+          <select
+            value={activeTab}
+            onChange={(e) => handleTabChange(e.target.value)}
+            style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              width: '100%', 
+              height: '100%', 
+              opacity: 0, 
+              cursor: 'pointer' 
+            }}
+          >
+            <option value="TUTTI I VINI">TUTTI</option>
+            <option value="BOLLICINE ITALIANE">Bollicine IT</option>
+            <option value="BOLLICINE FRANCESI">Bollicine FR</option>
+            <option value="BIANCHI">Bianchi</option>
+            <option value="ROSSI">Rossi</option>
+            <option value="ROSATI">Rosati</option>
+            <option value="VINI DOLCI">Vini Dolci</option>
+          </select>
+        </button>
       </footer>
 
       <FilterModal 

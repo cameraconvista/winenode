@@ -62,7 +62,12 @@ export default function WineCard({ wine, onUpdateInventory, onWineClick }: WineC
             {wine.inventory}
           </span>
           {isLowStock && (
-            <AlertTriangle className="h-3 w-3 text-app-warn flex-shrink-0" />
+            <span className="alert-icon flex-shrink-0" style={{ 
+              width: '18px', 
+              height: '18px', 
+              background: 'url("/allert.png") center/contain no-repeat',
+              display: 'inline-block'
+            }}></span>
           )}
         </div>
       </div>
