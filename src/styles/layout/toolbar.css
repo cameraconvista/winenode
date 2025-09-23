@@ -58,13 +58,13 @@
   background: var(--text);
 }
 
-/* FILTRI → icona filtro.png (ridotta -15% per uniformità) */
+/* FILTRI → icona filtro.png (ridotta ulteriormente -15%) */
 .bottom-toolbar .btn-filtri .icon {
   -webkit-mask: url("/filtro.png") center/contain no-repeat;
   mask: url("/filtro.png") center/contain no-repeat;
   background: var(--text);
-  width: 20px !important; /* -15% da 24px = 20.4px arrotondato */
-  height: 20px !important;
+  width: 17px !important; /* -15% da 20px = 17px */
+  height: 17px !important;
   opacity: 1 !important; /* mantieni visibilità ottimale */
 }
 
@@ -75,43 +75,52 @@
   background: var(--text);
 }
 
-/* TUTTI → CARET A SINISTRA + LABEL DINAMICA VISIBILE */
+/* TUTTI → CHIP BIANCO CON CARET A SINISTRA + LABEL DINAMICA */
 .bottom-toolbar .btn-tutti {
-  background: transparent;
+  background: #FFFFFF !important; /* Sfondo bianco pieno */
+  border: 1px solid var(--border) !important; /* Bordo soft coerente */
+  border-radius: 12px !important; /* Raggio arrotondato stile app */
   position: relative;
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 4px !important;
+  padding: 4px 8px !important; /* Padding ridotto per chip più compatto */
+  min-width: 36px !important;
+  min-height: 28px !important; /* Altezza ridotta ma proporzionata */
+  box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important; /* Ombra leggera */
 }
 
-/* Caret a sinistra della label */
+/* Nessuna freccia - solo chip bianco con testo */
 .bottom-toolbar .btn-tutti::before {
-  content: "";
-  display: block;
-  width: 8px;
-  height: 8px;
-  border: solid var(--text);
-  border-width: 2px 2px 0 0;
-  transform: rotate(-45deg);
-  background: transparent;
-  margin-right: 2px;
-  flex-shrink: 0;
+  display: none !important;
 }
 
-/* Label dinamica visibile (testo più grande) */
+/* Label dinamica ottimizzata per chip compatto */
 .bottom-toolbar .btn-tutti .label {
   display: block !important;
-  font-size: 12px !important; /* aumentato da 10px per leggibilità */
+  font-size: 10px !important; /* Ridotto per chip più piccolo */
   line-height: 1.1 !important;
-  color: var(--text) !important;
-  text-align: left !important;
+  color: #541111 !important; /* Colore brand su sfondo bianco */
+  text-align: center !important;
   font-weight: 600 !important;
-  max-width: 50px !important;
+  width: 100% !important; /* Occupa tutto lo spazio disponibile */
+  max-width: 45px !important; /* Ridotto per chip compatto */
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+}
+
+/* Stati di feedback per chip bianco (solo ombra/contorno) */
+.bottom-toolbar .btn-tutti:hover {
+  box-shadow: 0 2px 6px rgba(84, 17, 17, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.bottom-toolbar .btn-tutti:active {
+  box-shadow: 0 1px 2px rgba(84, 17, 17, 0.2) !important;
+  transform: translateY(0) !important;
 }
 
 /* Badge notifiche */
