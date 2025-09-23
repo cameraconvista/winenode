@@ -10,6 +10,7 @@
 
 /* Components - Wine Cards */
 @import './styles/components/wine-cards.css';
+@import './styles/components/wheel-picker.css';
 
 /* Utils - Layout e Scrollbar */
 @import './styles/utils/layout.css';

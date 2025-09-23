@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import CarrelloModal from '../components/CarrelloModal';
+import InventoryWheelPicker from '../components/InventoryWheelPicker';
 
 import useWines from '../hooks/useWines';
 import { useAutoSizeText } from '../hooks/useAutoSizeText';
@@ -35,11 +36,10 @@ export default function HomePage() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showWineDetailsModal, setShowWineDetailsModal] = useState(false);
   const [showCarrelloModal, setShowCarrelloModal] = useState(false);
-  const [editingInventoryId, setEditingInventoryId] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState('');
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showOrdineModal, setShowOrdineModal] = useState(false);
+  const [activePickerId, setActivePickerId] = useState<string | null>(null);
 
   // Auto-sizing per il testo del chip "Tutti"
   const chipDisplayText = activeTab === 'TUTTI I VINI' ? 'Tutti' : 
@@ -127,27 +127,6 @@ export default function HomePage() {
     setShowWineDetailsModal(true);
   };
 
-  const handleInventoryClick = (e: React.MouseEvent, wine: WineType) => {
-    e.stopPropagation();
-    setEditingInventoryId(wine.id);
-    setEditingValue(wine.inventory.toString());
-  };
-
-  const handleInventorySave = async () => {
-    if (editingInventoryId === null) return;
-    const value = parseInt(editingValue);
-    if (!isNaN(value) && value >= 0) {
-      console.log('🔄 Salvataggio manuale giacenza:', editingInventoryId, 'valore:', value);
-      await handleInventoryChange(editingInventoryId, value);
-    } else {
-      console.warn('⚠️ Valore giacenza non valido:', editingValue);
-      // Reset al valore precedente in caso di errore
-      const wine = wines.find(w => w.id === editingInventoryId);
-      if (wine) setEditingValue(wine.inventory.toString());
-    }
-    setEditingInventoryId(null);
-    setEditingValue('');
-  };
 
   const handleTabChange = (category: string) => {
     setActiveTab(category);
@@ -161,6 +140,19 @@ export default function HomePage() {
 
   const handleUpdateWine = async (id: string, updates: Partial<WineType>): Promise<void> => {
     await updateWine(id, updates);
+  };
+
+  // Gestione WheelPicker
+  const handlePickerOpen = (wineId: string) => {
+    setActivePickerId(wineId);
+  };
+
+  const handlePickerClose = () => {
+    setActivePickerId(null);
+  };
+
+  const handlePickerValueChange = async (wineId: string, newValue: number) => {
+    await handleInventoryChange(wineId, newValue);
   };
 
 
@@ -280,40 +272,25 @@ export default function HomePage() {
                     {wine.inventory <= wine.minStock && (
                       <span className="alert-icon flex-shrink-0"></span>
                     )}
-                    <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
-                      <button 
-                        onClick={e => { e.stopPropagation(); handleInventoryChange(wine.id, wine.inventory - 1); }} 
-                        disabled={wine.inventory <= 0} 
-                        className="bg-app-danger hover:bg-app-danger/80 disabled:bg-app-muted/50 text-white rounded-full flex items-center justify-center font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
+                    <div className="flex items-center flex-shrink-0 ml-auto">
+                      <div 
+                        onClick={e => { 
+                          e.stopPropagation(); 
+                          if (activePickerId !== wine.id) {
+                            handlePickerOpen(wine.id);
+                          }
+                        }}
                       >
-                        −
-                      </button>
-                      {editingInventoryId === wine.id ? (
-                        <input
-                          type="number"
-                          value={editingValue}
-                          onChange={e => setEditingValue(e.target.value)}
-                          onBlur={handleInventorySave}
-                          className="w-11 h-7 sm:w-12 sm:h-8 bg-app-surface border border-app-border rounded text-app-text text-center text-xs sm:text-sm"
-                          autoFocus
-                          min="0"
+                        <InventoryWheelPicker
+                          value={wine.inventory || 0}
+                          onValueChange={(newValue) => handlePickerValueChange(wine.id, newValue)}
+                          onClose={handlePickerClose}
+                          isActive={activePickerId === wine.id}
+                          isAnimating={animatingInventory === wine.id}
+                          min={0}
+                          max={999}
                         />
-                      ) : (
-                        <span 
-                          onClick={e => handleInventoryClick(e, wine)} 
-                          className={`text-app-text font-bold text-sm sm:text-base cursor-pointer min-w-[28px] sm:min-w-[32px] text-center py-1 px-1.5 sm:px-2 transition-all duration-200 ${
-                            animatingInventory === wine.id ? 'animate-pulse bg-app-warn/20 rounded' : ''
-                          }`}
-                        >
-                          {wine.inventory || 0}
-                        </span>
-                      )}
-                      <button 
-                        onClick={e => { e.stopPropagation(); handleInventoryChange(wine.id, wine.inventory + 1); }} 
-                        className="bg-app-accent hover:bg-app-accent/80 text-white rounded-full flex items-center justify-center font-bold transition-all duration-200 touch-manipulation shadow-sm mobile-button-small"
-                      >
-                        +
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
