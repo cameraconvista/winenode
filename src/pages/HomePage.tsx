@@ -196,7 +196,8 @@ export default function HomePage() {
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-hidden" style={{ 
         marginTop: '78px', // Spazio per header ingrandito (+8px per padding-bottom)
         marginBottom: '70px', // Spazio per toolbar bottom
-        height: 'calc(100vh - 140px)' // Header + toolbar
+        height: 'calc(100vh - 148px)', // Header + toolbar + safe-area
+        paddingBottom: 'env(safe-area-inset-bottom)'
       }}>
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3 py-2 sm:py-4" style={{
           maxHeight: '100%',
