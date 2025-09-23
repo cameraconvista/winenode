@@ -1,4 +1,23 @@
 /* === LISTA VINI — TESTI GRIGI + CAMPANELLA #541111 === */
+
+/* Disabilita highlight e stati attivi sui box durante scroll/tap */
+.wine-card {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+}
+
+.wine-card:hover,
+.wine-card:active,
+.wine-card:focus {
+  background-color: var(--surface-2) !important;
+  transform: none !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* === LISTA VINI — TESTI GRIGI + CAMPANELLA #541111 === */
 .wine-item .producer, 
 .wine-item .vintage,
 .card-vino .producer, 

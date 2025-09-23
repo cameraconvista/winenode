@@ -216,7 +216,11 @@ export default function HomePage() {
           ) : (
             <div className="space-y-0.5 sm:space-y-1 overflow-x-hidden w-full">
               {filteredWines.map(wine => (
-                <div key={wine.id} className="wine-card bg-app-surface-2 border border-app-border rounded-lg p-1.5 sm:p-2 hover:bg-app-surface-hover transition-all duration-200 overflow-x-hidden w-full max-w-full" style={{ boxShadow: 'var(--shadow)' }}>
+                <div key={wine.id} className="wine-card bg-app-surface-2 border border-app-border rounded-lg p-1.5 sm:p-2 overflow-x-hidden w-full max-w-full" style={{ 
+                  boxShadow: 'var(--shadow)',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent'
+                }}>
                   <div className="flex items-center justify-between gap-2 sm:gap-3 overflow-x-hidden w-full">
                     <div className="flex-1 cursor-pointer overflow-x-hidden min-w-0" onClick={() => handleWineClick(wine)}>
                       <div className="flex flex-col gap-0.5 sm:gap-1 overflow-x-hidden min-w-0">
