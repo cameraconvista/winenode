@@ -15,10 +15,10 @@ const OrdiniSospesiPage = lazy(() => import('./pages/OrdiniSospesiPage'))
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-app-bg">
       <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="min-h-screen flex items-center justify-center bg-app-bg">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
         </div>
       }>
         <Routes>

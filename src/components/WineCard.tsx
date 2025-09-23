@@ -47,7 +47,7 @@ export default function WineCard({ wine, onUpdateInventory, onWineClick }: WineC
             {getWineGlassIcon(wine.type)}
           </div>
           <h3 
-            className="font-medium text-sm leading-tight text-cream cursor-pointer hover:underline"
+            className="font-medium text-sm leading-tight text-app-text cursor-pointer hover:underline"
             onClick={() => onWineClick?.(wine)}
           >
             {wine.name}
@@ -56,13 +56,13 @@ export default function WineCard({ wine, onUpdateInventory, onWineClick }: WineC
 
         <div className="flex items-center justify-end flex-shrink-0" style={{ minWidth: '60px' }}>
           <span 
-            className="text-cream font-medium text-sm cursor-pointer hover:bg-gray-700 px-2 py-1 rounded transition-colors mr-1"
+            className="text-app-text font-medium text-sm cursor-pointer hover:bg-app-surface-2 px-2 py-1 rounded transition-colors mr-1"
             onClick={() => setShowInventoryModal(true)}
           >
             {wine.inventory}
           </span>
           {isLowStock && (
-            <AlertTriangle className="h-3 w-3 text-amber-400 flex-shrink-0" />
+            <AlertTriangle className="h-3 w-3 text-app-warn flex-shrink-0" />
           )}
         </div>
       </div>

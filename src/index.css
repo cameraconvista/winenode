@@ -18,6 +18,31 @@ input[inputMode="decimal"] {
 @tailwind components;
 @tailwind utilities;
 
+/* === TOKEN GLOBALI TEMA LIGHT === */
+:root {
+  /* Palette principale (vincolo) */
+  --bg: #fff9dc;           /* Background app */
+  --text: #541111;         /* Testo primario */
+
+  /* Neutrali per superfici e testi secondari */
+  --surface: #fff2b8;      /* Card/box attuale */
+  --surface-2: #ffeec1;    /* NUOVO: card più chiara (via di mezzo) */
+  --surface-hover: #ffeaa0; /* Hover / liste alternate */
+  --border: #e2d6aa;       /* Divider, outline soft */
+  --muted: #7a4a30;        /* Testo secondario/label su chiaro */
+  --toolbar-bg: #fff7d1;   /* NUOVO: toolbar bottom, leggermente distinta */
+
+  /* Stato/azioni (mantieni brand attuale) */
+  --accent: #1a7f37;       /* "+" verde: conferma */
+  --danger: #d33b2f;       /* "–" rosso: decremento */
+  --warn: #d4a300;         /* icone warning */
+  --icon: #5a5a5a;         /* icone neutrali */
+
+  /* UI feedback */
+  --shadow: 0 2px 10px rgba(0,0,0,0.06);
+  --focus: 0 0 0 3px rgba(212,163,0,0.28); /* focus accessibile sul chiaro */
+}
+
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
@@ -26,13 +51,15 @@ input[inputMode="decimal"] {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     overscroll-behavior-y: contain;
+    background: var(--bg);
+    color: var(--text);
   }
 
   body {
     margin: 0;
     padding: 0;
-    background: #0f172a;
-    color: #f8fafc;
+    background: var(--bg);
+    color: var(--text);
     height: 100%;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -44,6 +71,8 @@ input[inputMode="decimal"] {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background: var(--bg);
+    color: var(--text);
   }
 
   /* Previeni rotazioni indesiderate */
@@ -54,8 +83,236 @@ input[inputMode="decimal"] {
   }
 }
 
+/* === TOOLBAR FISSA IN BASSO (MOBILE/TABLET OPTIMIZED) === */
+.bottom-toolbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50; /* sopra la lista ma sotto eventuali modali */
+  background: var(--toolbar-bg);
+  border-top: 1px solid var(--border);
+  padding: 8px calc(12px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+}
+
+/* Pulsanti toolbar: tutti uguali, senza contorno, colore #541111 */
+.bottom-toolbar .nav-btn {
+  flex: 1 1 0; /* tutte le azioni stessa larghezza */
+  max-width: none;
+  height: 48px; /* touch target ≥ 44px */
+  min-height: 48px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.bottom-toolbar .nav-btn:hover,
+.bottom-toolbar .nav-btn:active {
+  background: var(--surface-hover);
+  transform: scale(0.98);
+}
+
+.bottom-toolbar .nav-btn:focus {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+/* Icone nei pulsanti toolbar */
+.bottom-toolbar .nav-btn svg {
+  width: 20px;
+  height: 20px;
+  color: var(--text);
+}
+
+.bottom-toolbar .nav-btn .emoji {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Select nel toolbar */
+.bottom-toolbar select {
+  flex: 1.5 1 0; /* un po' più largo per il testo */
+  height: 48px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  border-radius: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+.bottom-toolbar select:focus {
+  outline: none;
+  box-shadow: var(--focus);
+  background: var(--surface-hover);
+}
+
+/* Badge notifiche */
+.bottom-toolbar .nav-btn .badge {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--warn);
+  border-radius: 50%;
+  border: 1px solid var(--toolbar-bg);
+}
+
+/* === OTTIMIZZAZIONI MOBILE/TABLET SPECIFICHE === */
+
+/* Smartphone (fino a 767px) */
+@media screen and (max-width: 767px) {
+  /* Header più compatto */
+  header {
+    padding: 8px 16px !important;
+  }
+  
+  header img {
+    height: 32px !important;
+  }
+  
+  /* Main content ottimizzato */
+  main {
+    margin-top: 56px !important;
+    margin-bottom: 64px !important;
+    height: calc(100vh - 120px) !important;
+  }
+  
+  /* Toolbar bottom ottimizzata smartphone */
+  .bottom-toolbar {
+    padding: 6px calc(8px + env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left)) !important;
+    gap: 4px !important;
+  }
+  
+  .bottom-toolbar .nav-btn {
+    height: 52px !important;
+    font-size: 9px !important;
+    gap: 1px !important;
+  }
+  
+  .bottom-toolbar .nav-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  
+  .bottom-toolbar .nav-btn .emoji {
+    font-size: 14px !important;
+  }
+  
+  .bottom-toolbar select {
+    font-size: 9px !important;
+    height: 52px !important;
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* Header tablet */
+  header {
+    padding: 12px 24px !important;
+  }
+  
+  header img {
+    height: 40px !important;
+  }
+  
+  /* Main content tablet */
+  main {
+    margin-top: 64px !important;
+    margin-bottom: 68px !important;
+    height: calc(100vh - 132px) !important;
+  }
+  
+  /* Toolbar bottom tablet */
+  .bottom-toolbar {
+    padding: 8px calc(16px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)) !important;
+    gap: 8px !important;
+  }
+  
+  .bottom-toolbar .nav-btn {
+    height: 52px !important;
+    font-size: 11px !important;
+  }
+  
+  .bottom-toolbar .nav-btn svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  
+  .bottom-toolbar .nav-btn .emoji {
+    font-size: 18px !important;
+  }
+  
+  .bottom-toolbar select {
+    font-size: 11px !important;
+    height: 52px !important;
+  }
+}
+
+/* Landscape orientation ottimizzazioni */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  /* Header ultra compatto in landscape */
+  header img {
+    height: 24px !important;
+  }
+  
+  main {
+    margin-top: 40px !important;
+    margin-bottom: 56px !important;
+    height: calc(100vh - 96px) !important;
+  }
+  
+  .bottom-toolbar {
+    padding: 4px calc(8px + env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left)) !important;
+  }
+  
+  .bottom-toolbar .nav-btn {
+    height: 48px !important;
+    font-size: 8px !important;
+  }
+}
+
+/* Wine cards ottimizzate per touch */
+@media screen and (max-width: 1024px) {
+  .wine-card {
+    min-height: 60px !important;
+    padding: 12px !important;
+  }
+  
+  .wine-card .mobile-button-small {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+  }
+}
+
 .text-cream {
-  color: #f8fafc;
+  color: var(--text);
 }
 
 .bg-amber-900 {
@@ -79,23 +336,23 @@ input[inputMode="decimal"] {
   text-shadow: 0 0 1px #000, 0 0 1px #000;
 }
 
-/* Custom scrollbar styles */
+/* Custom scrollbar styles - TEMA LIGHT */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4a4a4a;
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6a6a6a;
+  background: var(--muted);
 }
 
 /* Stili per tipologie con barra colorata */
@@ -116,7 +373,7 @@ input[inputMode="decimal"] {
 }
 
 .tipologia-nome {
-  color: #333;
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -130,7 +387,7 @@ input[inputMode="decimal"] {
   position: absolute;
   width: 80%;
   height: 2px;
-  background-color: black;
+  background-color: var(--text);
   top: 50%;
   left: 10%;
   transform: rotate(-45deg);
@@ -168,12 +425,12 @@ input[inputMode="decimal"] {
     font-size: 14px;
     min-height: 100vh;
     overflow-x: auto;
-    background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
+    background: var(--bg) !important;
   }
 
-  /* Forza sfondo bordeaux scuro per tutti i contenitori principali */
+  /* Forza sfondo chiaro per tutti i contenitori principali */
   #root {
-    background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
+    background: var(--bg) !important;
   }
 
   /* Ottimizza tabelle per tablet orizzontale */
@@ -191,9 +448,9 @@ input[inputMode="decimal"] {
     padding: 0.5rem;
   }
 
-  /* Assicura che tutti i componenti principali mantengano il tema scuro */
+  /* Assicura che tutti i componenti principali mantengano il tema chiaro */
   .bg-gray-900, [style*="background"] {
-    background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
+    background: var(--surface) !important;
   }
 }
 
@@ -225,9 +482,9 @@ input[inputMode="decimal"] {
 
 /* Ottimizzazioni specifiche per tablet in orizzontale */
 @media screen and (max-width: 1024px) and (min-width: 481px) and (orientation: landscape) {
-  /* Forza sfondo bordeaux per contenitori principali */
+  /* Forza sfondo chiaro per contenitori principali */
   body, #root, main {
-    background: linear-gradient(to bottom right, #2d0505, #4d0707, #2d0505) !important;
+    background: var(--bg) !important;
   }
 
   /* Blocca scroll orizzontale tabella */
@@ -436,7 +693,7 @@ input[inputMode="decimal"] {
   body {
     font-size: 15px; /* Migliorata leggibilità */
     line-height: 1.4;
-    background: linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202);
+    background: var(--bg);
     min-height: 100vh;
     width: 100%;
     overflow-x: hidden;
@@ -449,7 +706,7 @@ input[inputMode="decimal"] {
   #root {
     width: 100%;
     min-height: 100vh;
-    background: linear-gradient(to bottom right, #1f0202, #2d0505, #1f0202);
+    background: var(--bg);
     overflow-x: hidden;
   }
 

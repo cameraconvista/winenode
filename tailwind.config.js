@@ -7,6 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Nuovi colori tema light
+        'app-bg': 'var(--bg)',
+        'app-text': 'var(--text)',
+        'app-surface': 'var(--surface)',
+        'app-surface-2': 'var(--surface-2)',
+        'app-surface-hover': 'var(--surface-hover)',
+        'app-border': 'var(--border)',
+        'app-muted': 'var(--muted)',
+        'app-toolbar-bg': 'var(--toolbar-bg)',
+        'app-accent': 'var(--accent)',
+        'app-danger': 'var(--danger)',
+        'app-warn': 'var(--warn)',
+        'app-icon': 'var(--icon)',
+        // Colori legacy mantenuti per compatibilità
         cream: '#F5F5DC',
         'wine-red': '#722F37',
         'wine-dark': '#2D1B1E'
