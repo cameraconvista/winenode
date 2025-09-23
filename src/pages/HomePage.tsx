@@ -198,7 +198,7 @@ export default function HomePage() {
 
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col" style={{ 
-        paddingTop: '78px', // CAMBIATO: padding invece di margin per evitare conflitti
+        paddingTop: '70px', // MOLTO RIDOTTO: quasi attaccato al logo
         height: '100vh', // SEMPLIFICATO: altezza piena viewport
         paddingBottom: 'calc(52px + env(safe-area-inset-bottom))' // Toolbar compatta + safe area
       }}>

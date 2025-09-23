@@ -46,9 +46,9 @@
 .bottom-toolbar .nav-btn .icon {
   width: 24px;
   height: 24px;
-  background: var(--brand-primary);
-  background: var(--text);
+  background: var(--text) !important; /* FORZA VISIBILITÀ ICONE */
   flex-shrink: 0;
+  opacity: 1 !important; /* ASSICURA VISIBILITÀ */
 }
 
 /* NASCONDI LE LABEL TRANNE "TUTTI" */
@@ -96,9 +96,9 @@
   align-items: center !important;
   justify-content: center !important;
   gap: 4px !important;
-  padding: 6px 12px !important; /* AUMENTATO: da 4px 8px a 6px 12px per chip più largo */
-  min-width: 60px !important; /* AUMENTATO: da 36px a 60px */
-  min-height: 32px !important; /* AUMENTATO: da 28px a 32px per migliore proporzione */
+  padding: 8px 16px !important; /* AUMENTATO ANCORA: più padding */
+  min-width: 120px !important; /* RADDOPPIATO: da 60px a 120px */
+  min-height: 36px !important; /* AUMENTATO: da 32px a 36px */
   box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important; /* Ombra leggera */
   margin-left: auto !important; /* SPINGE IL CHIP A DESTRA */
 }
@@ -108,16 +108,23 @@
   display: none !important;
 }
 
-/* Label dinamica ottimizzata per chip ampliato - UI POLISH v11 */
+/* Label dinamica ottimizzata per chip ampliato - UI POLISH v11 - FORZATO */
+.bottom-toolbar .btn-tutti .label,
+.bottom-toolbar .btn-tutti span,
+.bottom-toolbar .btn-tutti {
+  font-size: 18px !important; /* FORZATO ANCORA PIÙ GRANDE: 18px */
+  line-height: 1.4 !important;
+}
+
 .bottom-toolbar .btn-tutti .label {
   display: block !important;
-  font-size: 12px !important; /* AUMENTATO: da 10px a 12px per migliore leggibilità */
-  line-height: 1.2 !important; /* AUMENTATO: da 1.1 a 1.2 */
+  font-size: 18px !important; /* FORZATO: 18px per essere sicuri */
+  line-height: 1.4 !important;
   color: #541111 !important; /* Colore brand su sfondo bianco */
   text-align: center !important;
   font-weight: 600 !important;
   width: 100% !important; /* Occupa tutto lo spazio disponibile */
-  max-width: 70px !important; /* AUMENTATO: da 45px a 70px per chip più largo */
+  max-width: 110px !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
