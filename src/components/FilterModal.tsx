@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Filter, ChevronDown, Search, Calendar } from 'lucide-react';
+import { X, Filter, ChevronDown, Search, Calendar, RotateCcw, Bell, Truck } from 'lucide-react';
 
 interface FilterModalProps {
   open: boolean
@@ -68,15 +68,16 @@ export default function FilterModal({
                 <option value="">Tutti i tipi</option>
                 {wineTypes.map(type => (
                   <option key={type} value={type} className="capitalize">
-                    {type}
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#541111' }}>
-                🏢 Fornitore
+              <label className="block text-sm font-medium mb-2 flex items-center gap-2" style={{ color: '#541111' }}>
+                <Truck className="h-4 w-4" style={{ color: '#b45309' }} />
+                Fornitore
               </label>
               <select
                 value={filters.supplier}
@@ -112,8 +113,9 @@ export default function FilterModal({
                   border: '1px solid rgba(84, 17, 17, 0.3)'
                 }}
               />
-              <span className="text-sm select-none" style={{ color: '#541111' }}>
-                ⚠️ Solo scorte basse
+              <span className="text-sm select-none flex items-center gap-2" style={{ color: '#541111' }}>
+                <Bell className="h-4 w-4" style={{ color: '#dc2626' }} />
+                Solo scorte basse
               </span>
             </label>
         </div>
@@ -121,14 +123,17 @@ export default function FilterModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={() => onFiltersChange({ wineType: '', supplier: '', showAlertsOnly: false })}
-            className="flex-1 px-4 py-2 font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-2 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             style={{
-              color: '#541111',
-              border: '1px solid rgba(84, 17, 17, 0.3)',
-              background: 'transparent'
+              background: '#541111',
+              color: '#fff9dc',
+              border: 'none'
             }}
           >
-            🗑️ Reset
+            <div className="w-4 h-4 bg-gradient-to-b from-red-500 to-red-700 rounded shadow-sm flex items-center justify-center border border-red-800">
+              <X className="h-3 w-3 text-white font-bold stroke-2" />
+            </div>
+            Reset
           </button>
           <button
             onClick={() => onOpenChange(false)}
