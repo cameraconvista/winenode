@@ -108,26 +108,21 @@
   display: none !important;
 }
 
-/* Label dinamica ottimizzata per chip ampliato - UI POLISH v11 - FORZATO */
-.bottom-toolbar .btn-tutti .label,
-.bottom-toolbar .btn-tutti span,
-.bottom-toolbar .btn-tutti {
-  font-size: 18px !important; /* FORZATO ANCORA PIÙ GRANDE: 18px */
-  line-height: 1.4 !important;
-}
-
+/* Label dinamica ottimizzata per chip ampliato - AUTO-SIZING */
 .bottom-toolbar .btn-tutti .label {
   display: block !important;
-  font-size: 18px !important; /* FORZATO: 18px per essere sicuri */
-  line-height: 1.4 !important;
+  /* font-size gestito dinamicamente da useAutoSizeText */
+  line-height: 1.3 !important;
   color: #541111 !important; /* Colore brand su sfondo bianco */
   text-align: center !important;
   font-weight: 600 !important;
   width: 100% !important; /* Occupa tutto lo spazio disponibile */
-  max-width: 110px !important;
+  max-width: none !important; /* Rimosso limite per auto-sizing */
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+  /* Transizione smooth per cambio font-size */
+  transition: font-size 0.2s ease-in-out !important;
 }
 
 /* Stati di feedback per chip bianco (solo ombra/contorno) */

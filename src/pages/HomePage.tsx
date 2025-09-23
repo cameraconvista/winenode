@@ -6,6 +6,7 @@ import WineDetailsModal from '../components/WineDetailsModal';
 import CarrelloModal from '../components/CarrelloModal';
 
 import useWines from '../hooks/useWines';
+import { useAutoSizeText } from '../hooks/useAutoSizeText';
 import { supabase } from '../lib/supabase';
 
 import { WineType } from '../hooks/useWines';
@@ -39,6 +40,24 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showOrdineModal, setShowOrdineModal] = useState(false);
+
+  // Auto-sizing per il testo del chip "Tutti"
+  const chipDisplayText = activeTab === 'TUTTI I VINI' ? 'Tutti' : 
+                         activeTab === 'BOLLICINE ITALIANE' ? 'Bollicine IT' :
+                         activeTab === 'BOLLICINE FRANCESI' ? 'Bollicine FR' :
+                         activeTab === 'BIANCHI' ? 'Bianchi' :
+                         activeTab === 'ROSSI' ? 'Rossi' :
+                         activeTab === 'ROSATI' ? 'Rosati' :
+                         activeTab === 'VINI DOLCI' ? 'Dolci' : 'Tutti';
+
+  const { elementRef: chipTextRef } = useAutoSizeText({
+    text: chipDisplayText,
+    minFontSize: 12,
+    maxFontSize: 20,
+    paddingHorizontal: 32, // 16px * 2 dal CSS
+    caretWidth: 0, // nessun caret visibile
+    marginSafety: 6
+  });
   
 
   const filteredWines = wines
@@ -343,15 +362,20 @@ export default function HomePage() {
           onClick={() => {/* Toggle dropdown logic */}}
           className="nav-btn btn-tutti"
           title="Seleziona categoria"
+          aria-label={`Filtro attivo: ${activeTab}`}
         >
-          <span className="label">
-            {activeTab === 'TUTTI I VINI' ? 'Tutti' : 
-             activeTab === 'BOLLICINE ITALIANE' ? 'Bollicine IT' :
-             activeTab === 'BOLLICINE FRANCESI' ? 'Bollicine FR' :
-             activeTab === 'BIANCHI' ? 'Bianchi' :
-             activeTab === 'ROSSI' ? 'Rossi' :
-             activeTab === 'ROSATI' ? 'Rosati' :
-             activeTab === 'VINI DOLCI' ? 'Dolci' : 'Tutti'}
+          <span 
+            ref={chipTextRef}
+            className="label"
+            style={{ 
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: 'block',
+              width: '100%'
+            }}
+          >
+            {chipDisplayText}
           </span>
           <select
             value={activeTab}
