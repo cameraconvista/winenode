@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import CarrelloModal from '../components/CarrelloModal';
-import InventoryWheelPicker from '../components/InventoryWheelPicker';
+import InventoryModal from '../components/InventoryModal';
 
 import useWines from '../hooks/useWines';
 import { useAutoSizeText } from '../hooks/useAutoSizeText';
@@ -39,7 +39,8 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showOrdineModal, setShowOrdineModal] = useState(false);
-  const [activePickerId, setActivePickerId] = useState<string | null>(null);
+  const [showInventoryModal, setShowInventoryModal] = useState(false);
+  const [editingWine, setEditingWine] = useState<WineType | null>(null);
 
   // Auto-sizing per il testo del chip "Tutti"
   const chipDisplayText = activeTab === 'TUTTI I VINI' ? 'Tutti' : 
@@ -142,17 +143,34 @@ export default function HomePage() {
     await updateWine(id, updates);
   };
 
-  // Gestione WheelPicker
-  const handlePickerOpen = (wineId: string) => {
-    setActivePickerId(wineId);
+  // Gestione Modale Giacenza
+  const handleOpenInventoryModal = (wine: WineType) => {
+    setEditingWine(wine);
+    setShowInventoryModal(true);
   };
 
-  const handlePickerClose = () => {
-    setActivePickerId(null);
+  const handleCloseInventoryModal = () => {
+    setShowInventoryModal(false);
+    setEditingWine(null);
   };
 
-  const handlePickerValueChange = async (wineId: string, newValue: number) => {
-    await handleInventoryChange(wineId, newValue);
+  const handleConfirmInventory = async (newValue: number) => {
+    if (!editingWine) return;
+    
+    const previousValue = editingWine.inventory;
+    
+    // Chiudi modale immediatamente per UX fluida
+    handleCloseInventoryModal();
+    
+    // Update ottimistico + sync backend
+    try {
+      await handleInventoryChange(editingWine.id, newValue);
+      console.log('✅ Giacenza aggiornata con successo');
+    } catch (error) {
+      // Rollback + toast su errore
+      console.error('❌ Errore salvataggio giacenza, rollback a:', previousValue);
+      // TODO: Aggiungere toast di errore se necessario
+    }
   };
 
 
@@ -273,24 +291,18 @@ export default function HomePage() {
                       <span className="alert-icon flex-shrink-0"></span>
                     )}
                     <div className="flex items-center flex-shrink-0 ml-auto">
-                      <div 
+                      <span 
                         onClick={e => { 
                           e.stopPropagation(); 
-                          if (activePickerId !== wine.id) {
-                            handlePickerOpen(wine.id);
-                          }
+                          handleOpenInventoryModal(wine);
                         }}
+                        className={`text-app-text font-bold text-sm sm:text-base cursor-pointer min-w-[44px] text-center py-2 px-2 transition-all duration-200 rounded-lg hover:bg-app-accent/10 ${
+                          animatingInventory === wine.id ? 'animate-pulse bg-app-warn/20' : ''
+                        }`}
+                        style={{ minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        <InventoryWheelPicker
-                          value={wine.inventory || 0}
-                          onValueChange={(newValue) => handlePickerValueChange(wine.id, newValue)}
-                          onClose={handlePickerClose}
-                          isActive={activePickerId === wine.id}
-                          isAnimating={animatingInventory === wine.id}
-                          min={0}
-                          max={999}
-                        />
-                      </div>
+                        {wine.inventory || 0}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -391,6 +403,15 @@ export default function HomePage() {
         open={showCarrelloModal} 
         onClose={() => setShowCarrelloModal(false)} 
         onFornitoreSelezionato={handleFornitoreSelezionato} 
+      />
+
+      <InventoryModal
+        isOpen={showInventoryModal}
+        initialValue={editingWine?.inventory || 0}
+        onConfirm={handleConfirmInventory}
+        onCancel={handleCloseInventoryModal}
+        min={0}
+        max={999}
       />
       
     </div>

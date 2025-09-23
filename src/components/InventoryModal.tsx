@@ -1,133 +1,228 @@
-import React, { useState, useEffect } from 'react'
-import { X, Plus, Minus } from 'lucide-react'
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface InventoryModalProps {
-  wine: {
-    id: number
-    name: string
-    inventory: number
-    minStock: number
-  } | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onUpdateInventory: (wineId: number, newInventory: number) => void
+  isOpen: boolean;
+  initialValue: number;
+  onConfirm: (value: number) => void;
+  onCancel: () => void;
+  min?: number;
+  max?: number;
 }
 
-export default function InventoryModal({ wine, open, onOpenChange, onUpdateInventory }: InventoryModalProps) {
-  const [inventory, setInventory] = useState(0)
+export default function InventoryModal({
+  isOpen,
+  initialValue,
+  onConfirm,
+  onCancel,
+  min = 0,
+  max = 999
+}: InventoryModalProps) {
+  const [currentValue, setCurrentValue] = useState(initialValue);
+  const [isDragging, setIsDragging] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const startYRef = useRef(0);
+  const startValueRef = useRef(initialValue);
 
+  // Reset valore quando si apre la modale
   useEffect(() => {
-    if (wine) {
-      setInventory(wine.inventory)
+    if (isOpen) {
+      setCurrentValue(initialValue);
     }
-  }, [wine])
+  }, [isOpen, initialValue]);
 
-  if (!wine) return null
+  // Genera array di valori visibili (7 sopra e 7 sotto il valore corrente)
+  const visibleValues = Array.from({ length: 15 }, (_, i) => {
+    const val = currentValue - 7 + i;
+    return Math.max(min, Math.min(max, val));
+  });
 
-  const handleIncrement = () => {
-    setInventory(prev => prev + 1)
-  }
+  // Gestione touch/mouse events
+  const handleStart = (clientY: number) => {
+    setIsDragging(true);
+    startYRef.current = clientY;
+    startValueRef.current = currentValue;
+  };
 
-  const handleDecrement = () => {
-    if (inventory > 0) {
-      setInventory(prev => prev - 1)
+  const handleMove = (clientY: number) => {
+    if (!isDragging) return;
+
+    const deltaY = startYRef.current - clientY;
+    const steps = Math.round(deltaY / 40); // 40px per step (più ampio per modale)
+    const newValue = Math.max(min, Math.min(max, startValueRef.current + steps));
+    
+    if (newValue !== currentValue) {
+      setCurrentValue(newValue);
     }
-  }
+  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0
-    if (value >= 0) {
-      setInventory(value)
+  const handleEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Touch events
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleStart(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleMove(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleEnd();
+  };
+
+  // Mouse events
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleStart(e.clientY);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    handleMove(e.clientY);
+  }, [isDragging, currentValue]);
+
+  const handleMouseUp = useCallback(() => {
+    handleEnd();
+  }, []);
+
+  // Global mouse events quando si sta dragging
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
     }
-  }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  const handleSave = () => {
-    onUpdateInventory(wine.id, inventory)
-    onOpenChange(false)
-  }
+  // Blocca scroll del body quando la modale è aperta
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isOpen]);
 
-  const handleCancel = () => {
-    setInventory(wine.inventory)
-    onOpenChange(false)
-  }
+  // Gestione ESC key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCancel();
+      }
+    };
 
-  if (!open) return null
+    if (isOpen) {
+      document.addEventListener('keydown', handleEsc);
+      return () => document.removeEventListener('keydown', handleEsc);
+    }
+  }, [isOpen, onCancel]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-neutral-900 rounded-lg p-6 w-full max-w-md border border-neutral-700">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-cream">MODIFICA GIACENZA</h2>
-          <button
-            onClick={handleCancel}
-            className="text-neutral-400 hover:text-cream transition-colors"
-          >
-            <X size={24} />
-          </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Overlay scuro */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      
+      {/* Modale centrata */}
+      <div className="relative bg-white rounded-2xl shadow-2xl mx-4 w-full max-w-sm">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 text-center">
+            Modifica giacenza
+          </h3>
         </div>
 
-        <div className="mb-6">
-          <h3 className="text-cream font-medium mb-2">{wine.name}</h3>
-          <p className="text-neutral-400 text-sm mb-4">
-            Giacenza attuale: {wine.inventory} | Scorta minima: {wine.minStock}
-          </p>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-cream text-sm font-medium mb-2">
-                NUOVA GIACENZA
-              </label>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={handleDecrement}
-                  disabled={inventory <= 0}
-                  className="w-10 h-10 flex items-center justify-center bg-neutral-800 border border-neutral-600 rounded-md text-cream hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Minus size={16} />
-                </button>
-                
-                <input
-                  type="number"
-                  value={inventory}
-                  onChange={handleInputChange}
-                  min="0"
-                  className="flex-1 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded-md text-cream text-center text-lg font-medium focus:outline-none focus:border-amber-600"
-                />
-                
-                <button
-                  onClick={handleIncrement}
-                  className="w-10 h-10 flex items-center justify-center bg-neutral-800 border border-neutral-600 rounded-md text-cream hover:bg-neutral-700 transition-colors"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
+        {/* Picker area */}
+        <div className="px-6 py-8">
+          <div
+            ref={pickerRef}
+            className="relative h-64 flex items-center justify-center cursor-grab select-none"
+            style={{ 
+              touchAction: 'none',
+              userSelect: 'none',
+              WebkitUserSelect: 'none'
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
+            aria-label={`Giacenza, valore ${currentValue}`}
+            role="spinbutton"
+            aria-valuenow={currentValue}
+            aria-valuemin={min}
+            aria-valuemax={max}
+          >
+            {/* Overlay semitrasparenti sopra e sotto */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-white via-white/80 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
             </div>
 
-            {inventory < wine.minStock && (
-              <div className="bg-red-900/20 border border-red-700 rounded-md p-3">
-                <p className="text-red-300 text-sm">
-                  ⚠️ Attenzione: giacenza sotto la scorta minima
-                </p>
-              </div>
-            )}
+            {/* Slot centrale evidenziato */}
+            <div className="absolute top-1/2 left-4 right-4 h-12 -translate-y-1/2 bg-blue-50 border-y-2 border-blue-200 rounded-lg"></div>
+
+            {/* Lista valori scrollabile */}
+            <div className="flex flex-col items-center justify-center h-full overflow-hidden">
+              {visibleValues.map((val, index) => {
+                const isCenter = index === 7; // Elemento centrale
+                const distance = Math.abs(index - 7);
+                const opacity = isCenter ? 1 : Math.max(0.2, 1 - distance * 0.15);
+                const scale = isCenter ? 1 : Math.max(0.7, 1 - distance * 0.05);
+                
+                return (
+                  <div
+                    key={`${val}-${index}`}
+                    className={`text-center transition-all duration-150 ${
+                      isCenter ? 'text-gray-900 font-bold' : 'text-gray-400 font-normal'
+                    }`}
+                    style={{
+                      opacity,
+                      fontSize: isCenter ? '32px' : '24px',
+                      lineHeight: '40px',
+                      transform: `scale(${scale})`,
+                      height: '40px'
+                    }}
+                  >
+                    {val}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        <div className="flex space-x-3">
+        {/* Pulsanti */}
+        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
           <button
-            onClick={handleCancel}
-            className="flex-1 px-4 py-2 bg-neutral-800 border border-neutral-600 text-neutral-300 rounded-md hover:bg-neutral-700 transition-colors"
+            onClick={onCancel}
+            className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors"
           >
-            ANNULLA
+            Annulla
           </button>
           <button
-            onClick={handleSave}
-            className="flex-1 px-4 py-2 bg-amber-700 text-cream rounded-md hover:bg-amber-600 transition-colors font-medium"
+            onClick={() => onConfirm(currentValue)}
+            className="flex-1 px-4 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-xl font-medium transition-colors"
           >
-            SALVA
+            Conferma
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
