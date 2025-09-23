@@ -21,10 +21,14 @@ input[inputMode="decimal"] {
   html {
     font-family: 'Inter', system-ui, sans-serif;
     height: 100%;
-    overflow: hidden; /* BLOCCA COMPLETAMENTE LO SCROLL SU HTML */
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    overscroll-behavior-y: contain;
+    overflow: hidden; /* LAYOUT STANDARD: solo lista scorre */
+    -webkit-overflow-scrolling: auto; /* Disabilita momentum su html */
+    scroll-behavior: auto; /* Scroll smooth solo su contenitore lista */
+    overscroll-behavior: none; /* Blocca rubber band globalmente */
+    /* CRITICO: nessun transform problematico per iOS */
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
   }
 
   body {
@@ -33,14 +37,23 @@ input[inputMode="decimal"] {
     padding: 0;
     background: var(--bg);
     color: var(--text);
-    overflow: hidden; /* BLOCCA COMPLETAMENTE LO SCROLL SU BODY */
+    overflow: hidden; /* LAYOUT STANDARD: solo lista scorre */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none; /* Blocca rubber band */
+    /* CRITICO: nessun transform problematico per iOS */
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
   }
 
   #root {
     height: 100%;
-    overflow: hidden; /* BLOCCA COMPLETAMENTE LO SCROLL SU ROOT */
+    overflow: hidden; /* LAYOUT STANDARD: solo lista scorre */
+    /* CRITICO: nessun transform problematico per iOS */
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
   }
 
   /* Previeni rotazioni indesiderate */

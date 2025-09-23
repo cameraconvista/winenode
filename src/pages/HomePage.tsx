@@ -202,14 +202,17 @@ export default function HomePage() {
   );
 
   return (
-    <div className="homepage-container h-screen flex flex-col overflow-hidden bg-app-bg" style={{ 
+    <div className="homepage-container bg-app-bg" style={{ 
       width: '100vw',
-      maxWidth: '100%'
+      height: '100vh',
+      maxWidth: '100%',
+      overflow: 'hidden',
+      position: 'relative'
     }}>
-      <header className="app-topbar flex-shrink-0">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4">
+      {/* HEADER FISSO */}
+      <header className="mobile-header">
+        <div className="header-content">
           <div className="logo-wrap">
-            {/* Logo brand fuori dalla status bar */}
             <picture>
               <source type="image/webp" srcSet="/logo1.webp" />
               <img 
@@ -222,26 +225,19 @@ export default function HomePage() {
         </div>
       </header>
 
-
-
-
-
-      <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col" style={{ 
-        paddingTop: '70px', // MOLTO RIDOTTO: quasi attaccato al logo
-        height: '100vh', // SEMPLIFICATO: altezza piena viewport
-        paddingBottom: 'calc(52px + env(safe-area-inset-bottom))' // Toolbar compatta + safe area
-      }}>
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3" style={{
-          maxHeight: '100%',
-          scrollBehavior: 'smooth',
-          touchAction: 'pan-y', // Solo scroll verticale
-          WebkitOverflowScrolling: 'touch', // Smooth scrolling su iOS
-          overscrollBehavior: 'none', // RAFFORZATO: nessun rubber band
-          position: 'relative', // Assicura che sia un contenitore di scroll indipendente
-          zIndex: 1, // Sotto header e toolbar
-          paddingTop: '8px', // AGGIUNTO: spazio sopra per primo elemento
-          paddingBottom: '8px' // AGGIUNTO: spazio sotto per ultimo elemento
-        }}>
+      {/* CONTENT-LISTA SCROLLABILE */}
+      <main className="mobile-content">
+        <div className="wine-list-container"
+          style={{
+            height: '100%',
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'none',
+            touchAction: 'pan-y',
+            scrollBehavior: 'smooth',
+            padding: '0 16px'
+          }}
+        >
           
 
           {filteredWines.length === 0 ? (
@@ -312,8 +308,8 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* TOOLBAR FISSA IN BASSO - UI POLISH v5 */}
-      <footer className="bottom-toolbar">
+      {/* NAVBAR FISSA IN BASSO */}
+      <nav className="mobile-navbar">
         <button 
           onClick={() => setShowCarrelloModal(true)} 
           className="nav-btn btn-ordine"
@@ -388,7 +384,7 @@ export default function HomePage() {
             <option value="VINI DOLCI">Vini Dolci</option>
           </select>
         </button>
-      </footer>
+      </nav>
 
       <FilterModal 
         open={showFilterModal} 

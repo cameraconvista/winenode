@@ -1,0 +1,259 @@
+/* === LAYOUT STANDARD MOBILE === */
+
+/* Container principale - nessun transform problematico */
+.homepage-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+  /* CRITICO: nessun transform, filter, perspective, backdrop */
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+  backdrop-filter: none !important;
+}
+
+/* === HEADER FISSO === */
+.mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 15; /* Sotto navbar (20), sopra content (10) */
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  /* Misure standard: 44-56pt */
+  min-height: 44pt;
+  max-height: 56pt;
+  /* CRITICO: nessun transform problematico */
+  transform: none !important;
+  will-change: auto !important;
+}
+
+.header-content {
+  /* Safe-area + 8pt */
+  padding-top: calc(env(safe-area-inset-top) + 8pt);
+  padding-bottom: 8pt;
+  padding-left: 16pt;
+  padding-right: 16pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44pt;
+}
+
+.mobile-header .logo-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mobile-header .logo-wrap img {
+  height: 40pt;
+  width: auto;
+  object-fit: contain;
+}
+
+/* === CONTENT SCROLLABILE === */
+.mobile-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10; /* Sotto header e navbar */
+  /* Padding dinamico per header e navbar */
+  padding-top: calc(env(safe-area-inset-top) + 56pt); /* Header height + safe-area */
+  padding-bottom: calc(env(safe-area-inset-bottom) + 64pt); /* Navbar height + safe-area */
+  overflow: hidden;
+}
+
+.wine-list-container {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+  touch-action: pan-y;
+  scroll-behavior: smooth;
+  padding: 16pt;
+  /* Padding interno per primo/ultimo elemento */
+  padding-top: 8pt;
+  padding-bottom: 8pt;
+}
+
+/* === NAVBAR FISSA === */
+.mobile-navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20; /* Sopra header (15) e content (10) */
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  /* Misure standard: 56-64pt */
+  min-height: 56pt;
+  max-height: 64pt;
+  /* Safe-area + 6pt */
+  padding-bottom: calc(env(safe-area-inset-bottom) + 6pt);
+  padding-top: 6pt;
+  padding-left: calc(12pt + env(safe-area-inset-left));
+  padding-right: calc(12pt + env(safe-area-inset-right));
+  /* Layout grid per pulsanti */
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  gap: 6pt;
+  align-items: center;
+  border-radius: 14pt 14pt 0 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  /* CRITICO: nessun transform problematico */
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* === PULSANTI NAVBAR === */
+.mobile-navbar .nav-btn {
+  height: 44pt; /* Touch target minimo */
+  background: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+  /* Touch target e accessibilità */
+  min-width: 44pt;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-navbar .nav-btn:not(.btn-tutti) {
+  width: 44pt;
+  flex-shrink: 0;
+}
+
+.mobile-navbar .nav-btn .icon {
+  width: 24pt;
+  height: 24pt;
+  background: var(--text);
+  flex-shrink: 0;
+}
+
+/* Nascondi label tranne "Tutti" */
+.mobile-navbar .nav-btn:not(.btn-tutti) .label {
+  display: none;
+}
+
+.mobile-navbar .nav-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(84, 17, 17, 0.18);
+  border-radius: 10pt;
+}
+
+/* === ICONE SPECIFICHE === */
+.mobile-navbar .btn-ordine .icon {
+  -webkit-mask: url("/carrello.png") center/contain no-repeat;
+  mask: url("/carrello.png") center/contain no-repeat;
+}
+
+.mobile-navbar .btn-filtri .icon {
+  -webkit-mask: url("/filtro.png") center/contain no-repeat;
+  mask: url("/filtro.png") center/contain no-repeat;
+  width: 17pt;
+  height: 17pt;
+}
+
+.mobile-navbar .btn-allert .icon {
+  -webkit-mask: url("/allert.png") center/contain no-repeat;
+  mask: url("/allert.png") center/contain no-repeat;
+}
+
+/* === CHIP "TUTTI" === */
+.mobile-navbar .btn-tutti {
+  background: #FFFFFF !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12pt !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4pt !important;
+  padding: 8pt 16pt !important;
+  min-width: 120pt !important;
+  min-height: 36pt !important;
+  box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important;
+  margin-left: auto !important;
+}
+
+.mobile-navbar .btn-tutti .label {
+  display: block !important;
+  color: #541111 !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  transition: font-size 0.2s ease-in-out !important;
+}
+
+/* Stati hover/active per chip */
+.mobile-navbar .btn-tutti:hover {
+  box-shadow: 0 2px 6px rgba(84, 17, 17, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.mobile-navbar .btn-tutti:active {
+  box-shadow: 0 1px 2px rgba(84, 17, 17, 0.2) !important;
+  transform: translateY(0) !important;
+}
+
+/* Badge notifiche */
+.mobile-navbar .nav-btn .badge {
+  position: absolute;
+  top: 4pt;
+  right: 8pt;
+  width: 8pt;
+  height: 8pt;
+  background: var(--warn);
+  border-radius: 50%;
+  border: 1px solid var(--bg);
+}
+
+/* === RESPONSIVE ADJUSTMENTS === */
+@media (max-height: 600px) {
+  /* Dispositivi bassi: riduci padding */
+  .mobile-header {
+    min-height: 40pt;
+  }
+  
+  .mobile-navbar {
+    min-height: 52pt;
+  }
+  
+  .mobile-content {
+    padding-top: calc(env(safe-area-inset-top) + 48pt);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 58pt);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Landscape su telefoni: layout ultra-compatto */
+  .mobile-header {
+    min-height: 36pt;
+  }
+  
+  .mobile-navbar {
+    min-height: 48pt;
+  }
+  
+  .mobile-content {
+    padding-top: calc(env(safe-area-inset-top) + 42pt);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 54pt);
+  }
+}

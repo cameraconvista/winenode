@@ -7,6 +7,7 @@
 /* Layout - Header e Toolbar */
 @import './styles/layout/header.css';
 @import './styles/layout/toolbar.css';
+@import './styles/layout/mobile-standard.css';
 
 /* Components - Wine Cards */
 @import './styles/components/wine-cards.css';
