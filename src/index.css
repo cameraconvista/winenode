@@ -84,12 +84,12 @@ input[inputMode="decimal"] {
   }
 }
 
-/* === TOOLBAR IN BASSO — PIÙ IN ALTO + ICONE UNIFORMI === */
+/* === TOOLBAR IN BASSO — ABBASSATA ~8-10MM === */
 .bottom-toolbar {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(env(safe-area-inset-bottom) + 6px); /* ↑ sollevata */
+  bottom: calc(env(safe-area-inset-bottom) - 4px); /* abbassata di ~8-10mm */
   z-index: 50;
   background: var(--bg);
   border-top: 1px solid var(--border);
@@ -158,7 +158,7 @@ input[inputMode="decimal"] {
   background: var(--text);
 }
 
-/* TUTTI → etichetta dinamica + piccola freccia SU sopra al testo */
+/* TUTTI → etichetta dinamica + piccola freccia SU sopra al testo - PIÙ GRANDE */
 .bottom-toolbar .btn-tutti {
   background: transparent;
 }
@@ -168,8 +168,8 @@ input[inputMode="decimal"] {
   text-align: center;
   white-space: nowrap; /* evita wrap indesiderato */
   line-height: 1;
-  font-size: 10px; /* leggermente ridotto per label dinamiche */
-  max-width: 60px; /* limita larghezza per testi lunghi */
+  font-size: 12px; /* aumentato per uniformità con altri pulsanti */
+  max-width: 70px; /* aumentato per migliore leggibilità */
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -177,9 +177,9 @@ input[inputMode="decimal"] {
 .bottom-toolbar .btn-tutti .label::before {
   content: "";
   display: block;
-  margin: 0 auto 2px auto;
-  width: 8px;
-  height: 8px;
+  margin: 0 auto 3px auto;
+  width: 10px; /* leggermente più grande */
+  height: 10px; /* leggermente più grande */
   border: solid var(--text);
   border-width: 2px 2px 0 0;
   transform: rotate(-45deg); /* freccia su */
@@ -187,8 +187,13 @@ input[inputMode="decimal"] {
 
 @media (max-width: 480px) {
   .bottom-toolbar .btn-tutti .label {
-    font-size: 9px;
-    max-width: 50px;
+    font-size: 11px;
+    max-width: 60px;
+  }
+  
+  .bottom-toolbar .btn-tutti .label::before {
+    width: 8px;
+    height: 8px;
   }
 }
 
@@ -237,9 +242,10 @@ input[inputMode="decimal"] {
   background: var(--bg);
   border-bottom: none;
   box-shadow: none;
+  padding-bottom: 8px; /* aumenta altezza container verso il basso */
 }
 
-/* Sposta il contenuto del logo sotto la status bar senza cambiare l'altezza del container */
+/* Sposta il contenuto del logo sotto la status bar */
 .app-topbar .logo-wrap {
   padding-top: calc(env(safe-area-inset-top) + 6px); /* ↓ spinge sotto la status bar */
   display: flex;
@@ -273,6 +279,27 @@ input[inputMode="decimal"] {
 .main-scroll,
 .homepage-container main {
   padding-bottom: 110px; /* toolbar height + margine sicurezza */
+}
+
+/* === ELIMINARE HIGHLIGHT/EVIDENZIAZIONE SUI BOX VINI === */
+.wine-card,
+.wine-item,
+.card-vino {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+.wine-card:active,
+.wine-item:active,
+.card-vino:active,
+.wine-card:focus,
+.wine-item:focus,
+.card-vino:focus {
+  background-color: inherit !important;
+  transform: none !important;
+  box-shadow: inherit !important;
 }
 
 /* === NIENTE SCROLLBAR DESTRA (conservando lo scroll) === */

@@ -194,7 +194,7 @@ export default function HomePage() {
 
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-hidden" style={{ 
-        marginTop: '70px', // Spazio per header semplificato
+        marginTop: '78px', // Spazio per header ingrandito (+8px per padding-bottom)
         marginBottom: '70px', // Spazio per toolbar bottom
         height: 'calc(100vh - 140px)' // Header + toolbar
       }}>
@@ -224,13 +224,17 @@ export default function HomePage() {
                           {wine.vintage && (
                             <>
                               <span className="vintage" style={{ color: 'var(--muted-text)' }}>{wine.vintage}</span>
-                              <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
+                              {(wine.description || (wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato')) && (
+                                <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
+                              )}
                             </>
                           )}
                           {wine.description && (
                             <>
                               <span className="producer" style={{ color: 'var(--muted-text)' }}>{wine.description}</span>
-                              <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
+                              {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
+                                <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
+                              )}
                             </>
                           )}
                           {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
