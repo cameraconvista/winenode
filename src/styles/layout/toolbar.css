@@ -58,11 +58,14 @@
   background: var(--text);
 }
 
-/* FILTRI → icona filtro.png */
+/* FILTRI → icona filtro.png (ridotta -15% per uniformità) */
 .bottom-toolbar .btn-filtri .icon {
   -webkit-mask: url("/filtro.png") center/contain no-repeat;
   mask: url("/filtro.png") center/contain no-repeat;
   background: var(--text);
+  width: 20px !important; /* -15% da 24px = 20.4px arrotondato */
+  height: 20px !important;
+  opacity: 1 !important; /* mantieni visibilità ottimale */
 }
 
 /* ALLERT → campanella allert.png */
