@@ -223,13 +223,13 @@ export default function HomePage() {
                         <div className="text-xs truncate overflow-x-hidden leading-tight" style={{ fontSize: '10px' }}>
                           {wine.vintage && (
                             <>
-                              <span className="vintage font-medium" style={{ color: 'var(--muted-text)' }}>{wine.vintage}</span>
+                              <span className="vintage" style={{ color: 'var(--muted-text)' }}>{wine.vintage}</span>
                               <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
                             </>
                           )}
                           {wine.description && (
                             <>
-                              <span className="producer font-medium" style={{ color: 'var(--muted-text)' }}>{wine.description}</span>
+                              <span className="producer" style={{ color: 'var(--muted-text)' }}>{wine.description}</span>
                               <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
                             </>
                           )}
@@ -306,7 +306,7 @@ export default function HomePage() {
           className="nav-btn btn-filtri"
           title="Filtri"
         >
-          <Filter className="icon" size={24} />
+          <div className="icon"></div>
           <span className="label">Filtri</span>
           {(filters.wineType || filters.supplier) && (
             <div className="badge"></div>
@@ -331,7 +331,13 @@ export default function HomePage() {
           title="Seleziona categoria"
         >
           <span className="label">
-            TUTTI<br/>VINI
+            {activeTab === 'TUTTI I VINI' ? 'Tutti' : 
+             activeTab === 'BOLLICINE ITALIANE' ? 'Bollicine IT' :
+             activeTab === 'BOLLICINE FRANCESI' ? 'Bollicine FR' :
+             activeTab === 'BIANCHI' ? 'Bianchi' :
+             activeTab === 'ROSSI' ? 'Rossi' :
+             activeTab === 'ROSATI' ? 'Rosati' :
+             activeTab === 'VINI DOLCI' ? 'Dolci' : 'Tutti'}
           </span>
           <select
             value={activeTab}
