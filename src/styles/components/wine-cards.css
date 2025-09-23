@@ -107,20 +107,20 @@ span[class*="alert"]:focus {
   contain: layout style paint;
 }
 
-/* === UI POLISH v11: ALTEZZA BOX +20% === */
+/* === UI POLISH v11: ALTEZZA BOX +4% (molto leggera) === */
 .wine-card {
-  /* Aumenta padding verticale del +20% per maggiore altezza */
-  padding-top: calc(0.375rem * 1.2) !important; /* da p-1.5 (6px) a 7.2px */
-  padding-bottom: calc(0.375rem * 1.2) !important;
-  min-height: calc(60px * 1.2) !important; /* Altezza minima aumentata del 20% */
+  /* Aumenta padding verticale del +4% per incremento molto leggero */
+  padding-top: calc(0.375rem * 1.04) !important; /* da p-1.5 (6px) a 6.2px */
+  padding-bottom: calc(0.375rem * 1.04) !important;
+  min-height: calc(60px * 1.04) !important; /* Altezza minima aumentata del 4% */
 }
 
 /* Responsive: aumenta anche il padding per schermi più grandi */
 @media (min-width: 640px) {
   .wine-card {
-    padding-top: calc(0.5rem * 1.2) !important; /* da p-2 (8px) a 9.6px */
-    padding-bottom: calc(0.5rem * 1.2) !important;
-    min-height: calc(65px * 1.2) !important;
+    padding-top: calc(0.5rem * 1.04) !important; /* da p-2 (8px) a 8.3px */
+    padding-bottom: calc(0.5rem * 1.04) !important;
+    min-height: calc(65px * 1.04) !important;
   }
 }
 
