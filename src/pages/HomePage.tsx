@@ -86,7 +86,10 @@ export default function HomePage() {
 
     const matchesType = !filters.wineType || normalizedType === filters.wineType;
     const matchesSupplier = !filters.supplier || wine.supplier === filters.supplier;
-    const matchesAlerts = !filters.showAlertsOnly || wine.inventory <= wine.minStock;
+    // Logica alert: se showAlertsOnly è true, mostra SOLO vini con giacenza <= minStock
+    const isInAlert = wine.inventory <= wine.minStock;
+    const matchesAlerts = !filters.showAlertsOnly || isInAlert;
+    
 
     return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
   })
@@ -299,13 +302,14 @@ export default function HomePage() {
                           animatingInventory === wine.id ? 'animate-pulse' : ''
                         }`}
                         style={{ 
-                          color: 'var(--text)',
+                          color: wine.inventory <= wine.minStock ? 'var(--danger)' : 'var(--text)',
                           minWidth: '44px',
                           minHeight: '44px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          backgroundColor: animatingInventory === wine.id ? 'var(--warn)' : 'transparent'
+                          backgroundColor: animatingInventory === wine.id ? 'var(--warn)' : 'transparent',
+                          fontWeight: wine.inventory <= wine.minStock ? 'bold' : 'normal'
                         }}
                       >
                         {wine.inventory || 0}
@@ -345,13 +349,17 @@ export default function HomePage() {
         <button
           onClick={() => setFilters(prev => ({ ...prev, showAlertsOnly: !prev.showAlertsOnly }))}
           className="nav-btn btn-allert"
-          title="Mostra solo vini in esaurimento"
+          title={filters.showAlertsOnly ? "Mostra tutti i vini" : "Mostra solo vini in esaurimento"}
           style={{ 
-            background: filters.showAlertsOnly ? 'var(--surface-hover)' : 'transparent'
+            background: filters.showAlertsOnly ? 'var(--danger)' : 'transparent',
+            color: filters.showAlertsOnly ? 'white' : 'var(--text)',
+            borderRadius: '8px'
           }}
         >
-          <div className="icon"></div>
-          <span className="label">Allert</span>
+          <div className="icon" style={{
+            background: filters.showAlertsOnly ? 'white' : 'var(--text)'
+          }}></div>
+          <span className="label">Alert</span>
         </button>
         
         <button
