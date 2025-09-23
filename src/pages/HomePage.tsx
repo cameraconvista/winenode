@@ -199,8 +199,8 @@ export default function HomePage() {
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col" style={{ 
         marginTop: '78px', // Spazio per header con logo +25% e container rifinito
-        height: 'calc(100vh - 148px)', // Header (78px) + toolbar (70px) ottimizzato
-        paddingBottom: 'calc(70px + env(safe-area-inset-bottom))' // Toolbar + safe area
+        height: 'calc(100vh - 130px)', // Header (78px) + toolbar compatta (52px) ottimizzato
+        paddingBottom: 'calc(52px + env(safe-area-inset-bottom))' // Toolbar compatta + safe area
       }}>
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3 py-2 sm:py-4" style={{
           maxHeight: '100%',

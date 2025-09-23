@@ -3,12 +3,12 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(env(safe-area-inset-bottom) - 4px);
+  bottom: calc(env(safe-area-inset-bottom) - 8px);
   z-index: 100;
   background: var(--brand-bg);
   background: var(--bg);
   border-top: 1px solid var(--border);
-  padding: 8px calc(12px + env(safe-area-inset-right)) 8px calc(12px + env(safe-area-inset-left));
+  padding: 6px calc(12px + env(safe-area-inset-right)) 6px calc(12px + env(safe-area-inset-left));
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
@@ -19,7 +19,7 @@
 
 /* Pulsanti stile app coerente - SOLO ICONE */
 .bottom-toolbar .nav-btn {
-  height: 56px;
+  height: 40px;
   background: transparent;
   border: none;
   outline: none;
@@ -34,8 +34,8 @@
 }
 
 .bottom-toolbar .nav-btn .icon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   background: var(--brand-primary);
   background: var(--text);
   flex-shrink: 0;
