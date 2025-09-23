@@ -75,39 +75,40 @@
   background: var(--text);
 }
 
-/* TUTTI → CARET + LABEL DINAMICA VISIBILE */
+/* TUTTI → CARET A SINISTRA + LABEL DINAMICA VISIBILE */
 .bottom-toolbar .btn-tutti {
   background: transparent;
   position: relative;
   display: flex !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 2px !important;
+  gap: 4px !important;
 }
 
-/* Caret sopra la label */
+/* Caret a sinistra della label */
 .bottom-toolbar .btn-tutti::before {
   content: "";
   display: block;
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border: solid var(--text);
   border-width: 2px 2px 0 0;
   transform: rotate(-45deg);
   background: transparent;
-  margin-bottom: 2px;
+  margin-right: 2px;
+  flex-shrink: 0;
 }
 
-/* Label dinamica visibile */
+/* Label dinamica visibile (testo più grande) */
 .bottom-toolbar .btn-tutti .label {
   display: block !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
+  font-size: 12px !important; /* aumentato da 10px per leggibilità */
+  line-height: 1.1 !important;
   color: var(--text) !important;
-  text-align: center !important;
+  text-align: left !important;
   font-weight: 600 !important;
-  max-width: 60px !important;
+  max-width: 50px !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
