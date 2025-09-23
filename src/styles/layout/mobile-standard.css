@@ -44,11 +44,11 @@
 }
 
 .header-content {
-  /* Safe-area + 8pt */
-  padding-top: calc(env(safe-area-inset-top) + 8pt);
+  /* SAFE-AREA ADATTIVA + 8pt */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 8pt);
   padding-bottom: 8pt;
-  padding-left: 16pt;
-  padding-right: 16pt;
+  padding-left: calc(16pt + env(safe-area-inset-left, 0px));
+  padding-right: calc(16pt + env(safe-area-inset-right, 0px));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,9 +75,11 @@
   right: 0;
   bottom: 0;
   z-index: 10; /* Sotto header e navbar */
-  /* Padding dinamico PRECISO per header e navbar */
-  padding-top: calc(env(safe-area-inset-top) + 60pt); /* Header effettivo + safe-area */
-  padding-bottom: calc(env(safe-area-inset-bottom) + 62pt); /* Navbar effettivo + safe-area */
+  /* PADDING DINAMICO ADATTIVO per header e navbar */
+  /* Header: env(safe-area-inset-top) + 8pt + 44-56pt = ~60pt */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 60pt);
+  /* Navbar: env(safe-area-inset-bottom) + 11pt + 56pt = ~67pt adattivo */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 67pt);
   overflow: hidden;
   /* ZERO gap: nessun margin aggiuntivo */
   margin: 0 !important;
@@ -94,11 +96,13 @@
   /* Padding laterale standard */
   padding-left: 16pt;
   padding-right: 16pt;
-  /* ZERO padding verticale aggiuntivo - solo quello necessario */
-  padding-top: 4pt; /* Minimo respiro sopra */
-  padding-bottom: 4pt; /* Minimo respiro sotto */
-  /* ZERO margin per eliminare gap */
+  /* PADDING VERTICALE MINIMALE - eliminare gap */
+  padding-top: 2pt; /* Respiro minimo sopra */
+  padding-bottom: 2pt; /* Respiro minimo sotto */
+  /* ZERO margin per eliminare completamente gap */
   margin: 0 !important;
+  /* ASSICURA che ultima card sia sempre 100% visibile */
+  box-sizing: border-box;
 }
 
 /* === NAVBAR FISSA === */
@@ -116,11 +120,13 @@
   /* Misure standard: 56-64pt */
   min-height: 56pt;
   max-height: 64pt;
-  /* Safe-area + 6pt */
-  padding-bottom: calc(env(safe-area-inset-bottom) + 6pt);
+  /* SAFE-AREA ADATTIVA: FaceID vs non-FaceID */
+  /* iPhone con FaceID: env(safe-area-inset-bottom) + 10-12pt */
+  /* iPhone 8/SE/Android: 10-12pt fissi */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 11pt);
   padding-top: 6pt;
-  padding-left: calc(12pt + env(safe-area-inset-left));
-  padding-right: calc(12pt + env(safe-area-inset-right));
+  padding-left: calc(12pt + env(safe-area-inset-left, 0px));
+  padding-right: calc(12pt + env(safe-area-inset-right, 0px));
   /* Layout grid per pulsanti */
   display: grid;
   grid-template-columns: auto auto auto 1fr;
@@ -309,34 +315,50 @@
 }
 
 /* === RESPONSIVE ADJUSTMENTS === */
+
+/* iPhone 8/SE e dispositivi bassi */
 @media (max-height: 600px) {
-  /* Dispositivi bassi: riduci padding */
   .mobile-header {
     min-height: 40pt;
   }
   
   .mobile-navbar {
     min-height: 52pt;
+    /* Clearance ridotta per dispositivi bassi */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10pt);
   }
   
   .mobile-content {
-    padding-top: calc(env(safe-area-inset-top) + 48pt);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 58pt);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 56pt);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 62pt);
   }
 }
 
+/* Landscape su telefoni: layout ultra-compatto */
 @media (orientation: landscape) and (max-height: 500px) {
-  /* Landscape su telefoni: layout ultra-compatto */
   .mobile-header {
     min-height: 36pt;
   }
   
   .mobile-navbar {
     min-height: 48pt;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8pt);
   }
   
   .mobile-content {
-    padding-top: calc(env(safe-area-inset-top) + 42pt);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 54pt);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 50pt);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 56pt);
+  }
+}
+
+/* iPhone 15 Pro Max e dispositivi grandi */
+@media (min-height: 800px) {
+  .mobile-navbar {
+    /* Clearance ottimale per dispositivi grandi */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
+  }
+  
+  .mobile-content {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 68pt);
   }
 }
