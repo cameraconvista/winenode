@@ -3,7 +3,7 @@
   background: var(--bg);
   border-bottom: none;
   box-shadow: none;
-  padding-bottom: 4px; /* ridotto leggermente il container in basso */
+  padding-bottom: 8px; /* aumentato per respiro con logo più grande */
 }
 
 /* Sposta il contenuto del logo sotto la status bar */
@@ -14,14 +14,14 @@
   align-items: flex-start;
 }
 
-/* LOGO INGRANDITO +40% - MASSIMA SPECIFICITÀ */
+/* LOGO INGRANDITO +25% (da 39px) - MASSIMA SPECIFICITÀ */
 header.app-topbar .logo-wrap img,
 .app-topbar .logo-wrap img {
-  height: 39px !important; /* +40% da 28px = 39.2px arrotondato - FORZATO */
+  height: 49px !important; /* +25% da 39px = 48.75px arrotondato - FORZATO */
   width: auto !important;
   object-fit: contain !important;
   max-height: none !important;
-  min-height: 39px !important;
+  min-height: 49px !important;
   transform: scale(1) !important; /* evita scaling CSS */
 }
 
