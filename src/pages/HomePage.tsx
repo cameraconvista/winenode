@@ -353,13 +353,22 @@ export default function HomePage() {
           style={{ 
             background: filters.showAlertsOnly ? 'var(--danger)' : 'transparent',
             color: filters.showAlertsOnly ? 'white' : 'var(--text)',
-            borderRadius: '8px'
-          }}
+            borderRadius: '8px',
+            border: 'none',
+            outline: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            WebkitAppearance: 'none',
+            appearance: 'none'
+          } as React.CSSProperties}
         >
           <div className="icon" style={{
-            background: filters.showAlertsOnly ? 'white' : 'var(--text)'
+            background: filters.showAlertsOnly ? 'white' : 'var(--text)',
+            WebkitMask: 'url("/allert.png") center/contain no-repeat',
+            mask: 'url("/allert.png") center/contain no-repeat'
           }}></div>
-          <span className="label">Alert</span>
+          <span className="label" style={{
+            color: filters.showAlertsOnly ? 'white' : 'var(--text)'
+          }}>Alert</span>
         </button>
         
         <button

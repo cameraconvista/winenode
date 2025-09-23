@@ -32,28 +32,38 @@ export default function FilterModal({
   )).sort()
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm">
-      <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[85%] max-w-[280px] mx-4 sm:w-[75%] sm:max-w-[240px]">
-        <div className="modal-content bg-app-surface border border-app-border rounded-lg p-3 sm:p-2 shadow-2xl backdrop-blur-md" style={{ boxShadow: 'var(--shadow)' }}>
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-app-text">🔍 Filtri</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
+      <div className="border border-gray-700 rounded-lg shadow-lg max-w-md w-full p-6" style={{
+        background: '#541111',
+        maxHeight: '85vh',
+        overflowY: 'auto'
+      }}>
+        <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold" style={{ color: '#fff9dc' }}>🔍 Filtri</h3>
             <button
               onClick={() => onOpenChange(false)}
-              className="text-app-muted hover:text-app-text p-0.5 rounded-full hover:bg-app-surface-2 transition-all"
+              className="transition-colors"
+              style={{ color: '#fff9dc' }}
+              aria-label="Chiudi"
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-6 w-6" />
             </button>
-          </div>
+        </div>
 
-          <div className="space-y-1.5">
+        <div className="space-y-4 p-4 rounded-lg" style={{ background: '#fff9dc' }}>
             <div>
-              <label className="block text-xs font-medium text-app-muted mb-0.5">
+              <label className="block text-sm font-medium mb-2" style={{ color: '#541111' }}>
                 🍷 Tipo
               </label>
               <select
                 value={filters.wineType}
                 onChange={(e) => onFiltersChange({ ...filters, wineType: e.target.value })}
-                className="w-full px-2 py-1 text-xs bg-app-surface-2 border border-app-border rounded-md text-app-text focus:outline-none focus:ring-1 focus:ring-app-warn focus:border-app-warn"
+                className="w-full p-3 rounded-lg appearance-none focus:ring-2 focus:outline-none"
+                style={{
+                  background: '#fff9dc',
+                  color: '#541111',
+                  border: '1px solid rgba(84, 17, 17, 0.2)'
+                }}
               >
                 <option value="">Tutti i tipi</option>
                 {wineTypes.map(type => (
@@ -65,13 +75,18 @@ export default function FilterModal({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-app-muted mb-0.5">
+              <label className="block text-sm font-medium mb-2" style={{ color: '#541111' }}>
                 🏢 Fornitore
               </label>
               <select
                 value={filters.supplier}
                 onChange={(e) => onFiltersChange({ ...filters, supplier: e.target.value })}
-                className="w-full px-2 py-1 text-xs bg-app-surface-2 border border-app-border rounded-md text-app-text focus:outline-none focus:ring-1 focus:ring-app-warn focus:border-app-warn"
+                className="w-full p-3 rounded-lg appearance-none focus:ring-2 focus:outline-none"
+                style={{
+                  background: '#fff9dc',
+                  color: '#541111',
+                  border: '1px solid rgba(84, 17, 17, 0.2)'
+                }}
               >
                 <option value="">Tutti i fornitori</option>
                 {suppliers
@@ -85,34 +100,47 @@ export default function FilterModal({
               </select>
             </div>
 
-            <label htmlFor="alerts-checkbox" className="flex items-center gap-2 pt-0.5 cursor-pointer p-1 -m-1 rounded hover:bg-app-surface-2">
+            <label htmlFor="alerts-checkbox" className="flex items-center gap-3 pt-2 cursor-pointer p-2 rounded hover:bg-black/5">
               <input
                 type="checkbox"
                 id="alerts-checkbox"
                 checked={filters.showAlertsOnly}
                 onChange={(e) => onFiltersChange({ ...filters, showAlertsOnly: e.target.checked })}
-                className="h-3.5 w-3.5 text-app-warn bg-app-surface border border-app-border rounded focus:ring-1 focus:ring-app-warn focus:bg-app-warn checked:bg-app-warn checked:border-app-warn"
+                className="h-4 w-4 rounded focus:ring-2"
+                style={{
+                  accentColor: '#541111',
+                  border: '1px solid rgba(84, 17, 17, 0.3)'
+                }}
               />
-              <span className="text-xs text-app-muted select-none">
+              <span className="text-sm select-none" style={{ color: '#541111' }}>
                 ⚠️ Solo scorte basse
               </span>
             </label>
-          </div>
+        </div>
 
-          <div className="mt-2 flex gap-1.5">
-            <button
-              onClick={() => onFiltersChange({ wineType: '', supplier: '', showAlertsOnly: false })}
-              className="flex-1 px-2 py-1 text-xs bg-app-surface-2 text-app-text rounded-md hover:bg-app-border transition-colors border border-app-border"
-            >
-              🗑️ Reset
-            </button>
-            <button
-              onClick={() => onOpenChange(false)}
-              className="flex-1 px-2 py-1 text-xs bg-app-accent text-white rounded-md hover:bg-app-accent/80 transition-colors shadow-lg"
-            >
-              ✅ Applica
-            </button>
-          </div>
+        <div className="mt-6 flex gap-3">
+          <button
+            onClick={() => onFiltersChange({ wineType: '', supplier: '', showAlertsOnly: false })}
+            className="flex-1 px-4 py-2 font-medium rounded-lg transition-colors"
+            style={{
+              color: '#541111',
+              border: '1px solid rgba(84, 17, 17, 0.3)',
+              background: 'transparent'
+            }}
+          >
+            🗑️ Reset
+          </button>
+          <button
+            onClick={() => onOpenChange(false)}
+            className="flex-1 px-4 py-2 font-medium rounded-lg transition-colors"
+            style={{
+              background: '#541111',
+              color: '#fff9dc',
+              border: 'none'
+            }}
+          >
+            ✅ Applica
+          </button>
         </div>
       </div>
     </div>

@@ -78,8 +78,8 @@
   /* PADDING DINAMICO ADATTIVO per header e navbar */
   /* Header: env(safe-area-inset-top) + 8pt + 44-56pt = ~60pt */
   padding-top: calc(env(safe-area-inset-top, 0px) + 60pt);
-  /* Navbar: env(safe-area-inset-bottom) + 11pt + 56pt = ~67pt adattivo */
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 67pt);
+  /* Navbar: env(safe-area-inset-bottom) + 12pt + 56pt - 8pt offset = ~60pt adattivo */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 60pt);
   overflow: hidden;
   /* ZERO gap: nessun margin aggiuntivo */
   margin: 0 !important;
@@ -108,7 +108,7 @@
 /* === NAVBAR FISSA === */
 .mobile-navbar {
   position: fixed;
-  bottom: 0;
+  bottom: -8pt; /* SPOSTA NAVBAR PIÙ IN BASSO di 8pt */
   left: 0;
   right: 0;
   z-index: 20; /* Sopra header (15) e content (10) */
@@ -121,9 +121,9 @@
   min-height: 56pt;
   max-height: 64pt;
   /* SAFE-AREA ADATTIVA: FaceID vs non-FaceID */
-  /* iPhone con FaceID: env(safe-area-inset-bottom) + 10-12pt */
-  /* iPhone 8/SE/Android: 10-12pt fissi */
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 11pt);
+  /* iPhone con FaceID: env(safe-area-inset-bottom) + 12pt */
+  /* iPhone 8/SE/Android: 12pt fissi */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
   padding-top: 6pt;
   padding-left: calc(12pt + env(safe-area-inset-left, 0px));
   padding-right: calc(12pt + env(safe-area-inset-right, 0px));
@@ -166,7 +166,10 @@
   /* Touch target e accessibilità */
   min-width: 44pt;
   touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent !important;
+  /* MOBILE: Previeni colori di sistema */
+  -webkit-appearance: none !important;
+  appearance: none !important;
 }
 
 .mobile-navbar .nav-btn:not(.btn-tutti) {
@@ -295,6 +298,30 @@
   border: 1px solid var(--bg);
 }
 
+/* === PULSANTE ALERT SPECIFICO === */
+.mobile-navbar .btn-allert {
+  /* MOBILE: Forza colori personalizzati, previeni override sistema */
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+.mobile-navbar .btn-allert:focus,
+.mobile-navbar .btn-allert:active,
+.mobile-navbar .btn-allert:hover {
+  /* MOBILE: Mantieni colori personalizzati su tutti gli stati */
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  /* I colori vengono gestiti via style inline in React */
+}
+
+.mobile-navbar .btn-allert .icon {
+  /* MOBILE: Previeni colori di sistema per l'icona */
+  -webkit-mask-composite: source-over !important;
+  mask-composite: add !important;
+}
+
 /* === DISABILITA HIGHLIGHT CARD DURANTE SCROLL === */
 .wine-card {
   -webkit-tap-highlight-color: transparent !important;
@@ -330,7 +357,7 @@
   
   .mobile-content {
     padding-top: calc(env(safe-area-inset-top, 0px) + 56pt);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 62pt);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 54pt);
   }
 }
 
@@ -342,12 +369,12 @@
   
   .mobile-navbar {
     min-height: 48pt;
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8pt);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10pt);
   }
   
   .mobile-content {
     padding-top: calc(env(safe-area-inset-top, 0px) + 50pt);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 56pt);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 50pt);
   }
 }
 
@@ -359,6 +386,6 @@
   }
   
   .mobile-content {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 68pt);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 60pt);
   }
 }

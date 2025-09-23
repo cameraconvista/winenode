@@ -60,13 +60,16 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
-      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-w-xl w-full p-6 space-y-6">
+      <div className="border border-gray-700 rounded-lg shadow-lg max-w-md w-full p-6 space-y-6" style={{
+        background: '#541111'
+      }}>
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-cream">Nuovo Ordine</h2>
+          <h2 className="text-xl font-bold" style={{ color: '#fff9dc' }}>Nuovo Ordine</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="transition-colors"
+            style={{ color: '#fff9dc' }}
             aria-label="Chiudi"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,15 +80,20 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
 
         {/* Step 1: selezione fornitore */}
         {step === "fornitore" && (
-          <div className="space-y-4">
-            <p className="text-sm text-gray-300">Seleziona un fornitore per iniziare:</p>
+          <div className="space-y-4 p-4 rounded-lg" style={{ background: '#fff9dc' }}>
+            <p className="text-sm" style={{ color: '#541111' }}>Seleziona un fornitore per iniziare:</p>
 
             <div className="relative">
               <select
                 value={selectedFornitore}
                 onChange={(e) => setSelectedFornitore(e.target.value)}
                 disabled={isLoading}
-                className="w-full p-3 bg-black/30 border border-amber-600/50 rounded-lg text-white appearance-none focus:ring-2 focus:ring-amber-500"
+                className="w-full p-3 rounded-lg appearance-none focus:ring-2 focus:outline-none"
+                style={{
+                  background: '#fff9dc',
+                  color: '#541111',
+                  border: '1px solid rgba(84, 17, 17, 0.2)'
+                }}
               >
                 <option value="">
                   {isLoading
@@ -113,14 +121,23 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
             <div className="flex justify-end pt-2 gap-2">
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+                className="px-4 py-2 font-medium rounded-lg transition-colors"
+                style={{
+                  color: '#541111',
+                  border: '1px solid rgba(84, 17, 17, 0.3)'
+                }}
               >
                 Annulla
               </button>
               <button
                 onClick={handleAvanti}
                 disabled={!selectedFornitore || isLoading}
-                className="px-6 py-2 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-600 disabled:opacity-50 text-white font-medium rounded-lg"
+                className="px-6 py-2 font-medium rounded-lg transition-colors disabled:opacity-50"
+                style={{
+                  background: '#541111',
+                  color: '#fff9dc',
+                  border: 'none'
+                }}
               >
                 Avanti
               </button>
