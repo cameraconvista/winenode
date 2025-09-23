@@ -1,0 +1,71 @@
+/* === LISTA VINI — TESTI GRIGI + CAMPANELLA #541111 === */
+.wine-item .producer, 
+.wine-item .vintage,
+.card-vino .producer, 
+.card-vino .vintage {
+  color: var(--muted-text);
+  font-weight: normal; /* SOLO font-weight da grassetto a regolare */
+}
+
+/* Campanella dentro i box vino con colore brand scuro - OTTIMIZZATO MOBILE */
+.wine-item .alert-icon, 
+.card-vino .alert-icon,
+.alert-icon,
+span[class*="alert"],
+div[class*="alert"],
+.alert-triangle {
+  width: 18px !important;
+  height: 18px !important;
+  background: var(--brand-primary) !important; /* RGB per compatibilità mobile */
+  background: #541111 !important; /* fallback hex */
+  -webkit-mask: url("/allert.png") center/contain no-repeat !important;
+  mask: url("/allert.png") center/contain no-repeat !important;
+  display: inline-block !important;
+  color: transparent !important;
+  fill: var(--brand-primary) !important;
+  stroke: var(--brand-primary) !important;
+  /* Mantieni la stessa posizione/margini del vecchio simbolo */
+}
+
+/* Disattiva eventuale triangolo precedente */
+.wine-item .alert-triangle, 
+.card-vino .alert-triangle {
+  display: none !important;
+}
+
+/* === ELIMINARE HIGHLIGHT/EVIDENZIAZIONE SUI BOX VINI === */
+.wine-card,
+.wine-item,
+.card-vino {
+  -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.wine-card:active,
+.wine-item:active,
+.card-vino:active,
+.wine-card:focus,
+.wine-item:focus,
+.card-vino:focus,
+.wine-card:hover,
+.wine-item:hover,
+.card-vino:hover {
+  background-color: var(--surface-2) !important; /* mantieni colore originale */
+  transform: none !important;
+  box-shadow: var(--shadow) !important; /* mantieni ombra originale */
+  outline: none !important;
+  border-color: var(--border) !important;
+}
+
+/* Ottimizzazioni performance mobile */
+.wine-card,
+.wine-item,
+.card-vino {
+  will-change: auto;
+  contain: layout style paint;
+}

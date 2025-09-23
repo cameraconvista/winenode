@@ -1,0 +1,21 @@
+/* === EVITA SOVRAPPOSIZIONI CON LA LISTA === */
+/* Aumenta lo spazio in fondo alla lista per non essere coperta */
+.lista-vini-scroll, 
+.page-content-scroll, 
+.main-scroll,
+.homepage-container main {
+  padding-bottom: 110px; /* toolbar height + margine sicurezza */
+}
+
+/* === NIENTE SCROLLBAR DESTRA (conservando lo scroll) === */
+.lista-vini-scroll, 
+.page-content-scroll, 
+.main-scroll {
+  scrollbar-width: none;
+}
+
+.lista-vini-scroll::-webkit-scrollbar,
+.page-content-scroll::-webkit-scrollbar,
+.main-scroll::-webkit-scrollbar {
+  display: none;
+}

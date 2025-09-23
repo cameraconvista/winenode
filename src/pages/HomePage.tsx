@@ -194,9 +194,9 @@ export default function HomePage() {
 
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-hidden" style={{ 
-        marginTop: '78px', // Spazio per header ingrandito (+8px per padding-bottom)
+        marginTop: '74px', // Spazio per header con container ridotto (-4px)
         marginBottom: '70px', // Spazio per toolbar bottom
-        height: 'calc(100vh - 148px)', // Header + toolbar + safe-area
+        height: 'calc(100vh - 144px)', // Header + toolbar ottimizzato
         paddingBottom: 'env(safe-area-inset-bottom)'
       }}>
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3 py-2 sm:py-4" style={{

@@ -1,0 +1,57 @@
+/* === RESET E GLOBALI BASE === */
+
+/* Nascondi spinner per input numerici */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[inputMode="decimal"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    height: 100%;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
+  }
+
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Previeni rotazioni indesiderate */
+  table, .table-container, tbody, thead, tr, td, th {
+    transform: none !important;
+    writing-mode: initial !important;
+    text-orientation: initial !important;
+  }
+}
+
+/* Forza nessun highlight su tutti gli stati */
+* {
+  -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+}

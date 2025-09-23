@@ -1,0 +1,123 @@
+/* === TOOLBAR IN BASSO — OTTIMIZZATA === */
+.bottom-toolbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(env(safe-area-inset-bottom) - 4px);
+  z-index: 50;
+  background: var(--brand-bg);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 8px calc(12px + env(safe-area-inset-right)) 8px calc(12px + env(safe-area-inset-left));
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  border-radius: 14px 14px 0 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Pulsanti stile app coerente - SOLO ICONE */
+.bottom-toolbar .nav-btn {
+  height: 56px;
+  background: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+}
+
+.bottom-toolbar .nav-btn .icon {
+  width: 28px;
+  height: 28px;
+  background: var(--brand-primary);
+  background: var(--text);
+  flex-shrink: 0;
+}
+
+/* NASCONDI LE LABEL TRANNE "TUTTI" */
+.bottom-toolbar .nav-btn:not(.btn-tutti) .label {
+  display: none !important;
+}
+
+.bottom-toolbar .nav-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(84, 17, 17, 0.18);
+  border-radius: 10px;
+}
+
+/* ORDINE → icona carrello.png */
+.bottom-toolbar .btn-ordine .icon {
+  -webkit-mask: url("/carrello.png") center/contain no-repeat;
+  mask: url("/carrello.png") center/contain no-repeat;
+  background: var(--text);
+}
+
+/* FILTRI → icona filtro.png */
+.bottom-toolbar .btn-filtri .icon {
+  -webkit-mask: url("/filtro.png") center/contain no-repeat;
+  mask: url("/filtro.png") center/contain no-repeat;
+  background: var(--text);
+}
+
+/* ALLERT → campanella allert.png */
+.bottom-toolbar .btn-allert .icon {
+  -webkit-mask: url("/allert.png") center/contain no-repeat;
+  mask: url("/allert.png") center/contain no-repeat;
+  background: var(--text);
+}
+
+/* TUTTI → CARET + LABEL DINAMICA VISIBILE */
+.bottom-toolbar .btn-tutti {
+  background: transparent;
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+}
+
+/* Caret sopra la label */
+.bottom-toolbar .btn-tutti::before {
+  content: "";
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: solid var(--text);
+  border-width: 2px 2px 0 0;
+  transform: rotate(-45deg);
+  background: transparent;
+  margin-bottom: 2px;
+}
+
+/* Label dinamica visibile */
+.bottom-toolbar .btn-tutti .label {
+  display: block !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  color: var(--text) !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  max-width: 60px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Badge notifiche */
+.bottom-toolbar .nav-btn .badge {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--warn);
+  border-radius: 50%;
+  border: 1px solid var(--bg);
+}

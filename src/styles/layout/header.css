@@ -1,0 +1,35 @@
+/* === LOGO IN ALTO — FUORI DALLA STATUS BAR === */
+.app-topbar {
+  background: var(--bg);
+  border-bottom: none;
+  box-shadow: none;
+  padding-bottom: 4px; /* ridotto leggermente il container in basso */
+}
+
+/* Sposta il contenuto del logo sotto la status bar */
+.app-topbar .logo-wrap {
+  padding-top: calc(env(safe-area-inset-top) + 6px); /* ↓ spinge sotto la status bar */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* LOGO INGRANDITO +40% - MASSIMA SPECIFICITÀ */
+header.app-topbar .logo-wrap img,
+.app-topbar .logo-wrap img {
+  height: 39px !important; /* +40% da 28px = 39.2px arrotondato - FORZATO */
+  width: auto !important;
+  object-fit: contain !important;
+  max-height: none !important;
+  min-height: 39px !important;
+  transform: scale(1) !important; /* evita scaling CSS */
+}
+
+/* Fallback per compatibilità - DISABILITATO per evitare conflitti */
+.app-topbar .logo {
+  display: none !important; /* nascosto per evitare conflitti */
+}
+
+.app-topbar .logo img {
+  display: none !important; /* nascosto per evitare conflitti */
+}
