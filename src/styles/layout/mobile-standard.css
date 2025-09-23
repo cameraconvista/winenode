@@ -1,17 +1,19 @@
-/* === LAYOUT STANDARD MOBILE === */
+/* === LAYOUT STANDARD MOBILE RISOLUTIVO === */
 
-/* Container principale - nessun transform problematico */
+/* Container principale - ZERO transform problematici */
 .homepage-container {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   position: relative;
   background: var(--bg);
-  /* CRITICO: nessun transform, filter, perspective, backdrop */
+  /* CRITICO iOS: NESSUN transform, filter, perspective, backdrop */
   transform: none !important;
   filter: none !important;
   perspective: none !important;
   backdrop-filter: none !important;
+  contain: none !important;
+  will-change: auto !important;
 }
 
 /* === HEADER FISSO === */
@@ -22,13 +24,23 @@
   right: 0;
   z-index: 15; /* Sotto navbar (20), sopra content (10) */
   background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  /* RIMOZIONE ARTEFATTI: nessun bordo, ombra, separatore */
+  border: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
   /* Misure standard: 44-56pt */
   min-height: 44pt;
   max-height: 56pt;
-  /* CRITICO: nessun transform problematico */
+  /* CRITICO iOS: nessun transform problematico */
   transform: none !important;
   will-change: auto !important;
+  contain: none !important;
+}
+
+/* Rimuovi eventuali pseudo-elementi separatori */
+.mobile-header::before,
+.mobile-header::after {
+  display: none !important;
 }
 
 .header-content {
@@ -63,10 +75,12 @@
   right: 0;
   bottom: 0;
   z-index: 10; /* Sotto header e navbar */
-  /* Padding dinamico per header e navbar */
-  padding-top: calc(env(safe-area-inset-top) + 56pt); /* Header height + safe-area */
-  padding-bottom: calc(env(safe-area-inset-bottom) + 64pt); /* Navbar height + safe-area */
+  /* Padding dinamico PRECISO per header e navbar */
+  padding-top: calc(env(safe-area-inset-top) + 60pt); /* Header effettivo + safe-area */
+  padding-bottom: calc(env(safe-area-inset-bottom) + 62pt); /* Navbar effettivo + safe-area */
   overflow: hidden;
+  /* ZERO gap: nessun margin aggiuntivo */
+  margin: 0 !important;
 }
 
 .wine-list-container {
@@ -77,10 +91,14 @@
   overscroll-behavior: none;
   touch-action: pan-y;
   scroll-behavior: smooth;
-  padding: 16pt;
-  /* Padding interno per primo/ultimo elemento */
-  padding-top: 8pt;
-  padding-bottom: 8pt;
+  /* Padding laterale standard */
+  padding-left: 16pt;
+  padding-right: 16pt;
+  /* ZERO padding verticale aggiuntivo - solo quello necessario */
+  padding-top: 4pt; /* Minimo respiro sopra */
+  padding-bottom: 4pt; /* Minimo respiro sotto */
+  /* ZERO margin per eliminare gap */
+  margin: 0 !important;
 }
 
 /* === NAVBAR FISSA === */
@@ -91,7 +109,10 @@
   right: 0;
   z-index: 20; /* Sopra header (15) e content (10) */
   background: var(--bg);
-  border-top: 1px solid var(--border);
+  /* RIMOZIONE ARTEFATTI: nessun bordo, gap, separatore */
+  border: none !important;
+  border-top: none !important;
+  box-shadow: none !important;
   /* Misure standard: 56-64pt */
   min-height: 56pt;
   max-height: 64pt;
@@ -105,12 +126,21 @@
   grid-template-columns: auto auto auto 1fr;
   gap: 6pt;
   align-items: center;
-  border-radius: 14pt 14pt 0 0;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  /* CRITICO: nessun transform problematico */
+  /* NESSUN border-radius che può creare gap */
+  border-radius: 0 !important;
+  /* NESSUN backdrop-filter problematico per iOS */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  /* CRITICO iOS: nessun transform problematico */
   transform: none !important;
   will-change: auto !important;
+  contain: none !important;
+}
+
+/* Rimuovi eventuali pseudo-elementi separatori */
+.mobile-navbar::before,
+.mobile-navbar::after {
+  display: none !important;
 }
 
 /* === PULSANTI NAVBAR === */
@@ -200,6 +230,40 @@
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
   transition: font-size 0.2s ease-in-out !important;
+  /* Font-size gestito dinamicamente da useAutoSizeText */
+}
+
+/* Supporto per vecchia classe bottom-toolbar per compatibilità */
+.bottom-toolbar .btn-tutti,
+.mobile-navbar .btn-tutti {
+  background: #FFFFFF !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12pt !important;
+  position: relative;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4pt !important;
+  padding: 8pt 16pt !important;
+  min-width: 120pt !important;
+  min-height: 36pt !important;
+  box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important;
+  margin-left: auto !important;
+}
+
+.bottom-toolbar .btn-tutti .label,
+.mobile-navbar .btn-tutti .label {
+  display: block !important;
+  color: #541111 !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  width: 100% !important;
+  max-width: none !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  transition: font-size 0.2s ease-in-out !important;
 }
 
 /* Stati hover/active per chip */
@@ -223,6 +287,25 @@
   background: var(--warn);
   border-radius: 50%;
   border: 1px solid var(--bg);
+}
+
+/* === DISABILITA HIGHLIGHT CARD DURANTE SCROLL === */
+.wine-card {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+}
+
+.wine-card:hover,
+.wine-card:active,
+.wine-card:focus {
+  /* Mantieni colore originale, nessun highlight */
+  background-color: var(--surface-2) !important;
+  transform: none !important;
+  box-shadow: var(--shadow) !important;
+  outline: none !important;
 }
 
 /* === RESPONSIVE ADJUSTMENTS === */

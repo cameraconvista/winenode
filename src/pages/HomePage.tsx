@@ -202,12 +202,13 @@ export default function HomePage() {
   );
 
   return (
-    <div className="homepage-container bg-app-bg" style={{ 
+    <div className="homepage-container" style={{ 
       width: '100vw',
       height: '100vh',
       maxWidth: '100%',
       overflow: 'hidden',
-      position: 'relative'
+      position: 'relative',
+      background: 'var(--bg)'
     }}>
       {/* HEADER FISSO */}
       <header className="mobile-header">
@@ -234,20 +235,22 @@ export default function HomePage() {
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'none',
             touchAction: 'pan-y',
-            scrollBehavior: 'smooth',
-            padding: '0 16px'
+            scrollBehavior: 'smooth'
           }}
         >
           
 
           {filteredWines.length === 0 ? (
-            <p className="text-center text-app-muted text-sm">
+            <p className="text-center text-sm" style={{ color: 'var(--muted)' }}>
               {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 'Nessun vino trovato con i filtri selezionati'}
             </p>
           ) : (
             <div className="space-y-0.5 sm:space-y-1 overflow-x-hidden w-full">
               {filteredWines.map(wine => (
-                <div key={wine.id} className="wine-card bg-app-surface-2 border border-app-border rounded-lg p-1.5 sm:p-2 overflow-x-hidden w-full max-w-full" style={{ 
+                <div key={wine.id} className="wine-card rounded-lg overflow-x-hidden w-full max-w-full" style={{ 
+                  background: 'var(--surface-2)',
+                  border: '1px solid var(--border)',
+                  padding: '6px 8px',
                   boxShadow: 'var(--shadow)',
                   touchAction: 'manipulation',
                   WebkitTapHighlightColor: 'transparent'
@@ -256,7 +259,7 @@ export default function HomePage() {
                     <div className="flex-1 cursor-pointer overflow-x-hidden min-w-0" onClick={() => handleWineClick(wine)}>
                       <div className="flex flex-col gap-0.5 sm:gap-1 overflow-x-hidden min-w-0">
                         {/* Prima riga: Nome vino tutto maiuscolo */}
-                        <div className="text-xs sm:text-sm font-semibold truncate overflow-x-hidden uppercase leading-tight text-app-text">
+                        <div className="text-xs sm:text-sm font-semibold truncate overflow-x-hidden uppercase leading-tight" style={{ color: 'var(--text)' }}>
                           {wine.name}
                         </div>
                         {/* Seconda riga: Anno · Produttore · Fornitore € Prezzo */}
@@ -278,7 +281,7 @@ export default function HomePage() {
                             </>
                           )}
                           {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
-                            <span className="text-app-warn font-medium">{wine.supplier}</span>
+                            <span className="font-medium" style={{ color: 'var(--warn)' }}>{wine.supplier}</span>
                           )}
                         </div>
                       </div>
@@ -292,10 +295,18 @@ export default function HomePage() {
                           e.stopPropagation(); 
                           handleOpenInventoryModal(wine);
                         }}
-                        className={`text-app-text font-bold text-sm sm:text-base cursor-pointer min-w-[44px] text-center py-2 px-2 transition-all duration-200 rounded-lg hover:bg-app-accent/10 ${
-                          animatingInventory === wine.id ? 'animate-pulse bg-app-warn/20' : ''
+                        className={`font-bold text-sm sm:text-base cursor-pointer text-center py-2 px-2 transition-all duration-200 rounded-lg ${
+                          animatingInventory === wine.id ? 'animate-pulse' : ''
                         }`}
-                        style={{ minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        style={{ 
+                          color: 'var(--text)',
+                          minWidth: '44px',
+                          minHeight: '44px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: animatingInventory === wine.id ? 'var(--warn)' : 'transparent'
+                        }}
                       >
                         {wine.inventory || 0}
                       </span>
