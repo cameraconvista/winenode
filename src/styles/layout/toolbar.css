@@ -4,17 +4,21 @@
   left: 0;
   right: 0;
   bottom: calc(env(safe-area-inset-bottom) - 8px);
-  z-index: 100;
+  z-index: 150; /* SOTTO L'HEADER (z-index 200) MA SOPRA IL CONTENUTO */
   background: var(--brand-bg);
   background: var(--bg);
   border-top: 1px solid var(--border);
   padding: 6px calc(12px + env(safe-area-inset-right)) 6px calc(12px + env(safe-area-inset-left));
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-template-columns: auto auto auto 1fr; /* UI POLISH v11: primi 3 auto, ultimo occupa spazio rimanente */
+  gap: 6px; /* RIDOTTO: da 10px a 6px per compattare i primi 3 pulsanti */
+  align-items: center;
   border-radius: 14px 14px 0 0;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  /* RIMUOVI QUALSIASI TRANSFORM CHE POTREBBE CAUSARE PROBLEMI */
+  transform: none !important;
+  will-change: auto !important;
 }
 
 /* Pulsanti stile app coerente - SOLO ICONE */
@@ -31,6 +35,12 @@
   color: var(--text);
   cursor: pointer;
   position: relative;
+}
+
+/* UI POLISH v11: Compatta i primi 3 pulsanti */
+.bottom-toolbar .nav-btn:not(.btn-tutti) {
+  width: 44px; /* Larghezza fissa per area tappabile minima */
+  flex-shrink: 0; /* Non si restringono */
 }
 
 .bottom-toolbar .nav-btn .icon {
@@ -75,7 +85,7 @@
   background: var(--text);
 }
 
-/* TUTTI → CHIP BIANCO CON CARET A SINISTRA + LABEL DINAMICA */
+/* TUTTI → CHIP BIANCO CON CARET A SINISTRA + LABEL DINAMICA - UI POLISH v11 */
 .bottom-toolbar .btn-tutti {
   background: #FFFFFF !important; /* Sfondo bianco pieno */
   border: 1px solid var(--border) !important; /* Bordo soft coerente */
@@ -86,10 +96,11 @@
   align-items: center !important;
   justify-content: center !important;
   gap: 4px !important;
-  padding: 4px 8px !important; /* Padding ridotto per chip più compatto */
-  min-width: 36px !important;
-  min-height: 28px !important; /* Altezza ridotta ma proporzionata */
+  padding: 6px 12px !important; /* AUMENTATO: da 4px 8px a 6px 12px per chip più largo */
+  min-width: 60px !important; /* AUMENTATO: da 36px a 60px */
+  min-height: 32px !important; /* AUMENTATO: da 28px a 32px per migliore proporzione */
   box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important; /* Ombra leggera */
+  margin-left: auto !important; /* SPINGE IL CHIP A DESTRA */
 }
 
 /* Nessuna freccia - solo chip bianco con testo */
@@ -97,16 +108,16 @@
   display: none !important;
 }
 
-/* Label dinamica ottimizzata per chip compatto */
+/* Label dinamica ottimizzata per chip ampliato - UI POLISH v11 */
 .bottom-toolbar .btn-tutti .label {
   display: block !important;
-  font-size: 10px !important; /* Ridotto per chip più piccolo */
-  line-height: 1.1 !important;
+  font-size: 12px !important; /* AUMENTATO: da 10px a 12px per migliore leggibilità */
+  line-height: 1.2 !important; /* AUMENTATO: da 1.1 a 1.2 */
   color: #541111 !important; /* Colore brand su sfondo bianco */
   text-align: center !important;
   font-weight: 600 !important;
   width: 100% !important; /* Occupa tutto lo spazio disponibile */
-  max-width: 45px !important; /* Ridotto per chip compatto */
+  max-width: 70px !important; /* AUMENTATO: da 45px a 70px per chip più largo */
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;

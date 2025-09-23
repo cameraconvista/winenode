@@ -21,7 +21,7 @@ input[inputMode="decimal"] {
   html {
     font-family: 'Inter', system-ui, sans-serif;
     height: 100%;
-    overflow-x: hidden;
+    overflow: hidden; /* BLOCCA COMPLETAMENTE LO SCROLL SU HTML */
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     overscroll-behavior-y: contain;
@@ -33,14 +33,14 @@ input[inputMode="decimal"] {
     padding: 0;
     background: var(--bg);
     color: var(--text);
-    overflow-x: hidden;
+    overflow: hidden; /* BLOCCA COMPLETAMENTE LO SCROLL SU BODY */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   #root {
     height: 100%;
-    overflow-x: hidden;
+    overflow: hidden; /* BLOCCA COMPLETAMENTE LO SCROLL SU ROOT */
   }
 
   /* Previeni rotazioni indesiderate */

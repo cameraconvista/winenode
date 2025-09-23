@@ -177,7 +177,7 @@ export default function HomePage() {
       width: '100vw',
       maxWidth: '100%'
     }}>
-      <header className="app-topbar flex-shrink-0 fixed top-0 left-0 right-0 z-[100]">
+      <header className="app-topbar flex-shrink-0">
         <div className="max-w-4xl mx-auto px-3 sm:px-4">
           <div className="logo-wrap">
             {/* Logo brand fuori dalla status bar */}
@@ -198,14 +198,20 @@ export default function HomePage() {
 
 
       <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col" style={{ 
-        marginTop: '78px', // Spazio per header con logo +25% e container rifinito
-        height: 'calc(100vh - 130px)', // Header (78px) + toolbar compatta (52px) ottimizzato
+        paddingTop: '78px', // CAMBIATO: padding invece di margin per evitare conflitti
+        height: '100vh', // SEMPLIFICATO: altezza piena viewport
         paddingBottom: 'calc(52px + env(safe-area-inset-bottom))' // Toolbar compatta + safe area
       }}>
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3 py-2 sm:py-4" style={{
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3" style={{
           maxHeight: '100%',
           scrollBehavior: 'smooth',
-          touchAction: 'pan-y' // Solo scroll verticale
+          touchAction: 'pan-y', // Solo scroll verticale
+          WebkitOverflowScrolling: 'touch', // Smooth scrolling su iOS
+          overscrollBehavior: 'none', // RAFFORZATO: nessun rubber band
+          position: 'relative', // Assicura che sia un contenitore di scroll indipendente
+          zIndex: 1, // Sotto header e toolbar
+          paddingTop: '8px', // AGGIUNTO: spazio sopra per primo elemento
+          paddingBottom: '8px' // AGGIUNTO: spazio sotto per ultimo elemento
         }}>
           
 

@@ -17,6 +17,7 @@
 /* Mobile - Responsive e Rotation Lock */
 @import './styles/mobile/responsive.css';
 @import './styles/mobile/rotation-lock.css';
+@import './styles/mobile/scroll-fix.css';
 
 /* Importa Tailwind DOPO i moduli */
 @tailwind base;

@@ -1,9 +1,17 @@
 /* === LOGO IN ALTO — FUORI DALLA STATUS BAR === */
 .app-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200; /* SOPRA LA TOOLBAR (z-index 100) */
   background: var(--bg);
   border-bottom: none;
   box-shadow: none;
   padding-bottom: 8px; /* aumentato per respiro con logo più grande */
+  /* RIMUOVI QUALSIASI TRANSFORM CHE POTREBBE CAUSARE PROBLEMI */
+  transform: none !important;
+  will-change: auto !important;
 }
 
 /* Sposta il contenuto del logo sotto la status bar */
