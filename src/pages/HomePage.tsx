@@ -197,15 +197,15 @@ export default function HomePage() {
 
 
 
-      <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col overflow-hidden" style={{ 
+      <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col" style={{ 
         marginTop: '74px', // Spazio per header con container ridotto (-4px)
-        marginBottom: '70px', // Spazio per toolbar bottom
         height: 'calc(100vh - 144px)', // Header + toolbar ottimizzato
-        paddingBottom: 'env(safe-area-inset-bottom)'
+        paddingBottom: 'calc(70px + env(safe-area-inset-bottom))' // Toolbar + safe area
       }}>
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-3 py-2 sm:py-4" style={{
           maxHeight: '100%',
-          scrollBehavior: 'smooth'
+          scrollBehavior: 'smooth',
+          touchAction: 'pan-y' // Solo scroll verticale
         }}>
           
 

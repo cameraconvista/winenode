@@ -9,8 +9,9 @@
 
 **Branch**: main  
 **Remote**: https://github.com/cameraconvista/winenode.git  
-**Commit**: 78250be  
-**Tag**: release-20250923-1608-asset-optim  
+**Commit**: ce67256 (FINALE)  
+**Tag**: release-20250923-1619-webp-final  
+**Previous**: 78250be (release-20250923-1608-asset-optim)  
 
 ---
 
