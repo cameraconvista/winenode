@@ -61,7 +61,7 @@
   border-radius: 10px;
 }
 
-/* ORDINE → icona carrello.png */
+/* ORDINE → icona carrello.png (MANTENUTO per pulsante visivo) */
 .bottom-toolbar .btn-ordine .icon {
   -webkit-mask: url("/carrello.png") center/contain no-repeat;
   mask: url("/carrello.png") center/contain no-repeat;

@@ -11,7 +11,6 @@ const ImportaPage = lazy(() => import('./pages/ImportaPage'))
 // RIMOSSO: const AccountPage = lazy(() => import('./pages/AccountPage'))
 const PreferenzePage = lazy(() => import('./pages/PreferenzePage'))
 const FoglioExcelPage = lazy(() => import('./pages/FoglioExcelPage'))
-const OrdiniSospesiPage = lazy(() => import('./pages/OrdiniSospesiPage'))
 
 function App() {
   return (
@@ -30,7 +29,6 @@ function App() {
           {/* RIMOSSO: Route /settings/account eliminata */}
           <Route path="/manual-wine-insert" element={<ManualWineInsertPage />} />
           <Route path="/foglio-excel" element={<FoglioExcelPage />} />
-          <Route path="/ordini/sospesi" element={<OrdiniSospesiPage />} />
         </Routes>
       </Suspense>
     </div>

@@ -32,7 +32,6 @@ export const sanitizeEmail = (email: string): string => {
 export const validateWineData = (wine: any): boolean => {
   if (!wine.name || wine.name.length < 2) return false;
   if (wine.cost && (isNaN(wine.cost) || wine.cost < 0)) return false;
-  if (wine.quantity && (isNaN(wine.quantity) || wine.quantity < 0)) return false;
   
   return true;
 };
