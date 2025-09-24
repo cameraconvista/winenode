@@ -3,7 +3,7 @@ import { Bell } from 'lucide-react';
 import QuantityControl from './QuantityControl';
 
 interface Wine {
-  id: number;
+  id: string | number;
   name: string;
   description?: string;
   vintage?: string;
@@ -67,8 +67,8 @@ export default function WineRow({
       <QuantityControl
         quantity={quantity}
         mode={mode}
-        onQuantityChange={(delta) => onQuantityChange(wine.id, delta)}
-        onModeChange={(newMode) => onModeChange(wine.id, newMode)}
+        onQuantityChange={(delta) => onQuantityChange(Number(wine.id), delta)}
+        onModeChange={(newMode) => onModeChange(Number(wine.id), newMode)}
       />
     </div>
   );
