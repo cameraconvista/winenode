@@ -3,7 +3,6 @@ import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
-import CarrelloModal from '../components/CarrelloModal';
 import InventoryModal from '../components/InventoryModal';
 
 import useWines from '../hooks/useWines';
@@ -35,10 +34,8 @@ export default function HomePage() {
   const [selectedWine, setSelectedWine] = useState<WineType | null>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showWineDetailsModal, setShowWineDetailsModal] = useState(false);
-  const [showCarrelloModal, setShowCarrelloModal] = useState(false);
   const [activeTab, setActiveTab] = useState("TUTTI I VINI");
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
-  const [showOrdineModal, setShowOrdineModal] = useState(false);
   const [showInventoryModal, setShowInventoryModal] = useState(false);
   const [editingWine, setEditingWine] = useState<WineType | null>(null);
 
@@ -136,11 +133,6 @@ export default function HomePage() {
     setActiveTab(category);
   };
 
-  const handleFornitoreSelezionato = (fornitore: string) => {
-    console.log('Fornitore selezionato:', fornitore);
-    setShowOrdineModal(false);
-    // TODO: Implementare navigazione a pagina ordine con fornitore preselezionato
-  };
 
   const handleUpdateWine = async (id: string, updates: Partial<WineType>): Promise<void> => {
     await updateWine(id, updates);
@@ -326,7 +318,6 @@ export default function HomePage() {
       {/* NAVBAR FISSA IN BASSO */}
       <nav className="mobile-navbar">
         <button 
-          onClick={() => setShowCarrelloModal(true)} 
           className="nav-btn btn-ordine"
           title="Nuovo Ordine"
         >
@@ -423,11 +414,6 @@ export default function HomePage() {
         wines={wines}
       />
       <WineDetailsModal wine={selectedWine} open={showWineDetailsModal} onOpenChange={setShowWineDetailsModal} onUpdateWine={handleUpdateWine} suppliers={suppliers} />
-      <CarrelloModal 
-        open={showCarrelloModal} 
-        onClose={() => setShowCarrelloModal(false)} 
-        onFornitoreSelezionato={handleFornitoreSelezionato} 
-      />
 
       <InventoryModal
         isOpen={showInventoryModal}

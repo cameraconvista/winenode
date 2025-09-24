@@ -150,8 +150,6 @@ export default function CreateOrderPage() {
                 const quantity = line?.quantity || 0;
                 const mode = line?.unit || 'bottiglie';
                 
-                console.log('🎯 Rendering wine:', { wineId, quantity, mode, line });
-                
                 return (
                   <WineRow
                     key={wine.id}
