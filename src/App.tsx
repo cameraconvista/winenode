@@ -12,7 +12,7 @@ const ImportaPage = lazy(() => import('./pages/ImportaPage'))
 const PreferenzePage = lazy(() => import('./pages/PreferenzePage'))
 const FoglioExcelPage = lazy(() => import('./pages/FoglioExcelPage'))
 const OrdiniSospesiPage = lazy(() => import('./pages/OrdiniSospesiPage'))
-const CreateOrderPage = lazy(() => import('./pages/CreateOrderPage'))
+const CreateOrderPage = lazy(() => import('./features/orders/pages/CreateOrderPage'))
 
 function App() {
   return (

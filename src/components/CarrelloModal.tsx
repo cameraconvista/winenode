@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { ShoppingCart, Plus, Settings, X } from 'lucide-react';
-import OrdineModal from './OrdineModal';
+import NewOrderModal from '../features/orders/modals/NewOrderModal';
 import GestisciOrdiniModal from './GestisciOrdiniModal';
 
 interface CarrelloModalProps {
@@ -10,26 +10,18 @@ interface CarrelloModalProps {
   onFornitoreSelezionato?: (fornitore: string) => void;
 }
 
-export default function CarrelloModal({ open, onClose, onFornitoreSelezionato }: CarrelloModalProps) {
-  const [showOrdineModal, setShowOrdineModal] = useState(false);
+export default function CarrelloModal({ open, onClose }: CarrelloModalProps) {
+  const [showNewOrderModal, setShowNewOrderModal] = useState(false);
   const [showGestisciOrdiniModal, setShowGestisciOrdiniModal] = useState(false);
 
   if (!open) return null;
 
   const handleNuovoOrdine = () => {
-    setShowOrdineModal(true);
+    setShowNewOrderModal(true);
   };
 
   const handleGestisciOrdini = () => {
     setShowGestisciOrdiniModal(true);
-  };
-
-  const handleFornitoreSelezionatoInternal = (fornitore: string) => {
-    if (onFornitoreSelezionato) {
-      onFornitoreSelezionato(fornitore);
-    }
-    setShowOrdineModal(false);
-    onClose();
   };
 
   return (
@@ -37,10 +29,10 @@ export default function CarrelloModal({ open, onClose, onFornitoreSelezionato }:
       <div 
         className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
         style={{
-          visibility: showOrdineModal ? 'hidden' : 'visible',
-          pointerEvents: showOrdineModal ? 'none' : 'auto'
+          visibility: showNewOrderModal ? 'hidden' : 'visible',
+          pointerEvents: showNewOrderModal ? 'none' : 'auto'
         }}
-        aria-hidden={showOrdineModal}
+        aria-hidden={showNewOrderModal}
       >
         <div className="border border-gray-700 rounded-lg shadow-lg max-w-md w-full p-6" style={{
           background: '#541111'
@@ -97,10 +89,9 @@ export default function CarrelloModal({ open, onClose, onFornitoreSelezionato }:
       </div>
 
       {/* Modali secondari */}
-      <OrdineModal
-        open={showOrdineModal}
-        onClose={() => setShowOrdineModal(false)}
-        onFornitoreSelezionato={handleFornitoreSelezionatoInternal}
+      <NewOrderModal
+        open={showNewOrderModal}
+        onClose={() => setShowNewOrderModal(false)}
       />
 
       <GestisciOrdiniModal

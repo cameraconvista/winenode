@@ -1,27 +1,14 @@
-# STATO FINALE - FLUSSO ORDINI CORRETTO
+# DIAGNOSI LAMPO - REFAC CHIRURGICO
 
-## FLUSSO IMPLEMENTATO:
-1. ✅ Carrello Ordini (modale) → pulsante "Nuovo Ordine"
-2. ✅ "Crea Ordine" (modale DARK) → selezione fornitore → "Avanti"
-3. ✅ "Crea Ordine" (pagina LIGHT) → gestione quantità → "Conferma Ordine"
+## FLUSSO ATTUALE CONFERMATO:
+a) Click "Nuovo Ordine" da Carrello → apre OrdineModal (solo Step 1: selezione fornitore)
+b) Dopo selezione fornitore → navigate('/orders/create?supplier=ID') → CreateOrderPage
 
-## COMPONENTI FINALI:
-- ✅ OrdineModal.tsx: MODALE "Crea Ordine" (selezione fornitore) - DARK theme
-- ✅ CreateOrderPage.tsx: PAGINA "Crea Ordine" (gestione quantità) - LIGHT theme
-- ✅ Route /orders/create → CreateOrderPage
+## SPRECHI IN OrdineModal.tsx (610 righe):
+- Step 2-4 (linee 152-611): MAI RAGGIUNTI - codice morto 85%
+- Import inutili: useWines, useOrdini
+- State inutili: ordineQuantities, ordineMode, ordineData, selectedFornitoreId
+- Errori TS: w.ordineMinimo, w.unitaOrdine (proprietà inesistenti)
+- Props non usate: onFornitoreSelezionato
 
-## ARTEFATTI RIMOSSI:
-- ✅ NewOrderPage.tsx: RIMOSSO (duplicato errato)
-- ✅ ConfirmOrderPage.tsx: RIMOSSO (non necessario ora)
-- ✅ Route /orders/new: RIMOSSA
-- ✅ Route /orders/confirm: RIMOSSA
-
-## NAVIGAZIONE:
-- ✅ OrdineModal.handleAvanti() → navigate('/orders/create?supplier=ID')
-- ✅ CreateOrderPage legge supplier da URL params
-- ✅ Layout LIGHT con header/footer sticky, safe-area, z-index corretti
-
-## PALETTE COERENTE:
-- ✅ Modale: DARK (#541111 container, #fff9dc testi)
-- ✅ Pagina: LIGHT (#fff9dc sfondo, #541111 testi)
-- ✅ Touch target ≥ 44px, accessibilità completa
+## AZIONE: Pulizia chirurgica + modularizzazione completa
