@@ -26,14 +26,12 @@ export default function CarrelloModal({ open, onClose }: CarrelloModalProps) {
 
   return (
     <>
-      <div 
-        className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
-        style={{
-          visibility: showNewOrderModal ? 'hidden' : 'visible',
-          pointerEvents: showNewOrderModal ? 'none' : 'auto'
-        }}
-        aria-hidden={showNewOrderModal}
-      >
+      {!showNewOrderModal && (
+        <div 
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+        >
         <div className="border border-gray-700 rounded-lg shadow-lg max-w-md w-full p-6" style={{
           background: '#541111'
         }}>
@@ -86,7 +84,8 @@ export default function CarrelloModal({ open, onClose }: CarrelloModalProps) {
             </button>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Modali secondari */}
       <NewOrderModal
