@@ -1,16 +1,14 @@
 import { useOrderDraftStore } from '../state/orderDraft.store';
 
 export function useOrderDraft() {
-  const {
-    draft,
-    setSupplier,
-    setQuantity,
-    getQuantity,
-    getUnit,
-    getTotalBottles,
-    getSelectedWinesCount,
-    clear
-  } = useOrderDraftStore();
+  const draft = useOrderDraftStore(state => state.draft);
+  const setSupplier = useOrderDraftStore(state => state.setSupplier);
+  const setQuantity = useOrderDraftStore(state => state.setQuantity);
+  const getQuantity = useOrderDraftStore(state => state.getQuantity);
+  const getUnit = useOrderDraftStore(state => state.getUnit);
+  const getTotalBottles = useOrderDraftStore(state => state.getTotalBottles);
+  const getSelectedWinesCount = useOrderDraftStore(state => state.getSelectedWinesCount);
+  const clear = useOrderDraftStore(state => state.clear);
 
   const handleQuantityChange = (wineId: number, delta: number) => {
     const currentQty = getQuantity(wineId);

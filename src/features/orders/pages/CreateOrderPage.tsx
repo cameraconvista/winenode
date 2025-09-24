@@ -17,12 +17,8 @@ export default function CreateOrderPage() {
   const { 
     draft, 
     setSupplier, 
-    getQuantity, 
-    getUnit, 
     getTotalBottles, 
-    getSelectedWinesCount, 
-    handleQuantityChange, 
-    handleUnitChange 
+    getSelectedWinesCount
   } = useOrderDraft();
   
   const [selectedSupplierName, setSelectedSupplierName] = useState<string>('');
@@ -110,10 +106,6 @@ export default function CreateOrderPage() {
                 <WineRow
                   key={wine.id}
                   wine={wine}
-                  quantity={getQuantity(Number(wine.id))}
-                  mode={getUnit(Number(wine.id))}
-                  onQuantityChange={handleQuantityChange}
-                  onModeChange={handleUnitChange}
                 />
               ))}
             </div>

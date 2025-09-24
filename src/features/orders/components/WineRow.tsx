@@ -1,6 +1,7 @@
 import React from 'react';
 import { Bell } from 'lucide-react';
 import QuantityControl from './QuantityControl';
+import { useWineRowData } from '../hooks/useWineRowData';
 
 interface Wine {
   id: string | number;
@@ -13,19 +14,10 @@ interface Wine {
 
 interface WineRowProps {
   wine: Wine;
-  quantity: number;
-  mode: 'bottiglie' | 'cartoni';
-  onQuantityChange: (wineId: number, delta: number) => void;
-  onModeChange: (wineId: number, mode: 'bottiglie' | 'cartoni') => void;
 }
 
-export default function WineRow({
-  wine,
-  quantity,
-  mode,
-  onQuantityChange,
-  onModeChange
-}: WineRowProps) {
+export default function WineRow({ wine }: WineRowProps) {
+  const { quantity, unit, handleQuantityChange, handleUnitChange } = useWineRowData(Number(wine.id));
   const isLowStock = wine.inventory <= wine.minStock;
 
   return (
@@ -66,9 +58,9 @@ export default function WineRow({
 
       <QuantityControl
         quantity={quantity}
-        mode={mode}
-        onQuantityChange={(delta) => onQuantityChange(Number(wine.id), delta)}
-        onModeChange={(newMode) => onModeChange(Number(wine.id), newMode)}
+        mode={unit}
+        onQuantityChange={handleQuantityChange}
+        onModeChange={handleUnitChange}
       />
     </div>
   );
