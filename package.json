@@ -41,7 +41,8 @@
     "react-toastify": "^11.0.5",
     "sonner": "^2.0.5",
     "tailwind-merge": "^1.14.0",
-    "ws": "^8.18.2"
+    "ws": "^8.18.2",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@types/react": "^18.3.23",

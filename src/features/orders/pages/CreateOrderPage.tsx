@@ -1,48 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Minus, Bell } from 'lucide-react';
-import useSuppliers from '../hooks/useSuppliers';
-import useWines from '../hooks/useWines';
+import { ArrowLeft } from 'lucide-react';
+import useSuppliers from '../../../hooks/useSuppliers';
+import useWines from '../../../hooks/useWines';
+import WineRow from '../components/WineRow';
+import OrderTotalsBar from '../components/OrderTotalsBar';
+import { useOrderDraft } from '../hooks/useOrderDraft';
 
 export default function CreateOrderPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const supplierId = searchParams.get('supplier');
+  const supplierId = searchParams.get('supplier') ?? '';
   
   const { suppliers } = useSuppliers();
   const { wines } = useWines();
+  const { 
+    draft, 
+    setSupplier, 
+    getQuantity, 
+    getUnit, 
+    getTotalBottles, 
+    getSelectedWinesCount, 
+    handleQuantityChange, 
+    handleUnitChange 
+  } = useOrderDraft();
   
   const [selectedSupplierName, setSelectedSupplierName] = useState<string>('');
-  const [orderQuantities, setOrderQuantities] = useState<Record<number, number>>({});
-  const [orderMode, setOrderMode] = useState<Record<number, 'bottiglie' | 'cartoni'>>({});
 
   useEffect(() => {
     if (supplierId && suppliers.length > 0) {
       const supplier = suppliers.find(s => s.id === supplierId);
       if (supplier) {
         setSelectedSupplierName(supplier.nome);
+        setSupplier(supplier.id, supplier.nome);
       }
     }
-  }, [supplierId, suppliers]);
+  }, [supplierId, suppliers, setSupplier]);
 
   const filteredWines = wines.filter(w => w.supplier === selectedSupplierName);
-  const totalBottles = Object.values(orderQuantities).reduce((sum, qty) => sum + qty, 0);
-  const selectedWinesCount = Object.values(orderQuantities).filter(qty => qty > 0).length;
-
-  const handleQuantityChange = (wineId: number, delta: number) => {
-    const currentQty = orderQuantities[wineId] || 0;
-    const currentMode = orderMode[wineId] || 'bottiglie';
-    const increment = currentMode === 'cartoni' ? 6 : 1;
-    const newQty = Math.max(0, currentQty + (delta * increment));
-    
-    setOrderQuantities(prev => ({
-      ...prev,
-      [wineId]: newQty
-    }));
-  };
+  const totalBottles = getTotalBottles();
+  const selectedWinesCount = getSelectedWinesCount();
 
   const handleConfirmOrder = () => {
-    // Qui implementeresti la logica per confermare l'ordine
     alert(`Ordine confermato: ${totalBottles} bottiglie da ${selectedSupplierName}`);
     navigate('/');
   };
@@ -87,7 +86,7 @@ export default function CreateOrderPage() {
             )}
           </div>
           
-          <div className="w-20"></div> {/* Spacer per centrare il titolo */}
+          <div className="w-20"></div>
         </div>
       </header>
 
@@ -107,118 +106,16 @@ export default function CreateOrderPage() {
           {/* Lista vini */}
           {selectedSupplierName && filteredWines.length > 0 && (
             <div className="space-y-3">
-              {filteredWines.map(wine => {
-                const isLowStock = wine.inventory <= wine.minStock;
-                const quantity = orderQuantities[Number(wine.id)] || 0;
-                const mode = orderMode[Number(wine.id)] || 'bottiglie';
-                
-                return (
-                  <div
-                    key={wine.id}
-                    className="p-4 rounded-lg"
-                    style={{
-                      background: isLowStock ? '#fef2f2' : '#fff3bf',
-                      border: `1px solid ${isLowStock ? '#fca5a5' : 'rgba(84, 17, 17, 0.2)'}`,
-                      borderLeft: `4px solid ${isLowStock ? '#ef4444' : '#f59e0b'}`
-                    }}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-base" style={{ color: '#541111' }}>
-                          {wine.name}
-                        </h4>
-                        {wine.description && (
-                          <p className="text-sm opacity-80" style={{ color: '#541111' }}>
-                            {wine.description} {wine.vintage && `(${wine.vintage})`}
-                          </p>
-                        )}
-                      </div>
-                      
-                      <div className="text-right ml-4">
-                        <p className={`text-sm font-bold`} style={{ 
-                          color: isLowStock ? '#dc2626' : '#541111' 
-                        }}>
-                          Giacenza: {wine.inventory}
-                        </p>
-                        {isLowStock && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <Bell className="h-3 w-3 text-red-600" />
-                            <span className="text-xs text-red-600">Sotto soglia</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Controlli quantità */}
-                    <div className="flex items-center justify-between pt-3 border-t" style={{ borderColor: 'rgba(84, 17, 17, 0.1)' }}>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleQuantityChange(Number(wine.id), -1)}
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors"
-                          style={{ 
-                            minWidth: '44px', 
-                            minHeight: '44px',
-                            width: '44px',
-                            height: '44px'
-                          }}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        
-                        <div className="text-center min-w-16">
-                          <div className="text-lg font-bold" style={{ color: '#541111' }}>
-                            {mode === 'cartoni' ? Math.floor(quantity / 6) : quantity}
-                          </div>
-                          <div className="text-xs opacity-70" style={{ color: '#541111' }}>
-                            {mode === 'cartoni' ? 'cartoni' : 'bottiglie'}
-                          </div>
-                        </div>
-                        
-                        <button
-                          onClick={() => handleQuantityChange(Number(wine.id), 1)}
-                          className="bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors"
-                          style={{ 
-                            minWidth: '44px', 
-                            minHeight: '44px',
-                            width: '44px',
-                            height: '44px'
-                          }}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
-
-                      {/* Toggle bottiglie/cartoni */}
-                      <div className="flex rounded-lg p-1" style={{ background: 'rgba(84, 17, 17, 0.1)' }}>
-                        <button
-                          onClick={() => setOrderMode(prev => ({ ...prev, [Number(wine.id)]: 'bottiglie' }))}
-                          className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                            mode === 'bottiglie' ? 'text-white' : ''
-                          }`}
-                          style={{
-                            background: mode === 'bottiglie' ? '#541111' : 'transparent',
-                            color: mode === 'bottiglie' ? '#fff9dc' : '#541111'
-                          }}
-                        >
-                          Bottiglie
-                        </button>
-                        <button
-                          onClick={() => setOrderMode(prev => ({ ...prev, [Number(wine.id)]: 'cartoni' }))}
-                          className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                            mode === 'cartoni' ? 'text-white' : ''
-                          }`}
-                          style={{
-                            background: mode === 'cartoni' ? '#541111' : 'transparent',
-                            color: mode === 'cartoni' ? '#fff9dc' : '#541111'
-                          }}
-                        >
-                          Cartoni
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {filteredWines.map(wine => (
+                <WineRow
+                  key={wine.id}
+                  wine={wine}
+                  quantity={getQuantity(Number(wine.id))}
+                  mode={getUnit(Number(wine.id))}
+                  onQuantityChange={handleQuantityChange}
+                  onModeChange={handleUnitChange}
+                />
+              ))}
             </div>
           )}
 
@@ -296,13 +193,10 @@ export default function CreateOrderPage() {
           </button>
         </div>
         
-        {selectedWinesCount > 0 && (
-          <div className="px-4 pt-2">
-            <p className="text-xs text-center opacity-70" style={{ color: '#541111' }}>
-              {selectedWinesCount} vini selezionati • {totalBottles} bottiglie totali
-            </p>
-          </div>
-        )}
+        <OrderTotalsBar 
+          selectedWinesCount={selectedWinesCount}
+          totalBottles={totalBottles}
+        />
       </footer>
     </div>
   );
