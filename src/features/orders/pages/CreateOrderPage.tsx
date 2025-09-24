@@ -17,8 +17,12 @@ export default function CreateOrderPage() {
   const { 
     draft, 
     setSupplier, 
+    getQuantity, 
+    getUnit, 
     getTotalBottles, 
-    getSelectedWinesCount
+    getSelectedWinesCount, 
+    handleQuantityChange, 
+    handleUnitChange 
   } = useOrderDraft();
   
   const { 
@@ -144,6 +148,10 @@ export default function CreateOrderPage() {
                 <WineRow
                   key={wine.id}
                   wine={wine}
+                  quantity={getQuantity(Number(wine.id))}
+                  mode={getUnit(Number(wine.id))}
+                  onQuantityChange={handleQuantityChange}
+                  onModeChange={handleUnitChange}
                 />
               ))}
             </div>

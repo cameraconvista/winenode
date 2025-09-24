@@ -1,7 +1,6 @@
 import React from 'react';
 import { Bell } from 'lucide-react';
 import QuantityControl from './QuantityControl';
-import { useOrderDraftStore } from '../state/orderDraft.store';
 
 interface Wine {
   id: string | number;
@@ -14,36 +13,19 @@ interface Wine {
 
 interface WineRowProps {
   wine: Wine;
+  quantity: number;
+  mode: 'bottiglie' | 'cartoni';
+  onQuantityChange: (wineId: number, delta: number) => void;
+  onModeChange: (wineId: number, mode: 'bottiglie' | 'cartoni') => void;
 }
 
-export default function WineRow({ wine }: WineRowProps) {
-  const wineId = Number(wine.id);
-  
-  // Selector specifico per questa riga - si aggiorna solo quando questa riga cambia
-  const { quantity, unit } = useOrderDraftStore(state => {
-    const line = state.draft.lines.find(line => line.wineId === wineId);
-    return {
-      quantity: line?.quantity || 0,
-      unit: line?.unit || 'bottiglie'
-    };
-  });
-  const setQuantity = useOrderDraftStore(state => state.setQuantity);
-  
-  const handleQuantityChange = (delta: number) => {
-    const increment = unit === 'cartoni' ? 6 : 1;
-    const newQty = Math.max(0, quantity + (delta * increment));
-    setQuantity(wineId, unit, newQty);
-  };
-
-  const handleUnitChange = (newUnit: 'bottiglie' | 'cartoni') => {
-    let convertedQty = quantity;
-    if (unit === 'cartoni' && newUnit === 'bottiglie') {
-      convertedQty = quantity * 6;
-    } else if (unit === 'bottiglie' && newUnit === 'cartoni') {
-      convertedQty = Math.floor(quantity / 6);
-    }
-    setQuantity(wineId, newUnit, convertedQty);
-  };
+export default function WineRow({
+  wine,
+  quantity,
+  mode,
+  onQuantityChange,
+  onModeChange
+}: WineRowProps) {
   
   const isLowStock = wine.inventory <= wine.minStock;
 
@@ -85,9 +67,9 @@ export default function WineRow({ wine }: WineRowProps) {
 
       <QuantityControl
         quantity={quantity}
-        mode={unit}
-        onQuantityChange={handleQuantityChange}
-        onModeChange={handleUnitChange}
+        mode={mode}
+        onQuantityChange={(delta) => onQuantityChange(Number(wine.id), delta)}
+        onModeChange={(newMode) => onModeChange(Number(wine.id), newMode)}
       />
     </div>
   );
