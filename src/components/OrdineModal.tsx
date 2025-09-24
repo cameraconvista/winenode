@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useSuppliers from "../hooks/useSuppliers";
 import useWines from '../hooks/useWines';
 import { useOrdini } from "../hooks/useOrdini";
@@ -10,6 +11,7 @@ interface OrdineModalProps {
 }
 
 export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: OrdineModalProps) {
+  const navigate = useNavigate();
   const { suppliers, isLoading, error } = useSuppliers();
   const { wines } = useWines();
   const { salvaOrdine } = useOrdini();
@@ -46,9 +48,10 @@ export default function OrdineModal({ open, onClose, onFornitoreSelezionato }: O
       // Trova l'ID del fornitore selezionato
       const supplier = suppliers.find(s => s.nome === selectedFornitore);
       if (supplier) {
-        setSelectedFornitoreId(supplier.id);
+        // Chiudi il modale e naviga alla pagina Crea Ordine
+        onClose();
+        navigate(`/orders/create?supplier=${supplier.id}`);
       }
-      setStep("vini");
     }
   };
 
