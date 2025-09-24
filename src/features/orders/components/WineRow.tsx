@@ -17,7 +17,8 @@ interface WineRowProps {
 }
 
 export default function WineRow({ wine }: WineRowProps) {
-  const { quantity, unit, handleQuantityChange, handleUnitChange } = useWineRowData(Number(wine.id));
+  const wineId = React.useMemo(() => Number(wine.id), [wine.id]);
+  const { quantity, unit, handleQuantityChange, handleUnitChange } = useWineRowData(wineId);
   const isLowStock = wine.inventory <= wine.minStock;
 
   return (

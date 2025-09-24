@@ -1,24 +1,25 @@
 import { useOrderDraftStore } from '../state/orderDraft.store';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 /**
  * Hook ottimizzato per singola riga vino
  * Si sottoscrive solo ai dati specifici per evitare re-render inutili
  */
 export function useWineRowData(wineId: number) {
-  // Selector cachato per evitare loop infiniti
-  const selector = useMemo(
-    () => (state: any) => {
+  // Selector cachato e stabile per evitare loop infiniti
+  const selector = useCallback(
+    (state: any) => {
       const line = state.draft.lines.find((line: any) => line.wineId === wineId);
       return {
         quantity: line?.quantity || 0,
-        unit: line?.unit || 'bottiglie' as const
+        unit: (line?.unit || 'bottiglie') as 'bottiglie' | 'cartoni'
       };
     },
     [wineId]
   );
 
-  const { quantity, unit } = useOrderDraftStore(selector);
+  const data = useOrderDraftStore(selector);
+  const { quantity, unit } = data;
 
   // Azioni non causano re-render
   const setQuantity = useOrderDraftStore(state => state.setQuantity);
