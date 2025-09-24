@@ -60,17 +60,17 @@ export default function WineDetailsModal({
             <div className="text-xs md:text-sm mt-1" style={{ color: '#fff9dc' }}>
               {wine.vintage && (
                 <>
-                  <span className="font-medium" style={{ color: '#fff9dc' }}>{wine.vintage}</span>
-                  <span className="mx-2">·</span>
+                  <span className="font-medium" style={{ color: '#fef3c7' }}>{wine.vintage}</span>
+                  <span className="mx-2" style={{ color: '#fef3c7' }}>·</span>
                 </>
               )}
               {wine.description && (
                 <>
-                  <span className="font-medium" style={{ color: '#fff9dc' }}>{wine.description}</span>
-                  <span className="mx-2">·</span>
+                  <span className="font-medium" style={{ color: '#fef3c7' }}>{wine.description}</span>
+                  <span className="mx-2" style={{ color: '#fef3c7' }}>·</span>
                 </>
               )}
-              <span className="font-medium" style={{ color: '#fff9dc' }}>
+              <span className="font-medium" style={{ color: '#fef3c7' }}>
                 {wine.supplier && wine.supplier.trim() ? wine.supplier : 'BOLOGNA VINI'}
               </span>
             </div>
@@ -87,7 +87,7 @@ export default function WineDetailsModal({
 
         {/* Content - Layout responsivo */}
         <div className="p-4 md:p-6">
-          <div className="max-w-xs mx-auto">
+          <div className="max-w-[200px] mx-auto">
             {/* Controlli */}
             <div className="space-y-4 md:space-y-6">
               {/* Giacenza */}
@@ -95,7 +95,7 @@ export default function WineDetailsModal({
                 <label className="block text-base md:text-lg font-medium mb-2 md:mb-3 text-center" style={{ color: '#fff9dc' }}>
                   Giacenza
                 </label>
-                <div className="flex items-center rounded-lg" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
+                <div className="flex items-center rounded-lg overflow-hidden" style={{ background: '#fff2b8' }}>
                   <button
                     type="button"
                     onClick={() => {
@@ -104,8 +104,8 @@ export default function WineDetailsModal({
                         setFormData(prev => ({ ...prev, inventory: (currentValue - 1).toString() }));
                       }
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-l-lg text-lg md:text-2xl"
-                    style={{ background: '#dc2626', borderRight: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors text-lg md:text-2xl"
+                    style={{ background: '#dc2626' }}
                   >
                     −
                   </button>
@@ -123,8 +123,8 @@ export default function WineDetailsModal({
                       const currentValue = parseInt(formData.inventory) || 0;
                       setFormData(prev => ({ ...prev, inventory: (currentValue + 1).toString() }));
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-r-lg text-lg md:text-2xl"
-                    style={{ background: '#16a34a', borderLeft: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors text-lg md:text-2xl"
+                    style={{ background: '#16a34a' }}
                   >
                     +
                   </button>
@@ -141,7 +141,7 @@ export default function WineDetailsModal({
                     Soglia Minima
                   </span>
                 </label>
-                <div className="flex items-center rounded-lg" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
+                <div className="flex items-center rounded-lg overflow-hidden" style={{ background: '#fff2b8' }}>
                   <button
                     type="button"
                     onClick={() => {
@@ -150,8 +150,8 @@ export default function WineDetailsModal({
                         setFormData(prev => ({ ...prev, minStock: (currentValue - 1).toString() }));
                       }
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-l-lg text-lg md:text-2xl"
-                    style={{ background: '#dc2626', borderRight: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors text-lg md:text-2xl"
+                    style={{ background: '#dc2626' }}
                   >
                     −
                   </button>
@@ -170,8 +170,8 @@ export default function WineDetailsModal({
                       const currentValue = parseInt(formData.minStock) || 0;
                       setFormData(prev => ({ ...prev, minStock: (currentValue + 1).toString() }));
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-r-lg text-lg md:text-2xl"
-                    style={{ background: '#16a34a', borderLeft: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors text-lg md:text-2xl"
+                    style={{ background: '#16a34a' }}
                   >
                     +
                   </button>
@@ -199,7 +199,7 @@ export default function WineDetailsModal({
           <button
             onClick={() => onOpenChange(false)}
             className="flex-1 px-4 py-2 md:px-6 md:py-3 rounded-lg transition-colors text-base md:text-lg font-medium"
-            style={{ background: '#7a4a30', color: '#fff9dc' }}
+            style={{ background: '#dc2626', color: '#fff9dc' }}
             disabled={isLoading}
           >
             Annulla
