@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Home, Package, Clock, Eye, Check, Edit3 } from 'lucide-react';
 import { useOrdini } from '../hooks/useOrdini';
-import OrdineDetailModal from '../components/OrdineDetailModal';
 
 export default function OrdiniSospesiPage() {
   const navigate = useNavigate();
   const { ordini, isLoading, error, loadOrdini, aggiornaStatoOrdine } = useOrdini();
-  const [selectedOrdine, setSelectedOrdine] = useState<any>(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
 
   // Filtra solo ordini sospesi e inviati
   const ordiniSospesi = ordini.filter(o => o.stato === 'sospeso' || o.stato === 'inviato');
@@ -18,8 +15,8 @@ export default function OrdiniSospesiPage() {
   }, []);
 
   const handleViewOrdine = (ordine: any) => {
-    setSelectedOrdine(ordine);
-    setShowDetailModal(true);
+    // TODO: Implementare visualizzazione dettagli ordine
+    console.log('Visualizza ordine:', ordine);
   };
 
   const handleMarkAsInviato = async (ordineId: string) => {
@@ -242,20 +239,6 @@ export default function OrdiniSospesiPage() {
         </div>
       </main>
 
-      {/* Detail Modal */}
-      {showDetailModal && selectedOrdine && (
-        <OrdineDetailModal
-          ordine={selectedOrdine}
-          open={showDetailModal}
-          onClose={() => {
-            setShowDetailModal(false);
-            setSelectedOrdine(null);
-          }}
-          onUpdate={() => {
-            loadOrdini();
-          }}
-        />
-      )}
     </div>
   );
 }

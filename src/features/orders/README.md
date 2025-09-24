@@ -6,8 +6,6 @@ Modulo per la gestione degli ordini ai fornitori, completamente refactorizzato c
 
 ```
 src/features/orders/
-├── modals/                 # Modali per selezione fornitore
-│   └── NewOrderModal.tsx   # Modal selezione fornitore → navigate
 ├── pages/                  # Pagine complete per gestione ordini
 │   └── CreateOrderPage.tsx # Pagina creazione ordine con quantità
 ├── components/             # Componenti riusabili
@@ -25,25 +23,21 @@ src/features/orders/
 ├── utils/                  # Utility functions (vuoto per ora)
 └── __tests__/              # Test di integrazione
     └── integration.test.tsx
-```
 
 ## 🔄 Flusso Utente
 
 ```mermaid
 graph TD
-    A[Carrello Ordini] --> B[NewOrderModal]
-    B --> C[Selezione Fornitore]
-    C --> D[Navigate /orders/create]
-    D --> E[CreateOrderPage]
-    E --> F[Gestione Quantità]
-    F --> G[Conferma Ordine]
-    G --> H[Torna alla Home]
+    A[Accesso Diretto] --> B[/orders/create?supplier=ID]
+    B --> C[CreateOrderPage]
+    C --> D[WineRow + QuantityControl]
+    D --> E[OrderTotalsBar]
+    E --> F[Submit → OrderService]
 ```
 
 ### Dettaglio Flusso:
-1. **Carrello Ordini** (modale) → Pulsante "Nuovo Ordine"
-2. **NewOrderModal** → Selezione fornitore → "Avanti"
-3. **CreateOrderPage** → Gestione quantità modulare → "Conferma"
+1. **Accesso Diretto** → URL `/orders/create?supplier=ID`
+2. **CreateOrderPage** → Gestione quantità modulare → "Conferma"
 
 ## 🛡️ Regole di Import (Boundaries)
 

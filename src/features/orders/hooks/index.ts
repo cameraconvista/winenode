@@ -1,5 +1,4 @@
 // Barrel file per hooks ordini
 export { useOrderDraft } from './useOrderDraft';
 export { useDebounce } from './useDebounce';
-export { useWineRowData } from './useWineRowData';
 export { useOrderSubmit } from './useOrderSubmit';
