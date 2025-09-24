@@ -144,16 +144,20 @@ export default function CreateOrderPage() {
           {/* Lista vini */}
           {selectedSupplierName && filteredWines.length > 0 && (
             <div className="space-y-3">
-              {filteredWines.map(wine => (
-                <WineRow
-                  key={wine.id}
-                  wine={wine}
-                  quantity={getQuantity(Number(wine.id))}
-                  mode={getUnit(Number(wine.id))}
-                  onQuantityChange={handleQuantityChange}
-                  onModeChange={handleUnitChange}
-                />
-              ))}
+              {filteredWines.map(wine => {
+                const wineId = Number(wine.id);
+                const line = draft.lines.find(line => line.wineId === wineId);
+                return (
+                  <WineRow
+                    key={wine.id}
+                    wine={wine}
+                    quantity={line?.quantity || 0}
+                    mode={line?.unit || 'bottiglie'}
+                    onQuantityChange={handleQuantityChange}
+                    onModeChange={handleUnitChange}
+                  />
+                );
+              })}
             </div>
           )}
 
