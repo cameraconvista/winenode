@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { X, Package, Eye, Check, Trash2 } from 'lucide-react';
-import { useOrdini } from '../contexts/OrdiniContext';
+import { useOrdini, Ordine } from '../contexts/OrdiniContext';
 import OrdineRicevutoCard from '../components/orders/OrdineRicevutoCard';
+import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazioneModal';
 
 type TabType = 'inviati' | 'ricevuti' | 'storico';
 
@@ -20,8 +21,18 @@ export default function GestisciOrdiniPage() {
     spostaOrdineInviatiARicevuti,
     aggiornaQuantitaOrdine,
     confermaRicezioneOrdine,
+    eliminaOrdineInviato,
+    eliminaOrdineRicevuto,
     eliminaOrdineStorico
   } = useOrdini();
+
+  // Stati per il modale di conferma eliminazione
+  const [showConfermaEliminazione, setShowConfermaEliminazione] = useState(false);
+  const [ordineToDelete, setOrdineToDelete] = useState<{
+    id: string;
+    ordine: Ordine;
+    tipo: 'inviato' | 'ricevuto' | 'storico';
+  } | null>(null);
 
   // Gestisci tab da URL query
   useEffect(() => {
@@ -50,14 +61,52 @@ export default function GestisciOrdiniPage() {
     await confermaRicezioneOrdine(ordineId);
   };
 
-  const handleEliminaOrdine = (ordineId: string) => {
-    console.log('🗑️ Elimina ordine:', ordineId);
-    // TODO: Implementare eliminazione ordine per inviati/ricevuti
+  const handleEliminaOrdineInviato = (ordineId: string, ordine: Ordine) => {
+    setOrdineToDelete({ id: ordineId, ordine, tipo: 'inviato' });
+    setShowConfermaEliminazione(true);
   };
 
-  const handleEliminaOrdineStorico = (ordineId: string) => {
-    console.log('🗑️ Elimina ordine dallo storico:', ordineId);
-    eliminaOrdineStorico(ordineId);
+  const handleEliminaOrdineRicevuto = (ordineId: string, ordine: Ordine) => {
+    setOrdineToDelete({ id: ordineId, ordine, tipo: 'ricevuto' });
+    setShowConfermaEliminazione(true);
+  };
+
+  const handleEliminaOrdineStorico = (ordineId: string, ordine: Ordine) => {
+    setOrdineToDelete({ id: ordineId, ordine, tipo: 'storico' });
+    setShowConfermaEliminazione(true);
+  };
+
+  const confermaEliminazione = () => {
+    if (!ordineToDelete) return;
+
+    switch (ordineToDelete.tipo) {
+      case 'inviato':
+        eliminaOrdineInviato(ordineToDelete.id);
+        break;
+      case 'ricevuto':
+        eliminaOrdineRicevuto(ordineToDelete.id);
+        break;
+      case 'storico':
+        eliminaOrdineStorico(ordineToDelete.id);
+        break;
+    }
+
+    setOrdineToDelete(null);
+  };
+
+  const getMessaggioEliminazione = () => {
+    if (!ordineToDelete) return '';
+    
+    switch (ordineToDelete.tipo) {
+      case 'inviato':
+        return 'Sei sicuro di voler eliminare questo ordine inviato? Questa azione non può essere annullata.';
+      case 'ricevuto':
+        return 'Sei sicuro di voler eliminare questo ordine ricevuto? Tutte le modifiche alle quantità andranno perse.';
+      case 'storico':
+        return 'Sei sicuro di voler eliminare definitivamente questo ordine dall\'archivio?';
+      default:
+        return '';
+    }
   };
 
   const getTabCount = (tab: TabType) => {
@@ -214,7 +263,7 @@ export default function GestisciOrdiniPage() {
                     ordine={ordine}
                     onVisualizza={handleVisualizza}
                     onConfermaRicezione={handleConfermaRicezione}
-                    onElimina={handleEliminaOrdine}
+                    onElimina={handleEliminaOrdineRicevuto}
                     onAggiornaQuantita={aggiornaQuantitaOrdine}
                   />
                 );
@@ -291,7 +340,7 @@ export default function GestisciOrdiniPage() {
                         Conferma
                       </button>
                       <button
-                        onClick={() => handleEliminaOrdine(ordine.id)}
+                        onClick={() => handleEliminaOrdineInviato(ordine.id, ordine)}
                         className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
                         style={{ background: '#dc2626', color: '#fff9dc' }}
                       >
@@ -315,7 +364,7 @@ export default function GestisciOrdiniPage() {
                           Dettagli
                         </button>
                         <button
-                          onClick={() => handleEliminaOrdineStorico(ordine.id)}
+                          onClick={() => handleEliminaOrdineStorico(ordine.id, ordine)}
                           className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
                           style={{ background: '#dc2626', color: '#fff9dc' }}
                         >
@@ -331,6 +380,20 @@ export default function GestisciOrdiniPage() {
           </div>
         )}
       </main>
+
+      {/* Modale Conferma Eliminazione */}
+      <ConfermaEliminazioneModal
+        isOpen={showConfermaEliminazione}
+        onOpenChange={setShowConfermaEliminazione}
+        onConfirm={confermaEliminazione}
+        titolo="Conferma Eliminazione"
+        messaggio={getMessaggioEliminazione()}
+        dettagliOrdine={ordineToDelete ? {
+          fornitore: ordineToDelete.ordine.fornitore,
+          totale: ordineToDelete.ordine.totale,
+          data: ordineToDelete.ordine.data
+        } : undefined}
+      />
     </div>
   );
 }

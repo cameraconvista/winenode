@@ -30,6 +30,8 @@ interface OrdiniContextType {
   spostaOrdineInviatiARicevuti: (ordineId: string) => void;
   aggiornaQuantitaOrdine: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
   confermaRicezioneOrdine: (ordineId: string) => Promise<void>;
+  eliminaOrdineInviato: (ordineId: string) => void;
+  eliminaOrdineRicevuto: (ordineId: string) => void;
   eliminaOrdineStorico: (ordineId: string) => void;
 }
 
@@ -207,13 +209,37 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const eliminaOrdineInviato = (ordineId: string) => {
+    console.log('🗑️ Eliminando ordine inviato:', ordineId);
+    
+    setOrdiniInviati(prev => {
+      const ordine = prev.find(o => o.id === ordineId);
+      if (ordine) {
+        console.log('📋 Ordine inviato eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
+      }
+      return prev.filter(o => o.id !== ordineId);
+    });
+  };
+
+  const eliminaOrdineRicevuto = (ordineId: string) => {
+    console.log('🗑️ Eliminando ordine ricevuto:', ordineId);
+    
+    setOrdiniRicevuti(prev => {
+      const ordine = prev.find(o => o.id === ordineId);
+      if (ordine) {
+        console.log('📋 Ordine ricevuto eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
+      }
+      return prev.filter(o => o.id !== ordineId);
+    });
+  };
+
   const eliminaOrdineStorico = (ordineId: string) => {
     console.log('🗑️ Eliminando ordine dallo storico:', ordineId);
     
     setOrdiniStorico(prev => {
       const ordine = prev.find(o => o.id === ordineId);
       if (ordine) {
-        console.log('📋 Ordine eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
+        console.log('📋 Ordine storico eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
       }
       return prev.filter(o => o.id !== ordineId);
     });
@@ -230,6 +256,8 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       spostaOrdineInviatiARicevuti,
       aggiornaQuantitaOrdine,
       confermaRicezioneOrdine,
+      eliminaOrdineInviato,
+      eliminaOrdineRicevuto,
       eliminaOrdineStorico
     }}>
       {children}

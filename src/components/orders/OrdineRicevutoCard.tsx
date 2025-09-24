@@ -6,7 +6,7 @@ interface OrdineRicevutoCardProps {
   ordine: Ordine;
   onVisualizza: (ordineId: string) => void;
   onConfermaRicezione: (ordineId: string) => void;
-  onElimina: (ordineId: string) => void;
+  onElimina: (ordineId: string, ordine: Ordine) => void;
   onAggiornaQuantita: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
 }
 
@@ -154,7 +154,7 @@ export default function OrdineRicevutoCard({
           Conferma Ricezione
         </button>
         <button
-          onClick={() => onElimina(ordine.id)}
+          onClick={() => onElimina(ordine.id, ordine)}
           className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
           style={{ background: '#dc2626', color: '#fff9dc' }}
         >
