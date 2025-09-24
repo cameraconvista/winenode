@@ -70,12 +70,6 @@ export default function WineDetailsModal({
                   <span className="mx-2">·</span>
                 </>
               )}
-              {wine.cost && wine.cost > 0 && (
-                <>
-                  <span className="font-bold" style={{ color: '#d4a300' }}>€{wine.cost.toFixed(2)}</span>
-                  <span className="mx-2">·</span>
-                </>
-              )}
               <span className="font-medium" style={{ color: '#fff9dc' }}>
                 {wine.supplier && wine.supplier.trim() ? wine.supplier : 'BOLOGNA VINI'}
               </span>
@@ -93,12 +87,12 @@ export default function WineDetailsModal({
 
         {/* Content - Layout responsivo */}
         <div className="p-4 md:p-6">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-xs mx-auto">
             {/* Controlli */}
             <div className="space-y-4 md:space-y-6">
               {/* Giacenza */}
               <div>
-                <label className="block text-base md:text-lg font-medium mb-2 md:mb-3" style={{ color: '#541111' }}>
+                <label className="block text-base md:text-lg font-medium mb-2 md:mb-3 text-center" style={{ color: '#fff9dc' }}>
                   Giacenza
                 </label>
                 <div className="flex items-center rounded-lg" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
@@ -110,8 +104,8 @@ export default function WineDetailsModal({
                         setFormData(prev => ({ ...prev, inventory: (currentValue - 1).toString() }));
                       }
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-red-600 hover:text-red-700 transition-colors rounded-l-lg text-lg md:text-2xl"
-                    style={{ borderRight: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-l-lg text-lg md:text-2xl"
+                    style={{ background: '#dc2626', borderRight: '1px solid #e2d6aa' }}
                   >
                     −
                   </button>
@@ -129,8 +123,8 @@ export default function WineDetailsModal({
                       const currentValue = parseInt(formData.inventory) || 0;
                       setFormData(prev => ({ ...prev, inventory: (currentValue + 1).toString() }));
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-green-600 hover:text-green-700 transition-colors rounded-r-lg text-lg md:text-2xl"
-                    style={{ borderLeft: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-r-lg text-lg md:text-2xl"
+                    style={{ background: '#16a34a', borderLeft: '1px solid #e2d6aa' }}
                   >
                     +
                   </button>
@@ -141,8 +135,8 @@ export default function WineDetailsModal({
 
               {/* Soglia Minima */}
               <div>
-                <label className="block text-base md:text-lg font-medium mb-2 md:mb-3" style={{ color: '#541111' }}>
-                  <span className="flex items-center gap-2">
+                <label className="block text-base md:text-lg font-medium mb-2 md:mb-3 text-center" style={{ color: '#fff9dc' }}>
+                  <span className="flex items-center justify-center gap-2">
                     <Bell className="h-4 w-4 text-red-500" />
                     Soglia Minima
                   </span>
@@ -156,8 +150,8 @@ export default function WineDetailsModal({
                         setFormData(prev => ({ ...prev, minStock: (currentValue - 1).toString() }));
                       }
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-red-600 hover:text-red-700 transition-colors rounded-l-lg text-lg md:text-2xl"
-                    style={{ borderRight: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-l-lg text-lg md:text-2xl"
+                    style={{ background: '#dc2626', borderRight: '1px solid #e2d6aa' }}
                   >
                     −
                   </button>
@@ -176,8 +170,8 @@ export default function WineDetailsModal({
                       const currentValue = parseInt(formData.minStock) || 0;
                       setFormData(prev => ({ ...prev, minStock: (currentValue + 1).toString() }));
                     }}
-                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-green-600 hover:text-green-700 transition-colors rounded-r-lg text-lg md:text-2xl"
-                    style={{ borderLeft: '1px solid #e2d6aa' }}
+                    className="w-10 h-10 md:w-16 md:h-16 flex items-center justify-center text-white hover:opacity-80 transition-colors rounded-r-lg text-lg md:text-2xl"
+                    style={{ background: '#16a34a', borderLeft: '1px solid #e2d6aa' }}
                   >
                     +
                   </button>
@@ -186,12 +180,12 @@ export default function WineDetailsModal({
 
               {/* Prezzo di Acquisto */}
               <div>
-                <label className="block text-base md:text-lg font-medium mb-2 md:mb-3" style={{ color: '#541111' }}>
+                <label className="block text-base md:text-lg font-medium mb-2 md:mb-3 text-center" style={{ color: '#fff9dc' }}>
                   Prezzo di Acquisto
                 </label>
                 <div className="rounded-lg px-4 py-3 md:px-6 md:py-4" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
                   <div className="text-center text-base md:text-lg font-bold" style={{ color: '#541111' }}>
-                    {wine.cost && wine.cost > 0 ? `€${wine.cost.toFixed(2)}` : 'Non disponibile'}
+                    {wine.cost !== undefined && wine.cost !== null && wine.cost > 0 ? `€${wine.cost.toFixed(2)}` : 'Non disponibile'}
                   </div>
                 </div>
               </div>
