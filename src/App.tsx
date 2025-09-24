@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { OrdiniProvider } from './contexts/OrdiniContext'
 
 // Lazy loading per ottimizzare le prestazioni
 const HomePage = lazy(() => import('./pages/HomePage'))
@@ -13,16 +14,18 @@ const PreferenzePage = lazy(() => import('./pages/PreferenzePage'))
 const FoglioExcelPage = lazy(() => import('./pages/FoglioExcelPage'))
 const CreaOrdinePage = lazy(() => import('./pages/CreaOrdinePage'))
 const RiepilogoOrdinePage = lazy(() => import('./pages/RiepilogoOrdinePage'))
+const GestisciOrdiniPage = lazy(() => import('./pages/GestisciOrdiniPage'))
 
 function App() {
   return (
-    <div className="min-h-screen bg-app-bg">
-      <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center bg-app-bg">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
-        </div>
-      }>
-        <Routes>
+    <OrdiniProvider>
+      <div className="min-h-screen bg-app-bg">
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center bg-app-bg">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
+          </div>
+        }>
+          <Routes>
           <Route path="/" element={<HomePage />} />
           {/* RIMOSSO: Route /settings eliminata */}
           {/* RIMOSSO: Route /settings/fornitori eliminata */}
@@ -33,9 +36,11 @@ function App() {
           <Route path="/foglio-excel" element={<FoglioExcelPage />} />
           <Route path="/orders/create/:supplier" element={<CreaOrdinePage />} />
           <Route path="/orders/summary/:supplier" element={<RiepilogoOrdinePage />} />
-        </Routes>
-      </Suspense>
-    </div>
+          <Route path="/orders/manage" element={<GestisciOrdiniPage />} />
+          </Routes>
+        </Suspense>
+      </div>
+    </OrdiniProvider>
   )
 }
 

@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface UseCarrelloOrdiniProps {
   onNuovoOrdine?: () => void;
 }
 
 export function useCarrelloOrdini({ onNuovoOrdine }: UseCarrelloOrdiniProps = {}) {
+  const navigate = useNavigate();
   const [isCarrelloModalOpen, setIsCarrelloModalOpen] = useState(false);
 
   const openCarrelloModal = () => {
@@ -26,9 +28,9 @@ export function useCarrelloOrdini({ onNuovoOrdine }: UseCarrelloOrdiniProps = {}
   };
 
   const handleGestisciOrdini = () => {
-    console.log('⚙️ Gestisci Ordini clicked - TODO: Implementare logica');
-    // TODO: Implementare navigazione o apertura modale Gestisci Ordini
+    console.log('⚙️ Gestisci Ordini clicked - Navigando alla pagina Gestisci Ordini');
     closeCarrelloModal();
+    navigate('/orders/manage');
   };
 
   return {

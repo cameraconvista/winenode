@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { X, ArrowLeft, Check, AlertTriangle } from 'lucide-react';
 import useWines from '../hooks/useWines';
 import { OrdineItem } from '../hooks/useCreaOrdine';
+import { useOrdini } from '../contexts/OrdiniContext';
 
 interface LocationState {
   ordineItems: OrdineItem[];
@@ -14,6 +15,7 @@ export default function RiepilogoOrdinePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { wines } = useWines();
+  const { aggiungiOrdine } = useOrdini();
 
   const state = location.state as LocationState;
   const ordineItems = state?.ordineItems || [];
@@ -47,13 +49,38 @@ export default function RiepilogoOrdinePage() {
   };
 
   const handleConferma = () => {
+    const fornitore = decodeURIComponent(supplier || '');
+    
     console.log('🚀 Confermando ordine:', {
-      fornitore: decodeURIComponent(supplier || ''),
+      fornitore,
       ordineItems,
       totalBottiglie,
       totalOrdine
     });
-    // TODO: Implementare logica conferma ordine
+
+    // Crea nuovo ordine
+    const nuovoOrdine = {
+      fornitore,
+      totale: totalOrdine,
+      bottiglie: totalBottiglie,
+      data: new Date().toLocaleDateString('it-IT'),
+      stato: 'in_corso' as const,
+      tipo: 'inviato' as const,
+      dettagli: ordineDetails.map(detail => ({
+        wineId: detail.wineId,
+        wineName: detail.wine?.name || 'Vino sconosciuto',
+        quantity: detail.quantity,
+        unit: detail.unit,
+        unitPrice: detail.unitPrice,
+        totalPrice: detail.totalPrice
+      }))
+    };
+
+    // Aggiungi ordine agli inviati
+    aggiungiOrdine(nuovoOrdine);
+
+    // Naviga alla pagina Gestisci Ordini tab Inviati
+    navigate('/orders/manage?tab=inviati');
   };
 
   return (
