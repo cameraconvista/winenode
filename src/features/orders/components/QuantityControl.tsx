@@ -58,7 +58,12 @@ export default function QuantityControl({
       </div>
 
       {/* Toggle bottiglie/cartoni */}
-      <div className="flex rounded-lg p-1" style={{ background: 'rgba(84, 17, 17, 0.1)' }}>
+      <div 
+        className="flex rounded-lg p-1" 
+        style={{ background: 'rgba(84, 17, 17, 0.1)' }}
+        role="radiogroup"
+        aria-label="Unità di misura"
+      >
         <button
           onClick={() => onModeChange('bottiglie')}
           className={`px-3 py-1 text-xs font-medium rounded-md transition-colors`}
@@ -66,6 +71,9 @@ export default function QuantityControl({
             background: mode === 'bottiglie' ? '#541111' : 'transparent',
             color: mode === 'bottiglie' ? '#fff9dc' : '#541111'
           }}
+          aria-pressed={mode === 'bottiglie'}
+          role="radio"
+          aria-checked={mode === 'bottiglie'}
         >
           Bottiglie
         </button>
@@ -76,6 +84,9 @@ export default function QuantityControl({
             background: mode === 'cartoni' ? '#541111' : 'transparent',
             color: mode === 'cartoni' ? '#fff9dc' : '#541111'
           }}
+          aria-pressed={mode === 'cartoni'}
+          role="radio"
+          aria-checked={mode === 'cartoni'}
         >
           Cartoni
         </button>

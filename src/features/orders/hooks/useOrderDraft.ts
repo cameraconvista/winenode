@@ -19,10 +19,19 @@ export function useOrderDraft() {
     setQuantity(wineId, currentUnit, newQty);
   };
 
-  const handleUnitChange = (wineId: number, unit: 'bottiglie' | 'cartoni') => {
+  const handleUnitChange = (wineId: number, newUnit: 'bottiglie' | 'cartoni') => {
     const currentQty = getQuantity(wineId);
-    // Reset quantità quando si cambia unità per evitare confusione
-    setQuantity(wineId, unit, 0);
+    const currentUnit = getUnit(wineId);
+    
+    // Converti la quantità nell'unità equivalente invece di resettare
+    let convertedQty = currentQty;
+    if (currentUnit === 'cartoni' && newUnit === 'bottiglie') {
+      convertedQty = currentQty * 6; // 1 cartone = 6 bottiglie
+    } else if (currentUnit === 'bottiglie' && newUnit === 'cartoni') {
+      convertedQty = Math.floor(currentQty / 6); // 6 bottiglie = 1 cartone
+    }
+    
+    setQuantity(wineId, newUnit, convertedQty);
   };
 
   return {
