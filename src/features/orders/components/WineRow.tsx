@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bell } from 'lucide-react';
 import QuantityControl from './QuantityControl';
-import { useWineRowData } from '../hooks/useWineRowData';
+import { useOrderDraftStore } from '../state/orderDraft.store';
 
 interface Wine {
   id: string | number;
@@ -17,8 +17,32 @@ interface WineRowProps {
 }
 
 export default function WineRow({ wine }: WineRowProps) {
-  const wineId = React.useMemo(() => Number(wine.id), [wine.id]);
-  const { quantity, unit, handleQuantityChange, handleUnitChange } = useWineRowData(wineId);
+  const wineId = Number(wine.id);
+  
+  // Uso diretto dello store senza hook personalizzato per evitare loop
+  const getQuantity = useOrderDraftStore(state => state.getQuantity);
+  const getUnit = useOrderDraftStore(state => state.getUnit);
+  const setQuantity = useOrderDraftStore(state => state.setQuantity);
+  
+  const quantity = getQuantity(wineId);
+  const unit = getUnit(wineId);
+  
+  const handleQuantityChange = (delta: number) => {
+    const increment = unit === 'cartoni' ? 6 : 1;
+    const newQty = Math.max(0, quantity + (delta * increment));
+    setQuantity(wineId, unit, newQty);
+  };
+
+  const handleUnitChange = (newUnit: 'bottiglie' | 'cartoni') => {
+    let convertedQty = quantity;
+    if (unit === 'cartoni' && newUnit === 'bottiglie') {
+      convertedQty = quantity * 6;
+    } else if (unit === 'bottiglie' && newUnit === 'cartoni') {
+      convertedQty = Math.floor(quantity / 6);
+    }
+    setQuantity(wineId, newUnit, convertedQty);
+  };
+  
   const isLowStock = wine.inventory <= wine.minStock;
 
   return (
