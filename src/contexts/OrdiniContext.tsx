@@ -27,6 +27,9 @@ interface OrdiniContextType {
   loading: boolean;
   aggiungiOrdine: (ordine: Omit<Ordine, 'id'>) => void;
   aggiornaStatoOrdine: (ordineId: string, nuovoStato: Ordine['stato']) => void;
+  spostaOrdineInviatiARicevuti: (ordineId: string) => void;
+  aggiornaQuantitaOrdine: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
+  confermaRicezioneOrdine: (ordineId: string) => Promise<void>;
 }
 
 const OrdiniContext = createContext<OrdiniContextType | undefined>(undefined);
@@ -136,6 +139,73 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
     setOrdiniStorico(aggiorna);
   };
 
+  const spostaOrdineInviatiARicevuti = (ordineId: string) => {
+    console.log('🔄 Spostando ordine da Inviati a Ricevuti:', ordineId);
+    
+    setOrdiniInviati(prev => {
+      const ordine = prev.find(o => o.id === ordineId);
+      if (!ordine) return prev;
+      
+      // Sposta l'ordine nei ricevuti
+      const ordineRicevuto: Ordine = {
+        ...ordine,
+        tipo: 'ricevuto',
+        stato: 'in_corso'
+      };
+      
+      setOrdiniRicevuti(prevRicevuti => [ordineRicevuto, ...prevRicevuti]);
+      
+      // Rimuovi dai inviati
+      return prev.filter(o => o.id !== ordineId);
+    });
+  };
+
+  const aggiornaQuantitaOrdine = (ordineId: string, dettagli: OrdineDettaglio[]) => {
+    console.log('📝 Aggiornando quantità ordine:', ordineId, dettagli);
+    
+    const nuoveTotali = dettagli.reduce((acc, item) => ({
+      bottiglie: acc.bottiglie + (item.quantity * (item.unit === 'cartoni' ? 6 : 1)),
+      totale: acc.totale + item.totalPrice
+    }), { bottiglie: 0, totale: 0 });
+
+    setOrdiniRicevuti(prev =>
+      prev.map(ordine =>
+        ordine.id === ordineId
+          ? {
+              ...ordine,
+              dettagli,
+              bottiglie: nuoveTotali.bottiglie,
+              totale: nuoveTotali.totale
+            }
+          : ordine
+      )
+    );
+  };
+
+  const confermaRicezioneOrdine = async (ordineId: string) => {
+    console.log('✅ Confermando ricezione ordine:', ordineId);
+    
+    setOrdiniRicevuti(prev => {
+      const ordine = prev.find(o => o.id === ordineId);
+      if (!ordine) return prev;
+      
+      // TODO: Qui implementare aggiornamento giacenze
+      // Per ora simuliamo l'aggiornamento
+      console.log('📦 Aggiornando giacenze per ordine:', ordine);
+      
+      // Sposta l'ordine nello storico
+      const ordineCompletato: Ordine = {
+        ...ordine,
+        stato: 'completato'
+      };
+      
+      setOrdiniStorico(prevStorico => [ordineCompletato, ...prevStorico]);
+      
+      // Rimuovi dai ricevuti
+      return prev.filter(o => o.id !== ordineId);
+    });
+  };
+
   return (
     <OrdiniContext.Provider value={{
       ordiniInviati,
@@ -143,7 +213,10 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       ordiniStorico,
       loading,
       aggiungiOrdine,
-      aggiornaStatoOrdine
+      aggiornaStatoOrdine,
+      spostaOrdineInviatiARicevuti,
+      aggiornaQuantitaOrdine,
+      confermaRicezioneOrdine
     }}>
       {children}
     </OrdiniContext.Provider>

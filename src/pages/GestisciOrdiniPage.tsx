@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { X, Package, Eye, Check, Trash2 } from 'lucide-react';
 import { useOrdini } from '../contexts/OrdiniContext';
+import OrdineRicevutoCard from '../components/orders/OrdineRicevutoCard';
 
 type TabType = 'inviati' | 'ricevuti' | 'storico';
 
@@ -15,7 +16,10 @@ export default function GestisciOrdiniPage() {
     ordiniRicevuti,
     ordiniStorico,
     loading,
-    aggiornaStatoOrdine
+    aggiornaStatoOrdine,
+    spostaOrdineInviatiARicevuti,
+    aggiornaQuantitaOrdine,
+    confermaRicezioneOrdine
   } = useOrdini();
 
   // Gestisci tab da URL query
@@ -36,8 +40,13 @@ export default function GestisciOrdiniPage() {
   };
 
   const handleConfermaOrdine = (ordineId: string) => {
-    console.log('✅ Conferma ordine:', ordineId);
-    aggiornaStatoOrdine(ordineId, 'completato');
+    console.log('✅ Conferma ordine (sposta a ricevuti):', ordineId);
+    spostaOrdineInviatiARicevuti(ordineId);
+  };
+
+  const handleConfermaRicezione = async (ordineId: string) => {
+    console.log('📦 Conferma ricezione ordine:', ordineId);
+    await confermaRicezioneOrdine(ordineId);
   };
 
   const handleEliminaOrdine = (ordineId: string) => {
@@ -190,96 +199,119 @@ export default function GestisciOrdiniPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {currentData.map((ordine) => (
-              <div
-                key={ordine.id}
-                className="p-4 rounded-lg border"
-                style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}
-              >
-                {/* Header con fornitore e badge */}
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">🏢</span>
-                    <h4 className="font-bold text-base" style={{ color: '#541111' }}>
-                      {ordine.fornitore}
-                    </h4>
+            {currentData.map((ordine) => {
+              // Usa componente specializzato per ordini ricevuti
+              if (activeTab === 'ricevuti') {
+                return (
+                  <OrdineRicevutoCard
+                    key={ordine.id}
+                    ordine={ordine}
+                    onVisualizza={handleVisualizza}
+                    onConfermaRicezione={handleConfermaRicezione}
+                    onElimina={handleEliminaOrdine}
+                    onAggiornaQuantita={aggiornaQuantitaOrdine}
+                  />
+                );
+              }
+
+              // Layout standard per inviati e storico
+              return (
+                <div
+                  key={ordine.id}
+                  className="p-4 rounded-lg border"
+                  style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}
+                >
+                  {/* Header con fornitore e badge */}
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🏢</span>
+                      <h4 className="font-bold text-base" style={{ color: '#541111' }}>
+                        {ordine.fornitore}
+                      </h4>
+                    </div>
+                    {activeTab === 'inviati' && (
+                      <span 
+                        className="px-2 py-1 rounded text-xs font-medium"
+                        style={{ background: '#d4a300', color: '#fff9dc' }}
+                      >
+                        INVIATO
+                      </span>
+                    )}
+                    {activeTab === 'storico' && (
+                      <span 
+                        className="px-2 py-1 rounded text-xs font-medium"
+                        style={{ background: '#16a34a', color: '#fff9dc' }}
+                      >
+                        COMPLETATO
+                      </span>
+                    )}
                   </div>
+
+                  {/* Dettagli ordine */}
+                  <div className="grid grid-cols-3 gap-4 mb-3 text-xs" style={{ color: '#7a4a30' }}>
+                    <div>
+                      <span className="block font-medium">📅 Ordinato:</span>
+                      <span>{ordine.data}</span>
+                    </div>
+                    <div>
+                      <span className="block font-medium">📦 Articoli:</span>
+                      <span>{ordine.bottiglie}</span>
+                    </div>
+                    <div>
+                      <span className="block font-medium">💰 Totale:</span>
+                      <span className="font-bold" style={{ color: '#16a34a' }}>
+                        €{ordine.totale.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Pulsanti azione per tab Inviati */}
                   {activeTab === 'inviati' && (
-                    <span 
-                      className="px-2 py-1 rounded text-xs font-medium"
-                      style={{ background: '#d4a300', color: '#fff9dc' }}
-                    >
-                      INVIATO
-                    </span>
+                    <div className="flex gap-2 pt-2 border-t" style={{ borderColor: '#e2d6aa' }}>
+                      <button
+                        onClick={() => handleVisualizza(ordine.id)}
+                        className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                        style={{ background: '#541111', color: '#fff9dc' }}
+                      >
+                        <Eye className="h-3 w-3" />
+                        Visualizza
+                      </button>
+                      <button
+                        onClick={() => handleConfermaOrdine(ordine.id)}
+                        className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                        style={{ background: '#16a34a', color: '#fff9dc' }}
+                      >
+                        <Check className="h-3 w-3" />
+                        Conferma
+                      </button>
+                      <button
+                        onClick={() => handleEliminaOrdine(ordine.id)}
+                        className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                        style={{ background: '#dc2626', color: '#fff9dc' }}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Elimina
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Layout semplificato per storico */}
+                  {activeTab === 'storico' && (
+                    <div className="flex justify-between items-center text-xs pt-2 border-t" style={{ color: '#7a4a30', borderColor: '#e2d6aa' }}>
+                      <span>Completato il {ordine.data}</span>
+                      <button
+                        onClick={() => handleVisualizza(ordine.id)}
+                        className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
+                        style={{ background: '#541111', color: '#fff9dc' }}
+                      >
+                        <Eye className="h-3 w-3" />
+                        Dettagli
+                      </button>
+                    </div>
                   )}
                 </div>
-
-                {/* Dettagli ordine */}
-                <div className="grid grid-cols-3 gap-4 mb-3 text-xs" style={{ color: '#7a4a30' }}>
-                  <div>
-                    <span className="block font-medium">📅 Ordinato:</span>
-                    <span>{ordine.data}</span>
-                  </div>
-                  <div>
-                    <span className="block font-medium">📦 Articoli:</span>
-                    <span>{ordine.bottiglie}</span>
-                  </div>
-                  <div>
-                    <span className="block font-medium">💰 Totale:</span>
-                    <span className="font-bold" style={{ color: '#16a34a' }}>
-                      €{ordine.totale.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Pulsanti azione per tab Inviati */}
-                {activeTab === 'inviati' && (
-                  <div className="flex gap-2 pt-2 border-t" style={{ borderColor: '#e2d6aa' }}>
-                    <button
-                      onClick={() => handleVisualizza(ordine.id)}
-                      className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
-                      style={{ background: '#541111', color: '#fff9dc' }}
-                    >
-                      <Eye className="h-3 w-3" />
-                      Visualizza
-                    </button>
-                    <button
-                      onClick={() => handleConfermaOrdine(ordine.id)}
-                      className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
-                      style={{ background: '#16a34a', color: '#fff9dc' }}
-                    >
-                      <Check className="h-3 w-3" />
-                      Conferma
-                    </button>
-                    <button
-                      onClick={() => handleEliminaOrdine(ordine.id)}
-                      className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
-                      style={{ background: '#dc2626', color: '#fff9dc' }}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                      Elimina
-                    </button>
-                  </div>
-                )}
-
-                {/* Layout originale per altri tab */}
-                {activeTab !== 'inviati' && (
-                  <div className="flex justify-between items-center text-xs" style={{ color: '#7a4a30' }}>
-                    <span>{ordine.bottiglie} bottiglie</span>
-                    <span 
-                      className="px-2 py-1 rounded text-xs font-medium"
-                      style={{
-                        background: ordine.stato === 'completato' ? '#16a34a' : 
-                                   ordine.stato === 'in_corso' ? '#d4a300' : '#dc2626',
-                        color: '#fff9dc'
-                      }}
-                    >
-                      {ordine.stato}
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>
