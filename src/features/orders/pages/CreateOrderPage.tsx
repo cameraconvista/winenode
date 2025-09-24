@@ -5,7 +5,7 @@ import useSuppliers from '../../../hooks/useSuppliers';
 import useWines from '../../../hooks/useWines';
 import WineRow from '../components/WineRow';
 import OrderTotalsBar from '../components/OrderTotalsBar';
-import { useOrderDraft } from '../hooks/useOrderDraft';
+import { useOrderDraft, useOrderSubmit } from '../hooks';
 
 export default function CreateOrderPage() {
   const navigate = useNavigate();
@@ -20,6 +20,15 @@ export default function CreateOrderPage() {
     getTotalBottles, 
     getSelectedWinesCount
   } = useOrderDraft();
+  
+  const { 
+    submitOrder, 
+    isSubmitting, 
+    error, 
+    success, 
+    canSubmit,
+    clearMessages 
+  } = useOrderSubmit();
   
   const [selectedSupplierName, setSelectedSupplierName] = useState<string>('');
 
@@ -37,9 +46,9 @@ export default function CreateOrderPage() {
   const totalBottles = getTotalBottles();
   const selectedWinesCount = getSelectedWinesCount();
 
-  const handleConfirmOrder = () => {
-    console.log(`Ordine confermato: ${totalBottles} bottiglie da ${selectedSupplierName}`);
-    navigate('/');
+  const handleConfirmOrder = async () => {
+    clearMessages();
+    await submitOrder();
   };
 
   return (
@@ -99,6 +108,35 @@ export default function CreateOrderPage() {
         }}
       >
         <div className="px-4 space-y-4">
+          {/* Messaggi di errore/successo */}
+          {error && (
+            <div 
+              className="p-4 rounded-lg border"
+              style={{
+                background: '#fef2f2',
+                borderColor: '#fca5a5',
+                color: '#dc2626'
+              }}
+            >
+              <p className="font-medium">Errore</p>
+              <p className="text-sm">{error}</p>
+            </div>
+          )}
+          
+          {success && (
+            <div 
+              className="p-4 rounded-lg border"
+              style={{
+                background: '#f0fdf4',
+                borderColor: '#86efac',
+                color: '#166534'
+              }}
+            >
+              <p className="font-medium">Successo!</p>
+              <p className="text-sm">{success}</p>
+            </div>
+          )}
+
           {/* Lista vini */}
           {selectedSupplierName && filteredWines.length > 0 && (
             <div className="space-y-3">
@@ -172,16 +210,23 @@ export default function CreateOrderPage() {
           
           <button
             onClick={handleConfirmOrder}
-            disabled={totalBottles === 0}
+            disabled={!canSubmit}
             className="flex-1 px-6 py-3 font-bold rounded-lg transition-colors disabled:opacity-50"
             style={{
-              background: totalBottles > 0 ? '#541111' : '#9ca3af',
+              background: canSubmit ? '#541111' : '#9ca3af',
               color: '#fff9dc',
               border: 'none',
               minHeight: '44px'
             }}
           >
-            Conferma Ordine ({totalBottles} bottiglie)
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Invio in corso...
+              </span>
+            ) : (
+              `Conferma Ordine (${totalBottles} bottiglie)`
+            )}
           </button>
         </div>
         
