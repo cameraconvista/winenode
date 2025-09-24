@@ -14,11 +14,12 @@ export interface Ordine {
   id: string;
   fornitore: string;
   totale: number;
-  bottiglie: number;
   data: string;
   stato: 'in_corso' | 'completato' | 'annullato';
-  tipo: 'inviato' | 'ricevuto';
   dettagli?: OrdineDettaglio[];
+  // Campi calcolati per compatibilità UI
+  bottiglie?: number; // Calcolato dalla somma dei dettagli
+  tipo?: 'inviato' | 'ricevuto'; // Derivato dallo stato
 }
 
 interface OrdiniContextType {
@@ -49,17 +50,27 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loadOrdiniFromSupabase = async () => {
       console.log('🔄 Caricando ordini da Supabase...');
-      const { inviati, ricevuti, storico } = await supabaseOrdini.loadOrdini();
-      
-      setOrdiniInviati(inviati);
-      setOrdiniRicevuti(ricevuti);
-      setOrdiniStorico(storico);
-      
-      console.log('✅ Ordini caricati:', {
-        inviati: inviati.length,
-        ricevuti: ricevuti.length,
-        storico: storico.length
-      });
+      try {
+        const { inviati, ricevuti, storico } = await supabaseOrdini.loadOrdini();
+        
+        setOrdiniInviati(inviati);
+        setOrdiniRicevuti(ricevuti);
+        setOrdiniStorico(storico);
+        
+        console.log('✅ Ordini caricati:', {
+          inviati: inviati.length,
+          ricevuti: ricevuti.length,
+          storico: storico.length
+        });
+      } catch (error) {
+        console.error('❌ Errore caricamento ordini nel context:', error);
+        // Anche in caso di errore, non bloccare l'UI
+        setOrdiniInviati([]);
+        setOrdiniRicevuti([]);
+        setOrdiniStorico([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadOrdiniFromSupabase();
@@ -76,10 +87,11 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
         id: ordineId
       };
 
-      if (ordine.tipo === 'inviato') {
+      // Gli ordini appena creati sono sempre "inviati" per default
+      if (ordine.stato !== 'completato') {
         setOrdiniInviati(prev => [nuovoOrdine, ...prev]);
       } else {
-        setOrdiniRicevuti(prev => [nuovoOrdine, ...prev]);
+        setOrdiniStorico(prev => [nuovoOrdine, ...prev]);
       }
       
       console.log('✅ Ordine salvato e aggiunto al context:', ordineId);

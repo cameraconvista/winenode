@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { X, ArrowLeft, Check, AlertTriangle } from 'lucide-react';
+import { X, ArrowLeft, Check, AlertTriangle, Loader2 } from 'lucide-react';
 import useWines from '../hooks/useWines';
 import { OrdineItem } from '../hooks/useCreaOrdine';
 import { useOrdini } from '../contexts/OrdiniContext';
@@ -16,6 +16,10 @@ export default function RiepilogoOrdinePage() {
   const location = useLocation();
   const { wines } = useWines();
   const { aggiungiOrdine } = useOrdini();
+  
+  // Stati per feedback visivo
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const state = location.state as LocationState;
   const ordineItems = state?.ordineItems || [];
@@ -48,7 +52,9 @@ export default function RiepilogoOrdinePage() {
     navigate(-1);
   };
 
-  const handleConferma = () => {
+  const handleConferma = async () => {
+    if (isConfirming) return; // Previeni doppi click
+    
     const fornitore = decodeURIComponent(supplier || '');
     
     console.log('🚀 Confermando ordine:', {
@@ -58,29 +64,42 @@ export default function RiepilogoOrdinePage() {
       totalOrdine
     });
 
-    // Crea nuovo ordine
-    const nuovoOrdine = {
-      fornitore,
-      totale: totalOrdine,
-      bottiglie: totalBottiglie,
-      data: new Date().toLocaleDateString('it-IT'),
-      stato: 'in_corso' as const,
-      tipo: 'inviato' as const,
-      dettagli: ordineDetails.map(detail => ({
-        wineId: detail.wineId,
-        wineName: detail.wine?.name || 'Vino sconosciuto',
-        quantity: detail.quantity,
-        unit: detail.unit,
-        unitPrice: detail.unitPrice,
-        totalPrice: detail.totalPrice
-      }))
-    };
+    setIsConfirming(true);
 
-    // Aggiungi ordine agli inviati
-    aggiungiOrdine(nuovoOrdine);
+    try {
+      // Crea nuovo ordine
+      const nuovoOrdine = {
+        fornitore,
+        totale: totalOrdine,
+        data: new Date().toLocaleDateString('it-IT'),
+        stato: 'in_corso' as const,
+        dettagli: ordineDetails.map(detail => ({
+          wineId: detail.wineId,
+          wineName: detail.wine?.name || 'Vino sconosciuto',
+          quantity: detail.quantity,
+          unit: detail.unit,
+          unitPrice: detail.unitPrice,
+          totalPrice: detail.totalPrice
+        }))
+      };
 
-    // Naviga alla pagina Gestisci Ordini tab Inviati
-    navigate('/orders/manage?tab=inviati');
+      // Aggiungi ordine agli inviati
+      await aggiungiOrdine(nuovoOrdine);
+
+      // Mostra messaggio di successo
+      setShowSuccess(true);
+      
+      // Attendi 2 secondi per mostrare il messaggio di successo
+      setTimeout(() => {
+        // Naviga alla pagina Gestisci Ordini tab Inviati
+        navigate('/orders/manage?tab=inviati');
+      }, 2000);
+
+    } catch (error) {
+      console.error('❌ Errore durante la conferma ordine:', error);
+      setIsConfirming(false);
+      // Qui potresti aggiungere un toast di errore se necessario
+    }
   };
 
   return (
@@ -103,6 +122,34 @@ export default function RiepilogoOrdinePage() {
 
       {/* Content */}
       <main className="p-4 pb-24">
+        {/* Messaggio di successo */}
+        {showSuccess && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div 
+              className="p-8 rounded-lg text-center max-w-sm mx-4"
+              style={{ background: '#fff9dc' }}
+            >
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: '#16a34a' }}>
+                  <Check className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <h3 className="text-xl font-bold mb-2" style={{ color: '#541111' }}>
+                Ordine Confermato!
+              </h3>
+              <p className="text-base" style={{ color: '#7a4a30' }}>
+                L'ordine è stato salvato con successo nell'archivio gestione ordini.
+              </p>
+              <div className="mt-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 mx-auto" style={{ borderColor: '#541111' }}></div>
+                <p className="text-sm mt-2" style={{ color: '#7a4a30' }}>
+                  Reindirizzamento in corso...
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Riepilogo Header */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -218,15 +265,24 @@ export default function RiepilogoOrdinePage() {
           </button>
           <button
             onClick={handleConferma}
-            disabled={ordineDetails.length === 0}
+            disabled={ordineDetails.length === 0 || isConfirming}
             className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
             style={{ 
-              background: ordineDetails.length > 0 ? '#16a34a' : '#9b9b9b',
+              background: ordineDetails.length > 0 && !isConfirming ? '#16a34a' : '#9b9b9b',
               color: '#fff9dc'
             }}
           >
-            <Check className="h-4 w-4" />
-            CONFERMA
+            {isConfirming ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                SALVANDO...
+              </>
+            ) : (
+              <>
+                <Check className="h-4 w-4" />
+                CONFERMA
+              </>
+            )}
           </button>
         </div>
       </footer>

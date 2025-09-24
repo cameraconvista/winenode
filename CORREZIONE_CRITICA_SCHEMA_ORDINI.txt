@@ -1,0 +1,221 @@
+================================================================================
+WINENODE - CORREZIONE CRITICA SCHEMA ORDINI
+================================================================================
+Data: 25/09/2025 00:53
+Problema: Ordine confermato ma non salvato in Supabase
+Causa: Mismatch tipo dati - fornitore UUID vs stringa
+Soluzione: Lookup fornitore UUID + aggiunta user_id obbligatorio
+
+================================================================================
+PROBLEMA IDENTIFICATO DAI LOG
+================================================================================
+
+ERRORE SUPABASE:
+```
+POST https://rtmohyjquscdkbtibdsu.supabase.co/rest/v1/ordini 400 (Bad Request)
+❌ Errore salvataggio ordine: Invalid input syntax for type uuid: "BOLOGNA VINI"
+```
+
+CAUSA RADICE:
+1. **Campo fornitore**: Schema richiede UUID, codice invia stringa
+2. **Campo user_id**: Schema richiede NOT NULL, codice non lo invia
+3. **Tipo dati**: Mismatch tra schema database e payload applicazione
+
+SCHEMA REALE (SCHEMA_UNICO.sql):
+```sql
+CREATE TABLE ordini (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL,              -- ❌ MANCANTE nel payload
+  fornitore UUID REFERENCES fornitori(id), -- ❌ RICEVE stringa invece di UUID
+  stato TEXT DEFAULT 'sospeso',
+  data TIMESTAMP WITH TIME ZONE,
+  totale NUMERIC(10, 2),
+  contenuto JSONB
+);
+```
+
+PAYLOAD ERRATO (PRIMA):
+```typescript
+{
+  fornitore: "BOLOGNA VINI",    // ❌ STRINGA invece di UUID
+  totale: 500,
+  data: "2025-09-25T...",
+  stato: "in_corso",
+  contenuto: [...]
+  // ❌ MANCA user_id obbligatorio
+}
+```
+
+================================================================================
+CORREZIONE IMPLEMENTATA
+================================================================================
+
+STRATEGIA CORREZIONE:
+1. **Lookup fornitore**: Query fornitori per ottenere UUID dal nome
+2. **Aggiunta user_id**: Ottenere user autenticato da Supabase Auth
+3. **JOIN query**: Modificare SELECT per ottenere nome fornitore
+4. **Mapping corretto**: Estrarre nome fornitore dal JOIN
+
+CODICE CORRETTO:
+
+A) LOOKUP FORNITORE UUID:
+```typescript
+// Prima trova l'UUID del fornitore dal nome
+const { data: fornitoreData, error: fornitoreError } = await supabase
+  .from('fornitori')
+  .select('id')
+  .eq('nome', ordine.fornitore)  // "BOLOGNA VINI"
+  .single();
+
+if (fornitoreError || !fornitoreData) {
+  throw new Error(`Fornitore "${ordine.fornitore}" non trovato nel database`);
+}
+```
+
+B) OTTENIMENTO USER_ID:
+```typescript
+// Ottieni l'utente corrente
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) {
+  throw new Error('Utente non autenticato');
+}
+```
+
+C) PAYLOAD CORRETTO:
+```typescript
+{
+  user_id: user.id,              // ✅ UUID utente autenticato
+  fornitore: fornitoreData.id,   // ✅ UUID fornitore (non stringa)
+  totale: ordine.totale,
+  data: new Date().toISOString(),
+  stato: ordine.stato,
+  contenuto: ordine.dettagli || []
+}
+```
+
+D) QUERY SELECT CON JOIN:
+```typescript
+.select(`
+  *,
+  fornitori!fornitore (
+    nome
+  )
+`)
+```
+
+E) MAPPING CON JOIN:
+```typescript
+fornitore: ordine.fornitori?.nome || 'Fornitore sconosciuto'
+```
+
+================================================================================
+VANTAGGI CORREZIONE
+================================================================================
+
+✅ COMPATIBILITÀ SCHEMA: Payload allineato al database reale
+✅ INTEGRITÀ REFERENZIALE: FK fornitori rispettata
+✅ SICUREZZA: user_id obbligatorio per isolamento dati
+✅ PERFORMANCE: JOIN ottimizzato per nomi fornitori
+✅ ROBUSTEZZA: Gestione errori per fornitori inesistenti
+✅ DEBUGGING: Log dettagliati per troubleshooting
+
+================================================================================
+FLUSSO CORRETTO ATTESO
+================================================================================
+
+DOPO LA CORREZIONE:
+1. ✅ RiepilogoOrdine → Click "CONFERMA"
+2. ✅ Lookup "BOLOGNA VINI" → UUID fornitore
+3. ✅ Ottenimento user_id da Supabase Auth
+4. ✅ INSERT con payload corretto (UUID + user_id)
+5. ✅ Record salvato in tabella ordini
+6. ✅ Messaggio "Ordine Confermato!"
+7. ✅ Redirect a GestisciOrdini
+8. ✅ Ordine visibile in tab "Inviati (1)"
+9. ✅ SELECT con JOIN per nome fornitore
+
+LOG CONSOLE ATTESI:
+```
+💾 Salvando ordine: BOLOGNA VINI
+✅ Fornitore trovato: [UUID-fornitore]
+✅ Ordine salvato: [UUID-ordine]
+✅ Ordine salvato e aggiunto al context: [UUID-ordine]
+```
+
+================================================================================
+GESTIONE ERRORI IMPLEMENTATA
+================================================================================
+
+SCENARI GESTITI:
+1. **Fornitore inesistente**: Errore esplicito con nome fornitore
+2. **Utente non autenticato**: Errore di autenticazione
+3. **Errore database**: Log dettagliato per debug
+4. **JOIN fallito**: Fallback "Fornitore sconosciuto"
+
+MESSAGGI ERRORE:
+- `Fornitore "BOLOGNA VINI" non trovato nel database`
+- `Utente non autenticato`
+- Log Supabase per errori specifici
+
+================================================================================
+COMPATIBILITÀ E SICUREZZA
+================================================================================
+
+SICUREZZA IMPLEMENTATA:
+✅ Row Level Security: user_id obbligatorio
+✅ Integrità referenziale: FK fornitori validata
+✅ Autenticazione: Verifica utente corrente
+✅ Validazione input: Controllo esistenza fornitore
+
+COMPATIBILITÀ:
+✅ UI invariata: Nessuna modifica interfaccia
+✅ API consistente: Stessi parametri di input
+✅ Backward compatible: Gestione errori graceful
+✅ Performance: Query ottimizzate con JOIN
+
+================================================================================
+TEST DI VERIFICA
+================================================================================
+
+PASSI DA TESTARE:
+1. Navigare a RiepilogoOrdine con fornitore "BOLOGNA VINI"
+2. Click pulsante "CONFERMA"
+3. Verificare log console per lookup fornitore
+4. Verificare messaggio successo
+5. Verificare redirect a GestisciOrdini
+6. Verificare ordine in tab "Inviati"
+7. Verificare record in tabella Supabase ordini
+
+RISULTATO ATTESO:
+✅ Nessun errore 400 Bad Request
+✅ Record inserito in tabella ordini
+✅ Campi user_id e fornitore UUID popolati
+✅ Ordine visibile in GestisciOrdini
+✅ Nome fornitore corretto tramite JOIN
+
+================================================================================
+STATO CORREZIONE
+================================================================================
+
+STATUS: ✅ CORREZIONE CRITICA APPLICATA
+
+MODIFICHE:
+- ✅ useSupabaseOrdini.ts: Lookup fornitore UUID
+- ✅ useSupabaseOrdini.ts: Aggiunta user_id obbligatorio
+- ✅ useSupabaseOrdini.ts: Query SELECT con JOIN
+- ✅ useSupabaseOrdini.ts: Mapping fornitore da JOIN
+- ✅ Gestione errori completa implementata
+
+RISULTATO:
+Il sistema ora rispetta completamente lo schema database Supabase.
+Gli ordini verranno salvati correttamente con integrità referenziale.
+
+================================================================================
+FINE CORREZIONE CRITICA
+================================================================================
+
+Correzione eseguita da: Cascade AI Assistant
+Metodologia: Analisi schema database, allineamento tipi dati
+Approccio: Chirurgico (solo logica backend, nessuna modifica UI)
+Timestamp: 25/09/2025 00:53:00 CET
+Status: PRONTO PER TEST DEFINITIVO ✅

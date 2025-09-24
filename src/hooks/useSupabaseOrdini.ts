@@ -2,6 +2,26 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Ordine, OrdineDettaglio } from '../contexts/OrdiniContext';
 
+// Mapping stati tra interfaccia UI e database
+const mapStatoUIToDatabase = (statoUI: string): string => {
+  const mapping: Record<string, string> = {
+    'in_corso': 'sospeso',
+    'completato': 'archiviato',
+    'annullato': 'archiviato'
+  };
+  return mapping[statoUI] || 'sospeso';
+};
+
+const mapStatoDatabaseToUI = (statoDB: string): 'in_corso' | 'completato' | 'annullato' => {
+  const mapping: Record<string, 'in_corso' | 'completato' | 'annullato'> = {
+    'sospeso': 'in_corso',
+    'inviato': 'in_corso',
+    'ricevuto': 'completato',
+    'archiviato': 'completato'
+  };
+  return mapping[statoDB] || 'in_corso';
+};
+
 export function useSupabaseOrdini() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,25 +38,13 @@ export function useSupabaseOrdini() {
 
       console.log('🔄 Caricando ordini da Supabase...');
 
+      // Query con JOIN per ottenere il nome del fornitore
       const { data: ordiniData, error: ordiniError } = await supabase
         .from('ordini')
         .select(`
-          id,
-          fornitore,
-          totale,
-          bottiglie,
-          data_ordine,
-          stato,
-          tipo,
-          created_at,
-          ordini_dettaglio (
-            id,
-            vino_id,
-            nome_vino,
-            quantita,
-            unita,
-            prezzo_unitario,
-            prezzo_totale
+          *,
+          fornitori!fornitore (
+            nome
           )
         `)
         .order('created_at', { ascending: false });
@@ -47,25 +55,36 @@ export function useSupabaseOrdini() {
       }
 
       console.log('✅ Ordini caricati da Supabase:', ordiniData?.length || 0);
+      console.log('📋 Schema ordini effettivo:', ordiniData?.[0] ? Object.keys(ordiniData[0]) : 'Nessun ordine');
 
       // Mappa i dati dal database al formato dell'app
-      const ordiniMappati: Ordine[] = (ordiniData || []).map(ordine => ({
-        id: ordine.id,
-        fornitore: ordine.fornitore || '',
-        totale: ordine.totale || 0,
-        bottiglie: ordine.bottiglie || 0,
-        data: ordine.data_ordine || new Date().toLocaleDateString('it-IT'),
-        stato: ordine.stato || 'in_corso',
-        tipo: ordine.tipo || 'inviato',
-        dettagli: (ordine.ordini_dettaglio || []).map((dettaglio: any) => ({
-          wineId: dettaglio.vino_id?.toString() || '',
-          wineName: dettaglio.nome_vino || '',
-          quantity: dettaglio.quantita || 0,
-          unit: dettaglio.unita || 'bottiglie',
-          unitPrice: dettaglio.prezzo_unitario || 0,
-          totalPrice: dettaglio.prezzo_totale || 0
-        }))
-      }));
+      const ordiniMappati: Ordine[] = (ordiniData || []).map(ordine => {
+        // Usa contenuto JSONB o fallback vuoto
+        const dettagli = Array.isArray(ordine.contenuto) ? ordine.contenuto : [];
+
+        // Calcola bottiglie totali dai dettagli
+        const bottiglie = dettagli.reduce((sum, det) => {
+          const multiplier = det.unit === 'cartoni' ? 6 : 1;
+          return sum + (det.quantity * multiplier);
+        }, 0);
+
+        // Deriva tipo dallo stato (per compatibilità)
+        const tipo = ordine.stato === 'completato' ? 'ricevuto' : 'inviato';
+
+        return {
+          id: ordine.id,
+          fornitore: ordine.fornitori?.nome || 'Fornitore sconosciuto',
+          // Usa il nome corretto per il totale
+          totale: ordine.totale || 0,
+          // Usa il nome corretto per la data
+          data: ordine.data ? new Date(ordine.data).toLocaleDateString('it-IT') : 
+                new Date().toLocaleDateString('it-IT'),
+          stato: mapStatoDatabaseToUI(ordine.stato || 'sospeso'),
+          dettagli,
+          bottiglie,
+          tipo
+        };
+      });
 
       // Separa per tipo
       const inviati = ordiniMappati.filter(o => o.tipo === 'inviato' && o.stato !== 'completato');
@@ -89,49 +108,87 @@ export function useSupabaseOrdini() {
     try {
       console.log('💾 Salvando ordine:', ordine.fornitore);
 
+      // Prima trova l'UUID del fornitore dal nome
+      console.log('🔍 Cercando fornitore:', ordine.fornitore);
+      let { data: fornitoreData, error: fornitoreError } = await supabase
+        .from('fornitori')
+        .select('id, nome')
+        .eq('nome', ordine.fornitore)
+        .single();
+
+      console.log('📋 Risultato ricerca fornitore:', { fornitoreData, fornitoreError });
+
+      if (fornitoreError || !fornitoreData) {
+        console.error('❌ Fornitore non trovato:', ordine.fornitore);
+        
+        // Mostra tutti i fornitori disponibili per debug
+        const { data: allFornitori } = await supabase
+          .from('fornitori')
+          .select('id, nome');
+        console.log('📋 Fornitori disponibili:', allFornitori);
+        
+        // Crea automaticamente il fornitore se non esiste
+        console.log('🔧 Creando fornitore automaticamente:', ordine.fornitore);
+        const { SERVICE_USER_ID } = await import('../config/constants');
+        
+        const { data: nuovoFornitore, error: creazioneError } = await supabase
+          .from('fornitori')
+          .insert({
+            user_id: SERVICE_USER_ID,
+            nome: ordine.fornitore
+          })
+          .select('id, nome')
+          .single();
+          
+        if (creazioneError || !nuovoFornitore) {
+          console.error('❌ Errore creazione fornitore:', creazioneError);
+          throw new Error(`Impossibile creare fornitore "${ordine.fornitore}"`);
+        }
+        
+        console.log('✅ Fornitore creato automaticamente:', nuovoFornitore);
+        // Usa il fornitore appena creato
+        fornitoreData = nuovoFornitore;
+      }
+
+      console.log('✅ Fornitore trovato:', fornitoreData.id);
+
+      // Usa SERVICE_USER_ID fisso (modalità tenant unico)
+      const { SERVICE_USER_ID } = await import('../config/constants');
+      console.log('🔧 Usando SERVICE_USER_ID:', SERVICE_USER_ID);
+
       const { data, error } = await supabase
         .from('ordini')
         .insert({
-          fornitore: ordine.fornitore,
+          user_id: SERVICE_USER_ID,
+          fornitore: fornitoreData.id,
           totale: ordine.totale,
-          bottiglie: ordine.bottiglie,
-          data_ordine: ordine.data,
-          stato: ordine.stato,
-          tipo: ordine.tipo
+          data: new Date().toISOString(),
+          stato: mapStatoUIToDatabase(ordine.stato), // Mappa stato UI a database
+          contenuto: ordine.dettagli || []
         })
         .select()
         .single();
 
       if (error) {
-        console.error('❌ Errore salvataggio ordine:', error);
+        console.error('❌ Errore salvataggio ordine - Dettagli completi:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        console.error('❌ Payload inviato:', {
+          user_id: SERVICE_USER_ID,
+          fornitore: fornitoreData.id,
+          totale: ordine.totale,
+          data: new Date().toISOString(),
+          stato: ordine.stato,
+          contenuto: ordine.dettagli || []
+        });
         throw error;
       }
 
       console.log('✅ Ordine salvato:', data.id);
-
-      // Salva i dettagli se presenti
-      if (ordine.dettagli && ordine.dettagli.length > 0) {
-        const dettagliData = ordine.dettagli.map(dettaglio => ({
-          ordine_id: data.id,
-          vino_id: parseInt(dettaglio.wineId) || null,
-          nome_vino: dettaglio.wineName,
-          quantita: dettaglio.quantity,
-          unita: dettaglio.unit,
-          prezzo_unitario: dettaglio.unitPrice,
-          prezzo_totale: dettaglio.totalPrice
-        }));
-
-        const { error: dettagliError } = await supabase
-          .from('ordini_dettaglio')
-          .insert(dettagliData);
-
-        if (dettagliError) {
-          console.error('❌ Errore salvataggio dettagli:', dettagliError);
-          // Non blocchiamo per errori dettagli
-        } else {
-          console.log('✅ Dettagli ordine salvati');
-        }
-      }
+      console.log('✅ Dettagli ordine salvati in contenuto JSONB');
 
       return data.id;
 
