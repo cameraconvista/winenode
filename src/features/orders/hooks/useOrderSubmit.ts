@@ -34,16 +34,8 @@ export function useOrderSubmit() {
         // Pulisci il draft dopo successo
         clear();
         
-        // Naviga alla pagina di conferma dopo un breve delay
-        setTimeout(() => {
-          navigate('/', { 
-            state: { 
-              orderSuccess: true, 
-              message: response.message,
-              orderId: response.orderId 
-            }
-          });
-        }, 1500);
+        // NON navigare automaticamente - lascia che l'utente veda il messaggio di successo
+        // L'utente può tornare manualmente con il pulsante Indietro
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';

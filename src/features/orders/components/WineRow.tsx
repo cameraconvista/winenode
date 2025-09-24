@@ -19,13 +19,15 @@ interface WineRowProps {
 export default function WineRow({ wine }: WineRowProps) {
   const wineId = Number(wine.id);
   
-  // Uso diretto dello store senza hook personalizzato per evitare loop
-  const getQuantity = useOrderDraftStore(state => state.getQuantity);
-  const getUnit = useOrderDraftStore(state => state.getUnit);
+  // Selector specifico per questa riga - si aggiorna solo quando questa riga cambia
+  const { quantity, unit } = useOrderDraftStore(state => {
+    const line = state.draft.lines.find(line => line.wineId === wineId);
+    return {
+      quantity: line?.quantity || 0,
+      unit: line?.unit || 'bottiglie'
+    };
+  });
   const setQuantity = useOrderDraftStore(state => state.setQuantity);
-  
-  const quantity = getQuantity(wineId);
-  const unit = getUnit(wineId);
   
   const handleQuantityChange = (delta: number) => {
     const increment = unit === 'cartoni' ? 6 : 1;
