@@ -30,6 +30,7 @@ interface OrdiniContextType {
   spostaOrdineInviatiARicevuti: (ordineId: string) => void;
   aggiornaQuantitaOrdine: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
   confermaRicezioneOrdine: (ordineId: string) => Promise<void>;
+  eliminaOrdineStorico: (ordineId: string) => void;
 }
 
 const OrdiniContext = createContext<OrdiniContextType | undefined>(undefined);
@@ -206,6 +207,18 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const eliminaOrdineStorico = (ordineId: string) => {
+    console.log('🗑️ Eliminando ordine dallo storico:', ordineId);
+    
+    setOrdiniStorico(prev => {
+      const ordine = prev.find(o => o.id === ordineId);
+      if (ordine) {
+        console.log('📋 Ordine eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
+      }
+      return prev.filter(o => o.id !== ordineId);
+    });
+  };
+
   return (
     <OrdiniContext.Provider value={{
       ordiniInviati,
@@ -216,7 +229,8 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       aggiornaStatoOrdine,
       spostaOrdineInviatiARicevuti,
       aggiornaQuantitaOrdine,
-      confermaRicezioneOrdine
+      confermaRicezioneOrdine,
+      eliminaOrdineStorico
     }}>
       {children}
     </OrdiniContext.Provider>

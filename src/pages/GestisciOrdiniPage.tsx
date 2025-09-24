@@ -19,7 +19,8 @@ export default function GestisciOrdiniPage() {
     aggiornaStatoOrdine,
     spostaOrdineInviatiARicevuti,
     aggiornaQuantitaOrdine,
-    confermaRicezioneOrdine
+    confermaRicezioneOrdine,
+    eliminaOrdineStorico
   } = useOrdini();
 
   // Gestisci tab da URL query
@@ -51,7 +52,12 @@ export default function GestisciOrdiniPage() {
 
   const handleEliminaOrdine = (ordineId: string) => {
     console.log('🗑️ Elimina ordine:', ordineId);
-    // TODO: Implementare eliminazione ordine
+    // TODO: Implementare eliminazione ordine per inviati/ricevuti
+  };
+
+  const handleEliminaOrdineStorico = (ordineId: string) => {
+    console.log('🗑️ Elimina ordine dallo storico:', ordineId);
+    eliminaOrdineStorico(ordineId);
   };
 
   const getTabCount = (tab: TabType) => {
@@ -295,18 +301,28 @@ export default function GestisciOrdiniPage() {
                     </div>
                   )}
 
-                  {/* Layout semplificato per storico */}
+                  {/* Layout per storico con pulsanti */}
                   {activeTab === 'storico' && (
                     <div className="flex justify-between items-center text-xs pt-2 border-t" style={{ color: '#7a4a30', borderColor: '#e2d6aa' }}>
                       <span>Completato il {ordine.data}</span>
-                      <button
-                        onClick={() => handleVisualizza(ordine.id)}
-                        className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
-                        style={{ background: '#541111', color: '#fff9dc' }}
-                      >
-                        <Eye className="h-3 w-3" />
-                        Dettagli
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleVisualizza(ordine.id)}
+                          className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
+                          style={{ background: '#541111', color: '#fff9dc' }}
+                        >
+                          <Eye className="h-3 w-3" />
+                          Dettagli
+                        </button>
+                        <button
+                          onClick={() => handleEliminaOrdineStorico(ordine.id)}
+                          className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
+                          style={{ background: '#dc2626', color: '#fff9dc' }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Elimina
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
