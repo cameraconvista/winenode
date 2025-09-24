@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useSupabaseOrdini } from '../hooks/useSupabaseOrdini';
 
 export interface OrdineDettaglio {
   wineId: string;
@@ -25,14 +26,14 @@ interface OrdiniContextType {
   ordiniRicevuti: Ordine[];
   ordiniStorico: Ordine[];
   loading: boolean;
-  aggiungiOrdine: (ordine: Omit<Ordine, 'id'>) => void;
-  aggiornaStatoOrdine: (ordineId: string, nuovoStato: Ordine['stato']) => void;
+  aggiungiOrdine: (ordine: Omit<Ordine, 'id'>) => Promise<void>;
+  aggiornaStatoOrdine: (ordineId: string, nuovoStato: Ordine['stato']) => Promise<void>;
   spostaOrdineInviatiARicevuti: (ordineId: string) => void;
   aggiornaQuantitaOrdine: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
   confermaRicezioneOrdine: (ordineId: string) => Promise<void>;
-  eliminaOrdineInviato: (ordineId: string) => void;
-  eliminaOrdineRicevuto: (ordineId: string) => void;
-  eliminaOrdineStorico: (ordineId: string) => void;
+  eliminaOrdineInviato: (ordineId: string) => Promise<void>;
+  eliminaOrdineRicevuto: (ordineId: string) => Promise<void>;
+  eliminaOrdineStorico: (ordineId: string) => Promise<void>;
 }
 
 const OrdiniContext = createContext<OrdiniContextType | undefined>(undefined);
@@ -43,103 +44,67 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   const [ordiniStorico, setOrdiniStorico] = useState<Ordine[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const supabaseOrdini = useSupabaseOrdini();
+
   useEffect(() => {
-    // Simula caricamento dati
-    const loadOrdini = async () => {
-      setLoading(true);
+    const loadOrdiniFromSupabase = async () => {
+      console.log('🔄 Caricando ordini da Supabase...');
+      const { inviati, ricevuti, storico } = await supabaseOrdini.loadOrdini();
       
-      // TODO: Sostituire con chiamate API reali
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setOrdiniInviati(inviati);
+      setOrdiniRicevuti(ricevuti);
+      setOrdiniStorico(storico);
       
-      // Dati mock per testing - da sostituire con API reali
-      const mockOrdiniRicevuti: Ordine[] = [
-        {
-          id: 'ORD-001',
-          fornitore: 'BOLOGNA VINI',
-          totale: 245.50,
-          bottiglie: 24,
-          data: '20/09/2025',
-          stato: 'completato',
-          tipo: 'ricevuto'
-        },
-        {
-          id: 'ORD-002',
-          fornitore: 'CANTINA SOCIALE',
-          totale: 180.00,
-          bottiglie: 18,
-          data: '22/09/2025',
-          stato: 'in_corso',
-          tipo: 'ricevuto'
-        },
-        {
-          id: 'ORD-003',
-          fornitore: 'VINI DEL SUD',
-          totale: 320.75,
-          bottiglie: 36,
-          data: '23/09/2025',
-          stato: 'completato',
-          tipo: 'ricevuto'
-        },
-        {
-          id: 'ORD-004',
-          fornitore: 'PROSECCO & CO',
-          totale: 156.25,
-          bottiglie: 12,
-          data: '24/09/2025',
-          stato: 'in_corso',
-          tipo: 'ricevuto'
-        }
-      ];
-
-      const mockOrdiniStorico: Ordine[] = [
-        {
-          id: 'ORD-OLD-001',
-          fornitore: 'VINI ANTICHI',
-          totale: 89.50,
-          bottiglie: 6,
-          data: '15/08/2025',
-          stato: 'completato',
-          tipo: 'inviato'
-        }
-      ];
-
-      setOrdiniInviati([]); // Nessun ordine inviato per ora
-      setOrdiniRicevuti(mockOrdiniRicevuti);
-      setOrdiniStorico(mockOrdiniStorico);
-      setLoading(false);
+      console.log('✅ Ordini caricati:', {
+        inviati: inviati.length,
+        ricevuti: ricevuti.length,
+        storico: storico.length
+      });
     };
 
-    loadOrdini();
+    loadOrdiniFromSupabase();
   }, []);
 
-  const aggiungiOrdine = (ordine: Omit<Ordine, 'id'>) => {
-    const nuovoOrdine: Ordine = {
-      ...ordine,
-      id: `ORD-${Date.now()}`
-    };
+  const aggiungiOrdine = async (ordine: Omit<Ordine, 'id'>) => {
+    console.log('💾 Salvando ordine in Supabase:', ordine);
 
-    console.log('🔄 Aggiungendo ordine al context:', nuovoOrdine);
+    const ordineId = await supabaseOrdini.salvaOrdine(ordine);
+    
+    if (ordineId) {
+      const nuovoOrdine: Ordine = {
+        ...ordine,
+        id: ordineId
+      };
 
-    if (ordine.tipo === 'inviato') {
-      setOrdiniInviati(prev => {
-        const nuovaLista = [nuovoOrdine, ...prev];
-        console.log('📦 Ordini inviati aggiornati:', nuovaLista);
-        return nuovaLista;
-      });
+      if (ordine.tipo === 'inviato') {
+        setOrdiniInviati(prev => [nuovoOrdine, ...prev]);
+      } else {
+        setOrdiniRicevuti(prev => [nuovoOrdine, ...prev]);
+      }
+      
+      console.log('✅ Ordine salvato e aggiunto al context:', ordineId);
     } else {
-      setOrdiniRicevuti(prev => [nuovoOrdine, ...prev]);
+      console.error('❌ Errore salvataggio ordine');
     }
   };
 
-  const aggiornaStatoOrdine = (ordineId: string, nuovoStato: Ordine['stato']) => {
-    const aggiorna = (ordini: Ordine[]) =>
-      ordini.map(ordine =>
-        ordine.id === ordineId ? { ...ordine, stato: nuovoStato } : ordine
-      );
+  const aggiornaStatoOrdine = async (ordineId: string, nuovoStato: Ordine['stato']) => {
+    console.log('🔄 Aggiornando stato ordine in Supabase:', ordineId, '→', nuovoStato);
+    
+    const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, nuovoStato);
+    
+    if (success) {
+      const aggiorna = (ordini: Ordine[]) =>
+        ordini.map(ordine =>
+          ordine.id === ordineId ? { ...ordine, stato: nuovoStato } : ordine
+        );
 
-    setOrdiniInviati(aggiorna);
-    setOrdiniRicevuti(aggiorna);
-    setOrdiniStorico(aggiorna);
+      setOrdiniInviati(aggiorna);
+      setOrdiniRicevuti(aggiorna);
+      setOrdiniStorico(aggiorna);
+      
+      console.log('✅ Stato ordine aggiornato nel context');
+    }
   };
 
   const spostaOrdineInviatiARicevuti = (ordineId: string) => {
@@ -209,40 +174,52 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const eliminaOrdineInviato = (ordineId: string) => {
-    console.log('🗑️ Eliminando ordine inviato:', ordineId);
+  const eliminaOrdineInviato = async (ordineId: string) => {
+    console.log('🗑️ Eliminando ordine inviato da Supabase:', ordineId);
     
-    setOrdiniInviati(prev => {
-      const ordine = prev.find(o => o.id === ordineId);
-      if (ordine) {
-        console.log('📋 Ordine inviato eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
-      }
-      return prev.filter(o => o.id !== ordineId);
-    });
+    const success = await supabaseOrdini.eliminaOrdine(ordineId);
+    
+    if (success) {
+      setOrdiniInviati(prev => {
+        const ordine = prev.find(o => o.id === ordineId);
+        if (ordine) {
+          console.log('📋 Ordine inviato eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
+        }
+        return prev.filter(o => o.id !== ordineId);
+      });
+    }
   };
 
-  const eliminaOrdineRicevuto = (ordineId: string) => {
-    console.log('🗑️ Eliminando ordine ricevuto:', ordineId);
+  const eliminaOrdineRicevuto = async (ordineId: string) => {
+    console.log('🗑️ Eliminando ordine ricevuto da Supabase:', ordineId);
     
-    setOrdiniRicevuti(prev => {
-      const ordine = prev.find(o => o.id === ordineId);
-      if (ordine) {
-        console.log('📋 Ordine ricevuto eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
-      }
-      return prev.filter(o => o.id !== ordineId);
-    });
+    const success = await supabaseOrdini.eliminaOrdine(ordineId);
+    
+    if (success) {
+      setOrdiniRicevuti(prev => {
+        const ordine = prev.find(o => o.id === ordineId);
+        if (ordine) {
+          console.log('📋 Ordine ricevuto eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
+        }
+        return prev.filter(o => o.id !== ordineId);
+      });
+    }
   };
 
-  const eliminaOrdineStorico = (ordineId: string) => {
-    console.log('🗑️ Eliminando ordine dallo storico:', ordineId);
+  const eliminaOrdineStorico = async (ordineId: string) => {
+    console.log('🗑️ Eliminando ordine storico da Supabase:', ordineId);
     
-    setOrdiniStorico(prev => {
-      const ordine = prev.find(o => o.id === ordineId);
-      if (ordine) {
-        console.log('📋 Ordine storico eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
-      }
-      return prev.filter(o => o.id !== ordineId);
-    });
+    const success = await supabaseOrdini.eliminaOrdine(ordineId);
+    
+    if (success) {
+      setOrdiniStorico(prev => {
+        const ordine = prev.find(o => o.id === ordineId);
+        if (ordine) {
+          console.log('📋 Ordine storico eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
+        }
+        return prev.filter(o => o.id !== ordineId);
+      });
+    }
   };
 
   return (
