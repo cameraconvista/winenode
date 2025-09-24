@@ -102,7 +102,10 @@ describe('QuantityControl', () => {
       render(<QuantityControl {...defaultProps} />);
       
       const buttons = screen.getAllByRole('button');
-      expect(buttons).toHaveLength(4); // minus, plus, bottiglie, cartoni
+      expect(buttons).toHaveLength(2); // minus, plus
+      
+      const radios = screen.getAllByRole('radio');
+      expect(radios).toHaveLength(2); // bottiglie, cartoni
     });
 
     it('should maintain color contrast for text', () => {

@@ -35,12 +35,12 @@ export default function CreateOrderPage() {
   useEffect(() => {
     if (supplierId && suppliers.length > 0) {
       const supplier = suppliers.find(s => s.id === supplierId);
-      if (supplier) {
+      if (supplier && selectedSupplierName !== supplier.nome) {
         setSelectedSupplierName(supplier.nome);
         setSupplier(supplier.id, supplier.nome);
       }
     }
-  }, [supplierId, suppliers, setSupplier]);
+  }, [supplierId, suppliers, selectedSupplierName, setSupplier]);
 
   const filteredWines = wines.filter(w => w.supplier === selectedSupplierName);
   const totalBottles = getTotalBottles();
