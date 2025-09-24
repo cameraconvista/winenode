@@ -147,12 +147,17 @@ export default function CreateOrderPage() {
               {filteredWines.map(wine => {
                 const wineId = Number(wine.id);
                 const line = draft.lines.find(line => line.wineId === wineId);
+                const quantity = line?.quantity || 0;
+                const mode = line?.unit || 'bottiglie';
+                
+                console.log('🎯 Rendering wine:', { wineId, quantity, mode, line });
+                
                 return (
                   <WineRow
                     key={wine.id}
                     wine={wine}
-                    quantity={line?.quantity || 0}
-                    mode={line?.unit || 'bottiglie'}
+                    quantity={quantity}
+                    mode={mode}
                     onQuantityChange={handleQuantityChange}
                     onModeChange={handleUnitChange}
                   />

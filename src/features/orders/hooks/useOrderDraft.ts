@@ -16,6 +16,7 @@ export function useOrderDraft() {
     const increment = currentUnit === 'cartoni' ? 6 : 1;
     const newQty = Math.max(0, currentQty + (delta * increment));
     
+    console.log('🔍 handleQuantityChange:', { wineId, delta, currentQty, currentUnit, newQty });
     setQuantity(wineId, currentUnit, newQty);
   };
 
