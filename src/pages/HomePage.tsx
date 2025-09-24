@@ -4,9 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import InventoryModal from '../components/InventoryModal';
+import CarrelloOrdiniModal from '../components/modals/CarrelloOrdiniModal';
+import NuovoOrdineModal from '../components/modals/NuovoOrdineModal';
 
 import useWines from '../hooks/useWines';
 import { useAutoSizeText } from '../hooks/useAutoSizeText';
+import { useCarrelloOrdini } from '../hooks/useCarrelloOrdini';
+import { useNuovoOrdine } from '../hooks/useNuovoOrdine';
 import { supabase } from '../lib/supabase';
 
 import { WineType } from '../hooks/useWines';
@@ -38,6 +42,23 @@ export default function HomePage() {
   const [animatingInventory, setAnimatingInventory] = useState<string | null>(null);
   const [showInventoryModal, setShowInventoryModal] = useState(false);
   const [editingWine, setEditingWine] = useState<WineType | null>(null);
+
+  // Hook per gestire il modale Nuovo Ordine
+  const {
+    isNuovoOrdineModalOpen,
+    openNuovoOrdineModal,
+    closeNuovoOrdineModal,
+    handleAvanti
+  } = useNuovoOrdine();
+
+  // Hook per gestire il modale Carrello Ordini
+  const {
+    isCarrelloModalOpen,
+    openCarrelloModal,
+    closeCarrelloModal,
+    handleNuovoOrdine,
+    handleGestisciOrdini
+  } = useCarrelloOrdini({ onNuovoOrdine: openNuovoOrdineModal });
 
   // Auto-sizing per il testo del chip "Tutti"
   const chipDisplayText = activeTab === 'TUTTI I VINI' ? 'Tutti' : 
@@ -318,8 +339,9 @@ export default function HomePage() {
       {/* NAVBAR FISSA IN BASSO */}
       <nav className="mobile-navbar">
         <button 
+          onClick={openCarrelloModal}
           className="nav-btn btn-ordine"
-          title="Nuovo Ordine"
+          title="Carrello Ordini"
         >
           <div className="icon"></div>
           <span className="label">Ordine</span>
@@ -422,6 +444,20 @@ export default function HomePage() {
         onCancel={handleCloseInventoryModal}
         min={0}
         max={999}
+      />
+
+      <CarrelloOrdiniModal
+        isOpen={isCarrelloModalOpen}
+        onOpenChange={closeCarrelloModal}
+        onNuovoOrdine={handleNuovoOrdine}
+        onGestisciOrdini={handleGestisciOrdini}
+      />
+
+      <NuovoOrdineModal
+        isOpen={isNuovoOrdineModalOpen}
+        onOpenChange={closeNuovoOrdineModal}
+        suppliers={suppliers}
+        onAvanti={handleAvanti}
       />
       
     </div>

@@ -116,7 +116,7 @@ export default function WineDetailsModal({
                       type="number"
                       value={formData.inventory}
                       onChange={(e) => setFormData(prev => ({ ...prev, inventory: e.target.value }))}
-                      className="bg-transparent text-center focus:outline-none text-base md:text-lg font-bold w-16"
+                      className="bg-transparent text-center focus:outline-none text-base md:text-lg font-bold w-20"
                       style={{ color: '#541111' }}
                       min="0"
                     />
@@ -164,7 +164,7 @@ export default function WineDetailsModal({
                       type="number"
                       value={formData.minStock}
                       onChange={(e) => setFormData(prev => ({ ...prev, minStock: e.target.value }))}
-                      className="bg-transparent text-center focus:outline-none text-base md:text-lg font-bold w-16"
+                      className="bg-transparent text-center focus:outline-none text-base md:text-lg font-bold w-20"
                       style={{ color: '#541111' }}
                       min="0"
                       required
@@ -187,15 +187,15 @@ export default function WineDetailsModal({
               {/* Prezzo di Acquisto */}
               <div>
                 <label className="block text-base md:text-lg font-medium mb-2 md:mb-3 text-center" style={{ color: '#fff9dc' }}>
-                  Prezzo di Acquisto
+                  Prezzo di Acquisto €
                 </label>
                 <div className="flex justify-center">
-                  <div className="rounded-lg px-4 py-3 md:px-6 md:py-4" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
+                  <div className="rounded-lg px-6 py-3 md:px-8 md:py-4" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
                     <input
                       type="text"
-                      value={wine.cost !== undefined && wine.cost !== null && wine.cost > 0 ? `€${wine.cost.toFixed(2)}` : '€0'}
+                      value={wine.cost !== undefined && wine.cost !== null && wine.cost > 0 ? wine.cost.toFixed(2) : '/'}
                       readOnly
-                      className="bg-transparent text-center focus:outline-none text-base md:text-lg font-bold w-16"
+                      className="bg-transparent text-center focus:outline-none text-base md:text-lg font-bold w-20"
                       style={{ color: '#541111' }}
                     />
                   </div>
