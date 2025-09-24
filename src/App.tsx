@@ -12,7 +12,6 @@ const ImportaPage = lazy(() => import('./pages/ImportaPage'))
 const PreferenzePage = lazy(() => import('./pages/PreferenzePage'))
 const FoglioExcelPage = lazy(() => import('./pages/FoglioExcelPage'))
 const OrdiniSospesiPage = lazy(() => import('./pages/OrdiniSospesiPage'))
-const CreateOrderPage = lazy(() => import('./features/orders/pages/CreateOrderPage'))
 
 function App() {
   return (
@@ -32,7 +31,6 @@ function App() {
           <Route path="/manual-wine-insert" element={<ManualWineInsertPage />} />
           <Route path="/foglio-excel" element={<FoglioExcelPage />} />
           <Route path="/ordini/sospesi" element={<OrdiniSospesiPage />} />
-          <Route path="/orders/create" element={<CreateOrderPage />} />
         </Routes>
       </Suspense>
     </div>
