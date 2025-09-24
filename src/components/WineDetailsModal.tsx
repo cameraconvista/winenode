@@ -53,39 +53,37 @@ export default function WineDetailsModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
       <div className="modal-content rounded-lg w-full max-w-sm md:max-w-4xl max-h-[95vh] max-h-[95dvh] overflow-y-auto relative" style={{ background: '#2e0d0d', border: '1px solid #541111' }}>
-        {/* Close Button */}
-        <div className="absolute top-4 right-4 z-10">
-          <button
-            onClick={() => onOpenChange(false)}
-            className="transition-colors"
-            style={{ color: '#fff9dc' }}
-            disabled={isLoading}
-          >
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-
         {/* Header */}
         <div className="p-4 md:p-6">
-          <div>
-            <h3 className="text-lg md:text-2xl font-bold uppercase" style={{ color: '#fff9dc' }}>{wine.name}</h3>
-            <div className="text-xs md:text-sm mt-1" style={{ color: '#fff9dc' }}>
-              {wine.vintage && (
-                <>
-                  <span className="font-medium" style={{ color: '#fef3c7' }}>{wine.vintage}</span>
-                  <span className="mx-2" style={{ color: '#fef3c7' }}>·</span>
-                </>
-              )}
-              {wine.description && (
-                <>
-                  <span className="font-medium" style={{ color: '#fef3c7' }}>{wine.description}</span>
-                  <span className="mx-2" style={{ color: '#fef3c7' }}>·</span>
-                </>
-              )}
-              <span className="font-medium" style={{ color: '#fef3c7' }}>
-                {wine.supplier && wine.supplier.trim() ? wine.supplier : 'BOLOGNA VINI'}
-              </span>
+          <div className="flex items-start justify-between">
+            <div className="flex-1 pr-4">
+              <h3 className="text-lg md:text-2xl font-bold uppercase" style={{ color: '#fff9dc' }}>{wine.name}</h3>
+              <div className="text-xs md:text-sm mt-1" style={{ color: '#fff9dc' }}>
+                {wine.vintage && (
+                  <>
+                    <span className="font-medium" style={{ color: '#fef3c7' }}>{wine.vintage}</span>
+                    <span className="mx-2" style={{ color: '#fef3c7' }}>·</span>
+                  </>
+                )}
+                {wine.description && (
+                  <>
+                    <span className="font-medium" style={{ color: '#fef3c7' }}>{wine.description}</span>
+                    <span className="mx-2" style={{ color: '#fef3c7' }}>·</span>
+                  </>
+                )}
+                <span className="font-medium" style={{ color: '#fef3c7' }}>
+                  {wine.supplier && wine.supplier.trim() ? wine.supplier : 'BOLOGNA VINI'}
+                </span>
+              </div>
             </div>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="transition-colors flex-shrink-0"
+              style={{ color: '#fff9dc' }}
+              disabled={isLoading}
+            >
+              <X className="h-6 w-6" />
+            </button>
           </div>
         </div>
 
@@ -192,10 +190,14 @@ export default function WineDetailsModal({
                   Prezzo di Acquisto
                 </label>
                 <div className="flex justify-center">
-                  <div className="rounded-lg px-4 py-3 md:px-6 md:py-4 w-16 flex items-center justify-center" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
-                    <div className="text-center text-base md:text-lg font-bold" style={{ color: '#541111' }}>
-                      {wine.cost !== undefined && wine.cost !== null && wine.cost > 0 ? `€${wine.cost.toFixed(2)}` : 'Non disponibile'}
-                    </div>
+                  <div className="rounded-lg px-4 py-3 md:px-6 md:py-4" style={{ background: '#fff2b8', border: '1px solid #e2d6aa' }}>
+                    <input
+                      type="text"
+                      value={wine.cost !== undefined && wine.cost !== null && wine.cost > 0 ? `€${wine.cost.toFixed(2)}` : '€0'}
+                      readOnly
+                      className="bg-transparent text-center focus:outline-none text-base md:text-lg font-bold w-16"
+                      style={{ color: '#541111' }}
+                    />
                   </div>
                 </div>
               </div>
