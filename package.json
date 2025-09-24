@@ -10,6 +10,12 @@
     "start": "node index.js",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint:orders": "eslint \"src/features/orders/**/*.{ts,tsx}\" --max-warnings=0",
+    "test": "vitest",
+    "test:ci": "vitest run --coverage",
+    "test:orders": "vitest run src/features/orders",
+    "typecheck": "tsc --noEmit",
+    "prepush": "npm run typecheck && npm run lint:orders && npm run test:ci",
     "backup": "node scripts/backup-system.js create",
     "backup:list": "node scripts/backup-system.js list",
     "backup:restore": "node scripts/backup-system.js restore",
@@ -45,13 +51,24 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
     "@vitejs/plugin-react": "^4.5.2",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.21",
+    "jsdom": "^27.0.0",
     "postcss": "^8.5.4",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "vite": "^4.5.14"
+    "vite": "^4.5.14",
+    "vitest": "^3.2.4"
   }
 }

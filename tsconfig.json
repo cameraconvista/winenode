@@ -23,7 +23,8 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@orders/*": ["./src/features/orders/*"]
     },
 
     /* Additional options */
@@ -31,7 +32,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.config.*", "**/*.test.*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

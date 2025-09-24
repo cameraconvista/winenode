@@ -28,6 +28,7 @@ export default function QuantityControl({
             width: '44px',
             height: '44px'
           }}
+          aria-label="Diminuisci quantità"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -50,6 +51,7 @@ export default function QuantityControl({
             width: '44px',
             height: '44px'
           }}
+          aria-label="Aumenta quantità"
         >
           <Plus className="h-4 w-4" />
         </button>

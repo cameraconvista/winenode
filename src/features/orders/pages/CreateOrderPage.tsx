@@ -42,7 +42,7 @@ export default function CreateOrderPage() {
   const selectedWinesCount = getSelectedWinesCount();
 
   const handleConfirmOrder = () => {
-    alert(`Ordine confermato: ${totalBottles} bottiglie da ${selectedSupplierName}`);
+    console.log(`Ordine confermato: ${totalBottles} bottiglie da ${selectedSupplierName}`);
     navigate('/');
   };
 
