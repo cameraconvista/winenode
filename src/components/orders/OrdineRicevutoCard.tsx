@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, Check, Trash2, Plus, Minus } from 'lucide-react';
 import { Ordine, OrdineDettaglio } from '../../contexts/OrdiniContext';
 import { ORDINI_LABELS } from '../../constants/ordiniLabels';
+import { isFeatureEnabled } from '../../config/featureFlags';
 
 interface OrdineRicevutoCardProps {
   ordine: Ordine;
@@ -22,6 +23,12 @@ export default function OrdineRicevutoCard({
     ordine.dettagli || []
   );
   const [isModified, setIsModified] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Determina se l'ordine è archiviato/completato (readonly)
+  const isArchiviato = ordine.stato === 'archiviato';
+  const isReadonly = isArchiviato && isFeatureEnabled('ARCHIVIATI_READONLY');
+  const isCollapsible = isArchiviato && isFeatureEnabled('ARCHIVIATI_COLLAPSIBLE_BOX');
 
   const handleQuantityChange = (index: number, delta: number) => {
     const nuoviDettagli = [...dettagliModificati];
@@ -38,6 +45,12 @@ export default function OrdineRicevutoCard({
     
     // Aggiorna immediatamente il context
     onAggiornaQuantita(ordine.id, nuoviDettagli);
+  };
+
+  const handleBoxClick = () => {
+    if (isCollapsible) {
+      setIsExpanded(!isExpanded);
+    }
   };
 
   const totalBottiglie = dettagliModificati.reduce((acc, item) => 
@@ -86,52 +99,84 @@ export default function OrdineRicevutoCard({
         </div>
       </div>
 
-      {/* Lista vini modificabili */}
+      {/* Riepilogo sintetico per ordini archiviati */}
+      {isArchiviato && (
+        <div className="mb-3 text-sm" style={{ color: '#541111' }}>
+          <span className="font-medium">
+            {totalBottiglie} bottiglie {ORDINI_LABELS.dettagli.riepilogoConfermato}
+          </span>
+        </div>
+      )}
+
+      {/* Lista vini - collapsible per ordini archiviati */}
       {dettagliModificati.length > 0 && (
-        <div className="mb-4 p-3 rounded border-t" style={{ borderColor: '#e2d6aa', background: '#ffeaa0' }}>
+        <div 
+          className={`mb-4 p-3 rounded border-t ${isCollapsible ? 'cursor-pointer' : ''}`}
+          style={{ borderColor: '#e2d6aa', background: '#ffeaa0' }}
+          onClick={isCollapsible ? handleBoxClick : undefined}
+        >
           <h5 className="text-xs font-medium mb-2" style={{ color: '#541111' }}>
-            Modifica quantità ricevute:
+            {isReadonly ? 'Dettagli ordine:' : 'Modifica quantità ricevute:'}
+            {isCollapsible && (
+              <span className="ml-2 text-xs" style={{ color: '#7a4a30' }}>
+                {isExpanded ? '▼' : '▶'}
+              </span>
+            )}
           </h5>
-          <div className="space-y-2">
-            {dettagliModificati.map((dettaglio, index) => (
-              <div key={index} className="flex items-center justify-between text-xs">
-                <div className="flex-1">
-                  <span className="font-medium" style={{ color: '#541111' }}>
-                    {dettaglio.wineName}
-                  </span>
-                  <div style={{ color: '#7a4a30' }}>
-                    {dettaglio.unit} - €{dettaglio.unitPrice.toFixed(2)} cad.
+          
+          {(!isCollapsible || isExpanded) && (
+            <div className="space-y-2">
+              {dettagliModificati.map((dettaglio, index) => (
+                <div key={index} className="flex items-center justify-between text-xs">
+                  <div className="flex-1">
+                    <span className="font-medium" style={{ color: '#541111' }}>
+                      {dettaglio.wineName}
+                    </span>
+                    <div style={{ color: '#7a4a30' }}>
+                      {dettaglio.unit} - €{dettaglio.unitPrice.toFixed(2)} cad.
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleQuantityChange(index, -1)}
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
-                    style={{ background: '#dc2626' }}
-                    disabled={dettaglio.quantity <= 0}
-                  >
-                    <Minus className="h-3 w-3" />
-                  </button>
                   
-                  <span 
-                    className="px-2 py-1 rounded text-xs font-medium min-w-[40px] text-center"
-                    style={{ background: 'white', color: '#541111', border: '1px solid #e2d6aa' }}
-                  >
-                    {dettaglio.quantity}
-                  </span>
-                  
-                  <button
-                    onClick={() => handleQuantityChange(index, 1)}
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
-                    style={{ background: '#16a34a' }}
-                  >
-                    <Plus className="h-3 w-3" />
-                  </button>
+                  {!isReadonly ? (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleQuantityChange(index, -1)}
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
+                        style={{ background: '#dc2626' }}
+                        disabled={dettaglio.quantity <= 0}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      
+                      <span 
+                        className="px-2 py-1 rounded text-xs font-medium min-w-[40px] text-center"
+                        style={{ background: 'white', color: '#541111', border: '1px solid #e2d6aa' }}
+                      >
+                        {dettaglio.quantity}
+                      </span>
+                      
+                      <button
+                        onClick={() => handleQuantityChange(index, 1)}
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
+                        style={{ background: '#16a34a' }}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-right">
+                      <span 
+                        className="px-2 py-1 rounded text-xs font-medium"
+                        style={{ background: 'white', color: '#541111', border: '1px solid #e2d6aa' }}
+                      >
+                        {dettaglio.quantity}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -145,17 +190,22 @@ export default function OrdineRicevutoCard({
           <Eye className="h-3 w-3" />
           {ORDINI_LABELS.azioni.visualizza}
         </button>
-        <button
-          onClick={() => onConfermaRicezione(ordine.id)}
-          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
-          style={{ background: '#16a34a', color: '#fff9dc' }}
-        >
-          <Check className="h-3 w-3" />
-          {ORDINI_LABELS.azioni.confermaRicezione}
-        </button>
+        
+        {/* Pulsante Archivia - nascosto per ordini già archiviati */}
+        {!isReadonly && (
+          <button
+            onClick={() => onConfermaRicezione(ordine.id)}
+            className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+            style={{ background: '#16a34a', color: '#fff9dc' }}
+          >
+            <Check className="h-3 w-3" />
+            {ORDINI_LABELS.azioni.confermaRicezione}
+          </button>
+        )}
+        
         <button
           onClick={() => onElimina(ordine.id, ordine)}
-          className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+          className={`flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors ${isReadonly ? 'flex-1' : ''}`}
           style={{ background: '#dc2626', color: '#fff9dc' }}
         >
           <Trash2 className="h-3 w-3" />

@@ -59,7 +59,8 @@ export const ORDINI_LABELS = {
     ordinato: "Data:",
     articoli: "Articoli:", 
     totale: "Totale:",
-    completato: "Completato:"
+    completato: "Completato:",
+    riepilogoConfermato: "confermato"
   }
 } as const;
 
