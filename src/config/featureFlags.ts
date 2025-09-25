@@ -60,6 +60,12 @@ export const FEATURE_FLAGS = {
     enabled: true,
     description: "Abilita expand inline con picker quantità per pulsante Gestisci in ordini creati",
     rollbackInstructions: "Impostare enabled: false per ripristinare comportamento precedente"
+  },
+
+  CREATI_QTY_MODAL: {
+    enabled: true,
+    description: "Abilita modale quantità (come Home) invece di picker inline per modifica quantità in ordini creati",
+    rollbackInstructions: "Impostare enabled: false per ripristinare picker inline"
   }
 } as const;
 

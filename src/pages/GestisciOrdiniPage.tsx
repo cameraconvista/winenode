@@ -7,6 +7,7 @@ import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazione
 import { ORDINI_LABELS } from '../constants/ordiniLabels';
 import { isFeatureEnabled } from '../config/featureFlags';
 import QuantityPicker from '../components/QuantityPicker';
+import InventoryModal from '../components/InventoryModal';
 import '../styles/gestisci-ordini-mobile.css';
 
 type TabType = 'inviati' | 'ricevuti';
@@ -18,6 +19,8 @@ export default function GestisciOrdiniPage() {
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
   const [managingOrders, setManagingOrders] = useState<Set<string>>(new Set());
   const [modifiedQuantities, setModifiedQuantities] = useState<Record<string, Record<number, number>>>({});
+  const [showQuantityModal, setShowQuantityModal] = useState(false);
+  const [editingQuantity, setEditingQuantity] = useState<{ordineId: string, dettaglioIndex: number, currentValue: number, originalValue: number} | null>(null);
   
   const {
     ordiniInviati,
@@ -138,6 +141,34 @@ export default function GestisciOrdiniPage() {
         [dettaglioIndex]: newQuantity
       }
     }));
+  };
+
+  const handleOpenQuantityModal = (ordineId: string, dettaglioIndex: number) => {
+    const ordine = ordiniInviati.find(o => o.id === ordineId);
+    if (!ordine || !ordine.dettagli || !ordine.dettagli[dettaglioIndex]) return;
+
+    const originalValue = ordine.dettagli[dettaglioIndex].quantity;
+    const currentValue = modifiedQuantities[ordineId]?.[dettaglioIndex] ?? originalValue;
+
+    setEditingQuantity({
+      ordineId,
+      dettaglioIndex,
+      currentValue,
+      originalValue
+    });
+    setShowQuantityModal(true);
+  };
+
+  const handleCloseQuantityModal = () => {
+    setShowQuantityModal(false);
+    setEditingQuantity(null);
+  };
+
+  const handleConfirmQuantityModal = (newQuantity: number) => {
+    if (!editingQuantity) return;
+
+    handleQuantityChange(editingQuantity.ordineId, editingQuantity.dettaglioIndex, newQuantity);
+    handleCloseQuantityModal();
   };
 
   const handleConfermaModifiche = async (ordineId: string) => {
@@ -531,12 +562,28 @@ export default function GestisciOrdiniPage() {
                                   <div className="text-xs font-medium mb-2" style={{ color: '#7a4a30' }}>
                                     {ORDINI_LABELS.gestioneInline.colonne.modificaQuantita}
                                   </div>
-                                  <QuantityPicker
-                                    value={currentQuantity}
-                                    onChange={(newQuantity) => handleQuantityChange(ordine.id, index, newQuantity)}
-                                    min={0}
-                                    max={maxQuantity}
-                                  />
+                                  {isFeatureEnabled('CREATI_QTY_MODAL') ? (
+                                    <div
+                                      onClick={() => handleOpenQuantityModal(ordine.id, index)}
+                                      className="inline-flex items-center justify-center px-4 py-2 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50"
+                                      style={{ 
+                                        borderColor: '#e2d6aa',
+                                        background: 'white',
+                                        minWidth: '60px'
+                                      }}
+                                    >
+                                      <span className="text-sm font-bold" style={{ color: '#541111' }}>
+                                        {currentQuantity}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <QuantityPicker
+                                      value={currentQuantity}
+                                      onChange={(newQuantity) => handleQuantityChange(ordine.id, index, newQuantity)}
+                                      min={0}
+                                      max={maxQuantity}
+                                    />
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -670,6 +717,17 @@ export default function GestisciOrdiniPage() {
           totale: ordineToDelete.ordine.totale,
           data: ordineToDelete.ordine.data
         } : undefined}
+      />
+
+      {/* Modale Modifica Quantità */}
+      <InventoryModal
+        isOpen={showQuantityModal}
+        initialValue={editingQuantity?.currentValue || 0}
+        onConfirm={handleConfirmQuantityModal}
+        onCancel={handleCloseQuantityModal}
+        min={0}
+        max={editingQuantity?.originalValue || 999}
+        originalValue={editingQuantity?.originalValue}
       />
     </div>
   );

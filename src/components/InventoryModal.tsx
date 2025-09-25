@@ -7,6 +7,7 @@ interface InventoryModalProps {
   onCancel: () => void;
   min?: number;
   max?: number;
+  originalValue?: number; // Valore originario da evidenziare in rosso
 }
 
 export default function InventoryModal({
@@ -15,7 +16,8 @@ export default function InventoryModal({
   onConfirm,
   onCancel,
   min = 0,
-  max = 999
+  max = 999,
+  originalValue
 }: InventoryModalProps) {
   const [currentValue, setCurrentValue] = useState(initialValue);
   const [isDragging, setIsDragging] = useState(false);
@@ -142,9 +144,9 @@ export default function InventoryModal({
       {/* Modale centrata */}
       <div className="relative bg-white rounded-2xl shadow-2xl mx-4 w-full max-w-sm">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 text-center">
-            Modifica giacenza
+        <div className="px-6 py-4 border-b" style={{ borderColor: '#e2d6aa' }}>
+          <h3 className="text-lg font-semibold text-center" style={{ color: '#541111' }}>
+            Modifica quantità
           </h3>
         </div>
 
@@ -175,7 +177,11 @@ export default function InventoryModal({
             </div>
 
             {/* Slot centrale evidenziato */}
-            <div className="absolute top-1/2 left-4 right-4 h-12 -translate-y-1/2 bg-blue-50 border-y-2 border-blue-200 rounded-lg"></div>
+            <div className="absolute top-1/2 left-4 right-4 h-12 -translate-y-1/2 rounded-lg" style={{ 
+              background: 'rgba(212, 163, 0, 0.1)', 
+              borderTop: '2px solid #d4a300', 
+              borderBottom: '2px solid #d4a300' 
+            }}></div>
 
             {/* Lista valori scrollabile */}
             <div className="flex flex-col items-center justify-center h-full overflow-hidden">
@@ -184,19 +190,21 @@ export default function InventoryModal({
                 const distance = Math.abs(index - 7);
                 const opacity = isCenter ? 1 : Math.max(0.2, 1 - distance * 0.15);
                 const scale = isCenter ? 1 : Math.max(0.7, 1 - distance * 0.05);
+                const isOriginalValue = originalValue !== undefined && val === originalValue;
                 
                 return (
                   <div
                     key={`${val}-${index}`}
                     className={`text-center transition-all duration-150 ${
-                      isCenter ? 'text-gray-900 font-bold' : 'text-gray-400 font-normal'
+                      isCenter ? 'font-bold' : 'font-normal'
                     }`}
                     style={{
                       opacity,
                       fontSize: isCenter ? '32px' : '24px',
                       lineHeight: '40px',
                       transform: `scale(${scale})`,
-                      height: '40px'
+                      height: '40px',
+                      color: isOriginalValue ? '#dc2626' : (isCenter ? '#541111' : '#7a4a30')
                     }}
                   >
                     {val}
@@ -208,16 +216,24 @@ export default function InventoryModal({
         </div>
 
         {/* Pulsanti */}
-        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
+        <div className="px-6 py-4 border-t flex gap-3" style={{ borderColor: '#e2d6aa' }}>
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors"
+            className="flex-1 px-4 py-3 rounded-xl font-medium transition-colors"
+            style={{ 
+              background: '#6b7280', 
+              color: '#fff9dc' 
+            }}
           >
             Annulla
           </button>
           <button
             onClick={() => onConfirm(currentValue)}
-            className="flex-1 px-4 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-xl font-medium transition-colors"
+            className="flex-1 px-4 py-3 rounded-xl font-medium transition-colors"
+            style={{ 
+              background: '#16a34a', 
+              color: '#fff9dc' 
+            }}
           >
             Conferma
           </button>
