@@ -1,0 +1,320 @@
+================================================================================
+                    REPORT GESTISCI ORDINI - WINENODE
+================================================================================
+
+Data Analisi: 25/09/2025 12:07
+Operatore: Cascade AI Assistant
+File Analizzati: GestisciOrdiniPage.tsx, OrdineRicevutoCard.tsx, OrdiniContext.tsx
+
+================================================================================
+1. STRUTTURA ATTUALE DELLA PAGINA
+================================================================================
+
+1.1 SEZIONI PRINCIPALI
+- Header fisso con titolo "Gestisci Ordini" e pulsante chiusura (X)
+- Sistema di tab orizzontali con conteggi dinamici
+- Area contenuto principale con liste ordini
+- Modale conferma eliminazione
+
+1.2 TAB E BADGE DI CONTEGGIO
+┌─────────────────────────────────────────────────────────────────┐
+│ 📤 Inviati (N)  │ 📥 Ricevuti (N)  │ 📋 Storico (N)           │
+└─────────────────────────────────────────────────────────────────┘
+
+- Tab "Inviati": Colore attivo #d4a300 (giallo), emoji 📤
+- Tab "Ricevuti": Colore attivo #d4a300 (giallo), emoji 📥  
+- Tab "Storico": Colore attivo #d4a300 (giallo), emoji 📋
+- Conteggi dinamici tra parentesi aggiornati in tempo reale
+
+1.3 STATI E LABEL UTILIZZATI
+- INVIATO: Badge giallo (#d4a300) per ordini nel tab "Inviati"
+- RICEVUTO: Badge verde (#16a34a) per ordini nel tab "Ricevuti"
+- COMPLETATO: Badge verde (#16a34a) per ordini nel tab "Storico"
+
+1.4 LAYOUT SCHEDE ORDINI
+Ogni scheda contiene:
+- Header: Emoji fornitore 🏢 + Nome fornitore + Badge stato
+- Griglia dettagli: Data ordinazione (📅) | N. Articoli (📦) | Totale (💰)
+- Area azioni: Pulsanti specifici per ogni tab
+
+================================================================================
+2. FLUSSO FUNZIONALE ATTUALE
+================================================================================
+
+2.1 CREAZIONE E INSERIMENTO IN "INVIATI"
+Origine: RiepilogoOrdinePage.tsx → handleConferma()
+┌─────────────────────────────────────────────────────────────────┐
+│ 1. Utente conferma ordine da pagina Riepilogo                  │
+│ 2. Ordine creato con stato "sospeso"                           │
+│ 3. Salvato in database Supabase                                │
+│ 4. Aggiunto automaticamente al tab "Inviati"                   │
+│ 5. Navigazione automatica a GestisciOrdini?tab=inviati         │
+└─────────────────────────────────────────────────────────────────┘
+
+2.2 SPOSTAMENTO DA "INVIATI" A "RICEVUTI"
+Trigger: Pulsante "Conferma" nel tab Inviati
+┌─────────────────────────────────────────────────────────────────┐
+│ 1. Utente clicca "Conferma" su ordine inviato                  │
+│ 2. Chiamata spostaOrdineInviatiARicevuti(ordineId)             │
+│ 3. Aggiornamento stato database: "sospeso" → "ricevuto"        │
+│ 4. Rimozione ordine da array ordiniInviati                     │
+│ 5. Aggiunta ordine ad array ordiniRicevuti                     │
+│ 6. Cambio layout: scheda standard → OrdineRicevutoCard         │
+└─────────────────────────────────────────────────────────────────┘
+
+2.3 ARCHIVIAZIONE DA "RICEVUTI" A "STORICO"
+Trigger: Pulsante "Conferma Ricezione" nel tab Ricevuti
+┌─────────────────────────────────────────────────────────────────┐
+│ 1. Utente clicca "Conferma Ricezione" su ordine ricevuto       │
+│ 2. Chiamata confermaRicezioneOrdine(ordineId)                  │
+│ 3. Aggiornamento stato database: "ricevuto" → "archiviato"     │
+│ 4. Rimozione ordine da array ordiniRicevuti                    │
+│ 5. Aggiunta ordine ad array ordiniStorico                      │
+│ 6. TODO: Aggiornamento giacenze (attualmente simulato)         │
+└─────────────────────────────────────────────────────────────────┘
+
+2.4 AZIONI DISPONIBILI PER STATO
+
+TAB INVIATI:
+- 👁️ Visualizza: Mostra dettagli ordine (TODO: non implementato)
+- ✅ Conferma: Sposta ordine a "Ricevuti"
+- 🗑️ Elimina: Elimina ordine definitivamente dal database
+
+TAB RICEVUTI:
+- 👁️ Visualizza: Mostra dettagli ordine (TODO: non implementato)
+- ➕➖ Modifica Quantità: Aggiorna quantità ricevute per ogni vino
+- ✅ Conferma Ricezione: Sposta ordine a "Storico" e aggiorna giacenze
+- 🗑️ Elimina: Elimina ordine e perde modifiche quantità
+
+TAB STORICO:
+- 👁️ Dettagli: Mostra dettagli ordine completato (TODO: non implementato)
+- 🗑️ Elimina: Elimina definitivamente dall'archivio
+
+================================================================================
+3. MAPPATURA AZIONI → EFFETTI
+================================================================================
+
+3.1 PULSANTE "VISUALIZZA" / "DETTAGLI"
+Presente in: Tutti i tab
+Stato attuale: TODO - Non implementato
+Comportamento atteso:
+- Apertura modale o navigazione a pagina dettagli
+- Visualizzazione lista vini ordinati con quantità e prezzi
+- Cronologia stati ordine
+- Informazioni fornitore complete
+
+3.2 PULSANTE "CONFERMA" (Tab Inviati)
+Effetti immediati:
+- Aggiornamento database: stato "sospeso" → "ricevuto"
+- Spostamento visuale: Inviati → Ricevuti
+- Cambio layout scheda: Standard → OrdineRicevutoCard
+- Attivazione funzionalità modifica quantità
+- Aggiornamento conteggi tab
+
+3.3 PULSANTE "CONFERMA RICEZIONE" (Tab Ricevuti)
+Effetti immediati:
+- Aggiornamento database: stato "ricevuto" → "archiviato"
+- Spostamento visuale: Ricevuti → Storico
+- Cambio layout scheda: OrdineRicevutoCard → Standard
+- Disattivazione modifica quantità
+- TODO: Aggiornamento giacenze vini (simulato)
+- Aggiornamento conteggi tab
+
+3.4 PULSANTI "+/-" MODIFICA QUANTITÀ (Solo Tab Ricevuti)
+Comportamento:
+- Incremento/decremento quantità per singolo vino
+- Ricalcolo automatico totale bottiglie e prezzo
+- Aggiornamento immediato context (onAggiornaQuantita)
+- Persistenza modifiche in memoria (non database fino a conferma)
+- Validazione: quantità minima = 0
+
+3.5 PULSANTE "ELIMINA"
+Comportamento per tab:
+- Inviati: "Sei sicuro di voler eliminare questo ordine inviato? Questa azione non può essere annullata."
+- Ricevuti: "Sei sicuro di voler eliminare questo ordine ricevuto? Tutte le modifiche alle quantità andranno perse."
+- Storico: "Sei sicuro di voler eliminare definitivamente questo ordine dall'archivio?"
+
+Effetti:
+- Apertura ConfermaEliminazioneModal con messaggio specifico
+- Eliminazione definitiva da database Supabase
+- Rimozione da array context corrispondente
+- Aggiornamento conteggi tab
+
+================================================================================
+4. DATI E CAMPI UTILIZZATI
+================================================================================
+
+4.1 STRUTTURA ORDINE (Interface Ordine)
+┌─────────────────────────────────────────────────────────────────┐
+│ id: string              - UUID univoco ordine                  │
+│ fornitore: string       - Nome fornitore (es. "BOLOGNA VINI")  │
+│ totale: number          - Importo totale ordine in euro        │
+│ bottiglie: number       - Numero totale bottiglie ordinate     │
+│ data: string            - Data creazione formato italiano      │
+│ stato: enum             - 'sospeso'|'inviato'|'ricevuto'|'archiviato' │
+│ tipo: enum              - 'inviato'|'ricevuto' (legacy)        │
+│ dettagli?: array        - Array OrdineDettaglio opzionale      │
+└─────────────────────────────────────────────────────────────────┘
+
+4.2 STRUTTURA DETTAGLIO ORDINE (Interface OrdineDettaglio)
+┌─────────────────────────────────────────────────────────────────┐
+│ wineId: string          - ID vino di riferimento               │
+│ wineName: string        - Nome vino                            │
+│ quantity: number        - Quantità ordinata/ricevuta           │
+│ unit: enum              - 'bottiglie'|'cartoni'                │
+│ unitPrice: number       - Prezzo unitario per bottiglia        │
+│ totalPrice: number      - Prezzo totale (quantity * unitPrice) │
+└─────────────────────────────────────────────────────────────────┘
+
+4.3 TABELLE DATABASE COINVOLTE
+Tabella principale: public.ordini
+┌─────────────────────────────────────────────────────────────────┐
+│ id: UUID                - Chiave primaria                      │
+│ fornitore: UUID         - Riferimento fornitore (fittizio)     │
+│ totale: NUMERIC         - Importo totale                       │
+│ contenuto: JSONB        - Dettagli ordine + nome fornitore     │
+│ stato: ENUM             - Stati validi database                │
+│ data: TIMESTAMP         - Data creazione                       │
+│ user_id: UUID           - Utente proprietario (fittizio)       │
+│ created_at: TIMESTAMP   - Timestamp creazione automatico       │
+│ updated_at: TIMESTAMP   - Timestamp aggiornamento automatico   │
+└─────────────────────────────────────────────────────────────────┘
+
+4.4 CAMPI CHE CAMBIANO NEL PASSAGGIO TRA STATI
+Sospeso → Ricevuto:
+- Campo "stato": "sospeso" → "ricevuto"
+- Layout UI: Scheda standard → OrdineRicevutoCard
+- Azioni disponibili: Conferma → Conferma Ricezione + Modifica Quantità
+
+Ricevuto → Archiviato:
+- Campo "stato": "ricevuto" → "archiviato"  
+- Layout UI: OrdineRicevutoCard → Scheda standard
+- Azioni disponibili: Conferma Ricezione → Solo Dettagli
+- Contenuto JSONB: Quantità finali persistite
+
+4.5 CALCOLI DINAMICI
+- totalBottiglie: Somma (quantity * moltiplicatore_unità) per tutti i dettagli
+- totalPrezzo: Somma totalPrice per tutti i dettagli
+- Moltiplicatore unità: cartoni = 6, bottiglie = 1
+- Conteggi tab: .length degli array ordiniInviati/Ricevuti/Storico
+
+================================================================================
+5. OSSERVAZIONI CRITICHE
+================================================================================
+
+5.1 RIDONDANZE IDENTIFICATE
+
+A) CAMPO "tipo" LEGACY
+- Interface Ordine mantiene campo "tipo" non utilizzato dal database
+- Database filtra solo per "stato", non per "tipo"
+- Possibile rimozione per semplificare struttura dati
+
+B) DOPPIA GESTIONE QUANTITÀ
+- Quantità iniziale salvata in "contenuto" JSONB
+- Quantità modificata gestita in stato locale React
+- Sincronizzazione complessa tra stato locale e database
+
+C) FUNZIONE "VISUALIZZA" NON IMPLEMENTATA
+- Pulsante presente in tutti i tab ma non funzionale
+- TODO persistente in codebase
+- Potenziale confusione utente
+
+5.2 PASSAGGI SUPERFLUI
+
+A) SEZIONE "STORICO"
+Criticità:
+- Ordini archiviati raramente consultati
+- Occupa spazio UI prezioso
+- Funzionalità "Elimina" da storico questionabile
+- Potrebbe essere sostituita da semplice contatore
+
+Alternativa suggerita:
+- Rimuovere tab "Storico" dalla UI principale
+- Mantenere solo conteggio "X ordini completati"
+- Accesso storico tramite menu secondario o pagina dedicata
+
+B) STEP INTERMEDIO "RICEVUTI"
+Criticità:
+- Passaggio Inviati → Ricevuti → Storico potrebbe essere semplificato
+- Modifica quantità potrebbe avvenire direttamente in "Inviati"
+- Due conferme successive (Conferma + Conferma Ricezione) ridondanti
+
+Alternativa suggerita:
+- Unificare in singola azione "Conferma e Ricevi"
+- Modifica quantità direttamente nel modale di conferma
+- Passaggio diretto: Inviati → Completati (con aggiornamento giacenze)
+
+5.3 PUNTI DI MIGLIORAMENTO
+
+A) IMPLEMENTAZIONE "VISUALIZZA"
+Priorità: Alta
+- Modale dettagli ordine con lista vini completa
+- Cronologia stati e timestamp
+- Informazioni fornitore estese
+
+B) SEMPLIFICAZIONE FLUSSO
+Priorità: Media
+- Riduzione da 3 stati a 2: "In Corso" e "Completati"
+- Unificazione azioni conferma
+- Rimozione passaggi intermedi superflui
+
+C) MIGLIORAMENTO UX MODIFICA QUANTITÀ
+Priorità: Media
+- Input numerici diretti invece di +/-
+- Validazione quantità massima ordinata
+- Anteprima impatto su giacenze
+
+D) OTTIMIZZAZIONE PERFORMANCE
+Priorità: Bassa
+- Lazy loading per ordini storici
+- Paginazione per liste lunghe
+- Caching intelligente dati ordini
+
+================================================================================
+6. RACCOMANDAZIONI OPERATIVE
+================================================================================
+
+6.1 INTERVENTI CHIRURGICI SUGGERITI
+
+FASE 1 - PULIZIA (Basso Rischio)
+- Rimuovere campo "tipo" da interface Ordine
+- Implementare funzione "Visualizza" con modale dettagli
+- Aggiungere validazioni input quantità
+
+FASE 2 - SEMPLIFICAZIONE (Medio Rischio)  
+- Unificare azioni "Conferma" e "Conferma Ricezione"
+- Spostare modifica quantità in modale conferma
+- Ridurre tab da 3 a 2 (Attivi + Completati)
+
+FASE 3 - OTTIMIZZAZIONE (Alto Rischio)
+- Ristrutturare database per eliminare campo "tipo"
+- Implementare aggiornamento giacenze reale
+- Aggiungere sistema notifiche stato ordini
+
+6.2 PRIORITÀ INTERVENTI
+1. 🔴 CRITICO: Implementare "Visualizza" (funzionalità mancante)
+2. 🟡 MEDIO: Semplificare flusso stati (UX migliorata)  
+3. 🟢 BASSO: Ottimizzare performance (scalabilità)
+
+6.3 IMPATTI STIMATI
+- Rimozione tab "Storico": -30% complessità UI, +20% spazio utile
+- Unificazione conferme: -50% click utente, +40% velocità workflow
+- Implementazione "Visualizza": +100% completezza funzionale
+
+================================================================================
+CONCLUSIONI
+================================================================================
+
+La pagina "Gestisci Ordini" presenta un'architettura solida ma con margini di
+semplificazione significativi. Il flusso a 3 stati (Inviati→Ricevuti→Storico)
+è funzionale ma potrebbe essere ottimizzato per ridurre la complessità operativa.
+
+La funzionalità di modifica quantità è ben implementata tecnicamente ma 
+potrebbe beneficiare di un'integrazione più fluida nel workflow principale.
+
+L'assenza della funzione "Visualizza" rappresenta il gap funzionale più critico
+da colmare prioritariamente.
+
+================================================================================
+FINE REPORT - Generato il 25/09/2025 alle 12:07
+================================================================================

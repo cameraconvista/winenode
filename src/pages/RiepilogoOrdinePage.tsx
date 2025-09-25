@@ -64,7 +64,7 @@ export default function RiepilogoOrdinePage() {
       totale: totalOrdine,
       bottiglie: totalBottiglie,
       data: new Date().toLocaleDateString('it-IT'),
-      stato: 'in_corso' as const,
+      stato: 'sospeso' as const, // Stato valido per database: 'sospeso','inviato','ricevuto','archiviato'
       tipo: 'inviato' as const,
       dettagli: ordineDetails.map(detail => ({
         wineId: detail.wineId,

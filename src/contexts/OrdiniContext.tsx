@@ -16,7 +16,7 @@ export interface Ordine {
   totale: number;
   bottiglie: number;
   data: string;
-  stato: 'in_corso' | 'completato' | 'annullato';
+  stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato'; // Stati validi database Supabase
   tipo: 'inviato' | 'ricevuto';
   dettagli?: OrdineDettaglio[];
 }
@@ -48,18 +48,25 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const loadOrdiniFromSupabase = async () => {
-      console.log('🔄 Caricando ordini da Supabase...');
-      const { inviati, ricevuti, storico } = await supabaseOrdini.loadOrdini();
-      
-      setOrdiniInviati(inviati);
-      setOrdiniRicevuti(ricevuti);
-      setOrdiniStorico(storico);
-      
-      console.log('✅ Ordini caricati:', {
-        inviati: inviati.length,
-        ricevuti: ricevuti.length,
-        storico: storico.length
-      });
+      try {
+        setLoading(true);
+        console.log('🔄 Caricando ordini da Supabase...');
+        const { inviati, ricevuti, storico } = await supabaseOrdini.loadOrdini();
+        
+        setOrdiniInviati(inviati);
+        setOrdiniRicevuti(ricevuti);
+        setOrdiniStorico(storico);
+        
+        console.log('✅ Ordini caricati:', {
+          inviati: inviati.length,
+          ricevuti: ricevuti.length,
+          storico: storico.length
+        });
+      } catch (error) {
+        console.error('❌ Errore caricamento ordini nel context:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadOrdiniFromSupabase();
@@ -76,10 +83,25 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
         id: ordineId
       };
 
+      // Verifica che l'ordine non esista già prima di aggiungerlo
       if (ordine.tipo === 'inviato') {
-        setOrdiniInviati(prev => [nuovoOrdine, ...prev]);
+        setOrdiniInviati(prev => {
+          const exists = prev.some(o => o.id === ordineId);
+          if (exists) {
+            console.log('⚠️ Ordine già presente, evito duplicazione:', ordineId);
+            return prev;
+          }
+          return [nuovoOrdine, ...prev];
+        });
       } else {
-        setOrdiniRicevuti(prev => [nuovoOrdine, ...prev]);
+        setOrdiniRicevuti(prev => {
+          const exists = prev.some(o => o.id === ordineId);
+          if (exists) {
+            console.log('⚠️ Ordine già presente, evito duplicazione:', ordineId);
+            return prev;
+          }
+          return [nuovoOrdine, ...prev];
+        });
       }
       
       console.log('✅ Ordine salvato e aggiunto al context:', ordineId);
@@ -107,25 +129,37 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const spostaOrdineInviatiARicevuti = (ordineId: string) => {
+  const spostaOrdineInviatiARicevuti = async (ordineId: string) => {
     console.log('🔄 Spostando ordine da Inviati a Ricevuti:', ordineId);
     
-    setOrdiniInviati(prev => {
-      const ordine = prev.find(o => o.id === ordineId);
-      if (!ordine) return prev;
-      
-      // Sposta l'ordine nei ricevuti
-      const ordineRicevuto: Ordine = {
-        ...ordine,
-        tipo: 'ricevuto',
-        stato: 'in_corso'
-      };
-      
-      setOrdiniRicevuti(prevRicevuti => [ordineRicevuto, ...prevRicevuti]);
-      
-      // Rimuovi dai inviati
-      return prev.filter(o => o.id !== ordineId);
-    });
+    // Aggiorna lo stato nel database prima di spostare nel context
+    const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'ricevuto');
+    
+    if (success) {
+      setOrdiniInviati(prev => {
+        const ordine = prev.find(o => o.id === ordineId);
+        if (!ordine) return prev;
+        
+        // Sposta l'ordine nei ricevuti con stato aggiornato
+        const ordineRicevuto: Ordine = {
+          ...ordine,
+          stato: 'ricevuto'
+        };
+        
+        setOrdiniRicevuti(prevRicevuti => {
+          // Controlla se l'ordine esiste già nei ricevuti per evitare duplicazioni
+          const exists = prevRicevuti.some(o => o.id === ordineId);
+          if (exists) {
+            console.log('⚠️ Ordine già presente nei ricevuti, evito duplicazione:', ordineId);
+            return prevRicevuti;
+          }
+          return [ordineRicevuto, ...prevRicevuti];
+        });
+        
+        // Rimuovi dai inviati
+        return prev.filter(o => o.id !== ordineId);
+      });
+    }
   };
 
   const aggiornaQuantitaOrdine = (ordineId: string, dettagli: OrdineDettaglio[]) => {
@@ -153,25 +187,38 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   const confermaRicezioneOrdine = async (ordineId: string) => {
     console.log('✅ Confermando ricezione ordine:', ordineId);
     
-    setOrdiniRicevuti(prev => {
-      const ordine = prev.find(o => o.id === ordineId);
-      if (!ordine) return prev;
-      
-      // TODO: Qui implementare aggiornamento giacenze
-      // Per ora simuliamo l'aggiornamento
-      console.log('📦 Aggiornando giacenze per ordine:', ordine);
-      
-      // Sposta l'ordine nello storico
-      const ordineCompletato: Ordine = {
-        ...ordine,
-        stato: 'completato'
-      };
-      
-      setOrdiniStorico(prevStorico => [ordineCompletato, ...prevStorico]);
-      
-      // Rimuovi dai ricevuti
-      return prev.filter(o => o.id !== ordineId);
-    });
+    // Aggiorna lo stato nel database prima di spostare nel context
+    const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'archiviato');
+    
+    if (success) {
+      setOrdiniRicevuti(prev => {
+        const ordine = prev.find(o => o.id === ordineId);
+        if (!ordine) return prev;
+        
+        // TODO: Qui implementare aggiornamento giacenze
+        // Per ora simuliamo l'aggiornamento
+        console.log('📦 Aggiornando giacenze per ordine:', ordine);
+        
+        // Sposta l'ordine nello storico
+        const ordineCompletato: Ordine = {
+          ...ordine,
+          stato: 'archiviato' // Stato finale per ordini completati
+        };
+        
+        setOrdiniStorico(prevStorico => {
+          // Controlla se l'ordine esiste già nello storico per evitare duplicazioni
+          const exists = prevStorico.some(o => o.id === ordineId);
+          if (exists) {
+            console.log('⚠️ Ordine già presente nello storico, evito duplicazione:', ordineId);
+            return prevStorico;
+          }
+          return [ordineCompletato, ...prevStorico];
+        });
+        
+        // Rimuovi dai ricevuti
+        return prev.filter(o => o.id !== ordineId);
+      });
+    }
   };
 
   const eliminaOrdineInviato = async (ordineId: string) => {

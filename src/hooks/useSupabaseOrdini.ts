@@ -24,20 +24,10 @@ export function useSupabaseOrdini() {
           id,
           fornitore,
           totale,
-          bottiglie,
-          data_ordine,
+          contenuto,
           stato,
-          tipo,
-          created_at,
-          ordini_dettaglio (
-            id,
-            vino_id,
-            nome_vino,
-            quantita,
-            unita,
-            prezzo_unitario,
-            prezzo_totale
-          )
+          data,
+          created_at
         `)
         .order('created_at', { ascending: false });
 
@@ -49,28 +39,53 @@ export function useSupabaseOrdini() {
       console.log('✅ Ordini caricati da Supabase:', ordiniData?.length || 0);
 
       // Mappa i dati dal database al formato dell'app
-      const ordiniMappati: Ordine[] = (ordiniData || []).map(ordine => ({
-        id: ordine.id,
-        fornitore: ordine.fornitore || '',
-        totale: ordine.totale || 0,
-        bottiglie: ordine.bottiglie || 0,
-        data: ordine.data_ordine || new Date().toLocaleDateString('it-IT'),
-        stato: ordine.stato || 'in_corso',
-        tipo: ordine.tipo || 'inviato',
-        dettagli: (ordine.ordini_dettaglio || []).map((dettaglio: any) => ({
-          wineId: dettaglio.vino_id?.toString() || '',
-          wineName: dettaglio.nome_vino || '',
-          quantity: dettaglio.quantita || 0,
-          unit: dettaglio.unita || 'bottiglie',
-          unitPrice: dettaglio.prezzo_unitario || 0,
-          totalPrice: dettaglio.prezzo_totale || 0
-        }))
-      }));
+      const ordiniMappati: Ordine[] = (ordiniData || []).map(ordine => {
+        const contenuto = ordine.contenuto || {};
+        
+        // Gestisce sia il formato nuovo (oggetto con fornitore_nome e dettagli) che quello vecchio (array)
+        const dettagliArray = contenuto.dettagli || (Array.isArray(contenuto) ? contenuto : []);
+        const fornitoreNome = contenuto.fornitore_nome || 'Fornitore sconosciuto';
+        
+        const bottiglie = Array.isArray(dettagliArray) ? dettagliArray.reduce((sum: number, item: any) => {
+          const qty = item.quantita || item.quantity || 0;
+          const multiplier = (item.unit || item.unita) === 'cartoni' ? 6 : 1;
+          return sum + (qty * multiplier);
+        }, 0) : 0;
 
-      // Separa per tipo
-      const inviati = ordiniMappati.filter(o => o.tipo === 'inviato' && o.stato !== 'completato');
-      const ricevuti = ordiniMappati.filter(o => o.tipo === 'ricevuto' && o.stato !== 'completato');
-      const storico = ordiniMappati.filter(o => o.stato === 'completato');
+        const dettagli = Array.isArray(dettagliArray) ? dettagliArray.map((item: any) => ({
+          wineId: item.wineId || item.vino_id?.toString() || '',
+          wineName: item.nome || item.wineName || item.nome_vino || '',
+          quantity: item.quantita || item.quantity || 0,
+          unit: (item.unit || item.unita || 'bottiglie') as 'bottiglie' | 'cartoni',
+          unitPrice: item.prezzo_unitario || item.unitPrice || 0,
+          totalPrice: item.prezzo_totale || item.totalPrice || 0
+        })) : [];
+
+        // Converti timestamp database in formato italiano per visualizzazione
+        const dataVisualizzazione = (() => {
+          if (ordine.data) {
+            const dataObj = new Date(ordine.data);
+            return dataObj.toLocaleDateString('it-IT');
+          }
+          return new Date().toLocaleDateString('it-IT');
+        })();
+
+        return {
+          id: ordine.id,
+          fornitore: fornitoreNome,
+          totale: ordine.totale || 0,
+          bottiglie,
+          data: dataVisualizzazione,
+          stato: ordine.stato || 'sospeso',
+          tipo: 'inviato', // Default per compatibilità
+          dettagli
+        };
+      });
+
+      // Separa per stato (non per tipo, che non esiste nel database)
+      const inviati = ordiniMappati.filter(o => o.stato === 'sospeso' || o.stato === 'inviato');
+      const ricevuti = ordiniMappati.filter(o => o.stato === 'ricevuto');
+      const storico = ordiniMappati.filter(o => o.stato === 'archiviato');
 
       return { inviati, ricevuti, storico };
 
@@ -89,15 +104,45 @@ export function useSupabaseOrdini() {
     try {
       console.log('💾 Salvando ordine:', ordine.fornitore);
 
+      // Prepara il contenuto JSONB con i dettagli dell'ordine e info fornitore
+      const contenutoOrdine = {
+        fornitore_nome: ordine.fornitore, // Salviamo il nome del fornitore
+        dettagli: ordine.dettagli?.map(dettaglio => ({
+          wineId: dettaglio.wineId,
+          nome: dettaglio.wineName,
+          quantita: dettaglio.quantity,
+          unit: dettaglio.unit,
+          prezzo_unitario: dettaglio.unitPrice,
+          prezzo_totale: dettaglio.totalPrice
+        })) || []
+      };
+
+      // Genera un UUID fittizio per il fornitore (compatibilità con schema database)
+      const fornitoreUuid = '00000000-0000-0000-0000-000000000001';
+
+      // Converti la data dal formato italiano (DD/MM/YYYY) al formato timestamp ISO per Supabase
+      const dataTimestamp = (() => {
+        if (ordine.data.includes('/')) {
+          const [giorno, mese, anno] = ordine.data.split('/');
+          const dataObj = new Date(parseInt(anno), parseInt(mese) - 1, parseInt(giorno));
+          return dataObj.toISOString();
+        }
+        // Se è già una data, convertila in timestamp
+        const dataObj = new Date(ordine.data);
+        return dataObj.toISOString();
+      })();
+
+      console.log('📅 Convertendo data:', ordine.data, '→', dataTimestamp);
+
       const { data, error } = await supabase
         .from('ordini')
         .insert({
-          fornitore: ordine.fornitore,
+          fornitore: fornitoreUuid,
           totale: ordine.totale,
-          bottiglie: ordine.bottiglie,
-          data_ordine: ordine.data,
+          contenuto: contenutoOrdine,
+          data: dataTimestamp,
           stato: ordine.stato,
-          tipo: ordine.tipo
+          user_id: '00000000-0000-0000-0000-000000000001'
         })
         .select()
         .single();
@@ -109,29 +154,8 @@ export function useSupabaseOrdini() {
 
       console.log('✅ Ordine salvato:', data.id);
 
-      // Salva i dettagli se presenti
-      if (ordine.dettagli && ordine.dettagli.length > 0) {
-        const dettagliData = ordine.dettagli.map(dettaglio => ({
-          ordine_id: data.id,
-          vino_id: parseInt(dettaglio.wineId) || null,
-          nome_vino: dettaglio.wineName,
-          quantita: dettaglio.quantity,
-          unita: dettaglio.unit,
-          prezzo_unitario: dettaglio.unitPrice,
-          prezzo_totale: dettaglio.totalPrice
-        }));
-
-        const { error: dettagliError } = await supabase
-          .from('ordini_dettaglio')
-          .insert(dettagliData);
-
-        if (dettagliError) {
-          console.error('❌ Errore salvataggio dettagli:', dettagliError);
-          // Non blocchiamo per errori dettagli
-        } else {
-          console.log('✅ Dettagli ordine salvati');
-        }
-      }
+      // I dettagli sono già salvati nel campo contenuto JSONB
+      console.log('✅ Ordine e dettagli salvati nel campo contenuto JSONB');
 
       return data.id;
 
@@ -174,17 +198,7 @@ export function useSupabaseOrdini() {
     try {
       console.log('🗑️ Eliminando ordine:', ordineId);
 
-      // Prima elimina i dettagli (CASCADE dovrebbe farlo automaticamente)
-      const { error: dettagliError } = await supabase
-        .from('ordini_dettaglio')
-        .delete()
-        .eq('ordine_id', ordineId);
-
-      if (dettagliError) {
-        console.warn('⚠️ Errore eliminazione dettagli:', dettagliError);
-      }
-
-      // Poi elimina l'ordine
+      // Elimina l'ordine (i dettagli sono nel campo contenuto JSONB)
       const { error } = await supabase
         .from('ordini')
         .delete()
