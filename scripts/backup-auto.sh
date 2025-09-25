@@ -8,7 +8,7 @@
 set -e  # Exit on any error
 
 PROJECT_DIR="/Users/dero/Documents/winenode_main"
-BACKUP_DIR="/Users/dero/Documents/winenode_backups"
+BACKUP_DIR="/Users/dero/Documents/winenode_main/Backup_Automatico"
 TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
 BACKUP_NAME="winenode_backup_$TIMESTAMP"
 
@@ -49,10 +49,11 @@ echo -e "${GREEN}   File modificati: $GIT_STATUS${NC}"
 echo -e "${BLUE}📦 Creazione backup...${NC}"
 BACKUP_PATH="$BACKUP_DIR/$BACKUP_NAME.tar.gz"
 
-# Exclude node_modules, .git, and other unnecessary files
+# Exclude node_modules, .git, Backup_Automatico and other unnecessary files
 tar -czf "$BACKUP_PATH" \
     --exclude="node_modules" \
     --exclude=".git" \
+    --exclude="Backup_Automatico" \
     --exclude="*.log" \
     --exclude="dist" \
     --exclude="build" \
@@ -95,6 +96,7 @@ CONTENUTO BACKUP:
 ESCLUSI:
 - node_modules
 - .git directory
+- Backup_Automatico (evita ricorsione)
 - File temporanei
 - Build artifacts
 EOF
