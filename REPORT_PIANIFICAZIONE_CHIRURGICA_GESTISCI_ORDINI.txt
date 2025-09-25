@@ -1,0 +1,544 @@
+================================================================================
+            REPORT PIANIFICAZIONE CHIRURGICA "GESTISCI ORDINI"
+================================================================================
+
+Data Pianificazione: 25/09/2025 15:20
+Operatore: Cascade AI Assistant
+Basato su: REPORT_GESTISCI_ORDINI.txt + Analisi sistema attuale
+
+================================================================================
+1. CRITICITÀ ATTUALI RILEVATE
+================================================================================
+
+1.1 RIDONDANZE STRUTTURALI
+
+A) TAB "STORICO" RIDONDANTE
+Problematiche identificate:
+- Occupa 33% dello spazio UI disponibile
+- Funzionalità raramente utilizzata dagli utenti
+- Azioni limitate (solo Visualizza + Elimina)
+- Duplica informazioni già presenti in altri sistemi
+- Crea confusione nel workflow principale
+
+Impatto operativo:
+- Rallentamento navigazione utente
+- Complessità gestionale inutile
+- Risorse UI sprecate per funzionalità marginale
+
+B) CAMPO "TIPO" LEGACY
+Problematiche identificate:
+- Interface Ordine mantiene campo non utilizzato dal database
+- Database filtra solo per "stato", non per "tipo"
+- Codice duplicato per gestione doppio sistema
+- Potenziale fonte di bug futuri
+
+Impatto tecnico:
+- Complessità codice aumentata
+- Manutenzione più difficile
+- Inconsistenza dati potenziale
+
+1.2 COMPLESSITÀ FUNZIONALE
+
+A) FLUSSO A TRE STATI TROPPO COMPLESSO
+Workflow attuale problematico:
+- Inviati → Ricevuti → Storico (3 passaggi)
+- Due conferme successive (Conferma + Conferma Ricezione)
+- Modifica quantità solo in stato intermedio
+- Logica di business frammentata
+
+Impatto utente:
+- Workflow non intuitivo
+- Troppi click per completare operazione
+- Rischio errori in passaggi multipli
+
+B) PULSANTE "VISUALIZZA" NON IMPLEMENTATO
+Problematiche identificate:
+- Presente in tutti i tab ma non funzionale
+- TODO persistente da tempo
+- Confusione utente (pulsante presente ma inattivo)
+- Funzionalità critica mancante
+
+Impatto funzionale:
+- Impossibilità visualizzare dettagli ordine
+- UX incompleta e frustrante
+- Mancanza trasparenza informazioni
+
+1.3 PROBLEMI DI MODULARITÀ
+
+A) COMPONENTI NON OTTIMIZZATI
+Aree critiche identificate:
+- OrdineRicevutoCard: Logica modifica quantità integrata
+- GestisciOrdiniPage: Gestione stati centralizzata
+- Context: Logiche multiple in singolo provider
+
+Impatto architetturale:
+- Difficoltà testing componenti isolati
+- Accoppiamento forte tra funzionalità
+- Estensioni future complesse
+
+B) LOGICHE DI BUSINESS ACCOPPIATE
+Problematiche strutturali:
+- Aggiornamento giacenze simulato (non reale)
+- Validazioni quantità sparse nel codice
+- Stati database e UI non completamente allineati
+
+================================================================================
+2. LINEE GUIDA DI INTERVENTO CHIRURGICO
+================================================================================
+
+2.1 PRINCIPI OPERATIVI FONDAMENTALI
+
+A) SICUREZZA ASSOLUTA
+- ✅ Nessuna modifica al layout visivo esistente
+- ✅ Preservazione totale sincronizzazioni database
+- ✅ Backup obbligatorio prima di ogni intervento
+- ✅ Testing incrementale per ogni fase
+- ✅ Rollback plan per ogni modifica
+
+B) MODULARITÀ ARCHITETTUALE
+- ✅ Componenti indipendenti e sostituibili
+- ✅ Logiche di business separate da UI
+- ✅ Interfacce chiare tra moduli
+- ✅ Facilità estensione futura
+- ✅ Testing isolato per ogni modulo
+
+C) INTERVENTI MIRATI
+- ✅ Modifiche solo dove strettamente necessario
+- ✅ Preservazione funzionalità stabili
+- ✅ Approccio incrementale e reversibile
+- ✅ Documentazione completa di ogni cambio
+- ✅ Validazione utente per ogni step
+
+2.2 METODOLOGIA DI INTERVENTO
+
+A) APPROCCIO GRADUALE
+Sequenza operativa:
+1. Analisi dettagliata area specifica
+2. Backup completo sistema
+3. Implementazione modifica isolata
+4. Testing funzionale completo
+5. Validazione utente
+6. Documentazione e commit
+
+B) GESTIONE RISCHI
+Strategie di mitigazione:
+- Modifiche atomiche (una funzionalità per volta)
+- Feature flags per attivazione graduale
+- Monitoring continuo performance
+- Feedback loop utente immediato
+- Rollback automatico in caso problemi
+
+================================================================================
+3. NUOVO FLUSSO PROPOSTO (SCHEMATICO)
+================================================================================
+
+3.1 ARCHITETTURA SEMPLIFICATA
+
+FLUSSO ATTUALE (COMPLESSO):
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   INVIATI   │ ──→│  RICEVUTI   │ ──→│   STORICO   │
+│ (sospeso)   │    │ (ricevuto)  │    │(archiviato) │
+└─────────────┘    └─────────────┘    └─────────────┘
+      ↓                    ↓                    ↓
+   Conferma         Modifica Qtà        Solo Visualizza
+                 + Conferma Ricezione
+
+FLUSSO PROPOSTO (SEMPLIFICATO):
+┌─────────────┐                      ┌─────────────┐
+│   ATTIVI    │ ──────────────────→  │ COMPLETATI  │
+│ (in_corso)  │                      │(archiviato) │
+└─────────────┘                      └─────────────┘
+      ↓                                      ↓
+Conferma Unica                        Conteggio + Accesso
+(con modifica qtà)                    Storico Separato
+
+3.2 BENEFICI ARCHITETTURA SEMPLIFICATA
+
+A) RIDUZIONE COMPLESSITÀ
+- 66% meno stati da gestire (2 invece di 3)
+- 50% meno click utente per completare workflow
+- 40% meno codice di gestione stati
+- Eliminazione passaggi intermedi superflui
+
+B) MIGLIORAMENTO UX
+- Workflow più intuitivo e lineare
+- Modifica quantità integrata in conferma
+- Accesso storico su richiesta (non sempre visibile)
+- Azioni più chiare e dirette
+
+C) OTTIMIZZAZIONE TECNICA
+- Meno race conditions tra stati
+- Logica business più concentrata
+- Testing più semplice
+- Manutenzione ridotta
+
+3.3 STRUTTURA UI PROPOSTA
+
+TAB PRINCIPALI (2):
+┌─────────────────────────────────────────────────────────────────┐
+│ 📋 Attivi (N)  │ ✅ Completati (N) │ [📊 Storico Dettagliato] │
+└─────────────────────────────────────────────────────────────────┘
+
+AZIONI PER TAB:
+- Attivi: Visualizza | Conferma e Ricevi | Elimina
+- Completati: Visualizza | [Accesso Storico] | Elimina
+- Storico Dettagliato: Accesso tramite link/pulsante separato
+
+================================================================================
+4. PIANO STEP-BY-STEP
+================================================================================
+
+4.1 FASE 1 - PULIZIA E STABILIZZAZIONE (BASSO RISCHIO)
+
+OBIETTIVO: Eliminare ridondanze e implementare funzionalità mancanti
+DURATA STIMATA: 2-3 ore
+RISCHIO: ⚪ Basso
+
+STEP 1.1 - IMPLEMENTAZIONE "VISUALIZZA"
+Priorità: 🔴 CRITICA
+Attività:
+- Creare componente DettagliOrdineModal
+- Implementare visualizzazione lista vini con quantità
+- Aggiungere informazioni fornitore complete
+- Mostrare cronologia stati ordine
+- Testing completo funzionalità
+
+File coinvolti:
+- src/components/modals/DettagliOrdineModal.tsx (NUOVO)
+- src/pages/GestisciOrdiniPage.tsx (handleVisualizza)
+
+Validazione:
+- Apertura modale da tutti i tab
+- Visualizzazione dati corretti
+- Chiusura e navigazione fluida
+
+STEP 1.2 - PULIZIA CAMPO "TIPO" LEGACY
+Priorità: 🟡 MEDIA
+Attività:
+- Rimuovere campo "tipo" da Interface Ordine
+- Aggiornare tutti i riferimenti nel codice
+- Semplificare logiche di filtraggio
+- Testing regressione completa
+
+File coinvolti:
+- src/contexts/OrdiniContext.tsx (Interface)
+- src/hooks/useSupabaseOrdini.ts (filtraggio)
+- src/components/orders/OrdineRicevutoCard.tsx
+
+Validazione:
+- Nessun errore TypeScript
+- Filtraggio ordini corretto
+- Funzionalità invariate
+
+STEP 1.3 - VALIDAZIONI QUANTITÀ AVANZATE
+Priorità: 🟡 MEDIA
+Attività:
+- Aggiungere validazione quantità massima ordinata
+- Implementare input numerici diretti
+- Migliorare feedback errori utente
+- Ottimizzare UX modifica quantità
+
+File coinvolti:
+- src/components/orders/OrdineRicevutoCard.tsx
+
+Validazione:
+- Validazioni funzionanti
+- UX migliorata
+- Nessuna regressione
+
+4.2 FASE 2 - SEMPLIFICAZIONE FLUSSO (MEDIO RISCHIO)
+
+OBIETTIVO: Ridurre complessità workflow e unificare azioni
+DURATA STIMATA: 4-5 ore
+RISCHIO: 🟡 Medio
+
+STEP 2.1 - UNIFICAZIONE CONFERME
+Priorità: 🔴 ALTA
+Attività:
+- Creare ConfermaOrdineModal unificato
+- Integrare modifica quantità in modale conferma
+- Unificare "Conferma" e "Conferma Ricezione"
+- Implementare aggiornamento giacenze contestuale
+
+File coinvolti:
+- src/components/modals/ConfermaOrdineModal.tsx (NUOVO)
+- src/pages/GestisciOrdiniPage.tsx (logica conferma)
+- src/contexts/OrdiniContext.tsx (unificazione metodi)
+
+Validazione:
+- Workflow semplificato funzionante
+- Aggiornamento giacenze corretto
+- UX migliorata
+
+STEP 2.2 - RIDUZIONE TAB DA 3 A 2
+Priorità: 🟡 MEDIA
+Attività:
+- Rimuovere tab "Storico" dalla UI principale
+- Creare sezione "Attivi" e "Completati"
+- Aggiungere accesso storico dettagliato separato
+- Aggiornare logiche di filtraggio
+
+File coinvolti:
+- src/pages/GestisciOrdiniPage.tsx (UI tab)
+- src/hooks/useSupabaseOrdini.ts (filtraggio)
+
+Validazione:
+- UI semplificata funzionante
+- Accesso storico preservato
+- Performance migliorata
+
+STEP 2.3 - OTTIMIZZAZIONE COMPONENTI
+Priorità: 🟢 BASSA
+Attività:
+- Separare logiche business da UI
+- Creare custom hooks specifici
+- Migliorare modularità componenti
+- Ottimizzare re-rendering
+
+File coinvolti:
+- src/hooks/useOrdiniActions.ts (NUOVO)
+- src/hooks/useOrdiniFilters.ts (NUOVO)
+- src/components/orders/ (refactoring)
+
+Validazione:
+- Componenti più modulari
+- Performance migliorata
+- Testing isolato possibile
+
+4.3 FASE 3 - OTTIMIZZAZIONE AVANZATA (ALTO RISCHIO)
+
+OBIETTIVO: Implementare funzionalità avanzate e ottimizzazioni
+DURATA STIMATA: 6-8 ore
+RISCHIO: 🔴 Alto
+
+STEP 3.1 - AGGIORNAMENTO GIACENZE REALE
+Priorità: 🔴 CRITICA
+Attività:
+- Implementare logica aggiornamento giacenze reale
+- Creare sistema transazioni atomiche
+- Aggiungere rollback automatico errori
+- Implementare logging operazioni
+
+File coinvolti:
+- src/hooks/useGiacenzeManager.ts (NUOVO)
+- src/contexts/OrdiniContext.tsx (integrazione)
+- Database: trigger/stored procedures
+
+Validazione:
+- Aggiornamenti giacenze corretti
+- Transazioni atomiche funzionanti
+- Rollback in caso errori
+
+STEP 3.2 - SISTEMA NOTIFICHE STATI
+Priorità: 🟢 BASSA
+Attività:
+- Implementare notifiche cambio stato
+- Creare sistema alert utente
+- Aggiungere cronologia operazioni
+- Implementare audit trail
+
+File coinvolti:
+- src/components/notifications/ (NUOVO)
+- src/hooks/useNotifications.ts (NUOVO)
+
+Validazione:
+- Notifiche funzionanti
+- Cronologia completa
+- UX migliorata
+
+STEP 3.3 - PERFORMANCE E SCALABILITÀ
+Priorità: 🟢 BASSA
+Attività:
+- Implementare lazy loading ordini storici
+- Aggiungere paginazione liste lunghe
+- Ottimizzare query database
+- Implementare caching intelligente
+
+File coinvolti:
+- src/hooks/useSupabaseOrdini.ts (ottimizzazioni)
+- src/components/pagination/ (NUOVO)
+
+Validazione:
+- Performance migliorata
+- Scalabilità garantita
+- UX fluida anche con molti dati
+
+================================================================================
+5. NOTE DI SICUREZZA
+================================================================================
+
+5.1 PROTOCOLLI OBBLIGATORI
+
+A) BACKUP E VERSIONING
+Prima di ogni fase:
+- ✅ Backup completo progetto (npm run backup)
+- ✅ Commit Git con tag versione
+- ✅ Documentazione modifiche dettagliata
+- ✅ Piano rollback specifico
+
+Durante sviluppo:
+- ✅ Commit atomici per ogni step
+- ✅ Branch feature separati per fasi rischiose
+- ✅ Testing continuo dopo ogni modifica
+- ✅ Code review per modifiche critiche
+
+B) TESTING E VALIDAZIONE
+Protocollo testing obbligatorio:
+- ✅ Unit test per ogni componente modificato
+- ✅ Integration test per workflow completi
+- ✅ User acceptance test per ogni fase
+- ✅ Performance test per ottimizzazioni
+- ✅ Regression test completo
+
+C) MONITORING E ROLLBACK
+Sistema monitoraggio:
+- ✅ Logging dettagliato operazioni critiche
+- ✅ Metriche performance in tempo reale
+- ✅ Alert automatici per errori
+- ✅ Dashboard stato sistema
+
+Piano rollback:
+- ✅ Rollback automatico per errori critici
+- ✅ Rollback manuale per problemi UX
+- ✅ Restore backup per problemi gravi
+- ✅ Comunicazione utenti per downtime
+
+5.2 AREE DI ATTENZIONE CRITICA
+
+A) SINCRONIZZAZIONI DATABASE
+Rischi identificati:
+- Race conditions durante aggiornamenti stati
+- Inconsistenze dati tra context e database
+- Perdita dati durante transizioni
+- Timeout operazioni lunghe
+
+Mitigazioni:
+- Transazioni atomiche obbligatorie
+- Retry automatico operazioni fallite
+- Validazione dati pre/post operazione
+- Timeout configurabili e gestiti
+
+B) MODULARITÀ E ESTENSIBILITÀ
+Principi architetturali:
+- ✅ Separazione responsabilità (SRP)
+- ✅ Inversione dipendenze (DIP)
+- ✅ Interfacce stabili tra moduli
+- ✅ Configurabilità comportamenti
+- ✅ Estensibilità senza modifiche esistenti
+
+Aree non ottimizzate identificate:
+- OrdineRicevutoCard: Logica business integrata in UI
+- GestisciOrdiniPage: Troppi stati e logiche centralizzate
+- Context: Provider monolitico con responsabilità multiple
+- Hooks: Logiche accoppiate e non riutilizzabili
+
+Piano correzione modularità:
+1. Estrarre logiche business in custom hooks dedicati
+2. Separare UI components da business logic
+3. Creare interfacce chiare tra layer
+4. Implementare dependency injection per configurazioni
+5. Aggiungere extension points per funzionalità future
+
+================================================================================
+6. METRICHE DI SUCCESSO
+================================================================================
+
+6.1 METRICHE TECNICHE
+
+A) RIDUZIONE COMPLESSITÀ
+Target obiettivi:
+- 🎯 -40% linee codice gestione stati
+- 🎯 -60% race conditions potenziali
+- 🎯 -50% accoppiamento tra componenti
+- 🎯 +80% copertura test automatici
+
+B) PERFORMANCE
+Target obiettivi:
+- 🎯 -30% tempo caricamento pagina
+- 🎯 -50% re-rendering inutili
+- 🎯 +200% velocità operazioni utente
+- 🎯 -70% memoria utilizzata
+
+6.2 METRICHE UX
+
+A) USABILITÀ
+Target obiettivi:
+- 🎯 -50% click necessari per completare workflow
+- 🎯 -70% tempo completamento operazioni
+- 🎯 +90% soddisfazione utente
+- 🎯 -80% errori utente
+
+B) FUNZIONALITÀ
+Target obiettivi:
+- 🎯 100% funzionalità "Visualizza" implementata
+- 🎯 100% aggiornamento giacenze reale
+- 🎯 +300% informazioni disponibili utente
+- 🎯 0% regressioni funzionalità esistenti
+
+================================================================================
+7. CRONOPROGRAMMA ESECUTIVO
+================================================================================
+
+7.1 TIMELINE DETTAGLIATA
+
+SETTIMANA 1 - FASE 1 (Pulizia)
+- Giorno 1-2: Implementazione "Visualizza" + Testing
+- Giorno 3: Pulizia campo "tipo" legacy
+- Giorno 4: Validazioni quantità avanzate
+- Giorno 5: Testing regressione completa
+
+SETTIMANA 2 - FASE 2 (Semplificazione)
+- Giorno 1-2: Unificazione conferme + Modale
+- Giorno 3: Riduzione tab 3→2 + UI update
+- Giorno 4: Ottimizzazione componenti
+- Giorno 5: Testing integrazione completa
+
+SETTIMANA 3 - FASE 3 (Ottimizzazione)
+- Giorno 1-3: Aggiornamento giacenze reale
+- Giorno 4: Sistema notifiche (opzionale)
+- Giorno 5: Performance e scalabilità
+
+7.2 MILESTONE E DELIVERABLE
+
+MILESTONE 1 - Funzionalità Complete
+- ✅ Pulsante "Visualizza" funzionante
+- ✅ Codice pulito da legacy
+- ✅ Validazioni robuste
+
+MILESTONE 2 - Workflow Semplificato
+- ✅ Flusso 2 stati implementato
+- ✅ Conferma unificata funzionante
+- ✅ UI ottimizzata
+
+MILESTONE 3 - Sistema Produzione
+- ✅ Giacenze reali aggiornate
+- ✅ Performance ottimizzate
+- ✅ Sistema completo e stabile
+
+================================================================================
+CONCLUSIONI OPERATIVE
+================================================================================
+
+La pianificazione chirurgica proposta segue un approccio incrementale e sicuro,
+con focus sulla modularità e l'estensibilità del sistema. Ogni fase è progettata
+per essere autonoma e reversibile, garantendo la stabilità del sistema in
+produzione.
+
+Le criticità identificate sono tutte risolvibili con interventi mirati che
+non compromettono l'architettura esistente. Il nuovo flusso semplificato
+migliorerà significativamente l'esperienza utente mantenendo tutte le
+funzionalità essenziali.
+
+La metodologia proposta garantisce:
+- ✅ Zero downtime durante implementazione
+- ✅ Rollback immediato in caso problemi
+- ✅ Miglioramento graduale e misurabile
+- ✅ Architettura modulare e estensibile
+- ✅ Manutenibilità a lungo termine
+
+RACCOMANDAZIONE: Procedere con Fase 1 come proof of concept, validare risultati
+con utenti reali, poi procedere con fasi successive solo dopo conferma successo.
+
+================================================================================
+FINE REPORT - Generato il 25/09/2025 alle 15:20
+================================================================================

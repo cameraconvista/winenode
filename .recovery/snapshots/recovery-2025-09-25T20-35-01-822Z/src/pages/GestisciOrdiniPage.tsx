@@ -5,10 +5,9 @@ import { useOrdini, Ordine } from '../contexts/OrdiniContext';
 import OrdineRicevutoCard from '../components/orders/OrdineRicevutoCard';
 import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazioneModal';
 import { ORDINI_LABELS } from '../constants/ordiniLabels';
-import { isFeatureEnabled } from '../config/featureFlags';
 import '../styles/gestisci-ordini-mobile.css';
 
-type TabType = 'inviati' | 'ricevuti';
+type TabType = 'inviati' | 'ricevuti' | 'storico';
 
 export default function GestisciOrdiniPage() {
   const navigate = useNavigate();
@@ -34,13 +33,13 @@ export default function GestisciOrdiniPage() {
   const [ordineToDelete, setOrdineToDelete] = useState<{
     id: string;
     ordine: Ordine;
-    tipo: 'inviato' | 'ricevuto';
+    tipo: 'inviato' | 'ricevuto' | 'storico';
   } | null>(null);
 
   // Gestisci tab da URL query
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab') as TabType;
-    if (tabFromUrl && ['inviati', 'ricevuti'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['inviati', 'ricevuti', 'storico'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
@@ -54,16 +53,9 @@ export default function GestisciOrdiniPage() {
     // TODO: Implementare visualizzazione dettagli ordine
   };
 
-  const handleConfermaOrdine = async (ordineId: string) => {
-    console.log('✅ Conferma ordine con aggiornamento giacenze:', ordineId);
-    
-    if (isFeatureEnabled('ORDINI_CONFIRM_IN_CREATI')) {
-      // Nuova logica: conferma diretta con aggiornamento giacenze
-      await confermaRicezioneOrdine(ordineId);
-    } else {
-      // Logica precedente: sposta solo in ricevuti
-      spostaOrdineInviatiARicevuti(ordineId);
-    }
+  const handleConfermaOrdine = (ordineId: string) => {
+    console.log('✅ Conferma ordine (sposta a ricevuti):', ordineId);
+    spostaOrdineInviatiARicevuti(ordineId);
   };
 
   const handleConfermaRicezione = async (ordineId: string) => {
@@ -81,7 +73,10 @@ export default function GestisciOrdiniPage() {
     setShowConfermaEliminazione(true);
   };
 
-  // handleEliminaOrdineStorico rimosso - tab Storico eliminato
+  const handleEliminaOrdineStorico = (ordineId: string, ordine: Ordine) => {
+    setOrdineToDelete({ id: ordineId, ordine, tipo: 'storico' });
+    setShowConfermaEliminazione(true);
+  };
 
   const confermaEliminazione = () => {
     if (!ordineToDelete) return;
@@ -92,6 +87,9 @@ export default function GestisciOrdiniPage() {
         break;
       case 'ricevuto':
         eliminaOrdineRicevuto(ordineToDelete.id);
+        break;
+      case 'storico':
+        eliminaOrdineStorico(ordineToDelete.id);
         break;
     }
 
@@ -106,6 +104,8 @@ export default function GestisciOrdiniPage() {
         return ORDINI_LABELS.eliminazione.creato;
       case 'ricevuto':
         return ORDINI_LABELS.eliminazione.archiviato;
+      case 'storico':
+        return ORDINI_LABELS.eliminazione.storico;
       default:
         return '';
     }
@@ -117,6 +117,8 @@ export default function GestisciOrdiniPage() {
         return ordiniInviati.length;
       case 'ricevuti':
         return ordiniRicevuti.length;
+      case 'storico':
+        return ordiniStorico.length;
       default:
         return 0;
     }
@@ -128,6 +130,8 @@ export default function GestisciOrdiniPage() {
         return ordiniInviati;
       case 'ricevuti':
         return ordiniRicevuti;
+      case 'storico':
+        return ordiniStorico;
       default:
         return [];
     }
@@ -144,6 +148,11 @@ export default function GestisciOrdiniPage() {
         return {
           title: ORDINI_LABELS.emptyState.archiviati.title,
           subtitle: ORDINI_LABELS.emptyState.archiviati.subtitle
+        };
+      case 'storico':
+        return {
+          title: ORDINI_LABELS.emptyState.storico.title,
+          subtitle: ORDINI_LABELS.emptyState.storico.subtitle
         };
       default:
         return {
@@ -260,19 +269,17 @@ export default function GestisciOrdiniPage() {
             {ORDINI_LABELS.tabs.archiviati} ({getTabCount('ricevuti')})
           </button>
           
-          {!isFeatureEnabled('REMOVE_STORICO_TAB') && (
-            <button
-              onClick={() => setActiveTab('storico' as TabType)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors"
-              style={{
-                background: activeTab === 'storico' ? '#d4a300' : 'transparent',
-                color: activeTab === 'storico' ? '#fff9dc' : '#541111',
-                border: activeTab === 'storico' ? 'none' : '1px solid #e2d6aa'
-              }}
-            >
-              📋 Storico ({getTabCount('storico' as TabType)})
-            </button>
-          )}
+          <button
+            onClick={() => setActiveTab('storico')}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors"
+            style={{
+              background: activeTab === 'storico' ? '#d4a300' : 'transparent',
+              color: activeTab === 'storico' ? '#fff9dc' : '#541111',
+              border: activeTab === 'storico' ? 'none' : '1px solid #e2d6aa'
+            }}
+          >
+            {ORDINI_LABELS.tabs.storico} ({getTabCount('storico')})
+          </button>
         </div>
       </div>
 
@@ -348,7 +355,7 @@ export default function GestisciOrdiniPage() {
                         className="px-2 py-1 rounded text-xs font-medium"
                         style={{ background: '#d4a300', color: '#fff9dc' }}
                       >
-                        INVIATO
+                        {ORDINI_LABELS.badges.creato}
                       </span>
                     )}
                     {activeTab === 'storico' && (
@@ -356,7 +363,7 @@ export default function GestisciOrdiniPage() {
                         className="px-2 py-1 rounded text-xs font-medium"
                         style={{ background: '#16a34a', color: '#fff9dc' }}
                       >
-                        COMPLETATO
+                        {ORDINI_LABELS.badges.completato}
                       </span>
                     )}
                   </div>
@@ -364,15 +371,15 @@ export default function GestisciOrdiniPage() {
                   {/* Dettagli ordine */}
                   <div className="grid grid-cols-3 gap-4 mb-3 text-xs" style={{ color: '#7a4a30' }}>
                     <div>
-                      <span className="block font-medium">📅 Ordinato:</span>
+                      <span className="block font-medium">{ORDINI_LABELS.dettagli.ordinato}</span>
                       <span>{ordine.data}</span>
                     </div>
                     <div>
-                      <span className="block font-medium">📦 Articoli:</span>
+                      <span className="block font-medium">{ORDINI_LABELS.dettagli.articoli}</span>
                       <span>{ordine.bottiglie}</span>
                     </div>
                     <div>
-                      <span className="block font-medium">💰 Totale:</span>
+                      <span className="block font-medium">{ORDINI_LABELS.dettagli.totale}</span>
                       <span className="font-bold" style={{ color: '#16a34a' }}>
                         €{ordine.totale.toFixed(2)}
                       </span>
@@ -409,7 +416,30 @@ export default function GestisciOrdiniPage() {
                     </div>
                   )}
 
-                  {/* Layout per storico rimosso - tab eliminato */}
+                  {/* Layout per storico con pulsanti */}
+                  {activeTab === 'storico' && (
+                    <div className="flex justify-between items-center text-xs pt-2 border-t" style={{ color: '#7a4a30', borderColor: '#e2d6aa' }}>
+                      <span>{ORDINI_LABELS.dettagli.completato} {ordine.data}</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleVisualizza(ordine.id)}
+                          className="gestisci-ordini-button flex items-center gap-1"
+                          style={{ background: '#541111', color: '#fff9dc' }}
+                        >
+                          <Eye className="h-3 w-3" />
+                          {ORDINI_LABELS.azioni.dettagli}
+                        </button>
+                        <button
+                          onClick={() => handleEliminaOrdineStorico(ordine.id, ordine)}
+                          className="gestisci-ordini-button flex items-center gap-1"
+                          style={{ background: '#dc2626', color: '#fff9dc' }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          {ORDINI_LABELS.azioni.elimina}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
