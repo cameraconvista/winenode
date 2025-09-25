@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 import { ORDINI_LABELS } from '../../constants/ordiniLabels';
+import { isFeatureEnabled } from '../../config/featureFlags';
 import InventoryModal from '../InventoryModal';
+import ConfirmArchiveModal from './ConfirmArchiveModal';
 
 interface DettaglioOrdine {
   wineName: string;
@@ -15,6 +17,7 @@ interface SmartGestisciModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (modifiedQuantities: Record<number, number>) => void;
+  onArchive?: (modifiedQuantities: Record<number, number>) => void; // Callback per archiviazione
   ordineId: string;
   fornitore: string;
   dettagli: DettaglioOrdine[];
@@ -24,6 +27,7 @@ export default function SmartGestisciModal({
   isOpen,
   onClose,
   onConfirm,
+  onArchive,
   ordineId,
   fornitore,
   dettagli
@@ -31,6 +35,7 @@ export default function SmartGestisciModal({
   const [modifiedQuantities, setModifiedQuantities] = useState<Record<number, number>>({});
   const [showQuantityModal, setShowQuantityModal] = useState(false);
   const [editingItem, setEditingItem] = useState<{index: number, originalValue: number, currentValue: number} | null>(null);
+  const [showConfirmArchive, setShowConfirmArchive] = useState(false);
 
   // Inizializza quantità modificate quando si apre il modale
   useEffect(() => {
@@ -73,8 +78,26 @@ export default function SmartGestisciModal({
   };
 
   const handleConfirm = () => {
-    onConfirm(modifiedQuantities);
+    if (isFeatureEnabled('QTY_MODAL_CONFIRM_ARCHIVE_FLOW') && onArchive) {
+      // Mostra dialog di conferma archiviazione
+      setShowConfirmArchive(true);
+    } else {
+      // Comportamento legacy
+      onConfirm(modifiedQuantities);
+      onClose();
+    }
+  };
+
+  const handleConfirmArchive = () => {
+    if (onArchive) {
+      onArchive(modifiedQuantities);
+    }
+    setShowConfirmArchive(false);
     onClose();
+  };
+
+  const handleCancelArchive = () => {
+    setShowConfirmArchive(false);
   };
 
   const handleCancel = () => {
@@ -98,16 +121,30 @@ export default function SmartGestisciModal({
     <>
       {/* Overlay full-screen */}
       <div className="fixed inset-0 z-50 bg-white">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: '#e2d6aa' }}>
-          <h2 className="text-lg font-semibold" style={{ color: '#541111' }}>
-            {ORDINI_LABELS.gestioneInline.titolo}
-          </h2>
+        {/* Header come Home con logo */}
+        <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: '#e2d6aa', background: '#fff9dc' }}>
+          {/* Logo WineNode */}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#d4a300' }}>
+              <span className="text-sm font-bold" style={{ color: '#541111' }}>W</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
+                {ORDINI_LABELS.qtyModal.header.title}
+              </h1>
+              <p className="text-xs" style={{ color: '#7a4a30' }}>
+                {ORDINI_LABELS.qtyModal.header.subtitle}
+              </p>
+            </div>
+          </div>
+          
+          {/* Pulsante chiusura */}
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100"
+            style={{ color: '#7a4a30' }}
           >
-            <X className="h-5 w-5" style={{ color: '#7a4a30' }} />
+            ✕
           </button>
         </div>
 
@@ -219,6 +256,16 @@ export default function SmartGestisciModal({
         min={0}
         max={editingItem?.originalValue || 100}
         originalValue={editingItem?.originalValue}
+      />
+
+      {/* Dialog Conferma Archiviazione */}
+      <ConfirmArchiveModal
+        isOpen={showConfirmArchive}
+        onConfirm={handleConfirmArchive}
+        onCancel={handleCancelArchive}
+        fornitore={fornitore}
+        totalItems={totalConfermato}
+        totalValue={valoreConfermato}
       />
     </>
   );

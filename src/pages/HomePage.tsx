@@ -3,7 +3,7 @@ import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
-import InventoryModal from '../components/InventoryModal';
+import HomeInventoryModal from '../components/HomeInventoryModal';
 import CarrelloOrdiniModal from '../components/modals/CarrelloOrdiniModal';
 import NuovoOrdineModal from '../components/modals/NuovoOrdineModal';
 
@@ -173,19 +173,20 @@ export default function HomePage() {
   const handleConfirmInventory = async (newValue: number) => {
     if (!editingWine) return;
     
-    const previousValue = editingWine.inventory;
-    
     // Chiudi modale immediatamente per UX fluida
     handleCloseInventoryModal();
     
-    // Update ottimistico + sync backend
+    // Animazione di conferma
+    setAnimatingInventory(editingWine.id);
+    
     try {
-      await handleInventoryChange(editingWine.id, newValue);
+      await updateWineInventory(editingWine.id, newValue);
       console.log('✅ Giacenza aggiornata con successo');
     } catch (error) {
-      // Rollback + toast su errore
-      console.error('❌ Errore salvataggio giacenza, rollback a:', previousValue);
-      // TODO: Aggiungere toast di errore se necessario
+      console.error('❌ Errore aggiornamento giacenza:', error);
+    } finally {
+      // Rimuovi animazione dopo 1 secondo
+      setTimeout(() => setAnimatingInventory(null), 1000);
     }
   };
 
@@ -437,7 +438,7 @@ export default function HomePage() {
       />
       <WineDetailsModal wine={selectedWine} open={showWineDetailsModal} onOpenChange={setShowWineDetailsModal} onUpdateWine={handleUpdateWine} suppliers={suppliers} />
 
-      <InventoryModal
+      <HomeInventoryModal
         isOpen={showInventoryModal}
         initialValue={editingWine?.inventory || 0}
         onConfirm={handleConfirmInventory}

@@ -78,6 +78,18 @@ export const FEATURE_FLAGS = {
     enabled: true,
     description: "Abilita modale full-screen smart per pulsante Gestisci con cards compatte",
     rollbackInstructions: "Impostare enabled: false per ripristinare comportamento inline"
+  },
+
+  QTY_MODAL_PERSIST_COMMIT: {
+    enabled: true,
+    description: "Abilita persistenza reale delle quantità modificate nel modale (no reset alla chiusura)",
+    rollbackInstructions: "Impostare enabled: false per ripristinare reset automatico"
+  },
+
+  QTY_MODAL_CONFIRM_ARCHIVE_FLOW: {
+    enabled: true,
+    description: "Abilita dialog conferma archiviazione dopo modifica quantità con flusso completo",
+    rollbackInstructions: "Impostare enabled: false per disabilitare dialog archiviazione"
   }
 } as const;
 

@@ -100,7 +100,7 @@ const useWines = () => {
           .insert({
             vino_id: id,
             giacenza: newInventory,
-            user_id: 'default-user', // User ID fisso per app senza autenticazione
+            user_id: '00000000-0000-0000-0000-000000000000', // UUID fisso per app senza autenticazione
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });

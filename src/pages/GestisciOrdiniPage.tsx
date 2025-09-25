@@ -9,6 +9,7 @@ import { isFeatureEnabled } from '../config/featureFlags';
 import QuantityPicker from '../components/QuantityPicker';
 import InventoryModal from '../components/InventoryModal';
 import SmartGestisciModal from '../components/modals/SmartGestisciModal';
+import ConfirmArchiveModal from '../components/modals/ConfirmArchiveModal';
 import '../styles/gestisci-ordini-mobile.css';
 
 type TabType = 'inviati' | 'ricevuti';
@@ -24,6 +25,9 @@ export default function GestisciOrdiniPage() {
   const [editingQuantity, setEditingQuantity] = useState<{ordineId: string, dettaglioIndex: number, currentValue: number, originalValue: number} | null>(null);
   const [showSmartModal, setShowSmartModal] = useState(false);
   const [smartModalOrdine, setSmartModalOrdine] = useState<Ordine | null>(null);
+  const [draftQuantities, setDraftQuantities] = useState<Record<string, Record<number, number>>>({});
+  const [showConfirmArchive, setShowConfirmArchive] = useState(false);
+  const [pendingArchiveOrder, setPendingArchiveOrder] = useState<{ordineId: string, quantities: Record<number, number>} | null>(null);
   
   const {
     ordiniInviati,
@@ -151,7 +155,10 @@ export default function GestisciOrdiniPage() {
     if (!ordine || !ordine.dettagli || !ordine.dettagli[dettaglioIndex]) return;
 
     const originalValue = ordine.dettagli[dettaglioIndex].quantity;
-    const currentValue = modifiedQuantities[ordineId]?.[dettaglioIndex] ?? originalValue;
+    // Usa draftQuantities se disponibile, altrimenti modifiedQuantities, altrimenti originale
+    const currentValue = isFeatureEnabled('QTY_MODAL_PERSIST_COMMIT') 
+      ? (draftQuantities[ordineId]?.[dettaglioIndex] ?? modifiedQuantities[ordineId]?.[dettaglioIndex] ?? originalValue)
+      : (modifiedQuantities[ordineId]?.[dettaglioIndex] ?? originalValue);
 
     setEditingQuantity({
       ordineId,
@@ -170,7 +177,40 @@ export default function GestisciOrdiniPage() {
   const handleConfirmQuantityModal = (newQuantity: number) => {
     if (!editingQuantity) return;
 
-    handleQuantityChange(editingQuantity.ordineId, editingQuantity.dettaglioIndex, newQuantity);
+    if (isFeatureEnabled('QTY_MODAL_PERSIST_COMMIT')) {
+      // Commit del draft: salva in draftQuantities per persistenza
+      setDraftQuantities(prev => ({
+        ...prev,
+        [editingQuantity.ordineId]: {
+          ...prev[editingQuantity.ordineId],
+          [editingQuantity.dettaglioIndex]: newQuantity
+        }
+      }));
+
+      // Se abilitato il flusso di archiviazione, mostra dialog
+      if (isFeatureEnabled('QTY_MODAL_CONFIRM_ARCHIVE_FLOW')) {
+        const ordine = ordiniInviati.find(o => o.id === editingQuantity.ordineId);
+        if (ordine && ordine.dettagli) {
+          // Prepara le quantità per l'archiviazione
+          const quantities = ordine.dettagli.reduce((acc, _, index) => {
+            acc[index] = index === editingQuantity.dettaglioIndex 
+              ? newQuantity 
+              : (draftQuantities[editingQuantity.ordineId]?.[index] ?? ordine.dettagli![index].quantity);
+            return acc;
+          }, {} as Record<number, number>);
+
+          setPendingArchiveOrder({
+            ordineId: editingQuantity.ordineId,
+            quantities
+          });
+          setShowConfirmArchive(true);
+        }
+      }
+    } else {
+      // Comportamento legacy
+      handleQuantityChange(editingQuantity.ordineId, editingQuantity.dettaglioIndex, newQuantity);
+    }
+
     handleCloseQuantityModal();
   };
 
@@ -204,6 +244,78 @@ export default function GestisciOrdiniPage() {
 
     console.log('✅ Quantità aggiornate tramite Smart Modal');
   };
+
+  const handleSmartModalArchive = async (modifiedQuantities: Record<number, number>) => {
+    if (!smartModalOrdine || !smartModalOrdine.dettagli) return;
+
+    try {
+      // Prepara i dettagli aggiornati con le quantità modificate
+      const dettagliAggiornati = smartModalOrdine.dettagli.map((dettaglio, index) => {
+        const newQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
+        return {
+          ...dettaglio,
+          quantity: newQuantity,
+          totalPrice: newQuantity * dettaglio.unitPrice
+        };
+      });
+
+      // Prima aggiorna le quantità, poi conferma ricezione (logica atomica Fase 3)
+      aggiornaQuantitaOrdine(smartModalOrdine.id, dettagliAggiornati);
+      await confermaRicezioneOrdine(smartModalOrdine.id);
+
+      // Switch al tab Archiviati
+      setActiveTab('ricevuti');
+
+      console.log('✅ Ordine archiviato con successo tramite Smart Modal');
+    } catch (error) {
+      console.error('❌ Errore durante archiviazione Smart Modal:', error);
+    }
+  };
+
+  const handleConfirmArchive = async () => {
+    if (!pendingArchiveOrder) return;
+
+    const ordine = ordiniInviati.find(o => o.id === pendingArchiveOrder.ordineId);
+    if (!ordine || !ordine.dettagli) return;
+
+    try {
+      // Prepara i dettagli aggiornati con le quantità committate
+      const dettagliAggiornati = ordine.dettagli.map((dettaglio, index) => {
+        const newQuantity = pendingArchiveOrder.quantities[index] ?? dettaglio.quantity;
+        return {
+          ...dettaglio,
+          quantity: newQuantity,
+          totalPrice: newQuantity * dettaglio.unitPrice
+        };
+      });
+
+      // Prima aggiorna le quantità, poi conferma ricezione (logica atomica Fase 3)
+      aggiornaQuantitaOrdine(pendingArchiveOrder.ordineId, dettagliAggiornati);
+      await confermaRicezioneOrdine(pendingArchiveOrder.ordineId);
+
+      // Pulisci gli stati
+      setDraftQuantities(prev => {
+        const newDrafts = { ...prev };
+        delete newDrafts[pendingArchiveOrder.ordineId];
+        return newDrafts;
+      });
+
+      // Chiudi dialog e switch al tab Archiviati
+      setShowConfirmArchive(false);
+      setPendingArchiveOrder(null);
+      setActiveTab('ricevuti');
+
+      console.log('✅ Ordine archiviato con successo');
+    } catch (error) {
+      console.error('❌ Errore durante archiviazione:', error);
+    }
+  };
+
+  const handleCancelArchive = () => {
+    setShowConfirmArchive(false);
+    setPendingArchiveOrder(null);
+  };
+
 
   const handleConfermaModifiche = async (ordineId: string) => {
     const ordine = ordiniInviati.find(o => o.id === ordineId);
@@ -538,6 +650,11 @@ export default function GestisciOrdiniPage() {
                       <div className="space-y-2">
                         {ordine.dettagli.map((dettaglio, index) => {
                           const isCompactMode = isFeatureEnabled('CREATI_SMART_FULL_MODAL');
+                          // Usa draftQuantities se disponibile per persistenza
+                          const displayQuantity = isFeatureEnabled('QTY_MODAL_PERSIST_COMMIT')
+                            ? (draftQuantities[ordine.id]?.[index] ?? dettaglio.quantity)
+                            : dettaglio.quantity;
+                          const displayTotalPrice = displayQuantity * dettaglio.unitPrice;
                           
                           return (
                             <div key={index} className={`flex items-center justify-between text-xs ${isCompactMode ? 'py-1' : ''}`}>
@@ -550,12 +667,31 @@ export default function GestisciOrdiniPage() {
                                 {/* Riga 2: Meta info compatta */}
                                 <div className={`${isCompactMode ? 'text-xs whitespace-nowrap' : ''}`} style={{ color: '#7a4a30' }}>
                                   {isCompactMode ? (
-                                    `${dettaglio.unit} • ${dettaglio.quantity} • €${dettaglio.unitPrice.toFixed(2)}/cad • €${dettaglio.totalPrice.toFixed(2)}`
+                                    `${dettaglio.unit} • ${displayQuantity} • €${dettaglio.unitPrice.toFixed(2)}/cad • €${displayTotalPrice.toFixed(2)}`
                                   ) : (
-                                    `${dettaglio.quantity} ${dettaglio.unit} - €${dettaglio.totalPrice.toFixed(2)} (€${dettaglio.unitPrice.toFixed(2)}/cad)`
+                                    `${displayQuantity} ${dettaglio.unit} - €${displayTotalPrice.toFixed(2)} (€${dettaglio.unitPrice.toFixed(2)}/cad)`
                                   )}
                                 </div>
                               </div>
+
+                              {/* Quantità cliccabile per aprire modale */}
+                              {isFeatureEnabled('CREATI_QTY_MODAL') && (
+                                <div
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenQuantityModal(ordine.id, index);
+                                  }}
+                                  className="ml-3 px-3 py-1 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50 flex-shrink-0"
+                                  style={{ 
+                                    borderColor: '#e2d6aa',
+                                    background: 'white'
+                                  }}
+                                >
+                                  <span className="text-sm font-bold" style={{ color: '#541111' }}>
+                                    {displayQuantity}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           );
                         })}
@@ -783,11 +919,26 @@ export default function GestisciOrdiniPage() {
           isOpen={showSmartModal}
           onClose={handleCloseSmartModal}
           onConfirm={handleSmartModalConfirm}
+          onArchive={handleSmartModalArchive}
           ordineId={smartModalOrdine.id}
           fornitore={smartModalOrdine.fornitore}
           dettagli={smartModalOrdine.dettagli || []}
         />
       )}
+
+      {/* Dialog Conferma Archiviazione */}
+      <ConfirmArchiveModal
+        isOpen={showConfirmArchive}
+        onConfirm={handleConfirmArchive}
+        onCancel={handleCancelArchive}
+        fornitore={pendingArchiveOrder ? ordiniInviati.find(o => o.id === pendingArchiveOrder.ordineId)?.fornitore : undefined}
+        totalItems={pendingArchiveOrder ? Object.values(pendingArchiveOrder.quantities).reduce((sum, qty) => sum + qty, 0) : undefined}
+        totalValue={pendingArchiveOrder ? Object.entries(pendingArchiveOrder.quantities).reduce((sum, [index, qty]) => {
+          const ordine = ordiniInviati.find(o => o.id === pendingArchiveOrder.ordineId);
+          const dettaglio = ordine?.dettagli?.[parseInt(index)];
+          return sum + (qty * (dettaglio?.unitPrice || 0));
+        }, 0) : undefined}
+      />
     </div>
   );
 }

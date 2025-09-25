@@ -83,6 +83,20 @@ export const ORDINI_LABELS = {
       quantitaAggiornata: "Quantità aggiornate con successo",
       erroreAggiornamento: "Errore durante l'aggiornamento delle quantità"
     }
+  },
+
+  // Dialog conferma archiviazione
+  qtyModal: {
+    confirmArchive: {
+      title: "Conferma archiviazione",
+      body: "Vuoi confermare le modifiche alle quantità e archiviare l'ordine? Questa operazione aggiornerà le giacenze e sposterà l'ordine negli Archiviati.",
+      confirm: "Conferma e archivia",
+      cancel: "Annulla"
+    },
+    header: {
+      title: "Modifica quantità",
+      subtitle: "Seleziona le nuove quantità ricevute"
+    }
   }
 } as const;
 
