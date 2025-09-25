@@ -54,6 +54,12 @@ export const FEATURE_FLAGS = {
     enabled: true,
     description: "Abilita expand/collapse per dettagli ordini archiviati",
     rollbackInstructions: "Impostare enabled: false per mostrare sempre dettagli espansi"
+  },
+
+  CREATI_INLINE_GESTISCI: {
+    enabled: true,
+    description: "Abilita expand inline con picker quantità per pulsante Gestisci in ordini creati",
+    rollbackInstructions: "Impostare enabled: false per ripristinare comportamento precedente"
   }
 } as const;
 

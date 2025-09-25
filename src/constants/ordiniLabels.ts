@@ -59,8 +59,30 @@ export const ORDINI_LABELS = {
     ordinato: "Data:",
     articoli: "Articoli:", 
     totale: "Totale:",
-    completato: "Completato:",
+    completatoIl: "Completato il",
     riepilogoConfermato: "confermato"
+  },
+
+  // Gestione inline ordini creati
+  gestioneInline: {
+    titolo: "Modifica quantità",
+    colonne: {
+      prodotto: "Prodotto",
+      unita: "Unità", 
+      modificaQuantita: "Modifica quantità"
+    },
+    riepilogo: {
+      totaleConfermato: "Totale confermato:",
+      valoreConfermato: "Valore confermato:"
+    },
+    azioni: {
+      confermaModifiche: "Conferma modifiche",
+      annulla: "Annulla"
+    },
+    messaggi: {
+      quantitaAggiornata: "Quantità aggiornate con successo",
+      erroreAggiornamento: "Errore durante l'aggiornamento delle quantità"
+    }
   }
 } as const;
 

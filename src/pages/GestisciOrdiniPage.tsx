@@ -6,6 +6,7 @@ import OrdineRicevutoCard from '../components/orders/OrdineRicevutoCard';
 import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazioneModal';
 import { ORDINI_LABELS } from '../constants/ordiniLabels';
 import { isFeatureEnabled } from '../config/featureFlags';
+import QuantityPicker from '../components/QuantityPicker';
 import '../styles/gestisci-ordini-mobile.css';
 
 type TabType = 'inviati' | 'ricevuti';
@@ -15,6 +16,8 @@ export default function GestisciOrdiniPage() {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>('inviati');
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
+  const [managingOrders, setManagingOrders] = useState<Set<string>>(new Set());
+  const [modifiedQuantities, setModifiedQuantities] = useState<Record<string, Record<number, number>>>({});
   
   const {
     ordiniInviati,
@@ -94,6 +97,77 @@ export default function GestisciOrdiniPage() {
       }
       return newSet;
     });
+  };
+
+  const handleToggleManaging = (ordineId: string) => {
+    if (!isFeatureEnabled('CREATI_INLINE_GESTISCI')) return;
+    
+    setManagingOrders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(ordineId)) {
+        newSet.delete(ordineId);
+        // Reset quantità modificate quando si chiude la gestione
+        setModifiedQuantities(prevMod => {
+          const newMod = { ...prevMod };
+          delete newMod[ordineId];
+          return newMod;
+        });
+      } else {
+        newSet.add(ordineId);
+        // Inizializza quantità con valori originali
+        const ordine = ordiniInviati.find(o => o.id === ordineId);
+        if (ordine && ordine.dettagli) {
+          setModifiedQuantities(prevMod => ({
+            ...prevMod,
+            [ordineId]: ordine.dettagli!.reduce((acc, dettaglio, index) => {
+              acc[index] = dettaglio.quantity;
+              return acc;
+            }, {} as Record<number, number>)
+          }));
+        }
+      }
+      return newSet;
+    });
+  };
+
+  const handleQuantityChange = (ordineId: string, dettaglioIndex: number, newQuantity: number) => {
+    setModifiedQuantities(prev => ({
+      ...prev,
+      [ordineId]: {
+        ...prev[ordineId],
+        [dettaglioIndex]: newQuantity
+      }
+    }));
+  };
+
+  const handleConfermaModifiche = async (ordineId: string) => {
+    const ordine = ordiniInviati.find(o => o.id === ordineId);
+    if (!ordine || !ordine.dettagli) return;
+
+    try {
+      // Prepara i dettagli aggiornati con le quantità modificate
+      const dettagliAggiornati = ordine.dettagli.map((dettaglio, index) => {
+        const newQuantity = modifiedQuantities[ordineId]?.[index] ?? dettaglio.quantity;
+        return {
+          ...dettaglio,
+          quantity: newQuantity,
+          totalPrice: newQuantity * dettaglio.unitPrice
+        };
+      });
+
+      // Aggiorna l'ordine nel context
+      aggiornaQuantitaOrdine(ordineId, dettagliAggiornati);
+
+      // Conferma ricezione con logica atomica (riusa Fase 3)
+      await confermaRicezioneOrdine(ordineId);
+
+      // Chiudi la modalità gestione
+      handleToggleManaging(ordineId);
+
+      console.log('✅ Quantità confermate e ordine archiviato con successo');
+    } catch (error) {
+      console.error('❌ Errore durante la conferma delle modifiche:', error);
+    }
   };
 
   const confermaEliminazione = () => {
@@ -413,11 +487,144 @@ export default function GestisciOrdiniPage() {
                     </div>
                   )}
 
+                  {/* Sezione gestione inline per ordini creati */}
+                  {activeTab === 'inviati' && managingOrders.has(ordine.id) && ordine.dettagli && (
+                    <div 
+                      className="mb-4 p-4 rounded border-t"
+                      style={{ borderColor: '#e2d6aa', background: '#f9f9f9' }}
+                    >
+                      <h5 className="text-sm font-medium mb-3" style={{ color: '#541111' }}>
+                        {ORDINI_LABELS.gestioneInline.titolo}
+                      </h5>
+
+                      {/* Tabella gestione quantità */}
+                      <div className="space-y-3">
+                        {ordine.dettagli.map((dettaglio, index) => {
+                          const currentQuantity = modifiedQuantities[ordine.id]?.[index] ?? dettaglio.quantity;
+                          const maxQuantity = dettaglio.quantity; // Limite massimo = quantità ordinata
+                          
+                          return (
+                            <div key={index} className="bg-white p-3 rounded border" style={{ borderColor: '#e2d6aa' }}>
+                              <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:items-center">
+                                {/* Prodotto */}
+                                <div>
+                                  <div className="text-xs font-medium mb-1" style={{ color: '#7a4a30' }}>
+                                    {ORDINI_LABELS.gestioneInline.colonne.prodotto}
+                                  </div>
+                                  <div className="text-sm font-medium" style={{ color: '#541111' }}>
+                                    {dettaglio.wineName}
+                                  </div>
+                                </div>
+
+                                {/* Unità */}
+                                <div>
+                                  <div className="text-xs font-medium mb-1" style={{ color: '#7a4a30' }}>
+                                    {ORDINI_LABELS.gestioneInline.colonne.unita}
+                                  </div>
+                                  <div className="text-sm" style={{ color: '#7a4a30' }}>
+                                    {dettaglio.unit}
+                                  </div>
+                                </div>
+
+                                {/* Modifica quantità */}
+                                <div>
+                                  <div className="text-xs font-medium mb-2" style={{ color: '#7a4a30' }}>
+                                    {ORDINI_LABELS.gestioneInline.colonne.modificaQuantita}
+                                  </div>
+                                  <QuantityPicker
+                                    value={currentQuantity}
+                                    onChange={(newQuantity) => handleQuantityChange(ordine.id, index, newQuantity)}
+                                    min={0}
+                                    max={maxQuantity}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Riepilogo */}
+                      {(() => {
+                        const totalConfermato = ordine.dettagli.reduce((acc, dettaglio, index) => {
+                          const quantity = modifiedQuantities[ordine.id]?.[index] ?? dettaglio.quantity;
+                          return acc + quantity;
+                        }, 0);
+                        
+                        const valoreConfermato = ordine.dettagli.reduce((acc, dettaglio, index) => {
+                          const quantity = modifiedQuantities[ordine.id]?.[index] ?? dettaglio.quantity;
+                          return acc + (quantity * dettaglio.unitPrice);
+                        }, 0);
+
+                        return (
+                          <div className="mt-4 p-3 bg-white rounded border" style={{ borderColor: '#e2d6aa' }}>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <span className="font-medium" style={{ color: '#7a4a30' }}>
+                                  {ORDINI_LABELS.gestioneInline.riepilogo.totaleConfermato}
+                                </span>
+                                <span className="ml-2 font-bold" style={{ color: '#541111' }}>
+                                  {totalConfermato}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="font-medium" style={{ color: '#7a4a30' }}>
+                                  {ORDINI_LABELS.gestioneInline.riepilogo.valoreConfermato}
+                                </span>
+                                <span className="ml-2 font-bold" style={{ color: '#541111' }}>
+                                  €{valoreConfermato.toFixed(2)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Pulsanti azione gestione */}
+                      <div className="flex gap-2 mt-4">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleConfermaModifiche(ordine.id);
+                          }}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                          style={{ 
+                            background: '#16a34a', 
+                            color: '#fff9dc'
+                          }}
+                        >
+                          <Check className="h-3 w-3" />
+                          {ORDINI_LABELS.gestioneInline.azioni.confermaModifiche}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleManaging(ordine.id);
+                          }}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                          style={{ 
+                            background: '#6b7280', 
+                            color: '#fff9dc'
+                          }}
+                        >
+                          {ORDINI_LABELS.gestioneInline.azioni.annulla}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Pulsanti azione per tab Inviati */}
                   {activeTab === 'inviati' && (
                     <div className="flex gap-2 pt-2 border-t" style={{ borderColor: '#e2d6aa' }}>
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleConfermaOrdine(ordine.id); }}
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          if (isFeatureEnabled('CREATI_INLINE_GESTISCI')) {
+                            handleToggleManaging(ordine.id);
+                          } else {
+                            handleConfermaOrdine(ordine.id);
+                          }
+                        }}
                         className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
                         style={{ 
                           background: '#d4a300', 
