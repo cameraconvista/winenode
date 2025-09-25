@@ -383,43 +383,27 @@ export default function GestisciOrdiniPage() {
                     <div className="flex gap-2 pt-2 border-t" style={{ borderColor: '#e2d6aa' }}>
                       <button
                         onClick={() => handleVisualizza(ordine.id)}
-                        className="gestisci-ordini-button flex items-center justify-center"
-                        style={{ 
-                          background: '#541111', 
-                          color: '#fff9dc',
-                          width: '40px',
-                          height: '40px',
-                          minWidth: '40px',
-                          padding: '0'
-                        }}
+                        className="gestisci-ordini-button flex items-center gap-1"
+                        style={{ background: '#541111', color: '#fff9dc' }}
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-3 w-3" />
+                        {ORDINI_LABELS.azioni.visualizza}
                       </button>
                       <button
                         onClick={() => handleConfermaOrdine(ordine.id)}
-                        className="gestisci-ordini-button flex items-center justify-center"
-                        style={{ 
-                          background: '#16a34a', 
-                          color: '#fff9dc',
-                          flex: '1',
-                          padding: '8px 12px'
-                        }}
+                        className="gestisci-ordini-button flex items-center gap-1"
+                        style={{ background: '#16a34a', color: '#fff9dc' }}
                       >
+                        <Check className="h-3 w-3" />
                         {ORDINI_LABELS.azioni.conferma}
                       </button>
                       <button
                         onClick={() => handleEliminaOrdineInviato(ordine.id, ordine)}
-                        className="gestisci-ordini-button flex items-center justify-center"
-                        style={{ 
-                          background: '#dc2626', 
-                          color: '#fff9dc',
-                          width: '40px',
-                          height: '40px',
-                          minWidth: '40px',
-                          padding: '0'
-                        }}
+                        className="gestisci-ordini-button flex items-center gap-1"
+                        style={{ background: '#dc2626', color: '#fff9dc' }}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3 w-3" />
+                        {ORDINI_LABELS.azioni.elimina}
                       </button>
                     </div>
                   )}
