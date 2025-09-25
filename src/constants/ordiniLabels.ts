@@ -6,8 +6,8 @@
 export const ORDINI_LABELS = {
   // Tab principali
   tabs: {
-    creati: "Ordini Creati",
-    archiviati: "Ordini Archiviati"
+    creati: "Creati",
+    archiviati: "Archiviati"
   },
 
   // Badge stati
@@ -43,7 +43,7 @@ export const ORDINI_LABELS = {
   azioni: {
     visualizza: "Visualizza",
     dettagli: "Dettagli", 
-    conferma: "Conferma quantità",
+    conferma: "Gestisci",
     confermaRicezione: "Archivia",
     elimina: "Elimina"
   },

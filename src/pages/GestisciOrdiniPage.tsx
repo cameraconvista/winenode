@@ -14,6 +14,7 @@ export default function GestisciOrdiniPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>('inviati');
+  const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
   
   const {
     ordiniInviati,
@@ -83,6 +84,18 @@ export default function GestisciOrdiniPage() {
 
   // handleEliminaOrdineStorico rimosso - tab Storico eliminato
 
+  const handleToggleExpanded = (ordineId: string) => {
+    setExpandedOrders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(ordineId)) {
+        newSet.delete(ordineId);
+      } else {
+        newSet.add(ordineId);
+      }
+      return newSet;
+    });
+  };
+
   const confermaEliminazione = () => {
     if (!ordineToDelete) return;
 
@@ -116,7 +129,8 @@ export default function GestisciOrdiniPage() {
       case 'inviati':
         return ordiniInviati.length;
       case 'ricevuti':
-        return ordiniRicevuti.length;
+        // Tab "Ordini Archiviati" conta ordini completati (storico)
+        return ordiniStorico.length;
       default:
         return 0;
     }
@@ -127,7 +141,8 @@ export default function GestisciOrdiniPage() {
       case 'inviati':
         return ordiniInviati;
       case 'ricevuti':
-        return ordiniRicevuti;
+        // Tab "Ordini Archiviati" mostra ordini completati (storico)
+        return ordiniStorico;
       default:
         return [];
     }
@@ -235,10 +250,10 @@ export default function GestisciOrdiniPage() {
             padding: '16px 16px 0 16px',
             background: '#fff9dc'
           }}>
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-nowrap">
           <button
             onClick={() => setActiveTab('inviati')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg font-medium transition-colors flex-1 whitespace-nowrap"
             style={{
               background: activeTab === 'inviati' ? '#d4a300' : 'transparent',
               color: activeTab === 'inviati' ? '#fff9dc' : '#541111',
@@ -250,7 +265,7 @@ export default function GestisciOrdiniPage() {
           
           <button
             onClick={() => setActiveTab('ricevuti')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg font-medium transition-colors flex-1 whitespace-nowrap"
             style={{
               background: activeTab === 'ricevuti' ? '#d4a300' : 'transparent',
               color: activeTab === 'ricevuti' ? '#fff9dc' : '#541111',
@@ -333,7 +348,8 @@ export default function GestisciOrdiniPage() {
               return (
                 <div
                   key={ordine.id}
-                  className="gestisci-ordini-card"
+                  className="gestisci-ordini-card cursor-pointer"
+                  onClick={() => handleToggleExpanded(ordine.id)}
                 >
                   {/* Header con fornitore e badge */}
                   <div className="flex justify-between items-start mb-3">
@@ -361,65 +377,66 @@ export default function GestisciOrdiniPage() {
                   </div>
 
                   {/* Dettagli ordine */}
-                  <div className="grid grid-cols-3 gap-4 mb-3 text-xs" style={{ color: '#7a4a30' }}>
+                  <div className="grid grid-cols-2 gap-4 mb-3 text-xs" style={{ color: '#7a4a30' }}>
                     <div>
                       <span className="block font-medium">{ORDINI_LABELS.dettagli.ordinato}</span>
-                      <span>{ordine.data}</span>
-                    </div>
-                    <div>
-                      <span className="block font-medium">{ORDINI_LABELS.dettagli.articoli}</span>
-                      <span>{ordine.bottiglie}</span>
+                      <span className="font-bold">{ordine.data}</span>
                     </div>
                     <div>
                       <span className="block font-medium">{ORDINI_LABELS.dettagli.totale}</span>
-                      <span className="font-bold" style={{ color: '#16a34a' }}>
+                      <span className="font-bold" style={{ color: '#7a4a30' }}>
                         €{ordine.totale.toFixed(2)}
                       </span>
                     </div>
                   </div>
 
+                  {/* Box dettagli espandibile per ordini creati */}
+                  {activeTab === 'inviati' && expandedOrders.has(ordine.id) && ordine.dettagli && (
+                    <div 
+                      className="mb-4 p-3 rounded border-t"
+                      style={{ borderColor: '#e2d6aa', background: 'white' }}
+                    >
+                      <div className="space-y-2">
+                        {ordine.dettagli.map((dettaglio, index) => (
+                          <div key={index} className="flex items-center justify-between text-xs">
+                            <div className="flex-1">
+                              <span className="font-medium" style={{ color: '#541111' }}>
+                                {dettaglio.wineName}
+                              </span>
+                              <div style={{ color: '#7a4a30' }}>
+                                {dettaglio.quantity} {dettaglio.unit} - €{dettaglio.totalPrice.toFixed(2)} (€{dettaglio.unitPrice.toFixed(2)}/cad)
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Pulsanti azione per tab Inviati */}
                   {activeTab === 'inviati' && (
                     <div className="flex gap-2 pt-2 border-t" style={{ borderColor: '#e2d6aa' }}>
                       <button
-                        onClick={() => handleVisualizza(ordine.id)}
-                        className="gestisci-ordini-button flex items-center justify-center"
-                        style={{ 
-                          background: '#541111', 
-                          color: '#fff9dc',
-                          width: '40px',
-                          height: '40px',
-                          minWidth: '40px',
-                          padding: '0'
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleConfermaOrdine(ordine.id)}
-                        className="gestisci-ordini-button flex items-center justify-center"
+                        onClick={(e) => { e.stopPropagation(); handleConfermaOrdine(ordine.id); }}
+                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
                         style={{ 
                           background: '#d4a300', 
-                          color: '#fff9dc',
-                          flex: '1',
-                          padding: '8px 12px'
+                          color: '#fff9dc'
                         }}
                       >
+                        <Check className="h-3 w-3" />
                         {ORDINI_LABELS.azioni.conferma}
                       </button>
                       <button
-                        onClick={() => handleEliminaOrdineInviato(ordine.id, ordine)}
-                        className="gestisci-ordini-button flex items-center justify-center"
+                        onClick={(e) => { e.stopPropagation(); handleEliminaOrdineInviato(ordine.id, ordine); }}
+                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
                         style={{ 
                           background: '#dc2626', 
-                          color: '#fff9dc',
-                          width: '40px',
-                          height: '40px',
-                          minWidth: '40px',
-                          padding: '0'
+                          color: '#fff9dc'
                         }}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3 w-3" />
+                        {ORDINI_LABELS.azioni.elimina}
                       </button>
                     </div>
                   )}

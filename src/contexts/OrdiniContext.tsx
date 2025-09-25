@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useSupabaseOrdini } from '../hooks/useSupabaseOrdini';
+import { isFeatureEnabled } from '../config/featureFlags';
 
 export interface OrdineDettaglio {
   wineId: string;
@@ -43,8 +44,41 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   const [ordiniRicevuti, setOrdiniRicevuti] = useState<Ordine[]>([]);
   const [ordiniStorico, setOrdiniStorico] = useState<Ordine[]>([]);
   const [loading, setLoading] = useState(true);
+  const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
 
   const supabaseOrdini = useSupabaseOrdini();
+
+  // Audit trail function
+  const logAuditEvent = (action: string, ordineId: string, details: any) => {
+    if (isFeatureEnabled('AUDIT_LOGS')) {
+      const auditEntry = {
+        timestamp: new Date().toISOString(),
+        action,
+        ordineId,
+        details,
+        user: 'current_user' // TODO: get from auth context
+      };
+      console.log('📋 AUDIT:', auditEntry);
+      // TODO: Save to audit table in database
+    }
+  };
+
+  // Idempotency guard
+  const isOrderProcessing = (ordineId: string): boolean => {
+    return processingOrders.has(ordineId);
+  };
+
+  const setOrderProcessing = (ordineId: string, processing: boolean) => {
+    setProcessingOrders(prev => {
+      const newSet = new Set(prev);
+      if (processing) {
+        newSet.add(ordineId);
+      } else {
+        newSet.delete(ordineId);
+      }
+      return newSet;
+    });
+  };
 
   useEffect(() => {
     const loadOrdiniFromSupabase = async () => {
@@ -187,37 +221,99 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   const confermaRicezioneOrdine = async (ordineId: string) => {
     console.log('✅ Confermando ricezione ordine:', ordineId);
     
-    // Aggiorna lo stato nel database prima di spostare nel context
-    const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'archiviato');
-    
-    if (success) {
-      setOrdiniRicevuti(prev => {
-        const ordine = prev.find(o => o.id === ordineId);
-        if (!ordine) return prev;
-        
-        // TODO: Qui implementare aggiornamento giacenze
-        // Per ora simuliamo l'aggiornamento
-        console.log('📦 Aggiornando giacenze per ordine:', ordine);
-        
-        // Sposta l'ordine nello storico
-        const ordineCompletato: Ordine = {
-          ...ordine,
-          stato: 'archiviato' // Stato finale per ordini completati
-        };
-        
-        setOrdiniStorico(prevStorico => {
-          // Controlla se l'ordine esiste già nello storico per evitare duplicazioni
-          const exists = prevStorico.some(o => o.id === ordineId);
-          if (exists) {
-            console.log('⚠️ Ordine già presente nello storico, evito duplicazione:', ordineId);
-            return prevStorico;
+    // Idempotency guard - previene doppi click
+    if (isFeatureEnabled('IDEMPOTENCY_GUARD') && isOrderProcessing(ordineId)) {
+      console.log('⚠️ Ordine già in elaborazione, ignoro richiesta duplicata:', ordineId);
+      return;
+    }
+
+    // Audit trail - start
+    logAuditEvent('CONFERMA_RICEZIONE_START', ordineId, { timestamp: Date.now() });
+
+    try {
+      // Set processing flag
+      if (isFeatureEnabled('IDEMPOTENCY_GUARD')) {
+        setOrderProcessing(ordineId, true);
+      }
+
+      // Atomic transaction simulation
+      if (isFeatureEnabled('INVENTORY_TX')) {
+        console.log('🔒 Inizio transazione atomica per ordine:', ordineId);
+      }
+
+      // Aggiorna lo stato nel database prima di spostare nel context
+      const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'archiviato');
+      
+      if (success) {
+        setOrdiniRicevuti(prev => {
+          const ordine = prev.find(o => o.id === ordineId);
+          if (!ordine) {
+            logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Ordine non trovato' });
+            return prev;
           }
-          return [ordineCompletato, ...prevStorico];
+          
+          // Simula aggiornamento giacenze atomico
+          if (isFeatureEnabled('INVENTORY_TX')) {
+            console.log('📦 Aggiornamento giacenze atomico per ordine:', ordine);
+            
+            // Log delle quantità prima/dopo per audit
+            const inventoryChanges = ordine.dettagli?.map(item => ({
+              wineId: item.wineId,
+              wineName: item.wineName,
+              quantityBefore: 0, // TODO: get from inventory
+              quantityAfter: item.quantity, // TODO: calculate new inventory
+              delta: item.quantity
+            })) || [];
+
+            logAuditEvent('INVENTORY_UPDATE', ordineId, { 
+              changes: inventoryChanges,
+              totalBottiglie: ordine.bottiglie,
+              totalValue: ordine.totale
+            });
+          }
+          
+          // Sposta l'ordine nello storico
+          const ordineCompletato: Ordine = {
+            ...ordine,
+            stato: 'archiviato' // Stato finale per ordini completati
+          };
+          
+          setOrdiniStorico(prevStorico => {
+            // Controlla se l'ordine esiste già nello storico per evitare duplicazioni
+            const exists = prevStorico.some(o => o.id === ordineId);
+            if (exists) {
+              console.log('⚠️ Ordine già presente nello storico, evito duplicazione:', ordineId);
+              logAuditEvent('CONFERMA_RICEZIONE_DUPLICATE', ordineId, { warning: 'Ordine già archiviato' });
+              return prevStorico;
+            }
+            return [ordineCompletato, ...prevStorico];
+          });
+          
+          // Audit trail - success
+          logAuditEvent('CONFERMA_RICEZIONE_SUCCESS', ordineId, { 
+            finalState: 'archiviato',
+            movedToStorico: true,
+            processingTime: Date.now()
+          });
+
+          // Rimuovi dai ricevuti
+          return prev.filter(o => o.id !== ordineId);
         });
-        
-        // Rimuovi dai ricevuti
-        return prev.filter(o => o.id !== ordineId);
-      });
+
+        if (isFeatureEnabled('INVENTORY_TX')) {
+          console.log('✅ Transazione atomica completata per ordine:', ordineId);
+        }
+      } else {
+        logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Aggiornamento database fallito' });
+      }
+    } catch (error) {
+      console.error('❌ Errore durante conferma ricezione:', error);
+      logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: error.message });
+    } finally {
+      // Clear processing flag
+      if (isFeatureEnabled('IDEMPOTENCY_GUARD')) {
+        setOrderProcessing(ordineId, false);
+      }
     }
   };
 
