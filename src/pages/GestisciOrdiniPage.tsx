@@ -4,6 +4,7 @@ import { X, Package, Eye, Check, Trash2 } from 'lucide-react';
 import { useOrdini, Ordine } from '../contexts/OrdiniContext';
 import OrdineRicevutoCard from '../components/orders/OrdineRicevutoCard';
 import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazioneModal';
+import '../styles/gestisci-ordini-mobile.css';
 
 type TabType = 'inviati' | 'ricevuti' | 'storico';
 
@@ -176,28 +177,72 @@ export default function GestisciOrdiniPage() {
   const emptyMessage = getEmptyMessage();
 
   return (
-    <div className="min-h-screen" style={{ background: '#fff9dc' }}>
-      {/* Header */}
-      <header className="sticky top-0 z-10 p-4 border-b" style={{ 
-        background: '#fff9dc', 
-        borderColor: '#e2d6aa' 
-      }}>
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
-            Gestisci Ordini
-          </h1>
-          <button
-            onClick={handleClose}
-            className="p-2 rounded-lg transition-colors"
-            style={{ color: '#541111' }}
-          >
-            <X className="h-5 w-5" />
-          </button>
+    <div className="homepage-container" style={{ 
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100%',
+      overflow: 'hidden',
+      position: 'relative',
+      background: '#fff9dc'
+    }}>
+      {/* HEADER FISSO CON LOGO */}
+      <header className="mobile-header">
+        <div className="header-content">
+          <div className="logo-wrap">
+            <picture>
+              <source type="image/webp" srcSet="/logo1.webp" />
+              <img 
+                src="/logo1.png" 
+                alt="WINENODE"
+                loading="eager"
+              />
+            </picture>
+          </div>
         </div>
       </header>
 
-      {/* Tabs */}
-      <div className="p-4 pb-0">
+      {/* CONTENT SCROLLABILE */}
+      <main className="mobile-content">
+        <div className="gestisci-ordini-page-content" style={{
+          height: '100%',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          
+          {/* Titolo e Pulsante Chiudi */}
+          <div className="gestisci-ordini-header-section" style={{
+            flexShrink: 0,
+            padding: '16px',
+            borderBottom: '1px solid #e2d6aa',
+            background: '#fff9dc'
+          }}>
+            <div className="flex items-center justify-between">
+              <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
+                Gestisci Ordini
+              </h1>
+              <button
+                onClick={handleClose}
+                className="gestisci-ordini-button"
+                style={{ 
+                  color: '#541111',
+                  background: 'transparent',
+                  minWidth: '44px',
+                  minHeight: '44px',
+                  padding: '10px'
+                }}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Tabs Fissi */}
+          <div className="gestisci-ordini-tabs" style={{
+            flexShrink: 0,
+            padding: '16px 16px 0 16px',
+            background: '#fff9dc'
+          }}>
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab('inviati')}
@@ -237,23 +282,44 @@ export default function GestisciOrdiniPage() {
         </div>
       </div>
 
-      {/* Content */}
-      <main className="p-4 pt-0">
-        {currentData.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Package 
-              className="h-16 w-16 mb-4 opacity-30"
-              style={{ color: '#7a4a30' }}
-            />
-            <h3 className="text-lg font-semibold mb-2" style={{ color: '#541111' }}>
-              {emptyMessage.title}
-            </h3>
-            <p className="text-sm" style={{ color: '#7a4a30' }}>
-              {emptyMessage.subtitle}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
+          {/* Content Scrollabile */}
+          <div className="gestisci-ordini-content-scroll" style={{
+            flex: 1,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            padding: '0 16px',
+            paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px'
+          }}>
+            {currentData.length === 0 ? (
+              <div className="gestisci-ordini-empty" style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                textAlign: 'center',
+                padding: '32px 16px'
+              }}>
+                <Package 
+                  className="h-16 w-16 mb-4 opacity-30"
+                  style={{ color: '#7a4a30' }}
+                />
+                <h3 className="text-lg font-semibold mb-2" style={{ color: '#541111' }}>
+                  {emptyMessage.title}
+                </h3>
+                <p className="text-sm" style={{ color: '#7a4a30' }}>
+                  {emptyMessage.subtitle}
+                </p>
+              </div>
+            ) : (
+              <div className="gestisci-ordini-list" style={{
+                padding: '8px 0',
+                gap: '12px',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
             {currentData.map((ordine) => {
               // Usa componente specializzato per ordini ricevuti
               if (activeTab === 'ricevuti') {
@@ -273,8 +339,7 @@ export default function GestisciOrdiniPage() {
               return (
                 <div
                   key={ordine.id}
-                  className="p-4 rounded-lg border"
-                  style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}
+                  className="gestisci-ordini-card"
                 >
                   {/* Header con fornitore e badge */}
                   <div className="flex justify-between items-start mb-3">
@@ -325,7 +390,7 @@ export default function GestisciOrdiniPage() {
                     <div className="flex gap-2 pt-2 border-t" style={{ borderColor: '#e2d6aa' }}>
                       <button
                         onClick={() => handleVisualizza(ordine.id)}
-                        className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                        className="gestisci-ordini-button flex items-center gap-1"
                         style={{ background: '#541111', color: '#fff9dc' }}
                       >
                         <Eye className="h-3 w-3" />
@@ -333,7 +398,7 @@ export default function GestisciOrdiniPage() {
                       </button>
                       <button
                         onClick={() => handleConfermaOrdine(ordine.id)}
-                        className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                        className="gestisci-ordini-button flex items-center gap-1"
                         style={{ background: '#16a34a', color: '#fff9dc' }}
                       >
                         <Check className="h-3 w-3" />
@@ -341,7 +406,7 @@ export default function GestisciOrdiniPage() {
                       </button>
                       <button
                         onClick={() => handleEliminaOrdineInviato(ordine.id, ordine)}
-                        className="flex items-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
+                        className="gestisci-ordini-button flex items-center gap-1"
                         style={{ background: '#dc2626', color: '#fff9dc' }}
                       >
                         <Trash2 className="h-3 w-3" />
@@ -357,7 +422,7 @@ export default function GestisciOrdiniPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleVisualizza(ordine.id)}
-                          className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
+                          className="gestisci-ordini-button flex items-center gap-1"
                           style={{ background: '#541111', color: '#fff9dc' }}
                         >
                           <Eye className="h-3 w-3" />
@@ -365,7 +430,7 @@ export default function GestisciOrdiniPage() {
                         </button>
                         <button
                           onClick={() => handleEliminaOrdineStorico(ordine.id, ordine)}
-                          className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
+                          className="gestisci-ordini-button flex items-center gap-1"
                           style={{ background: '#dc2626', color: '#fff9dc' }}
                         >
                           <Trash2 className="h-3 w-3" />
@@ -377,8 +442,10 @@ export default function GestisciOrdiniPage() {
                 </div>
               );
             })}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </main>
 
       {/* Modale Conferma Eliminazione */}

@@ -1,0 +1,24 @@
+WINENODE BACKUP INFO
+===================
+Data: 2025-09-25 02:49:49
+Progetto: WineNode v1.0.0
+Directory: /Users/dero/Documents/winenode_main
+Branch Git: main
+Ultimo commit: 746f855 - SCRIPTS COMMIT E BACKUP AUTOMATICI - SOLUZIONE DEFINITIVA
+File modificati:        2
+Dimensione backup: 964K
+Hash MD5: 9115f19d2919b096da7ed9227666f2e5
+
+CONTENUTO BACKUP:
+- Codice sorgente completo
+- Configurazioni progetto
+- Documentazione
+- Scripts e assets
+- File di configurazione
+
+ESCLUSI:
+- node_modules
+- .git directory
+- Backup_Automatico (evita ricorsione)
+- File temporanei
+- Build artifacts
