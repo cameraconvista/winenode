@@ -66,6 +66,18 @@ export const FEATURE_FLAGS = {
     enabled: true,
     description: "Abilita modale quantità (come Home) invece di picker inline per modifica quantità in ordini creati",
     rollbackInstructions: "Impostare enabled: false per ripristinare picker inline"
+  },
+
+  QTY_PICKER_0_100: {
+    enabled: true,
+    description: "Abilita range 0-100 consecutivo nel picker quantità invece del range dinamico",
+    rollbackInstructions: "Impostare enabled: false per ripristinare range dinamico"
+  },
+
+  CREATI_SMART_FULL_MODAL: {
+    enabled: true,
+    description: "Abilita modale full-screen smart per pulsante Gestisci con cards compatte",
+    rollbackInstructions: "Impostare enabled: false per ripristinare comportamento inline"
   }
 } as const;
 

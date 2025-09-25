@@ -8,6 +8,7 @@ import { ORDINI_LABELS } from '../constants/ordiniLabels';
 import { isFeatureEnabled } from '../config/featureFlags';
 import QuantityPicker from '../components/QuantityPicker';
 import InventoryModal from '../components/InventoryModal';
+import SmartGestisciModal from '../components/modals/SmartGestisciModal';
 import '../styles/gestisci-ordini-mobile.css';
 
 type TabType = 'inviati' | 'ricevuti';
@@ -21,6 +22,8 @@ export default function GestisciOrdiniPage() {
   const [modifiedQuantities, setModifiedQuantities] = useState<Record<string, Record<number, number>>>({});
   const [showQuantityModal, setShowQuantityModal] = useState(false);
   const [editingQuantity, setEditingQuantity] = useState<{ordineId: string, dettaglioIndex: number, currentValue: number, originalValue: number} | null>(null);
+  const [showSmartModal, setShowSmartModal] = useState(false);
+  const [smartModalOrdine, setSmartModalOrdine] = useState<Ordine | null>(null);
   
   const {
     ordiniInviati,
@@ -169,6 +172,37 @@ export default function GestisciOrdiniPage() {
 
     handleQuantityChange(editingQuantity.ordineId, editingQuantity.dettaglioIndex, newQuantity);
     handleCloseQuantityModal();
+  };
+
+  const handleOpenSmartModal = (ordine: Ordine) => {
+    if (!isFeatureEnabled('CREATI_SMART_FULL_MODAL')) return;
+    
+    setSmartModalOrdine(ordine);
+    setShowSmartModal(true);
+  };
+
+  const handleCloseSmartModal = () => {
+    setShowSmartModal(false);
+    setSmartModalOrdine(null);
+  };
+
+  const handleSmartModalConfirm = (modifiedQuantities: Record<number, number>) => {
+    if (!smartModalOrdine || !smartModalOrdine.dettagli) return;
+
+    // Aggiorna le quantità nell'ordine
+    const dettagliAggiornati = smartModalOrdine.dettagli.map((dettaglio, index) => {
+      const newQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
+      return {
+        ...dettaglio,
+        quantity: newQuantity,
+        totalPrice: newQuantity * dettaglio.unitPrice
+      };
+    });
+
+    // Aggiorna l'ordine nel context
+    aggiornaQuantitaOrdine(smartModalOrdine.id, dettagliAggiornati);
+
+    console.log('✅ Quantità aggiornate tramite Smart Modal');
   };
 
   const handleConfermaModifiche = async (ordineId: string) => {
@@ -502,18 +536,29 @@ export default function GestisciOrdiniPage() {
                       style={{ borderColor: '#e2d6aa', background: 'white' }}
                     >
                       <div className="space-y-2">
-                        {ordine.dettagli.map((dettaglio, index) => (
-                          <div key={index} className="flex items-center justify-between text-xs">
-                            <div className="flex-1">
-                              <span className="font-medium" style={{ color: '#541111' }}>
-                                {dettaglio.wineName}
-                              </span>
-                              <div style={{ color: '#7a4a30' }}>
-                                {dettaglio.quantity} {dettaglio.unit} - €{dettaglio.totalPrice.toFixed(2)} (€{dettaglio.unitPrice.toFixed(2)}/cad)
+                        {ordine.dettagli.map((dettaglio, index) => {
+                          const isCompactMode = isFeatureEnabled('CREATI_SMART_FULL_MODAL');
+                          
+                          return (
+                            <div key={index} className={`flex items-center justify-between text-xs ${isCompactMode ? 'py-1' : ''}`}>
+                              <div className="flex-1 min-w-0">
+                                {/* Riga 1: Nome vino (compatto con ellipsis) */}
+                                <div className={`font-medium ${isCompactMode ? 'truncate' : ''}`} style={{ color: '#541111' }}>
+                                  {dettaglio.wineName}
+                                </div>
+                                
+                                {/* Riga 2: Meta info compatta */}
+                                <div className={`${isCompactMode ? 'text-xs whitespace-nowrap' : ''}`} style={{ color: '#7a4a30' }}>
+                                  {isCompactMode ? (
+                                    `${dettaglio.unit} • ${dettaglio.quantity} • €${dettaglio.unitPrice.toFixed(2)}/cad • €${dettaglio.totalPrice.toFixed(2)}`
+                                  ) : (
+                                    `${dettaglio.quantity} ${dettaglio.unit} - €${dettaglio.totalPrice.toFixed(2)} (€${dettaglio.unitPrice.toFixed(2)}/cad)`
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -666,7 +711,9 @@ export default function GestisciOrdiniPage() {
                       <button
                         onClick={(e) => { 
                           e.stopPropagation(); 
-                          if (isFeatureEnabled('CREATI_INLINE_GESTISCI')) {
+                          if (isFeatureEnabled('CREATI_SMART_FULL_MODAL')) {
+                            handleOpenSmartModal(ordine);
+                          } else if (isFeatureEnabled('CREATI_INLINE_GESTISCI')) {
                             handleToggleManaging(ordine.id);
                           } else {
                             handleConfermaOrdine(ordine.id);
@@ -729,6 +776,18 @@ export default function GestisciOrdiniPage() {
         max={editingQuantity?.originalValue || 999}
         originalValue={editingQuantity?.originalValue}
       />
+
+      {/* Modale Smart Gestisci */}
+      {smartModalOrdine && (
+        <SmartGestisciModal
+          isOpen={showSmartModal}
+          onClose={handleCloseSmartModal}
+          onConfirm={handleSmartModalConfirm}
+          ordineId={smartModalOrdine.id}
+          fornitore={smartModalOrdine.fornitore}
+          dettagli={smartModalOrdine.dettagli || []}
+        />
+      )}
     </div>
   );
 }

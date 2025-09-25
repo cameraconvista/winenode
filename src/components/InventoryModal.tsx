@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { isFeatureEnabled } from '../config/featureFlags';
 
 interface InventoryModalProps {
   isOpen: boolean;
@@ -32,11 +33,22 @@ export default function InventoryModal({
     }
   }, [isOpen, initialValue]);
 
-  // Genera array di valori visibili (7 sopra e 7 sotto il valore corrente)
-  const visibleValues = Array.from({ length: 15 }, (_, i) => {
-    const val = currentValue - 7 + i;
-    return Math.max(min, Math.min(max, val));
-  });
+  // Genera array di valori visibili
+  const visibleValues = (() => {
+    if (isFeatureEnabled('QTY_PICKER_0_100')) {
+      // Range fisso 0-100: mostra 7 sopra e 7 sotto il valore corrente
+      return Array.from({ length: 15 }, (_, i) => {
+        const val = currentValue - 7 + i;
+        return Math.max(0, Math.min(100, val));
+      });
+    } else {
+      // Range dinamico originale: usa min/max passati come props
+      return Array.from({ length: 15 }, (_, i) => {
+        const val = currentValue - 7 + i;
+        return Math.max(min, Math.min(max, val));
+      });
+    }
+  })();
 
   // Gestione touch/mouse events
   const handleStart = (clientY: number) => {
@@ -50,7 +62,15 @@ export default function InventoryModal({
 
     const deltaY = startYRef.current - clientY;
     const steps = Math.round(deltaY / 40); // 40px per step (più ampio per modale)
-    const newValue = Math.max(min, Math.min(max, startValueRef.current + steps));
+    
+    let newValue;
+    if (isFeatureEnabled('QTY_PICKER_0_100')) {
+      // Range fisso 0-100
+      newValue = Math.max(0, Math.min(100, startValueRef.current + steps));
+    } else {
+      // Range dinamico originale
+      newValue = Math.max(min, Math.min(max, startValueRef.current + steps));
+    }
     
     if (newValue !== currentValue) {
       setCurrentValue(newValue);
