@@ -38,33 +38,79 @@ export default function CreaOrdinePage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#fff9dc' }}>
-      {/* Header */}
-      <header className="sticky top-0 z-10 p-4 border-b" style={{ 
-        background: '#fff9dc', 
-        borderColor: '#e2d6aa' 
-      }}>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleBack}
-            className="p-2 rounded-lg transition-colors"
-            style={{ color: '#541111' }}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div className="flex-1 text-center">
-            <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
-              Crea Ordine
-            </h1>
-            <p className="text-sm" style={{ color: '#7a4a30' }}>
-              Fornitore: {decodeURIComponent(supplier || '')}
-            </p>
+    <div className="homepage-container" style={{ 
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100%',
+      overflow: 'hidden',
+      position: 'relative',
+      background: '#fff9dc'
+    }}>
+      {/* HEADER FISSO CON LOGO */}
+      <header className="mobile-header">
+        <div className="header-content">
+          <div className="logo-wrap">
+            <picture>
+              <source type="image/webp" srcSet="/logo1.webp" />
+              <img 
+                src="/logo1.png" 
+                alt="WINENODE"
+                loading="eager"
+              />
+            </picture>
           </div>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="p-4 pb-20">
+      {/* CONTENT SCROLLABILE */}
+      <main className="mobile-content">
+        <div className="crea-ordine-page-content" style={{
+          height: '100%',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          
+          {/* Titolo e Navigazione */}
+          <div className="crea-ordine-header-section" style={{
+            flexShrink: 0,
+            padding: '16px',
+            borderBottom: '1px solid #e2d6aa',
+            background: '#fff9dc'
+          }}>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleBack}
+                className="p-2 rounded-lg transition-colors"
+                style={{ 
+                  color: '#541111',
+                  minWidth: '44px',
+                  minHeight: '44px'
+                }}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+              <div className="flex-1 text-center">
+                <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
+                  Crea Ordine
+                </h1>
+                <p className="text-sm" style={{ color: '#7a4a30' }}>
+                  Fornitore: {decodeURIComponent(supplier || '')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Content Scrollabile */}
+          <div className="crea-ordine-content-scroll" style={{
+            flex: 1,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            padding: '16px',
+            paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 80px'
+          }}>
         {supplierWines.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-base" style={{ color: '#7a4a30' }}>
@@ -166,14 +212,21 @@ export default function CreaOrdinePage() {
                 </div>
               );
             })}
+            </div>
+          )}
           </div>
-        )}
+        </div>
       </main>
 
-      {/* Footer */}
+      {/* Footer Fisso */}
       <footer 
         className="fixed bottom-0 left-0 right-0 p-4 border-t"
-        style={{ background: '#fff9dc', borderColor: '#e2d6aa' }}
+        style={{ 
+          background: '#fff9dc', 
+          borderColor: '#e2d6aa',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
+          zIndex: 50
+        }}
       >
         <div className="flex gap-3">
           <button
@@ -182,26 +235,37 @@ export default function CreaOrdinePage() {
             style={{ 
               background: 'white', 
               color: '#541111',
-              border: '1px solid #e2d6aa'
+              border: '1px solid #e2d6aa',
+              minHeight: '44px',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent'
             }}
           >
             Indietro
           </button>
           <button
             onClick={() => {
+              console.log('🔘 Click Conferma Ordine - totalBottiglie:', totalBottiglie);
+              console.log('🔘 ordineItems:', ordineItems);
               if (totalBottiglie > 0) {
+                console.log('✅ Navigando a riepilogo ordine...');
                 navigate(`/orders/summary/${supplier}`, {
                   state: {
                     ordineItems,
                     totalBottiglie
                   }
                 });
+              } else {
+                console.log('❌ Nessuna bottiglia selezionata');
               }
             }}
             className="flex-1 px-6 py-3 rounded-lg font-medium transition-colors"
             style={{ 
               background: totalBottiglie > 0 ? '#8b7355' : '#d1c7b8',
-              color: '#fff9dc'
+              color: '#fff9dc',
+              minHeight: '44px',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent'
             }}
             disabled={totalBottiglie === 0}
           >

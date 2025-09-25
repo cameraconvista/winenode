@@ -38,15 +38,10 @@ export function useSupabaseOrdini() {
 
       console.log('🔄 Caricando ordini da Supabase...');
 
-      // Query con JOIN per ottenere il nome del fornitore
+      // Query semplificata senza JOIN problematico
       const { data: ordiniData, error: ordiniError } = await supabase
         .from('ordini')
-        .select(`
-          *,
-          fornitori!fornitore (
-            nome
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (ordiniError) {
@@ -56,6 +51,15 @@ export function useSupabaseOrdini() {
 
       console.log('✅ Ordini caricati da Supabase:', ordiniData?.length || 0);
       console.log('📋 Schema ordini effettivo:', ordiniData?.[0] ? Object.keys(ordiniData[0]) : 'Nessun ordine');
+      console.log('📋 Dati ordini completi:', ordiniData);
+
+      // Prima ottieni tutti i fornitori per il mapping
+      const { data: fornitoriData } = await supabase
+        .from('fornitori')
+        .select('id, nome');
+
+      const fornitoriMap = new Map();
+      (fornitoriData || []).forEach(f => fornitoriMap.set(f.id, f.nome));
 
       // Mappa i dati dal database al formato dell'app
       const ordiniMappati: Ordine[] = (ordiniData || []).map(ordine => {
@@ -73,7 +77,7 @@ export function useSupabaseOrdini() {
 
         return {
           id: ordine.id,
-          fornitore: ordine.fornitori?.nome || 'Fornitore sconosciuto',
+          fornitore: fornitoriMap.get(ordine.fornitore) || 'Fornitore sconosciuto',
           // Usa il nome corretto per il totale
           totale: ordine.totale || 0,
           // Usa il nome corretto per la data
@@ -189,6 +193,7 @@ export function useSupabaseOrdini() {
 
       console.log('✅ Ordine salvato:', data.id);
       console.log('✅ Dettagli ordine salvati in contenuto JSONB');
+      console.log('📋 Dati ordine salvato completi:', data);
 
       return data.id;
 

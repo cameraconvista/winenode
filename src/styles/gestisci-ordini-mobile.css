@@ -1,0 +1,173 @@
+/* ============================================
+   GESTISCI ORDINI - OTTIMIZZAZIONI MOBILE
+   ============================================ */
+
+/* Container principale con layout flex */
+.gestisci-ordini-container {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height per mobile */
+  display: flex;
+  flex-direction: column;
+  background: #fff9dc;
+}
+
+/* Header fisso con safe-area */
+.gestisci-ordini-header {
+  flex-shrink: 0;
+  padding: 16px;
+  padding-top: max(env(safe-area-inset-top), 0px) + 16px;
+  background: #fff9dc;
+  border-bottom: 1px solid #e2d6aa;
+  z-index: 100;
+}
+
+/* Tabs fissi */
+.gestisci-ordini-tabs {
+  flex-shrink: 0;
+  padding: 16px 16px 0 16px;
+  background: #fff9dc;
+  z-index: 90;
+}
+
+/* Area contenuto scrollabile */
+.gestisci-ordini-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 16px;
+  padding-bottom: max(env(safe-area-inset-bottom), 0px) + 16px;
+  
+  /* Ottimizzazioni scroll mobile */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* Lista ordini con padding interno */
+.gestisci-ordini-list {
+  padding: 8px 0;
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card ordine ottimizzata per touch */
+.gestisci-ordini-card {
+  background: #fff2b8;
+  border: 1px solid #e2d6aa;
+  border-radius: 8px;
+  padding: 16px;
+  
+  /* Touch ottimizzazioni */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Transizioni smooth */
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Hover/Active states per touch */
+.gestisci-ordini-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(84, 17, 17, 0.1);
+}
+
+/* Pulsanti azione ottimizzati */
+.gestisci-ordini-button {
+  min-height: 44px; /* Touch target iOS guidelines */
+  min-width: 44px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  
+  /* Touch ottimizzazioni */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  
+  /* Transizioni */
+  transition: all 0.15s ease;
+}
+
+/* Stati attivi pulsanti */
+.gestisci-ordini-button:active {
+  transform: scale(0.95);
+}
+
+/* Empty state centrato */
+.gestisci-ordini-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 32px 16px;
+}
+
+/* Responsive breakpoints */
+@media (max-height: 600px) {
+  /* iPhone 8/SE ottimizzazioni */
+  .gestisci-ordini-header {
+    padding-top: max(env(safe-area-inset-top), 0px) + 12px;
+    padding-bottom: 12px;
+  }
+  
+  .gestisci-ordini-tabs {
+    padding: 12px 16px 0 16px;
+  }
+  
+  .gestisci-ordini-card {
+    padding: 12px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Landscape compatto */
+  .gestisci-ordini-header {
+    padding-top: max(env(safe-area-inset-top), 0px) + 8px;
+    padding-bottom: 8px;
+  }
+  
+  .gestisci-ordini-tabs {
+    padding: 8px 16px 0 16px;
+  }
+  
+  .gestisci-ordini-empty {
+    padding: 16px;
+  }
+}
+
+@media (min-height: 800px) {
+  /* iPhone 15 Pro Max ottimizzazioni */
+  .gestisci-ordini-header {
+    padding-top: max(env(safe-area-inset-top), 0px) + 20px;
+  }
+  
+  .gestisci-ordini-content {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px) + 20px;
+  }
+}
+
+/* iOS Safari specifico */
+@supports (-webkit-touch-callout: none) {
+  .gestisci-ordini-content {
+    /* Fix per iOS scroll momentum */
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+  }
+  
+  .gestisci-ordini-card {
+    /* Fix per iOS rendering */
+    transform: translateZ(0);
+  }
+}
+
+/* Android Chrome specifico */
+@supports not (-webkit-touch-callout: none) {
+  .gestisci-ordini-content {
+    /* Android scroll ottimizzato */
+    overscroll-behavior-y: contain;
+  }
+}
