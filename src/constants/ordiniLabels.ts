@@ -43,7 +43,7 @@ export const ORDINI_LABELS = {
   azioni: {
     visualizza: "Visualizza",
     dettagli: "Dettagli", 
-    conferma: "Conferma ricezione",
+    conferma: "Conferma quantità",
     confermaRicezione: "Archivia",
     elimina: "Elimina"
   },

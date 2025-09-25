@@ -345,7 +345,7 @@ export default function GestisciOrdiniPage() {
                     {activeTab === 'inviati' && (
                       <span 
                         className="px-2 py-1 rounded text-xs font-medium"
-                        style={{ background: '#d4a300', color: '#fff9dc' }}
+                        style={{ background: '#16a34a', color: '#fff9dc' }}
                       >
                         {ORDINI_LABELS.badges.creato}
                       </span>
@@ -399,7 +399,7 @@ export default function GestisciOrdiniPage() {
                         onClick={() => handleConfermaOrdine(ordine.id)}
                         className="gestisci-ordini-button flex items-center justify-center"
                         style={{ 
-                          background: '#16a34a', 
+                          background: '#d4a300', 
                           color: '#fff9dc',
                           flex: '1',
                           padding: '8px 12px'
