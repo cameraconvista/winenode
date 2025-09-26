@@ -187,6 +187,25 @@ export default function GestisciOrdiniPage() {
         }
       }));
 
+      // AGGIORNA LE QUANTITÀ REALI NELL'ORDINE
+      const ordine = ordiniInviati.find(o => o.id === editingQuantity.ordineId);
+      if (ordine && ordine.dettagli) {
+        const dettagliAggiornati = ordine.dettagli.map((dettaglio, index) => {
+          if (index === editingQuantity.dettaglioIndex) {
+            return {
+              ...dettaglio,
+              quantity: newQuantity,
+              totalPrice: newQuantity * dettaglio.unitPrice
+            };
+          }
+          return dettaglio;
+        });
+        
+        // Aggiorna l'ordine nel context
+        aggiornaQuantitaOrdine(editingQuantity.ordineId, dettagliAggiornati);
+        console.log('✅ Quantità aggiornata:', newQuantity);
+      }
+
       // Se abilitato il flusso di archiviazione, mostra dialog
       if (isFeatureEnabled('QTY_MODAL_CONFIRM_ARCHIVE_FLOW')) {
         const ordine = ordiniInviati.find(o => o.id === editingQuantity.ordineId);

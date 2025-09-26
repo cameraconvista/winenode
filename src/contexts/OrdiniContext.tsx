@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useSupabaseOrdini } from '../hooks/useSupabaseOrdini';
 import { isFeatureEnabled } from '../config/featureFlags';
+import useWines from '../hooks/useWines';
 
 export interface OrdineDettaglio {
   wineId: string;
@@ -38,15 +39,15 @@ interface OrdiniContextType {
 }
 
 const OrdiniContext = createContext<OrdiniContextType | undefined>(undefined);
-
 export function OrdiniProvider({ children }: { children: ReactNode }) {
   const [ordiniInviati, setOrdiniInviati] = useState<Ordine[]>([]);
   const [ordiniRicevuti, setOrdiniRicevuti] = useState<Ordine[]>([]);
   const [ordiniStorico, setOrdiniStorico] = useState<Ordine[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
-
+  
   const supabaseOrdini = useSupabaseOrdini();
+  const { wines, updateWineInventory } = useWines();
 
   // Audit trail function
   const logAuditEvent = (action: string, ordineId: string, details: any) => {
@@ -204,6 +205,21 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       totale: acc.totale + item.totalPrice
     }), { bottiglie: 0, totale: 0 });
 
+    // Aggiorna ordiniInviati (per Gestione Ordini)
+    setOrdiniInviati(prev =>
+      prev.map(ordine =>
+        ordine.id === ordineId
+          ? {
+              ...ordine,
+              dettagli,
+              bottiglie: nuoveTotali.bottiglie,
+              totale: nuoveTotali.totale
+            }
+          : ordine
+      )
+    );
+
+    // Aggiorna anche ordiniRicevuti (per compatibilità)
     setOrdiniRicevuti(prev =>
       prev.map(ordine =>
         ordine.id === ordineId
@@ -241,35 +257,61 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
         console.log('🔒 Inizio transazione atomica per ordine:', ordineId);
       }
 
-      // Aggiorna lo stato nel database prima di spostare nel context
+      // Trova l'ordine prima di aggiornare lo stato
+      const ordine = ordiniRicevuti.find(o => o.id === ordineId) || ordiniInviati.find(o => o.id === ordineId);
+      if (!ordine) {
+        logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Ordine non trovato' });
+        return;
+      }
+
+      // AGGIORNA LE GIACENZE REALI DEI VINI PRIMA DI ARCHIVIARE
+      if (ordine.dettagli) {
+        console.log('📦 Aggiornamento giacenze per ordine:', ordine);
+        
+        // Aggiorna le giacenze per ogni vino nell'ordine
+        for (const item of ordine.dettagli) {
+          const currentWine = wines.find(w => w.id === item.wineId);
+          if (currentWine) {
+            const currentInventory = currentWine.inventory || 0;
+            const bottlesToAdd = item.quantity * (item.unit === 'cartoni' ? 6 : 1);
+            const newInventory = currentInventory + bottlesToAdd;
+            
+            console.log(`📦 ${item.wineName}: ${currentInventory} + ${bottlesToAdd} = ${newInventory}`);
+            
+            // Aggiorna la giacenza nel database
+            await updateWineInventory(item.wineId, newInventory);
+          }
+        }
+        
+        // Log delle quantità per audit
+        const inventoryChanges = ordine.dettagli?.map(item => {
+          const currentWine = wines.find(w => w.id === item.wineId);
+          const currentInventory = currentWine?.inventory || 0;
+          const bottlesToAdd = item.quantity * (item.unit === 'cartoni' ? 6 : 1);
+          return {
+            wineId: item.wineId,
+            wineName: item.wineName,
+            quantityBefore: currentInventory,
+            quantityAfter: currentInventory + bottlesToAdd,
+            delta: bottlesToAdd
+          };
+        }) || [];
+
+        logAuditEvent('INVENTORY_UPDATE', ordineId, { 
+          changes: inventoryChanges,
+          totalBottiglie: ordine.bottiglie,
+          totalValue: ordine.totale
+        });
+      }
+
+      // Aggiorna lo stato nel database
       const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'archiviato');
       
       if (success) {
         setOrdiniRicevuti(prev => {
-          const ordine = prev.find(o => o.id === ordineId);
-          if (!ordine) {
-            logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Ordine non trovato' });
+          const ordineToUpdate = prev.find(o => o.id === ordineId);
+          if (!ordineToUpdate) {
             return prev;
-          }
-          
-          // Simula aggiornamento giacenze atomico
-          if (isFeatureEnabled('INVENTORY_TX')) {
-            console.log('📦 Aggiornamento giacenze atomico per ordine:', ordine);
-            
-            // Log delle quantità prima/dopo per audit
-            const inventoryChanges = ordine.dettagli?.map(item => ({
-              wineId: item.wineId,
-              wineName: item.wineName,
-              quantityBefore: 0, // TODO: get from inventory
-              quantityAfter: item.quantity, // TODO: calculate new inventory
-              delta: item.quantity
-            })) || [];
-
-            logAuditEvent('INVENTORY_UPDATE', ordineId, { 
-              changes: inventoryChanges,
-              totalBottiglie: ordine.bottiglie,
-              totalValue: ordine.totale
-            });
           }
           
           // Sposta l'ordine nello storico
