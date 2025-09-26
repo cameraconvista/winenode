@@ -4,6 +4,7 @@ import { ORDINI_LABELS } from '../../constants/ordiniLabels';
 import { isFeatureEnabled } from '../../config/featureFlags';
 import GestisciOrdiniInventoryModal from '../GestisciOrdiniInventoryModal';
 import ConfirmArchiveModal from './ConfirmArchiveModal';
+import { getStandardButtonStyles, getNavbarTwoButtonLayout } from '../../utils/buttonStyles';
 
 interface DettaglioOrdine {
   wineName: string;
@@ -120,7 +121,7 @@ export default function SmartGestisciModal({
   return (
     <>
       {/* Overlay full-screen */}
-      <div className="fixed inset-0 z-50 bg-white">
+      <div className="fixed inset-0 z-50" style={{ background: '#fff9dc' }}>
         {/* HEADER FISSO CON LOGO */}
         <header className="mobile-header">
           <div className="header-content">
@@ -141,36 +142,46 @@ export default function SmartGestisciModal({
             </div>
 
             {/* Lista righe scrollabile */}
-            <div className="p-4 space-y-3">
+            <div className="px-3 py-4 space-y-3">
               {dettagli.map((dettaglio, index) => {
                 const currentQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
                 
                 return (
-                  <div key={index} className="bg-white rounded-lg border p-4" style={{ borderColor: '#e2d6aa' }}>
-                    {/* Nome vino */}
-                    <div className="mb-3">
-                      <h4 className="font-medium text-sm truncate" style={{ color: '#541111' }}>
-                        {dettaglio.wineName}
-                      </h4>
-                    </div>
-                    
-                    {/* Quantità centrata con label sotto */}
-                    <div className="flex flex-col items-center">
-                      <div
-                        onClick={() => handleQuantityClick(index)}
-                        className="px-4 py-2 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50"
-                        style={{ 
-                          borderColor: '#e2d6aa',
-                          background: 'white'
-                        }}
-                      >
-                        <span className="text-lg font-bold" style={{ color: '#541111' }}>
-                          {currentQuantity}
+                  <div key={index} className="bg-white rounded-lg border py-2 px-3" style={{ borderColor: '#e2d6aa' }}>
+                    {/* Layout: titolo a sinistra, quantità a destra */}
+                    <div className="flex items-start justify-between">
+                      {/* Nome vino - max 2 righe con ellissi */}
+                      <div className="flex-1 pr-3">
+                        <h4 className="font-medium text-sm leading-tight" 
+                            style={{ 
+                              color: '#541111',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden'
+                            }}>
+                          {dettaglio.wineName}
+                        </h4>
+                      </div>
+                      
+                      {/* Box quantità a destra */}
+                      <div className="flex flex-col items-center flex-shrink-0">
+                        <div
+                          onClick={() => handleQuantityClick(index)}
+                          className="px-2 py-1 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50"
+                          style={{ 
+                            borderColor: '#e2d6aa',
+                            background: 'white'
+                          }}
+                        >
+                          <span className="text-lg font-bold" style={{ color: '#541111' }}>
+                            {currentQuantity}
+                          </span>
+                        </div>
+                        <span className="text-xs mt-1" style={{ color: '#7a4a30' }}>
+                          {dettaglio.unit}
                         </span>
                       </div>
-                      <span className="text-xs mt-1" style={{ color: '#7a4a30' }}>
-                        {dettaglio.unit}
-                      </span>
                     </div>
                   </div>
                 );
@@ -182,32 +193,24 @@ export default function SmartGestisciModal({
 
         {/* NAVBAR FISSA */}
         <nav className="mobile-navbar">
-          <div className="flex gap-4 justify-center w-full px-4">
-            <button
-              onClick={handleCancel}
-              className="flex-1 py-3 rounded-lg font-medium transition-colors"
-              title="Annulla"
-              style={{ 
-                background: '#6b7280',
-                color: '#fff9dc',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Annulla
-            </button>
-            <button
-              onClick={handleConfirm}
-              className="flex-1 py-3 rounded-lg font-medium transition-colors"
-              title="Conferma Modifiche"
-              style={{ 
-                background: '#16a34a',
-                color: '#fff9dc',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              CONFERMA MODIFICHE
-            </button>
-          </div>
+          <button
+            onClick={handleCancel}
+            {...getStandardButtonStyles({ variant: 'neutral' })}
+            title="Annulla"
+          >
+            Annulla
+          </button>
+          <button
+            onClick={handleConfirm}
+            {...getStandardButtonStyles({ variant: 'primary' })}
+            title="Conferma Modifiche"
+            style={{
+              ...getStandardButtonStyles({ variant: 'primary' }).style,
+              marginLeft: 'auto'
+            }}
+          >
+            CONFERMA MODIFICHE
+          </button>
         </nav>
       </div>
 

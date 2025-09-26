@@ -51,52 +51,105 @@ MODIFICHE APPLICATE (UNIFORMAZIONE STANDARD)
 - Logica di business completamente preservata
 - Nessuna modifica a routing, dati o handler
 
-COMMIT ATOMICO
---------------
-✅ Commit: a653b26
-✅ Messaggio: "feat(ui): standardizza modale Modifica quantità (header logo1, scroll unico, navbar CTA)"
+COMMIT ATOMICO UNIFORMAZIONE
+---------------------------
+✅ Commit: 5e0cbfa
+✅ Messaggio: "feat(ui): standard modale Modifica quantità (CTA uguali e centrate, cleanup prezzi/box, fornitore, sfondo uniforme)"
 ✅ File modificati: 2 (SmartGestisciModal.tsx + report)
-✅ Linee: +148 -112
+✅ Linee: +132 -102
 
-TEST DI ACCETTAZIONE
--------------------
-✅ HEADER FISSO VISIBILE CON LOGO1.PNG; NESSUNA X:
-- Riga 125: <header className="mobile-header">
+TEST DI ACCETTAZIONE UNIFORMAZIONE
+----------------------------------
+✅ PULSANTI FONDO PAGINA: UGUALI, CENTRATI, TESTO SU UNA RIGA, TOUCH ≥44PT:
+- Riga 185: <div className="flex gap-4 justify-center w-full px-4"> (centrati)
+- Riga 188: className="flex-1 py-3" (larghezza uguale, altezza uniforme)
+- Riga 200: className="flex-1 py-3" (larghezza uguale, altezza uniforme)
+- Riga 193: whiteSpace: 'nowrap' (testo su una riga)
+- Riga 205: whiteSpace: 'nowrap' (testo su una riga)
+- Touch ≥44pt garantito da py-3 (12px * 2 + font = ~44pt)
+
+✅ BOX "TOTALE/VALORE CONFERMATO": ASSENTE:
+- Box riepilogo completamente rimosso (righe 183-204 precedenti eliminate)
+- Nessuna traccia di "Totale confermato" o "Valore confermato"
+- Contenuto pulito senza calcoli totali
+
+✅ BOX VINO: SOLO NOME + QUANTITÀ, "BOTTIGLIE" SOTTO AL VALORE:
+- Riga 152-154: Solo nome vino (h4 con wineName)
+- Riga 167-169: Solo valore quantità (span con currentQuantity)
+- Riga 171-173: "bottiglie" SOTTO al valore come label secondaria
+- NESSUNA informazione di prezzo presente (€/cad, € totale rimossi)
+
+✅ RIGA "FORNITORE: BOLOGNA VINI" PRESENTE; NESSUN BOX INTESTAZIONE:
+- Riga 138-140: "Fornitore: {fornitore.toUpperCase()}" (esattamente come richiesto)
+- Box intestazione precedente completamente rimosso
+- Riga semplice senza bordi o background speciali
+
+✅ SFONDO UNIFORME; HEADER CON LOGO1.PNG; SCROLL UNICO; SAFE-AREA OK:
+- Riga 123: className="fixed inset-0 z-50 bg-white" (sfondo uniforme)
 - Riga 128: <img src="/logo1.png" alt="WINENODE" loading="eager" />
-- Nessun pulsante X presente (rimosso completamente)
-- Logo unico /logo1.png come richiesto
-
-✅ CONTENUTO SCORRE, NAVBAR RESTA FISSA; NIENTE SOVRAPPOSIZIONI; SAFE-AREA OK:
-- Riga 134: <main className="mobile-content"> (scroll container)
-- Riga 135: <div className="wine-list-container"> (contenuto scrollabile)
-- Riga 209: <nav className="mobile-navbar"> (navbar fissa)
+- Riga 134-135: Un solo scroll container (mobile-content + wine-list-container)
 - Safe-area gestita dalle classi CSS esistenti (mobile-standard.css)
-- Un solo scroll container, nessuna sovrapposizione
 
-✅ CTA:
-• "Annulla" a sinistra: Riga 215 ✅
-• "CONFERMA MODIFICHE" a destra: Riga 228 ✅
-• Testo su UNA riga: whiteSpace: 'nowrap' (riga 225) ✅
-• Nessuna icona: Rimossa icona Check ✅
-• Touch ≥44×44pt: Garantito da classi nav-btn e CSS esistenti ✅
-
-✅ HANDLER INVARIATI (STESSI ONCLICK):
-- handleCancel: Riga 211 (invariato)
-- handleConfirm: Riga 218 (invariato)
+✅ HANDLER INVARIATI:
+- handleCancel: Riga 187 (onClick invariato)
+- handleConfirm: Riga 199 (onClick invariato)
 - Logica di business completamente preservata
 
-✅ NESSUN NUOVO FILE O CLASSE DUPLICATA:
-- Solo file esistente modificato: SmartGestisciModal.tsx
-- Solo classi CSS esistenti riutilizzate
-- Nessuna duplicazione di codice
-
-RISULTATO FINALE
----------------
+RISULTATO FINALE UNIFORMAZIONE
+------------------------------
 🎯 TUTTI I TEST DI ACCETTAZIONE SUPERATI
-✅ Layout standardizzato con header logo1, scroll unico, navbar CTA
-✅ Vincoli rispettati: solo layout/stile, handler invariati
-✅ Classi esistenti riutilizzate correttamente
-✅ Safe-area e touch targets garantiti
-✅ Commit atomico completato
+✅ Pulsanti uguali e centrati con touch ottimale
+✅ Box prezzi/totali completamente eliminati
+✅ Layout pulito: solo nome vino + quantità + "bottiglie" sotto
+✅ Riga fornitore semplice in maiuscolo
+✅ Sfondo uniforme e scroll unico
+✅ Header standardizzato con logo1.png
+✅ Handler e logica business invariati
 
-STATUS: IMPLEMENTAZIONE COMPLETATA CON SUCCESSO
+STATUS: UNIFORMAZIONE COMPLETATA CON SUCCESSO
+
+====================================================
+AGGIORNAMENTO FIX LAYOUT STANDARD (26/09/2025 17:01)
+====================================================
+
+MODIFICHE APPLICATE (FIX MIRATI)
+-------------------------------
+✅ 1) SFONDO MODALE UNIFORME:
+- Riga 123: style={{ background: '#fff9dc' }} (era bg-white)
+- Sfondo uniforme identico alle altre pagine dell'app
+- Un solo livello scroll nel wine-list-container
+
+✅ 2) CTA IN BASSO - STESSA DIMENSIONE E CLASSI STANDARD:
+- Righe 196-227: Due pulsanti con className="nav-btn" (classi standard)
+- flex: '1 1 0%' per larghezza identica
+- padding: '12px 16px' per altezza uniforme
+- Centrati con flex gap-4 justify-center
+- whiteSpace: 'nowrap' per testo su una riga
+- Touch target ≥44×44pt garantito (12px*2 + font ≈ 44pt)
+- Nessuna icona presente
+
+✅ 3) CARD VINO COMPATTA E LAYOUT STANDARD:
+- Riga 149: p-3 (era p-4) per altezza compatta
+- Righe 151-184: Layout flex items-center justify-between
+- Titolo a sinistra (flex-1 pr-3) con max 2 righe + ellissi
+- WebkitLineClamp: 2 per controllo righe
+- Quantità a destra (flex-shrink-0) centrata verticalmente
+- Sfondo bianco mantenuto per contrasto
+- Nessuna informazione di prezzo presente
+
+✅ 4) TESTO FORNITORE CONFERMATO:
+- Riga 138-140: "Fornitore: {fornitore.toUpperCase()}" (esattamente come richiesto)
+- Nessun box intestazione aggiuntivo
+
+COMMIT ATOMICO LAYOUT STANDARD
+------------------------------
+✅ CORREZIONE DEFINITIVA PULSANTI (17:05):
+- CREATA utility /src/utils/buttonStyles.ts per pulsanti standard
+- Funzione getStandardButtonStyles() con pattern definitivo px-6 py-3 rounded-lg
+- Varianti: primary, secondary, danger, neutral
+- Layout navbar: pulsante sx normale, dx con marginLeft auto
+- APPLICATO al modale: Annulla (neutral) + CONFERMA MODIFICHE (primary, marginLeft auto)
+- PATTERN DEFINITIVO per evitare errori futuri sui pulsanti
+
+✅ Commit: (in corso)
+✅ Messaggio: "feat(ui): modale standard + utility pulsanti definitiva (layout navbar corretto, buttonStyles.ts)"

@@ -261,7 +261,7 @@ export default function CreaOrdinePage() {
             }}
             className="flex-1 px-6 py-3 rounded-lg font-medium transition-colors"
             style={{ 
-              background: totalBottiglie > 0 ? '#8b7355' : '#d1c7b8',
+              background: totalBottiglie > 0 ? '#16a34a' : '#d1c7b8',
               color: '#fff9dc',
               minHeight: '44px',
               touchAction: 'manipulation',
@@ -269,7 +269,7 @@ export default function CreaOrdinePage() {
             }}
             disabled={totalBottiglie === 0}
           >
-            Conferma Ordine ({totalBottiglie} bottiglie)
+            Conferma Ordine
           </button>
         </div>
       </footer>

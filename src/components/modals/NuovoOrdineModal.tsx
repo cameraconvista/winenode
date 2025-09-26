@@ -102,7 +102,7 @@ export default function NuovoOrdineModal({
               disabled={!selectedSupplier}
               className="flex-1 px-4 py-3 rounded-lg transition-colors text-sm md:text-base font-medium disabled:opacity-50"
               style={{ 
-                background: selectedSupplier ? '#8b7355' : '#d1c7b8', 
+                background: selectedSupplier ? '#16a34a' : '#d1c7b8', 
                 color: '#fff9dc'
               }}
             >
