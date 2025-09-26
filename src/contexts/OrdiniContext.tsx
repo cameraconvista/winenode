@@ -257,8 +257,11 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
         console.log('🔒 Inizio transazione atomica per ordine:', ordineId);
       }
 
-      // Trova l'ordine prima di aggiornare lo stato
-      const ordine = ordiniRicevuti.find(o => o.id === ordineId) || ordiniInviati.find(o => o.id === ordineId);
+      // Trova l'ordine prima di aggiornare lo stato (cerca in entrambe le liste)
+      const ordineInviato = ordiniInviati.find(o => o.id === ordineId);
+      const ordineRicevuto = ordiniRicevuti.find(o => o.id === ordineId);
+      const ordine = ordineInviato || ordineRicevuto;
+      
       if (!ordine) {
         logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Ordine non trovato' });
         return;
@@ -308,38 +311,39 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'archiviato');
       
       if (success) {
-        setOrdiniRicevuti(prev => {
-          const ordineToUpdate = prev.find(o => o.id === ordineId);
-          if (!ordineToUpdate) {
-            return prev;
+        // Crea l'ordine completato
+        const ordineCompletato: Ordine = {
+          ...ordine,
+          stato: 'archiviato' // Stato finale per ordini completati
+        };
+        
+        // Aggiungi allo storico (archiviati)
+        setOrdiniStorico(prevStorico => {
+          // Controlla se l'ordine esiste già nello storico per evitare duplicazioni
+          const exists = prevStorico.some(o => o.id === ordineId);
+          if (exists) {
+            console.log('⚠️ Ordine già presente nello storico, evito duplicazione:', ordineId);
+            logAuditEvent('CONFERMA_RICEZIONE_DUPLICATE', ordineId, { warning: 'Ordine già archiviato' });
+            return prevStorico;
           }
-          
-          // Sposta l'ordine nello storico
-          const ordineCompletato: Ordine = {
-            ...ordine,
-            stato: 'archiviato' // Stato finale per ordini completati
-          };
-          
-          setOrdiniStorico(prevStorico => {
-            // Controlla se l'ordine esiste già nello storico per evitare duplicazioni
-            const exists = prevStorico.some(o => o.id === ordineId);
-            if (exists) {
-              console.log('⚠️ Ordine già presente nello storico, evito duplicazione:', ordineId);
-              logAuditEvent('CONFERMA_RICEZIONE_DUPLICATE', ordineId, { warning: 'Ordine già archiviato' });
-              return prevStorico;
-            }
-            return [ordineCompletato, ...prevStorico];
-          });
-          
-          // Audit trail - success
-          logAuditEvent('CONFERMA_RICEZIONE_SUCCESS', ordineId, { 
-            finalState: 'archiviato',
-            movedToStorico: true,
-            processingTime: Date.now()
-          });
-
-          // Rimuovi dai ricevuti
-          return prev.filter(o => o.id !== ordineId);
+          return [ordineCompletato, ...prevStorico];
+        });
+        
+        // Rimuovi dalla lista di origine (inviati o ricevuti)
+        if (ordineInviato) {
+          setOrdiniInviati(prev => prev.filter(o => o.id !== ordineId));
+          console.log('📤 Ordine rimosso da inviati e spostato in archiviati:', ordineId);
+        } else if (ordineRicevuto) {
+          setOrdiniRicevuti(prev => prev.filter(o => o.id !== ordineId));
+          console.log('📦 Ordine rimosso da ricevuti e spostato in archiviati:', ordineId);
+        }
+        
+        // Audit trail - success
+        logAuditEvent('CONFERMA_RICEZIONE_SUCCESS', ordineId, { 
+          finalState: 'archiviato',
+          movedToStorico: true,
+          sourceList: ordineInviato ? 'inviati' : 'ricevuti',
+          processingTime: Date.now()
         });
 
         if (isFeatureEnabled('INVENTORY_TX')) {
