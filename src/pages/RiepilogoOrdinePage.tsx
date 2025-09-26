@@ -118,8 +118,7 @@ export default function RiepilogoOrdinePage() {
         >
         {/* Riepilogo Header */}
         <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="text-2xl">📋</span>
+          <div className="text-center mb-2">
             <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
               Riepilogo Ordine
             </h2>
@@ -160,7 +159,7 @@ export default function RiepilogoOrdinePage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium" style={{ color: '#16a34a' }}>
+                      <div className="text-sm font-medium" style={{ color: '#fff9dc' }}>
                         €{detail.totalPrice.toFixed(2)}
                       </div>
                     </div>
@@ -190,7 +189,7 @@ export default function RiepilogoOrdinePage() {
             <span className="text-lg font-semibold" style={{ color: '#fff9dc' }}>
               Totale Ordine:
             </span>
-            <span className="text-2xl font-bold" style={{ color: '#16a34a' }}>
+            <span className="text-2xl font-bold" style={{ color: '#fff9dc' }}>
               €{totalOrdine.toFixed(2)}
             </span>
           </div>
@@ -242,7 +241,7 @@ export default function RiepilogoOrdinePage() {
             WebkitMask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat',
             mask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat'
           }}></div>
-          <span className="label">CONFERMA</span>
+          <span className="label">CONFERMA ORDINE</span>
         </button>
       </nav>
     </div>
