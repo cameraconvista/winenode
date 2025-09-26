@@ -1,0 +1,53 @@
+REPORT STANDARDIZZAZIONE MODALE MODIFICA QUANTITÀ
+==================================================
+Data: 26/09/2025 16:46
+
+DIAGNOSI
+--------
+✅ FILE LOCALIZZATO: /src/components/modals/SmartGestisciModal.tsx
+✅ RIGHE TOTALI: 273
+✅ COMPONENTE CORRISPONDENTE: SmartGestisciModal
+
+STRINGHE CHIAVE TROVATE:
+- Riga 133: ORDINI_LABELS.qtyModal.header.title ("Modifica quantità")
+- Riga 136: ORDINI_LABELS.qtyModal.header.subtitle ("Seleziona le nuove quantità ricevute")
+- Riga 244: ORDINI_LABELS.gestioneInline.azioni.confermaModifiche ("Conferma modifiche")
+- Riga 206: ORDINI_LABELS.gestioneInline.riepilogo.totaleConfermato ("Totale confermato")
+
+LAYOUT ATTUALE:
+- Header: Righe 125-149 (logo W circolare + titolo/sottotitolo + X)
+- Contenuto scroll: Righe 159-197 (lista vini scrollabile)
+- Footer fisso: Righe 200-247 (riepilogo + CTA Annulla/Conferma)
+
+MODIFICHE APPLICATE
+------------------
+✅ HEADER STANDARDIZZATO (Righe 125-131):
+- Rimosso logo W circolare e pulsante X
+- Implementato header standard con classi mobile-header
+- Logo unico: /logo1.png con alt="WINENODE" loading="eager"
+- Struttura: header > header-content > logo-wrap > img
+
+✅ CONTENUTO SCROLL UNIFICATO (Righe 134-206):
+- Implementato main.mobile-content > div.wine-list-container
+- Spostato riepilogo dentro il contenuto scrollabile (righe 183-204)
+- Un solo scroll container, body/overlay senza scroll
+- Safe-area gestita dalle classi CSS esistenti
+
+✅ NAVBAR CTA STANDARDIZZATA (Righe 209-230):
+- Implementata nav.mobile-navbar
+- Pulsante "Annulla" a sinistra con classe nav-btn
+- Pulsante "CONFERMA MODIFICHE" a destra con stili inline
+- Testo su UNA riga (whiteSpace: 'nowrap')
+- Nessuna icona nei pulsanti CTA
+- Touch target ≥44pt garantito dalle classi CSS
+
+✅ HANDLER INVARIATI:
+- onClick handlers mantenuti identici
+- handleCancel e handleConfirm non modificati
+- Logica di business completamente preservata
+
+✅ CLASSI RIUTILIZZATE:
+- mobile-header, header-content, logo-wrap (esistenti)
+- mobile-content, wine-list-container (esistenti) 
+- mobile-navbar, nav-btn (esistenti)
+- Nessuna nuova classe CSS creata
