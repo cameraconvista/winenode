@@ -228,20 +228,37 @@ export default function RiepilogoOrdinePage() {
         <button
           onClick={handleConferma}
           disabled={ordineDetails.length === 0}
-          className="nav-btn nav-btn-primary"
+          className="nav-btn nav-btn-primary btn-conferma-custom"
           title="Conferma Ordine"
           style={{ 
             opacity: ordineDetails.length === 0 ? 0.5 : 1,
             background: ordineDetails.length > 0 ? 'var(--accent)' : 'var(--muted)',
-            color: 'white'
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px',
+            minHeight: '44pt',
+            padding: '4px 8px'
           }}
         >
           <div className="icon" style={{
             background: 'white',
             WebkitMask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat',
-            mask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat'
+            mask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat',
+            width: '16px',
+            height: '16px'
           }}></div>
-          <span className="label" style={{ display: 'block !important' }}>CONFERMA ORDINE</span>
+          <span style={{ 
+            display: 'block',
+            fontSize: '10px',
+            fontWeight: '500',
+            color: 'white',
+            textAlign: 'center',
+            lineHeight: '1.1',
+            whiteSpace: 'nowrap'
+          }}>CONFERMA ORDINE</span>
         </button>
       </nav>
     </div>
