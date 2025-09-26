@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { X, ArrowLeft, Check, AlertTriangle } from 'lucide-react';
+import { Check, AlertTriangle } from 'lucide-react';
 import useWines from '../hooks/useWines';
 import { OrdineItem } from '../hooks/useCreaOrdine';
 import { useOrdini } from '../contexts/OrdiniContext';
@@ -39,10 +39,6 @@ export default function RiepilogoOrdinePage() {
   });
 
   const totalOrdine = ordineDetails.reduce((sum, detail) => sum + detail.totalPrice, 0);
-
-  const handleClose = () => {
-    navigate('/');
-  };
 
   const handleModificaOrdine = () => {
     navigate(-1);
@@ -84,25 +80,42 @@ export default function RiepilogoOrdinePage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#fff9dc' }}>
-      {/* Header */}
-      <header className="sticky top-0 z-10 p-4 border-b" style={{ 
-        background: '#fff9dc', 
-        borderColor: '#e2d6aa' 
-      }}>
-        <div className="flex items-center justify-end">
-          <button
-            onClick={handleClose}
-            className="p-2 rounded-lg transition-colors"
-            style={{ color: '#541111' }}
-          >
-            <X className="h-5 w-5" />
-          </button>
+    <div className="homepage-container" style={{ 
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100%',
+      overflow: 'hidden',
+      position: 'relative',
+      background: 'var(--bg)'
+    }}>
+      {/* HEADER FISSO CON LOGO */}
+      <header className="mobile-header">
+        <div className="header-content">
+          <div className="logo-wrap">
+            <picture>
+              <source type="image/webp" srcSet="/logo1.webp" />
+              <img 
+                src="/logo1.png" 
+                alt="WINENODE"
+                loading="eager"
+              />
+            </picture>
+          </div>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="p-4 pb-24">
+      {/* CONTENT SCROLLABILE */}
+      <main className="mobile-content">
+        <div className="wine-list-container"
+          style={{
+            height: '100%',
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'none',
+            touchAction: 'pan-y',
+            scrollBehavior: 'smooth'
+          }}
+        >
         {/* Riepilogo Header */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -196,40 +209,42 @@ export default function RiepilogoOrdinePage() {
             Calcolato sui costi di acquisto
           </p>
         </div>
+        </div>
       </main>
 
-      {/* Footer */}
-      <footer 
-        className="fixed bottom-0 left-0 right-0 p-4 border-t"
-        style={{ background: '#fff9dc', borderColor: '#e2d6aa' }}
-      >
-        <div className="flex gap-3">
-          <button
-            onClick={handleModificaOrdine}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors"
-            style={{ 
-              background: 'transparent', 
-              color: '#541111',
-              border: '1px solid #e2d6aa'
-            }}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Modifica Ordine
-          </button>
-          <button
-            onClick={handleConferma}
-            disabled={ordineDetails.length === 0}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
-            style={{ 
-              background: ordineDetails.length > 0 ? '#16a34a' : '#9b9b9b',
-              color: '#fff9dc'
-            }}
-          >
-            <Check className="h-4 w-4" />
-            CONFERMA
-          </button>
-        </div>
-      </footer>
+      {/* NAVBAR FISSA */}
+      <nav className="mobile-navbar">
+        <button
+          onClick={handleModificaOrdine}
+          className="nav-btn"
+          title="Modifica Ordine"
+        >
+          <div className="icon" style={{
+            background: 'var(--text)',
+            WebkitMask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M10 19l-7-7m0 0l7-7m-7 7h18\'/%3E%3C/svg%3E") center/contain no-repeat',
+            mask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M10 19l-7-7m0 0l7-7m-7 7h18\'/%3E%3C/svg%3E") center/contain no-repeat'
+          }}></div>
+          <span className="label">Modifica</span>
+        </button>
+        <button
+          onClick={handleConferma}
+          disabled={ordineDetails.length === 0}
+          className="nav-btn nav-btn-primary"
+          title="Conferma Ordine"
+          style={{ 
+            opacity: ordineDetails.length === 0 ? 0.5 : 1,
+            background: ordineDetails.length > 0 ? 'var(--accent)' : 'var(--muted)',
+            color: 'white'
+          }}
+        >
+          <div className="icon" style={{
+            background: 'white',
+            WebkitMask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat',
+            mask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat'
+          }}></div>
+          <span className="label">CONFERMA</span>
+        </button>
+      </nav>
     </div>
   );
 }
