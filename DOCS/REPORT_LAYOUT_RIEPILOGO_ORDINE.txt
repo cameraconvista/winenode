@@ -829,3 +829,100 @@ style={{ color: '#fff9dc' }}
 ➡️ **PROSSIMO STEP:** Fase 3 - Test e commit atomico
 
 ================================================================================
+🔧 FINITURE NAVBAR - STANDARDIZZAZIONE PULSANTE CONFERMA
+================================================================================
+
+📅 Data Correzione: 26 Settembre 2025, 15:46
+🎯 Obiettivo: Standardizzare pulsante "CONFERMA ORDINE" secondo pattern CTA dell'app
+
+### 🔍 PROBLEMI IDENTIFICATI:
+
+**PULSANTE VERDE NON STANDARD:**
+- ❌ Classe custom: `btn-conferma-custom` (inesistente nel CSS)
+- ❌ Layout verticale: `flexDirection: 'column'` non standard per CTA
+- ❌ Font troppo piccolo: 10px vs 14px standard CTA
+- ❌ Icona piccola: 16px vs 18px standard
+- ❌ Allineamento: Non seguiva pattern navbar standard
+- ❌ Touch target: Insufficiente per CTA primaria
+
+### ✅ SOLUZIONE IMPLEMENTATA:
+
+**PULSANTE STANDARDIZZATO:**
+```tsx
+// PRIMA (NON STANDARD):
+className="nav-btn nav-btn-primary btn-conferma-custom"
+style={{ 
+  flexDirection: 'column',
+  gap: '2px',
+  fontSize: '10px',
+  padding: '4px 8px'
+}}
+
+// DOPO (STANDARD CTA):
+className="nav-btn nav-btn-primary"
+style={{ 
+  minHeight: '44pt',
+  minWidth: '120px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '6px',
+  padding: '8px 12px',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: '600',
+  marginLeft: 'auto'
+}}
+```
+
+### 🎯 CARATTERISTICHE STANDARD APPLICATE:
+
+**DIMENSIONI & TOUCH TARGET:**
+- ✅ minHeight: 44pt (standard mobile)
+- ✅ minWidth: 120px (CTA primaria)
+- ✅ Touch area: ≥44×44pt garantita
+
+**TIPOGRAFIA CTA:**
+- ✅ fontSize: 14px (standard CTA app)
+- ✅ fontWeight: 600 (semi-bold CTA)
+- ✅ Contrasto AA: Bianco su verde
+
+**LAYOUT & ALLINEAMENTO:**
+- ✅ Layout orizzontale: icona + testo affiancati
+- ✅ Gap: 6px tra icona e testo
+- ✅ Allineamento: marginLeft auto (destra navbar)
+- ✅ Icona: 18px standard (era 16px)
+
+**PATTERN NAVBAR:**
+- ✅ Classe: nav-btn nav-btn-primary (standard)
+- ✅ Rimozione: btn-conferma-custom (classe inesistente)
+- ✅ Background: var(--accent) (token standard)
+- ✅ Border radius: 8px (standard CTA)
+
+### 📊 MICRO-CHECK ANTI-REGRESSIONE:
+
+**✅ CLASSI STANDARD VERIFICATE:**
+- ✅ nav-btn: Classe base navbar (esistente in CSS)
+- ✅ nav-btn-primary: Classe CTA primaria (pattern standard)
+- ❌ RIMOSSA: btn-conferma-custom (classe non standard)
+
+**✅ STILI INLINE OTTIMIZZATI:**
+- ✅ Ridotti stili custom al minimo necessario
+- ✅ Utilizzati token CSS (var(--accent), var(--muted))
+- ✅ Rispettate convenzioni touch target mobile
+
+**✅ LAYOUT NAVBAR PRESERVATO:**
+- ✅ mobile-navbar: Container invariato
+- ✅ Pulsante sinistro "Modifica": Invariato
+- ✅ Pulsante destro "CONFERMA": Standardizzato
+- ✅ Safe-area handling: Automatico da CSS
+
+================================================================================
+✅ STANDARDIZZAZIONE COMPLETATA - PRONTO PER COMMIT
+
+**COMMIT MESSAGGIO:**
+`feat(ui): standardizza bottone "CONFERMA ORDINE" (size ≥44pt, right align, font CTA)`
+
+➡️ **PROSSIMO STEP:** Test e verifica finale
+
+================================================================================
