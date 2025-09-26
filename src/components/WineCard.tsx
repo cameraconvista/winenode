@@ -1,7 +1,6 @@
 import { AlertTriangle } from 'lucide-react'
 import { Wine } from '../../shared/schema'
 import { useState } from 'react'
-import InventoryModal from './InventoryModal'
 
 interface WineCardProps {
   wine: Wine
@@ -67,12 +66,7 @@ export default function WineCard({ wine, onUpdateInventory, onWineClick }: WineC
         </div>
       </div>
 
-      <InventoryModal
-        wine={wine}
-        open={showInventoryModal}
-        onOpenChange={setShowInventoryModal}
-        onUpdateInventory={handleUpdateInventory}
-      />
+      {/* TODO: Implementare modale giacenza per WineCard */}
     </>
   )
 }

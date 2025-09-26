@@ -7,7 +7,7 @@ import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazione
 import { ORDINI_LABELS } from '../constants/ordiniLabels';
 import { isFeatureEnabled } from '../config/featureFlags';
 import QuantityPicker from '../components/QuantityPicker';
-import InventoryModal from '../components/InventoryModal';
+import GestisciOrdiniInventoryModal from '../components/GestisciOrdiniInventoryModal';
 import SmartGestisciModal from '../components/modals/SmartGestisciModal';
 import ConfirmArchiveModal from '../components/modals/ConfirmArchiveModal';
 import '../styles/gestisci-ordini-mobile.css';
@@ -902,14 +902,14 @@ export default function GestisciOrdiniPage() {
         } : undefined}
       />
 
-      {/* Modale Modifica Quantità */}
-      <InventoryModal
+      {/* Modale Modifica Quantità - Gestione Ordini */}
+      <GestisciOrdiniInventoryModal
         isOpen={showQuantityModal}
         initialValue={editingQuantity?.currentValue || 0}
         onConfirm={handleConfirmQuantityModal}
         onCancel={handleCloseQuantityModal}
         min={0}
-        max={editingQuantity?.originalValue || 999}
+        max={100}
         originalValue={editingQuantity?.originalValue}
       />
 

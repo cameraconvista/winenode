@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 import { ORDINI_LABELS } from '../../constants/ordiniLabels';
 import { isFeatureEnabled } from '../../config/featureFlags';
-import InventoryModal from '../InventoryModal';
+import GestisciOrdiniInventoryModal from '../GestisciOrdiniInventoryModal';
 import ConfirmArchiveModal from './ConfirmArchiveModal';
 
 interface DettaglioOrdine {
@@ -248,13 +248,13 @@ export default function SmartGestisciModal({
       </div>
 
       {/* Modale quantità */}
-      <InventoryModal
+      <GestisciOrdiniInventoryModal
         isOpen={showQuantityModal}
         initialValue={editingItem?.currentValue || 0}
         onConfirm={handleQuantityConfirm}
         onCancel={handleQuantityCancel}
         min={0}
-        max={editingItem?.originalValue || 100}
+        max={100}
         originalValue={editingItem?.originalValue}
       />
 
