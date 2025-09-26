@@ -31,15 +31,12 @@ export default function GestisciOrdiniPage() {
   
   const {
     ordiniInviati,
-    ordiniRicevuti,
     ordiniStorico,
     loading,
     aggiornaStatoOrdine,
-    spostaOrdineInviatiARicevuti,
     aggiornaQuantitaOrdine,
     confermaRicezioneOrdine,
     eliminaOrdineInviato,
-    eliminaOrdineRicevuto,
     eliminaOrdineStorico
   } = useOrdini();
 
@@ -71,13 +68,8 @@ export default function GestisciOrdiniPage() {
   const handleConfermaOrdine = async (ordineId: string) => {
     console.log('✅ Conferma ordine con aggiornamento giacenze:', ordineId);
     
-    if (isFeatureEnabled('ORDINI_CONFIRM_IN_CREATI')) {
-      // Nuova logica: conferma diretta con aggiornamento giacenze
-      await confermaRicezioneOrdine(ordineId);
-    } else {
-      // Logica precedente: sposta solo in ricevuti
-      spostaOrdineInviatiARicevuti(ordineId);
-    }
+    // Conferma diretta con aggiornamento giacenze (sempre attiva)
+    await confermaRicezioneOrdine(ordineId);
   };
 
   const handleConfermaRicezione = async (ordineId: string) => {
@@ -90,10 +82,7 @@ export default function GestisciOrdiniPage() {
     setShowConfermaEliminazione(true);
   };
 
-  const handleEliminaOrdineRicevuto = (ordineId: string, ordine: Ordine) => {
-    setOrdineToDelete({ id: ordineId, ordine, tipo: 'ricevuto' });
-    setShowConfermaEliminazione(true);
-  };
+  // handleEliminaOrdineRicevuto rimossa - ordini ricevuti non esistono più
 
   const handleEliminaOrdineStorico = (ordineId: string, ordine: Ordine) => {
     setOrdineToDelete({ id: ordineId, ordine, tipo: 'storico' });
@@ -377,7 +366,7 @@ export default function GestisciOrdiniPage() {
         eliminaOrdineInviato(ordineToDelete.id);
         break;
       case 'ricevuto':
-        eliminaOrdineRicevuto(ordineToDelete.id);
+        // eliminaOrdineRicevuto rimossa - non più necessaria
         break;
       case 'storico':
         eliminaOrdineStorico(ordineToDelete.id);

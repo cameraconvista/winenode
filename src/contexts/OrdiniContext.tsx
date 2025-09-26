@@ -25,23 +25,19 @@ export interface Ordine {
 
 interface OrdiniContextType {
   ordiniInviati: Ordine[];
-  ordiniRicevuti: Ordine[];
   ordiniStorico: Ordine[];
   loading: boolean;
   aggiungiOrdine: (ordine: Omit<Ordine, 'id'>) => Promise<void>;
   aggiornaStatoOrdine: (ordineId: string, nuovoStato: Ordine['stato']) => Promise<void>;
-  spostaOrdineInviatiARicevuti: (ordineId: string) => void;
   aggiornaQuantitaOrdine: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
   confermaRicezioneOrdine: (ordineId: string) => Promise<void>;
   eliminaOrdineInviato: (ordineId: string) => Promise<void>;
-  eliminaOrdineRicevuto: (ordineId: string) => Promise<void>;
   eliminaOrdineStorico: (ordineId: string) => Promise<void>;
 }
 
 const OrdiniContext = createContext<OrdiniContextType | undefined>(undefined);
 export function OrdiniProvider({ children }: { children: ReactNode }) {
   const [ordiniInviati, setOrdiniInviati] = useState<Ordine[]>([]);
-  const [ordiniRicevuti, setOrdiniRicevuti] = useState<Ordine[]>([]);
   const [ordiniStorico, setOrdiniStorico] = useState<Ordine[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
@@ -86,15 +82,13 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       try {
         setLoading(true);
         console.log('🔄 Caricando ordini da Supabase...');
-        const { inviati, ricevuti, storico } = await supabaseOrdini.loadOrdini();
+        const { inviati, storico } = await supabaseOrdini.loadOrdini();
         
         setOrdiniInviati(inviati);
-        setOrdiniRicevuti(ricevuti);
         setOrdiniStorico(storico);
         
         console.log('✅ Ordini caricati:', {
           inviati: inviati.length,
-          ricevuti: ricevuti.length,
           storico: storico.length
         });
       } catch (error) {
@@ -128,15 +122,6 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
           }
           return [nuovoOrdine, ...prev];
         });
-      } else {
-        setOrdiniRicevuti(prev => {
-          const exists = prev.some(o => o.id === ordineId);
-          if (exists) {
-            console.log('⚠️ Ordine già presente, evito duplicazione:', ordineId);
-            return prev;
-          }
-          return [nuovoOrdine, ...prev];
-        });
       }
       
       console.log('✅ Ordine salvato e aggiunto al context:', ordineId);
@@ -157,45 +142,13 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
         );
 
       setOrdiniInviati(aggiorna);
-      setOrdiniRicevuti(aggiorna);
       setOrdiniStorico(aggiorna);
       
       console.log('✅ Stato ordine aggiornato nel context');
     }
   };
 
-  const spostaOrdineInviatiARicevuti = async (ordineId: string) => {
-    console.log('🔄 Spostando ordine da Inviati a Ricevuti:', ordineId);
-    
-    // Aggiorna lo stato nel database prima di spostare nel context
-    const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'ricevuto');
-    
-    if (success) {
-      setOrdiniInviati(prev => {
-        const ordine = prev.find(o => o.id === ordineId);
-        if (!ordine) return prev;
-        
-        // Sposta l'ordine nei ricevuti con stato aggiornato
-        const ordineRicevuto: Ordine = {
-          ...ordine,
-          stato: 'ricevuto'
-        };
-        
-        setOrdiniRicevuti(prevRicevuti => {
-          // Controlla se l'ordine esiste già nei ricevuti per evitare duplicazioni
-          const exists = prevRicevuti.some(o => o.id === ordineId);
-          if (exists) {
-            console.log('⚠️ Ordine già presente nei ricevuti, evito duplicazione:', ordineId);
-            return prevRicevuti;
-          }
-          return [ordineRicevuto, ...prevRicevuti];
-        });
-        
-        // Rimuovi dai inviati
-        return prev.filter(o => o.id !== ordineId);
-      });
-    }
-  };
+  // spostaOrdineInviatiARicevuti rimossa - ordini vanno direttamente da inviati ad archiviati
 
   const aggiornaQuantitaOrdine = (ordineId: string, dettagli: OrdineDettaglio[]) => {
     console.log('📝 Aggiornando quantità ordine:', ordineId, dettagli);
@@ -219,19 +172,7 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       )
     );
 
-    // Aggiorna anche ordiniRicevuti (per compatibilità)
-    setOrdiniRicevuti(prev =>
-      prev.map(ordine =>
-        ordine.id === ordineId
-          ? {
-              ...ordine,
-              dettagli,
-              bottiglie: nuoveTotali.bottiglie,
-              totale: nuoveTotali.totale
-            }
-          : ordine
-      )
-    );
+    // Nota: ordini ricevuti rimossi dal sistema
   };
 
   const confermaRicezioneOrdine = async (ordineId: string) => {
@@ -257,14 +198,11 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
         console.log('🔒 Inizio transazione atomica per ordine:', ordineId);
       }
 
-      // Trova l'ordine prima di aggiornare lo stato (cerca in entrambe le liste)
-      const ordineInviato = ordiniInviati.find(o => o.id === ordineId);
-      const ordineRicevuto = ordiniRicevuti.find(o => o.id === ordineId);
-      const ordine = ordineInviato || ordineRicevuto;
+      // Trova l'ordine prima di aggiornare lo stato (cerca solo in inviati)
+      const ordine = ordiniInviati.find(o => o.id === ordineId);
       
       if (!ordine) {
         logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Ordine non trovato' });
-        return;
       }
 
       // AGGIORNA LE GIACENZE REALI DEI VINI PRIMA DI ARCHIVIARE
@@ -329,20 +267,15 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
           return [ordineCompletato, ...prevStorico];
         });
         
-        // Rimuovi dalla lista di origine (inviati o ricevuti)
-        if (ordineInviato) {
-          setOrdiniInviati(prev => prev.filter(o => o.id !== ordineId));
-          console.log('📤 Ordine rimosso da inviati e spostato in archiviati:', ordineId);
-        } else if (ordineRicevuto) {
-          setOrdiniRicevuti(prev => prev.filter(o => o.id !== ordineId));
-          console.log('📦 Ordine rimosso da ricevuti e spostato in archiviati:', ordineId);
-        }
+        // Rimuovi dalla lista inviati (unica lista di origine ora)
+        setOrdiniInviati(prev => prev.filter(o => o.id !== ordineId));
+        console.log('📤 Ordine rimosso da inviati e spostato in archiviati:', ordineId);
         
         // Audit trail - success
         logAuditEvent('CONFERMA_RICEZIONE_SUCCESS', ordineId, { 
           finalState: 'archiviato',
           movedToStorico: true,
-          sourceList: ordineInviato ? 'inviati' : 'ricevuti',
+          sourceList: 'inviati',
           processingTime: Date.now()
         });
 
@@ -379,21 +312,7 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const eliminaOrdineRicevuto = async (ordineId: string) => {
-    console.log('🗑️ Eliminando ordine ricevuto da Supabase:', ordineId);
-    
-    const success = await supabaseOrdini.eliminaOrdine(ordineId);
-    
-    if (success) {
-      setOrdiniRicevuti(prev => {
-        const ordine = prev.find(o => o.id === ordineId);
-        if (ordine) {
-          console.log('📋 Ordine ricevuto eliminato:', ordine.fornitore, '- €' + ordine.totale.toFixed(2));
-        }
-        return prev.filter(o => o.id !== ordineId);
-      });
-    }
-  };
+  // eliminaOrdineRicevuto rimossa - ordini ricevuti non esistono più
 
   const eliminaOrdineStorico = async (ordineId: string) => {
     console.log('🗑️ Eliminando ordine storico da Supabase:', ordineId);
@@ -414,16 +333,13 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   return (
     <OrdiniContext.Provider value={{
       ordiniInviati,
-      ordiniRicevuti,
       ordiniStorico,
       loading,
       aggiungiOrdine,
       aggiornaStatoOrdine,
-      spostaOrdineInviatiARicevuti,
       aggiornaQuantitaOrdine,
       confermaRicezioneOrdine,
       eliminaOrdineInviato,
-      eliminaOrdineRicevuto,
       eliminaOrdineStorico
     }}>
       {children}

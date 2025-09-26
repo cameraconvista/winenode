@@ -9,7 +9,6 @@ export function useSupabaseOrdini() {
   // Carica tutti gli ordini dal database
   const loadOrdini = async (): Promise<{
     inviati: Ordine[];
-    ricevuti: Ordine[];
     storico: Ordine[];
   }> => {
     try {
@@ -82,18 +81,17 @@ export function useSupabaseOrdini() {
         };
       });
 
-      // Separa per stato (non per tipo, che non esiste nel database)
+      // Separa per stato - solo inviati e archiviati
       const inviati = ordiniMappati.filter(o => o.stato === 'sospeso' || o.stato === 'inviato');
-      const ricevuti = ordiniMappati.filter(o => o.stato === 'ricevuto');
       const storico = ordiniMappati.filter(o => o.stato === 'archiviato');
 
-      return { inviati, ricevuti, storico };
+      return { inviati, storico };
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
       console.error('❌ Errore caricamento ordini:', errorMessage);
       setError(errorMessage);
-      return { inviati: [], ricevuti: [], storico: [] };
+      return { inviati: [], storico: [] };
     } finally {
       setLoading(false);
     }
