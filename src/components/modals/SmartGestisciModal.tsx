@@ -133,11 +133,11 @@ export default function SmartGestisciModal({
         {/* CONTENT SCROLLABILE */}
         <main className="mobile-content">
           <div className="wine-list-container">
-            {/* Fornitore */}
-            <div className="p-4 border-b" style={{ borderColor: '#e2d6aa', background: '#f9f9f9' }}>
-              <h3 className="font-medium" style={{ color: '#541111' }}>
-                {fornitore}
-              </h3>
+            {/* Riga fornitore semplice */}
+            <div className="p-4">
+              <p className="text-sm font-medium" style={{ color: '#541111' }}>
+                Fornitore: {fornitore.toUpperCase()}
+              </p>
             </div>
 
             {/* Lista righe scrollabile */}
@@ -147,86 +147,67 @@ export default function SmartGestisciModal({
                 
                 return (
                   <div key={index} className="bg-white rounded-lg border p-4" style={{ borderColor: '#e2d6aa' }}>
-                    {/* Riga 1: Nome vino */}
-                    <div className="mb-2">
+                    {/* Nome vino */}
+                    <div className="mb-3">
                       <h4 className="font-medium text-sm truncate" style={{ color: '#541111' }}>
                         {dettaglio.wineName}
                       </h4>
                     </div>
                     
-                    {/* Riga 2: Meta info + quantità */}
-                    <div className="flex items-center justify-between text-xs" style={{ color: '#7a4a30' }}>
-                      <div className="flex-1 truncate">
-                        {dettaglio.unit} • €{dettaglio.unitPrice.toFixed(2)}/cad • €{(currentQuantity * dettaglio.unitPrice).toFixed(2)}
-                      </div>
-                      
-                      {/* Quantità cliccabile */}
+                    {/* Quantità centrata con label sotto */}
+                    <div className="flex flex-col items-center">
                       <div
                         onClick={() => handleQuantityClick(index)}
-                        className="ml-3 px-3 py-1 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50 flex-shrink-0"
+                        className="px-4 py-2 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50"
                         style={{ 
                           borderColor: '#e2d6aa',
                           background: 'white'
                         }}
                       >
-                        <span className="text-sm font-bold" style={{ color: '#541111' }}>
+                        <span className="text-lg font-bold" style={{ color: '#541111' }}>
                           {currentQuantity}
                         </span>
                       </div>
+                      <span className="text-xs mt-1" style={{ color: '#7a4a30' }}>
+                        {dettaglio.unit}
+                      </span>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Riepilogo */}
-            <div className="p-4">
-              <div className="p-3 rounded border" style={{ borderColor: '#e2d6aa', background: '#f9f9f9' }}>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium" style={{ color: '#7a4a30' }}>
-                      {ORDINI_LABELS.gestioneInline.riepilogo.totaleConfermato}
-                    </span>
-                    <span className="ml-2 font-bold" style={{ color: '#541111' }}>
-                      {totalConfermato}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-medium" style={{ color: '#7a4a30' }}>
-                      {ORDINI_LABELS.gestioneInline.riepilogo.valoreConfermato}
-                    </span>
-                    <span className="ml-2 font-bold" style={{ color: '#541111' }}>
-                      €{valoreConfermato.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </main>
 
         {/* NAVBAR FISSA */}
         <nav className="mobile-navbar">
-          <button
-            onClick={handleCancel}
-            className="nav-btn"
-            title="Annulla"
-          >
-            Annulla
-          </button>
-          <button
-            onClick={handleConfirm}
-            className="px-6 py-3 rounded-lg font-medium transition-colors"
-            title="Conferma Modifiche"
-            style={{ 
-              background: '#16a34a',
-              color: '#fff9dc',
-              marginLeft: 'auto',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            CONFERMA MODIFICHE
-          </button>
+          <div className="flex gap-4 justify-center w-full px-4">
+            <button
+              onClick={handleCancel}
+              className="flex-1 py-3 rounded-lg font-medium transition-colors"
+              title="Annulla"
+              style={{ 
+                background: '#6b7280',
+                color: '#fff9dc',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Annulla
+            </button>
+            <button
+              onClick={handleConfirm}
+              className="flex-1 py-3 rounded-lg font-medium transition-colors"
+              title="Conferma Modifiche"
+              style={{ 
+                background: '#16a34a',
+                color: '#fff9dc',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              CONFERMA MODIFICHE
+            </button>
+          </div>
         </nav>
       </div>
 
