@@ -28,7 +28,14 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      'no-unused-vars': 'off'
+      'no-unused-vars': 'off',
+      // Governance architetturale
+      'max-lines': ['warn', { max: 500, skipBlankLines: true, skipComments: true }],
+      'max-lines-per-function': ['warn', { max: 50, skipBlankLines: true, skipComments: true }],
+      'complexity': ['warn', 10],
+      'max-depth': ['warn', 4],
+      'max-params': ['warn', 5],
+      'max-nested-callbacks': ['warn', 3]
     }
   },
   {
