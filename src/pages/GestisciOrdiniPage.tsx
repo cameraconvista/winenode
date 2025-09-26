@@ -12,7 +12,7 @@ import SmartGestisciModal from '../components/modals/SmartGestisciModal';
 import ConfirmArchiveModal from '../components/modals/ConfirmArchiveModal';
 import '../styles/gestisci-ordini-mobile.css';
 
-type TabType = 'inviati' | 'ricevuti';
+type TabType = 'inviati' | 'archiviati';
 
 export default function GestisciOrdiniPage() {
   const navigate = useNavigate();
@@ -48,13 +48,13 @@ export default function GestisciOrdiniPage() {
   const [ordineToDelete, setOrdineToDelete] = useState<{
     id: string;
     ordine: Ordine;
-    tipo: 'inviato' | 'ricevuto';
+    tipo: 'inviato' | 'ricevuto' | 'storico';
   } | null>(null);
 
   // Gestisci tab da URL query
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab') as TabType;
-    if (tabFromUrl && ['inviati', 'ricevuti'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['inviati', 'archiviati'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
@@ -95,7 +95,10 @@ export default function GestisciOrdiniPage() {
     setShowConfermaEliminazione(true);
   };
 
-  // handleEliminaOrdineStorico rimosso - tab Storico eliminato
+  const handleEliminaOrdineStorico = (ordineId: string, ordine: Ordine) => {
+    setOrdineToDelete({ id: ordineId, ordine, tipo: 'storico' });
+    setShowConfermaEliminazione(true);
+  };
 
   const handleToggleExpanded = (ordineId: string) => {
     setExpandedOrders(prev => {
@@ -283,7 +286,7 @@ export default function GestisciOrdiniPage() {
       await confermaRicezioneOrdine(smartModalOrdine.id);
 
       // Switch al tab Archiviati
-      setActiveTab('ricevuti');
+      setActiveTab('archiviati');
 
       console.log('✅ Ordine archiviato con successo tramite Smart Modal');
     } catch (error) {
@@ -322,7 +325,7 @@ export default function GestisciOrdiniPage() {
       // Chiudi dialog e switch al tab Archiviati
       setShowConfirmArchive(false);
       setPendingArchiveOrder(null);
-      setActiveTab('ricevuti');
+      setActiveTab('archiviati');
 
       console.log('✅ Ordine archiviato con successo');
     } catch (error) {
@@ -376,6 +379,9 @@ export default function GestisciOrdiniPage() {
       case 'ricevuto':
         eliminaOrdineRicevuto(ordineToDelete.id);
         break;
+      case 'storico':
+        eliminaOrdineStorico(ordineToDelete.id);
+        break;
     }
 
     setOrdineToDelete(null);
@@ -389,6 +395,8 @@ export default function GestisciOrdiniPage() {
         return ORDINI_LABELS.eliminazione.creato;
       case 'ricevuto':
         return ORDINI_LABELS.eliminazione.archiviato;
+      case 'storico':
+        return ORDINI_LABELS.eliminazione.archiviato;
       default:
         return '';
     }
@@ -398,7 +406,7 @@ export default function GestisciOrdiniPage() {
     switch (tab) {
       case 'inviati':
         return ordiniInviati.length;
-      case 'ricevuti':
+      case 'archiviati':
         // Tab "Ordini Archiviati" conta ordini completati (storico)
         return ordiniStorico.length;
       default:
@@ -410,7 +418,7 @@ export default function GestisciOrdiniPage() {
     switch (activeTab) {
       case 'inviati':
         return ordiniInviati;
-      case 'ricevuti':
+      case 'archiviati':
         // Tab "Ordini Archiviati" mostra ordini completati (storico)
         return ordiniStorico;
       default:
@@ -425,7 +433,7 @@ export default function GestisciOrdiniPage() {
           title: ORDINI_LABELS.emptyState.creati.title,
           subtitle: ORDINI_LABELS.emptyState.creati.subtitle
         };
-      case 'ricevuti':
+      case 'archiviati':
         return {
           title: ORDINI_LABELS.emptyState.archiviati.title,
           subtitle: ORDINI_LABELS.emptyState.archiviati.subtitle
@@ -534,30 +542,16 @@ export default function GestisciOrdiniPage() {
           </button>
           
           <button
-            onClick={() => setActiveTab('ricevuti')}
+            onClick={() => setActiveTab('archiviati')}
             className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg font-medium transition-colors flex-1 whitespace-nowrap"
             style={{
-              background: activeTab === 'ricevuti' ? '#d4a300' : 'transparent',
-              color: activeTab === 'ricevuti' ? '#fff9dc' : '#541111',
-              border: activeTab === 'ricevuti' ? 'none' : '1px solid #e2d6aa'
+              background: activeTab === 'archiviati' ? '#d4a300' : 'transparent',
+              color: activeTab === 'archiviati' ? '#fff9dc' : '#541111',
+              border: activeTab === 'archiviati' ? 'none' : '1px solid #e2d6aa'
             }}
           >
-            {ORDINI_LABELS.tabs.archiviati} ({getTabCount('ricevuti')})
+            {ORDINI_LABELS.tabs.archiviati} ({getTabCount('archiviati')})
           </button>
-          
-          {!isFeatureEnabled('REMOVE_STORICO_TAB') && (
-            <button
-              onClick={() => setActiveTab('storico' as TabType)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors"
-              style={{
-                background: activeTab === 'storico' ? '#d4a300' : 'transparent',
-                color: activeTab === 'storico' ? '#fff9dc' : '#541111',
-                border: activeTab === 'storico' ? 'none' : '1px solid #e2d6aa'
-              }}
-            >
-              📋 Storico ({getTabCount('storico' as TabType)})
-            </button>
-          )}
         </div>
       </div>
 
@@ -600,15 +594,15 @@ export default function GestisciOrdiniPage() {
                 flexDirection: 'column'
               }}>
             {currentData.map((ordine) => {
-              // Usa componente specializzato per ordini ricevuti
-              if (activeTab === 'ricevuti') {
+              // Usa componente specializzato per ordini archiviati
+              if (activeTab === 'archiviati') {
                 return (
                   <OrdineRicevutoCard
                     key={ordine.id}
                     ordine={ordine}
                     onVisualizza={handleVisualizza}
                     onConfermaRicezione={handleConfermaRicezione}
-                    onElimina={handleEliminaOrdineRicevuto}
+                    onElimina={handleEliminaOrdineStorico}
                     onAggiornaQuantita={aggiornaQuantitaOrdine}
                   />
                 );
@@ -634,14 +628,6 @@ export default function GestisciOrdiniPage() {
                         style={{ background: '#16a34a', color: '#fff9dc' }}
                       >
                         {ORDINI_LABELS.badges.creato}
-                      </span>
-                    )}
-                    {activeTab === 'storico' && (
-                      <span 
-                        className="px-2 py-1 rounded text-xs font-medium"
-                        style={{ background: '#16a34a', color: '#fff9dc' }}
-                      >
-                        {ORDINI_LABELS.badges.completato}
                       </span>
                     )}
                   </div>
