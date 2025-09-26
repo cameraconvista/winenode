@@ -594,6 +594,36 @@ import { Check, AlertTriangle } from 'lucide-react';
 **🎉 MISSIONE COMPLETATA - LAYOUT MOBILE STANDARD RAGGIUNTO!**
 
 ================================================================================
+🔄 AGGIORNAMENTO FLUSSO ORDINI - SETUP DEFINITIVO
+================================================================================
+
+📅 Data Aggiornamento: 26 Settembre 2025, 16:05
+🎯 Obiettivo: Correzione flusso ordini Creati → Archiviati
+
+### 🐛 PROBLEMA RISOLTO:
+**SINTOMO:** Ordini confermati da "Creati" sparivano invece di andare in "Archiviati"
+**CAUSA:** confermaRicezioneOrdine() non gestiva correttamente ordini da ordiniInviati
+**SOLUZIONE:** Logica corretta per rimuovere da lista origine e spostare in archiviati
+
+### 🔧 MODIFICHE APPLICATE:
+- ✅ Corretta funzione confermaRicezioneOrdine in OrdiniContext
+- ✅ Gestione corretta ordini da ordiniInviati e ordiniRicevuti  
+- ✅ Spostamento corretto in ordiniStorico (archiviati)
+- ✅ Pulizia completa tab obsoleti (ricevuti → archiviati)
+- ✅ Documentazione completa in REPORT_GESTISCI_ORDINI_SETUP.txt
+
+### 📊 FLUSSO CORRETTO:
+1. **Nuovo ordine** → RiepilogoOrdinePage → stato 'sospeso' → tab "Creati"
+2. **Conferma ordine** → confermaRicezioneOrdine() → giacenze aggiornate → stato 'archiviato' → tab "Archiviati"
+3. **Eliminazione** → handleEliminaOrdineStorico() → rimozione database + UI
+
+### 🎯 SETUP FINALE:
+- **Tab attivi:** Solo "Creati" e "Archiviati" (2 tab)
+- **Stati validi:** 'sospeso', 'inviato', 'ricevuto', 'archiviato'
+- **Feature flag:** ORDINI_CONFIRM_IN_CREATI abilitato
+- **Giacenze:** Aggiornamento automatico su conferma
+
+================================================================================
 🎨 ULTERIORI FINITURE - DIAGNOSI
 ================================================================================
 
@@ -924,5 +954,101 @@ style={{
 `feat(ui): standardizza bottone "CONFERMA ORDINE" (size ≥44pt, right align, font CTA)`
 
 ➡️ **PROSSIMO STEP:** Test e verifica finale
+
+================================================================================
+🔧 FINITURE NAVBAR 2 - PULSANTE STANDARD MOBILE
+================================================================================
+
+📅 Data Ottimizzazione: 26 Settembre 2025, 15:48
+🎯 Obiettivo: Trasformare pulsante verde in CTA standard mobile (no icon, single-line)
+
+### 🔍 PROBLEMI IDENTIFICATI:
+
+**PULSANTE NON STANDARD MOBILE:**
+- ❌ **Icona presente**: SVG check 18px non necessaria per CTA mobile
+- ❌ **Gap per icona**: 6px spazio sprecato tra icona e testo
+- ❌ **Larghezza insufficiente**: 120px poteva causare wrap del testo
+- ❌ **Complessità**: Layout flex con icona + span invece di testo diretto
+
+### ✅ SOLUZIONE IMPLEMENTATA:
+
+**PULSANTE STANDARD MOBILE:**
+```tsx
+// PRIMA (CON ICONA):
+<button style={{ gap: '6px', minWidth: '120px' }}>
+  <div className="icon" style={{ width: '18px', height: '18px' }}>
+    [SVG Check Icon]
+  </div>
+  <span>CONFERMA ORDINE</span>
+</button>
+
+// DOPO (STANDARD MOBILE):
+<button style={{ 
+  minWidth: '140px',
+  padding: '8px 16px',
+  whiteSpace: 'nowrap'
+}}>
+  CONFERMA ORDINE
+</button>
+```
+
+### 🎯 CARATTERISTICHE STANDARD MOBILE:
+
+**RIMOZIONI APPLICATE:**
+- ❌ **Icona rimossa**: Eliminato `<div className="icon">` completo
+- ❌ **Gap rimosso**: Eliminato `gap: '6px'` non più necessario
+- ❌ **Span wrapper**: Testo diretto nel button (più pulito)
+
+**OTTIMIZZAZIONI AGGIUNTE:**
+- ✅ **Single-line garantito**: `whiteSpace: 'nowrap'`
+- ✅ **Larghezza aumentata**: `minWidth: '140px'` (era 120px)
+- ✅ **Padding ottimizzato**: `8px 16px` (era 8px 12px)
+- ✅ **Layout semplificato**: Solo testo centrato
+
+**STANDARD CTA MANTENUTI:**
+- ✅ **Touch target**: `minHeight: '44pt'` confermato
+- ✅ **Tipografia**: `fontSize: '14px', fontWeight: '600'`
+- ✅ **Allineamento**: `marginLeft: 'auto'` (destra navbar)
+- ✅ **Colori**: `var(--accent)` su bianco (contrasto AA)
+- ✅ **Border radius**: `8px` standard CTA
+
+### 📱 RISULTATO FINALE:
+
+**PRIMA:**
+- Icona check + testo "CONFERMA ORDINE"
+- Layout complesso con gap
+- Possibile wrap su schermi piccoli
+
+**DOPO:**
+- Solo testo "CONFERMA ORDINE" su una riga
+- Layout pulito e diretto
+- Garantito no-wrap con whiteSpace
+
+### 📊 MICRO-CHECK ANTI-REGRESSIONE:
+
+**✅ PATTERN STANDARD VERIFICATI:**
+- ✅ `nav-btn nav-btn-primary`: Classi standard mantenute
+- ✅ `mobile-navbar`: Container invariato
+- ✅ Token CSS: `var(--accent)`, `var(--muted)` utilizzati
+- ✅ Touch target: ≥44×44pt garantito
+
+**✅ LAYOUT NAVBAR PRESERVATO:**
+- ✅ Pulsante sinistro "Modifica": Invariato
+- ✅ Pulsante destro: Semplificato e standardizzato
+- ✅ Safe-area handling: Automatico da CSS
+- ✅ Responsive: Funziona su tutti i device
+
+**✅ LOGICA BUSINESS INVARIATA:**
+- ✅ `onClick={handleConferma}`: Mantenuto
+- ✅ `disabled` logic: Mantenuta
+- ✅ Routing e dati: Non toccati
+
+================================================================================
+✅ PULSANTE STANDARD MOBILE COMPLETATO
+
+**COMMIT MESSAGGIO:**
+`feat(ui): pulsante CONFERMA ORDINE standard (no icon, single-line, CTA size, right aligned)`
+
+➡️ **PROSSIMO STEP:** Test finale e verifica
 
 ================================================================================

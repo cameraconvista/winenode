@@ -1,0 +1,216 @@
+================================================================================
+📋 SETUP GESTISCI ORDINI - CONFIGURAZIONE DEFINITIVA
+================================================================================
+
+📅 Data Aggiornamento: 26 Settembre 2025, 16:05
+🎯 Obiettivo: Documentare setup definitivo pagina Gestisci Ordini post-ottimizzazione
+
+================================================================================
+🏗️ ARCHITETTURA SEMPLIFICATA
+================================================================================
+
+### 📊 STRUTTURA TAB:
+**SOLO 2 TAB ATTIVI:**
+1. **"Creati" (inviati)** - Ordini con stato 'sospeso' o 'inviato'
+2. **"Archiviati" (storico)** - Ordini con stato 'archiviato'
+
+**TAB RIMOSSI:**
+- ❌ Tab "Ricevuti" (obsoleto)
+- ❌ Tab "Storico" condizionale (rimosso)
+
+### 🔄 FLUSSO ORDINI CORRETTO:
+
+**CREAZIONE ORDINE:**
+1. Nuovo ordine → Stato: 'sospeso'
+2. Appare in tab "Creati"
+
+**CONFERMA ORDINE:**
+1. Click "Conferma" in tab "Creati"
+2. Aggiornamento giacenze automatico
+3. Stato: 'sospeso' → 'archiviato'
+4. Ordine spostato da "Creati" a "Archiviati"
+
+**ELIMINAZIONE ORDINE:**
+1. Click "Elimina" in qualsiasi tab
+2. Conferma eliminazione
+3. Rimozione da database + UI immediata
+
+================================================================================
+🔧 IMPLEMENTAZIONE TECNICA
+================================================================================
+
+### 📁 FILE COINVOLTI:
+
+**PAGINA PRINCIPALE:**
+- `/src/pages/GestisciOrdiniPage.tsx`
+  - Tab type: `'inviati' | 'archiviati'`
+  - Funzioni: handleConfermaOrdine, handleEliminaOrdineStorico
+  - Layout: 2 tab semplificati
+
+**CONTEXT ORDINI:**
+- `/src/contexts/OrdiniContext.tsx`
+  - Funzione: `confermaRicezioneOrdine` (corretta)
+  - Stati: ordiniInviati, ordiniStorico
+  - Flusso: inviati → archiviati
+
+**COMPONENTI:**
+- `/src/components/orders/OrdineRicevutoCard.tsx`
+  - Usato per ordini archiviati
+  - Pulsante Elimina funzionante
+
+### 🎛️ FEATURE FLAGS ATTIVI:
+
+```typescript
+ORDINI_CONFIRM_IN_CREATI: {
+  enabled: true,
+  description: "Abilita conferma con giacenze su pulsante verde in Ordini Creati"
+}
+```
+
+### 🔄 FUNZIONI PRINCIPALI:
+
+**confermaRicezioneOrdine(ordineId):**
+- Cerca ordine in ordiniInviati O ordiniRicevuti
+- Aggiorna giacenze vini automaticamente
+- Cambia stato a 'archiviato' nel database
+- Rimuove da lista origine
+- Aggiunge a ordiniStorico (archiviati)
+
+**handleEliminaOrdineStorico(ordineId, ordine):**
+- Mostra conferma eliminazione
+- Elimina da database
+- Rimuove da UI immediatamente
+
+================================================================================
+🎯 STATI ORDINI VALIDI
+================================================================================
+
+**DATABASE SUPABASE:**
+- `'sospeso'` - Ordine creato, non ancora inviato
+- `'inviato'` - Ordine confermato e inviato
+- `'ricevuto'` - Ordine ricevuto dal fornitore
+- `'archiviato'` - Ordine completato e archiviato
+
+**MAPPING UI:**
+- Tab "Creati": stati 'sospeso', 'inviato'
+- Tab "Archiviati": stato 'archiviato'
+
+================================================================================
+🧪 WORKFLOW COMPLETO TESTATO
+================================================================================
+
+### ✅ SCENARIO 1: CREAZIONE E CONFERMA
+1. **Crea ordine** → RiepilogoOrdinePage → stato 'sospeso'
+2. **Appare in "Creati"** → GestisciOrdiniPage tab inviati
+3. **Click "Conferma"** → confermaRicezioneOrdine()
+4. **Aggiornamento giacenze** → updateWineInventory()
+5. **Stato → 'archiviato'** → database update
+6. **Spostamento UI** → da "Creati" a "Archiviati"
+
+### ✅ SCENARIO 2: ELIMINAZIONE ARCHIVIATI
+1. **Tab "Archiviati"** → ordini con stato 'archiviato'
+2. **Click "Elimina"** → handleEliminaOrdineStorico()
+3. **Conferma eliminazione** → ConfermaEliminazioneModal
+4. **Eliminazione database** → eliminaOrdineStorico()
+5. **Rimozione UI** → sparisce immediatamente
+
+### ✅ SCENARIO 3: GESTIONE QUANTITÀ
+1. **Modifica quantità** → QuantityPicker
+2. **Conferma modifiche** → aggiornaQuantitaOrdine()
+3. **Archiviazione** → confermaRicezioneOrdine()
+4. **Giacenze aggiornate** → inventory update atomico
+
+================================================================================
+⚠️ PROBLEMI RISOLTI
+================================================================================
+
+### 🐛 PROBLEMA PRINCIPALE RISOLTO:
+**SINTOMO:** Ordini confermati da "Creati" sparivano invece di andare in "Archiviati"
+
+**CAUSA ROOT:** 
+- confermaRicezioneOrdine() cercava ordine solo in ordiniRicevuti
+- Rimuoveva ordine solo da ordiniRicevuti
+- Ordini "Creati" sono in ordiniInviati
+
+**SOLUZIONE IMPLEMENTATA:**
+```typescript
+// PRIMA (PROBLEMATICO):
+const ordine = ordiniRicevuti.find(o => o.id === ordineId);
+setOrdiniRicevuti(prev => prev.filter(o => o.id !== ordineId));
+
+// DOPO (CORRETTO):
+const ordineInviato = ordiniInviati.find(o => o.id === ordineId);
+const ordineRicevuto = ordiniRicevuti.find(o => o.id === ordineId);
+const ordine = ordineInviato || ordineRicevuto;
+
+if (ordineInviato) {
+  setOrdiniInviati(prev => prev.filter(o => o.id !== ordineId));
+} else if (ordineRicevuto) {
+  setOrdiniRicevuti(prev => prev.filter(o => o.id !== ordineId));
+}
+```
+
+### 🧹 PULIZIA CODICE:
+- ✅ Rimossi riferimenti tab "ricevuti" obsoleto
+- ✅ Corretti tutti i tipi TypeScript
+- ✅ Rimosso pulsante tab "storico" condizionale
+- ✅ Semplificata logica di spostamento ordini
+
+================================================================================
+🚀 PERFORMANCE E SICUREZZA
+================================================================================
+
+### 🔒 SICUREZZA:
+- ✅ Idempotency guard per doppi click
+- ✅ Audit trail completo per tutte le operazioni
+- ✅ Controllo duplicazioni negli archiviati
+- ✅ Transazioni atomiche per giacenze
+
+### ⚡ PERFORMANCE:
+- ✅ Update ottimistico UI
+- ✅ Batch operations per giacenze
+- ✅ Logging strutturato per debug
+- ✅ Feature flags per rollback rapido
+
+================================================================================
+📊 METRICHE E MONITORAGGIO
+================================================================================
+
+### 📈 AUDIT EVENTS:
+- `CONFERMA_RICEZIONE_START` - Inizio processo
+- `INVENTORY_UPDATE` - Aggiornamento giacenze
+- `CONFERMA_RICEZIONE_SUCCESS` - Completamento successo
+- `CONFERMA_RICEZIONE_ERROR` - Errori processo
+- `CONFERMA_RICEZIONE_DUPLICATE` - Duplicazioni evitate
+
+### 🎯 KPI MONITORATI:
+- Tempo processo conferma ordine
+- Successo rate aggiornamento giacenze
+- Duplicazioni evitate
+- Errori database
+
+================================================================================
+🔮 ROADMAP FUTURA
+================================================================================
+
+### 🎯 MIGLIORAMENTI PIANIFICATI:
+1. **Notifiche push** per conferme ordini
+2. **Batch operations** per ordini multipli
+3. **Export PDF** ordini archiviati
+4. **Dashboard analytics** ordini
+
+### 🛡️ BACKUP E RECOVERY:
+- Backup automatico pre-operazioni critiche
+- Recovery point per rollback giacenze
+- Audit trail per compliance
+
+================================================================================
+✅ SETUP DEFINITIVO COMPLETATO
+
+**STATUS:** 🟢 STABILE E FUNZIONANTE
+**FLUSSO:** Creati → Archiviati (corretto)
+**ELIMINAZIONE:** Funzionante su tutti i tab
+**GIACENZE:** Aggiornamento automatico
+**UI:** Pulita e semplificata (2 tab)
+
+================================================================================
