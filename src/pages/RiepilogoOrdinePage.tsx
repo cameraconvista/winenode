@@ -241,7 +241,7 @@ export default function RiepilogoOrdinePage() {
             WebkitMask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat',
             mask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M5 13l4 4L19 7\'/%3E%3C/svg%3E") center/contain no-repeat'
           }}></div>
-          <span className="label">CONFERMA ORDINE</span>
+          <span className="label" style={{ display: 'block !important' }}>CONFERMA ORDINE</span>
         </button>
       </nav>
     </div>
