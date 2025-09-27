@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { storage } from './storage';
 import { validateEnvironment } from './config/env';
+import winesRouter from './routes/wines';
 
 const app = express();
 
@@ -29,69 +30,10 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// API Routes
-app.get('/api/wines', async (req, res) => {
-  try {
-    const wines = await storage.getWines();
-    res.json(wines);
-  } catch (error) {
-    console.error('Error fetching wines:', error);
-    res.status(500).json({ error: 'Errore nel caricamento dei vini' });
-  }
-});
+// Routes
+app.use('/api/wines', winesRouter);
 
-app.get('/api/wines/:id', async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const wine = await storage.getWineById(id);
-    if (!wine) {
-      return res.status(404).json({ error: 'Vino non trovato' });
-    }
-    res.json(wine);
-  } catch (error) {
-    console.error('Error fetching wine:', error);
-    res.status(500).json({ error: 'Errore nel caricamento del vino' });
-  }
-});
-
-app.post('/api/wines', async (req, res) => {
-  try {
-    const wine = await storage.createWine(req.body);
-    res.status(201).json(wine);
-  } catch (error) {
-    console.error('Error creating wine:', error);
-    res.status(500).json({ error: 'Errore nella creazione del vino' });
-  }
-});
-
-app.put('/api/wines/:id', async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const wine = await storage.updateWine(id, req.body);
-    if (!wine) {
-      return res.status(404).json({ error: 'Vino non trovato' });
-    }
-    res.json(wine);
-  } catch (error) {
-    console.error('Error updating wine:', error);
-    res.status(500).json({ error: 'Errore nell\'aggiornamento del vino' });
-  }
-});
-
-app.delete('/api/wines/:id', async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const deleted = await storage.deleteWine(id);
-    if (!deleted) {
-      return res.status(404).json({ error: 'Vino non trovato' });
-    }
-    res.status(204).send();
-  } catch (error) {
-    console.error('Error deleting wine:', error);
-    res.status(500).json({ error: 'Errore nella cancellazione del vino' });
-  }
-});
-
+// Suppliers API
 app.get('/api/suppliers', async (req, res) => {
   try {
     const suppliers = await storage.getSuppliers();
@@ -99,36 +41,6 @@ app.get('/api/suppliers', async (req, res) => {
   } catch (error) {
     console.error('Error fetching suppliers:', error);
     res.status(500).json({ error: 'Errore nel caricamento dei fornitori' });
-  }
-});
-
-app.get('/api/wines/type/:type', async (req, res) => {
-  try {
-    const wines = await storage.getWinesByType(req.params.type);
-    res.json(wines);
-  } catch (error) {
-    console.error('Error fetching wines by type:', error);
-    res.status(500).json({ error: 'Errore nel caricamento dei vini per tipo' });
-  }
-});
-
-app.get('/api/wines/supplier/:supplier', async (req, res) => {
-  try {
-    const wines = await storage.getWinesBySupplier(req.params.supplier);
-    res.json(wines);
-  } catch (error) {
-    console.error('Error fetching wines by supplier:', error);
-    res.status(500).json({ error: 'Errore nel caricamento dei vini per fornitore' });
-  }
-});
-
-app.get('/api/wines/alerts/low-stock', async (req, res) => {
-  try {
-    const wines = await storage.getLowStockWines();
-    res.json(wines);
-  } catch (error) {
-    console.error('Error fetching low stock wines:', error);
-    res.status(500).json({ error: 'Errore nel caricamento degli avvisi scorte' });
   }
 });
 
