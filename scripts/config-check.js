@@ -162,14 +162,14 @@ function checkEnvironmentVariables() {
     
     // Controlla variabili mancanti
     Object.keys(envExampleVars).forEach(key => {
-        if (!envVars.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(envVars, key)) {
             missing.push(key);
         }
     });
     
     // Controlla variabili extra
     Object.keys(envVars).forEach(key => {
-        if (!envExampleVars.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(envExampleVars, key)) {
             extra.push(key);
         }
     });
