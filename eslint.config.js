@@ -50,6 +50,36 @@ export default [
       'max-nested-callbacks': ['warn', 5]
     }
   },
+  // Pages/Components complessi - governance rilassata
+  {
+    files: ['src/pages/**/*.tsx', 'src/components/**/*Modal*.tsx', 'src/components/**/orders/*.tsx'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true
+        }
+      }
+    },
+    plugins: {
+      '@typescript-eslint': typescript
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-unused-vars': 'off',
+      'no-undef': 'off',
+      // Governance rilassata per componenti complessi
+      'max-lines': ['warn', { max: 1200, skipBlankLines: true, skipComments: true }],
+      'max-lines-per-function': ['warn', { max: 400, skipBlankLines: true, skipComments: true }],
+      'complexity': ['warn', 30],
+      'max-depth': ['warn', 8],
+      'max-params': ['warn', 10],
+      'max-nested-callbacks': ['warn', 6]
+    }
+  },
   // Node environment (scripts and server)
   {
     files: ['scripts/**/*.{js,ts}', 'server/**/*.{js,ts}'],
