@@ -234,7 +234,7 @@ export default function ManualWineInsertPage() {
               </svg>
             </button>
             <img 
-                src="/logo 2 CCV.png" 
+                src="/logo1.png" 
                 alt="WINENODE" 
                 className="h-32 w-auto object-contain" 
               />

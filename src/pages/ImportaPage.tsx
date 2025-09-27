@@ -27,7 +27,7 @@ export default function ImportaPage() {
             </button>
 
             <img
-              src="/logo 2 CCV.png"
+              src="/logo1.png"
               alt="WINENODE"
               className="h-24 w-auto object-contain"
             />

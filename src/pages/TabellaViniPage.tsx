@@ -105,7 +105,7 @@ export default function TabellaViniPage() {
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-bold text-cream">TABELLA VINI</h1>
               <img
-                src="/logo2.png"
+                src="/logo1.png"
                 alt="WINENODE"
                 className="h-12 w-auto object-contain"
               />
