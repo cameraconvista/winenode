@@ -4,11 +4,16 @@ import { storage } from './storage';
 import winesRouter from './routes/wines';
 import googleSheetsRouter from './routes/googleSheets';
 import { errorHandler, notFoundHandler, asyncHandler } from './middleware/errorHandler';
+import { requestCompatibilityMiddleware, responseCompatibilityMiddleware } from './utils/compatibility';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Compatibility middleware per mapping supplier/fornitore
+app.use(requestCompatibilityMiddleware);
+app.use(responseCompatibilityMiddleware);
 
 // Health Check
 app.get('/api/health', asyncHandler(async (req, res) => {
