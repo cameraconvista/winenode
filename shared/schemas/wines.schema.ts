@@ -9,7 +9,7 @@ export const wines = pgTable('wines', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   type: varchar('type', { length: 20 }).notNull(), // 'rosso', 'bianco', 'bollicine', 'rosato'
-  supplier: varchar('supplier', { length: 255 }).notNull(),
+  supplier: varchar('supplier', { length: 255 }).notNull(), // TODO: Normalizzare a 'fornitore' in fase futura
   inventory: integer('inventory').notNull().default(3),
   minStock: integer('min_stock').notNull().default(2),
   price: decimal('price', { precision: 10, scale: 2 }).notNull(),
@@ -30,6 +30,14 @@ export type Wine = typeof wines.$inferSelect;
  * Campi opzionali e default gestiti automaticamente da Drizzle
  */
 export type InsertWine = typeof wines.$inferInsert;
+
+/**
+ * Alias per compatibilità naming - PREPARAZIONE MIGRAZIONE FUTURA
+ * @deprecated Usa 'supplier' per coerenza con schema database
+ * Questi alias facilitano la migrazione graduale supplier/fornitore
+ */
+export type WineSupplierField = Wine['supplier'];
+export type InsertWineSupplierField = InsertWine['supplier'];
 
 // Schema di validazione Zod per Wine
 export const WineSchema = z.object({
