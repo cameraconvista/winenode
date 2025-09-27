@@ -1,64 +1,68 @@
 # REPORT ULTIMA MODIFICA - WINENODE
 
-**Data:** 28/09/2025 01:35  
-**Sessione:** FASE 2 - OTTIMIZZAZIONE SHARED/  
-**Durata:** ~8 minuti  
-**Backup:** backup_28092025_012745.tar.gz
+**Data:** 28/09/2025 01:46  
+**Sessione:** FASE 2 - src/ (Modalità NO-SUPABASE)  
+**Durata:** ~1 minuto  
+**Backup:** backup_28092025_014622.tar.gz
 
 ---
 
 ## 🎯 OBIETTIVO COMPLETATO
 
-Ottimizzazione completa della cartella `shared/` con modularizzazione schema, seguendo il piano definito in `DOCS/PIANO_AZIONE_SHARED.md`. 5 azioni implementate con successo (SH-05, SH-07, SH-08, SH-04, SH-01), 3 rimandate per accesso database.
+Pulizia cartella `src/` in modalità NO-SUPABASE, rimozione orfani confermati da audit. Operazione completata senza modifiche (file target già assenti). Preparata documentazione completa per migrazioni database Supabase pendenti.
 
 ---
 
 ## 📊 RISULTATI QUANTITATIVI
 
-### Modularizzazione Schema
-- **PRIMA**: 1 file schema.ts (102 righe)
-- **DOPO**: 4 file modulari (133 righe totali, +30%)
-- **STRUTTURA**: wines.schema.ts (63), googleSheets.schema.ts (41), index.ts (22), schema.ts (7)
+### Pulizia src/ (NO-SUPABASE)
+- **File target**: 3 orfani da audit (SearchModal.tsx, WineCard.tsx, wheel-picker.css)
+- **File rimossi**: 0 (già assenti dal repository)
+- **Byte risparmiati**: 0 (cleanup già eseguito)
+- **Regressioni**: 0 (typecheck + build verdi)
 
-### Miglioramenti Implementati
-- **JSDoc completa**: Documentazione tutti i tipi
-- **Validazioni Zod**: Runtime + compile-time safety
-- **Drizzle aggiornato**: Versione 0.31.5 (latest)
-- **Zero regressioni**: Tutti i test verdi
+### Documentazione Supabase Preparata
+- **TODO_SUPABASE.md**: Piano migrazioni DB pendenti
+- **DB_MIGRATIONS_SCRIPTS.sql**: Script SQL completi
+- **DB_MIGRATION_GUIDE.md**: Guida esecuzione amministratore
+- **LOG_DB_MIGRATIONS.txt**: Template documentazione
 
 ---
 
-## 🏗️ ARCHITETTURA FINALE
+## 🏗️ STATO REPOSITORY
 
+### src/ - Pulizia Completata
 ```
-shared/ (da 1 → 4 file modulari)
-├── schema.ts (7 righe) - Backward compatibility layer
-├── schemas/
-│   ├── index.ts (22 righe) - Re-export centralizzato
-│   ├── wines.schema.ts (63 righe) - Schema vini + validazioni
-│   └── googleSheets.schema.ts (41 righe) - Schema Google Sheets
-└── NAMING_MIGRATION_PLAN.md - Piano migrazione supplier/fornitore
+✅ Repository già pulito dagli orfani target
+✅ Nessuna modifica necessaria
+✅ Qualità codice mantenuta (typecheck + build verdi)
+```
+
+### DOCS/ - Documentazione Supabase
+```
+DOCS/
+├── TODO_SUPABASE.md - Piano migrazioni DB pendenti
+├── DB_MIGRATIONS_SCRIPTS.sql - Script SQL completi  
+├── DB_MIGRATION_GUIDE.md - Guida amministratore
+├── LOG_DB_MIGRATIONS.txt - Template esecuzione
+└── LOG_SRC_PHASE2.txt - Log sessione NO-SUPABASE
 ```
 
 ---
 
 ## ✅ AZIONI IMPLEMENTATE
 
-### FASE 2A - DX & Performance (Rischio Basso)
-- **SH-05**: ✅ JSDoc Documentazione Tipi
-- **SH-06**: ⚠️ Indici Database Performance (saltato - richiede accesso DB)
-- **SH-07**: ✅ Drizzle Kit/ORM Latest (0.31.4 → 0.31.5)
+### FASE 2 - src/ Pulizia (NO-SUPABASE)
+- **Audit orfani**: ✅ Verificati 3 file target (SearchModal.tsx, WineCard.tsx, wheel-picker.css)
+- **Rimozione**: ✅ Completata (file già assenti, nessuna azione necessaria)
+- **Qualità**: ✅ Mantenuta (typecheck + build verdi)
+- **Documentazione**: ✅ LOG_SRC_PHASE2.txt creato
 
-### FASE 2B - Validazioni (Rischio Medio)
-- **SH-02**: ⚠️ Enum per Wine.type (saltato - richiede migrazione DB)
-- **SH-03**: ⚠️ Check Constraints (saltato - richiede migrazione DB)
-- **SH-08**: ✅ Schema Validation Runtime (Zod integrato)
-
-### FASE 2C - Refactoring Strutturale
-- **SH-04**: ✅ Split Schema in Moduli (4 file modulari)
-
-### FASE 2D - Naming (Approccio Safe)
-- **SH-01**: ✅ Preparazione Naming (doc + alias, no-breaking)
+### Preparazione Migrazioni Supabase
+- **TODO_SUPABASE.md**: ✅ Piano completo migrazioni DB pendenti
+- **Script SQL**: ✅ DB_MIGRATIONS_SCRIPTS.sql (SH-06, SH-02, SH-03)
+- **Guida esecuzione**: ✅ DB_MIGRATION_GUIDE.md per amministratore
+- **Template log**: ✅ LOG_DB_MIGRATIONS.txt per documentazione
 
 ---
 

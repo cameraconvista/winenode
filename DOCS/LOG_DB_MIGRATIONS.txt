@@ -1,0 +1,133 @@
+=== LOG MIGRAZIONI DATABASE SUPABASE ===
+Data: 28/09/2025 01:41
+Database: WineNode Supabase PostgreSQL
+Ambito: SH-06 (Indici), SH-02 (Enum), SH-03 (Constraints)
+
+STATO: ⚠️ PREPARAZIONE - RICHIEDE ESECUZIONE MANUALE
+Script SQL: DOCS/DB_MIGRATIONS_SCRIPTS.sql
+
+=== PRE-REQUISITI ===
+□ Accesso amministrativo database Supabase
+□ Backup completo database (schema + dati)
+□ Connessione psql o console Supabase
+□ Verifica zero traffico critico durante migrazione
+
+=== BACKUP DATABASE ===
+Data backup: [DA COMPILARE]
+File schema: db_backup_schema_20250928_0141.sql
+File dati: db_backup_data_20250928_0141.sql
+Dimensione: [DA COMPILARE]
+Verifica integrità: [DA COMPILARE]
+
+=== SH-06 - INDICI PERFORMANCE ===
+STATUS: [DA COMPILARE]
+INIZIO: [DA COMPILARE]
+FINE: [DA COMPILARE]
+
+Indici creati:
+□ idx_wines_supplier ON wines(supplier)
+□ idx_wines_type ON wines(type)  
+□ idx_wines_user_id ON wines(user_id)
+
+Performance test:
+- Query supplier: [TEMPO PRIMA] → [TEMPO DOPO]
+- Query type: [TEMPO PRIMA] → [TEMPO DOPO]
+- Query user_id: [TEMPO PRIMA] → [TEMPO DOPO]
+
+Errori: [DA COMPILARE]
+Note: [DA COMPILARE]
+
+=== SH-02 - ENUM WINE_TYPE ===
+STATUS: [DA COMPILARE]
+INIZIO: [DA COMPILARE]
+FINE: [DA COMPILARE]
+
+Verifica dati esistenti:
+- Totale righe wines: [DA COMPILARE]
+- Valori type esistenti: [DA COMPILARE]
+- Record non conformi: [DA COMPILARE]
+
+⚠️ ATTENZIONE: Se record non conformi > 0, STOP e documenta
+
+Migrazione:
+□ Enum wine_type creato
+□ Colonna type migrata da varchar a enum
+□ Verifica NOT NULL constraint
+□ Test inserimento/aggiornamento
+
+Errori: [DA COMPILARE]
+Note: [DA COMPILARE]
+
+=== SH-03 - CHECK CONSTRAINTS ===
+STATUS: [DA COMPILARE]
+INIZIO: [DA COMPILARE]
+FINE: [DA COMPILARE]
+
+Verifica dati esistenti:
+- Totale righe: [DA COMPILARE]
+- Price <= 0: [DA COMPILARE]
+- Inventory < 0: [DA COMPILARE]
+- MinStock < 0: [DA COMPILARE]
+
+⚠️ ATTENZIONE: Se record non conformi > 0, STOP e documenta
+
+Constraints creati:
+□ chk_wines_price_positive (price > 0)
+□ chk_wines_inventory_non_negative (inventory >= 0)
+□ chk_wines_min_stock_non_negative (min_stock >= 0)
+
+Test validazione:
+□ Inserimento valori validi: OK
+□ Inserimento valori non validi: RESPINTO
+□ Aggiornamento esistenti: OK
+
+Errori: [DA COMPILARE]
+Note: [DA COMPILARE]
+
+=== POST-CHECK VERIFICA ===
+STATUS: [DA COMPILARE]
+
+Test CRUD Server:
+□ GET /api/wines: [RISULTATO]
+□ POST /api/wines: [RISULTATO]
+□ PUT /api/wines/:id: [RISULTATO]
+□ DELETE /api/wines/:id: [RISULTATO]
+□ POST /api/google-sheet/import: [RISULTATO]
+
+Test Build:
+□ npm run typecheck: [RISULTATO]
+□ npm run build: [RISULTATO]
+□ Health check /api/health: [RISULTATO]
+
+Test Frontend:
+□ HomePage caricamento vini: [RISULTATO]
+□ Filtri per tipo: [RISULTATO]
+□ Creazione ordine: [RISULTATO]
+
+=== ROLLBACK PLAN ===
+In caso di problemi:
+1. Eseguire script rollback in DB_MIGRATIONS_SCRIPTS.sql
+2. Ripristinare backup database
+3. Verificare funzionalità app
+4. Documentare causa problema
+
+=== RISULTATO FINALE ===
+STATUS: [DA COMPILARE]
+DURATA TOTALE: [DA COMPILARE]
+DOWNTIME: [DA COMPILARE]
+RECORD MIGRATI: [DA COMPILARE]
+PERFORMANCE MIGLIORATA: [DA COMPILARE]
+
+PROSSIMI PASSI:
+□ Monitoraggio performance query
+□ Verifica stabilità 24h
+□ Aggiornamento documentazione schema
+□ Pianificazione prossime ottimizzazioni
+
+=== NOTE TECNICHE ===
+[DA COMPILARE - Eventuali osservazioni, problemi risolti, lessons learned]
+
+=== FIRMA ESECUZIONE ===
+Eseguito da: [DA COMPILARE]
+Data/Ora: [DA COMPILARE]
+Approvato da: [DA COMPILARE]
