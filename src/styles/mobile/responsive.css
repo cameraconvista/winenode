@@ -8,7 +8,7 @@
   }
   
   .app-topbar .logo-wrap {
-    padding-top: calc(env(safe-area-inset-top) + 4px) !important;
+    padding-top: calc(var(--safe-top) + 4px) !important;
   }
   
   .app-topbar .logo-wrap img {
@@ -17,7 +17,7 @@
   
   /* Toolbar ottimizzata per mobile */
   .bottom-toolbar {
-    padding: 6px calc(8px + env(safe-area-inset-right)) 6px calc(8px + env(safe-area-inset-left)) !important;
+    padding: 6px calc(8px + var(--safe-right)) 6px calc(8px + var(--safe-left)) !important;
     gap: 6px !important; /* ridotto per schermi piccoli */
   }
   
@@ -112,7 +112,7 @@
   
   /* Toolbar bottom tablet */
   .bottom-toolbar {
-    padding: 8px calc(16px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)) !important;
+    padding: 8px calc(16px + var(--safe-right)) calc(8px + var(--safe-bottom)) calc(16px + var(--safe-left)) !important;
     gap: 8px !important;
   }
   

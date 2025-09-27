@@ -34,7 +34,7 @@
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
-    z-index: 9999;
+    z-index: var(--z-toast);
     white-space: nowrap;
   }
 }

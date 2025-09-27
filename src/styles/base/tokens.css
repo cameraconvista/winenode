@@ -30,4 +30,20 @@
   --brand-primary: rgb(84, 17, 17);    /* #541111 in RGB per iOS/Android */
   --brand-bg: rgb(255, 249, 220);      /* #fff9dc in RGB per iOS/Android */
   --brand-surface: rgb(255, 238, 193); /* #ffeec1 in RGB per iOS/Android */
+
+  /* Safe-area centralizzate (AZ-003 DRY) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* Z-index stack semantico (AZ-008) */
+  --z-base: 10;        /* Contenuto base */
+  --z-header: 15;      /* Header mobile */
+  --z-navbar: 20;      /* Navbar bottom */
+  --z-tabs: 90;        /* Tabs gestisci ordini */
+  --z-modal: 100;      /* Modali e overlay */
+  --z-toolbar: 150;    /* Toolbar principale */
+  --z-topbar: 200;     /* Header principale */
+  --z-toast: 9999;     /* Notifiche e toast */
 }

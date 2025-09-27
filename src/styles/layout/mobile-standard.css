@@ -22,7 +22,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 15; /* Sotto navbar (20), sopra content (10) */
+  z-index: var(--z-header); /* Sotto navbar, sopra content */
   background: var(--bg);
   /* RIMOZIONE ARTEFATTI: nessun bordo, ombra, separatore */
   border: none !important;
@@ -45,10 +45,10 @@
 
 .header-content {
   /* SAFE-AREA ADATTIVA + 8pt */
-  padding-top: calc(env(safe-area-inset-top, 0px) + 8pt);
+  padding-top: calc(var(--safe-top) + 8pt);
   padding-bottom: 8pt;
-  padding-left: calc(16pt + env(safe-area-inset-left, 0px));
-  padding-right: calc(16pt + env(safe-area-inset-right, 0px));
+  padding-left: calc(16pt + var(--safe-left));
+  padding-right: calc(16pt + var(--safe-right));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,12 +74,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10; /* Sotto header e navbar */
+  z-index: var(--z-base); /* Sotto header e navbar */
   /* PADDING DINAMICO ADATTIVO per header e navbar */
-  /* Header: env(safe-area-inset-top) + 8pt + 44-56pt = ~60pt */
-  padding-top: calc(env(safe-area-inset-top, 0px) + 60pt);
-  /* Navbar: env(safe-area-inset-bottom) + 12pt + 56pt - 8pt offset = ~60pt adattivo */
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 60pt);
+  /* Header: var(--safe-top) + 8pt + 44-56pt = ~60pt */
+  padding-top: calc(var(--safe-top) + 60pt);
+  /* Navbar: var(--safe-bottom) + 12pt + 56pt - 8pt offset = ~60pt adattivo */
+  padding-bottom: calc(var(--safe-bottom) + 60pt);
   overflow: hidden;
   /* ZERO gap: nessun margin aggiuntivo */
   margin: 0 !important;
@@ -111,7 +111,7 @@
   bottom: -8pt; /* SPOSTA NAVBAR PIÙ IN BASSO di 8pt */
   left: 0;
   right: 0;
-  z-index: 20; /* Sopra header (15) e content (10) */
+  z-index: var(--z-navbar); /* Sopra header e content */
   background: var(--bg);
   /* RIMOZIONE ARTEFATTI: nessun bordo, gap, separatore */
   border: none !important;
@@ -121,12 +121,12 @@
   min-height: 56pt;
   max-height: 64pt;
   /* SAFE-AREA ADATTIVA: FaceID vs non-FaceID */
-  /* iPhone con FaceID: env(safe-area-inset-bottom) + 12pt */
+  /* iPhone con FaceID: var(--safe-bottom) + 12pt */
   /* iPhone 8/SE/Android: 12pt fissi */
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
+  padding-bottom: calc(var(--safe-bottom) + 12pt);
   padding-top: 6pt;
-  padding-left: calc(12pt + env(safe-area-inset-left, 0px));
-  padding-right: calc(12pt + env(safe-area-inset-right, 0px));
+  padding-left: calc(12pt + var(--safe-left));
+  padding-right: calc(12pt + var(--safe-right));
   /* Layout grid per pulsanti */
   display: grid;
   grid-template-columns: auto auto auto 1fr;
@@ -352,12 +352,12 @@
   .mobile-navbar {
     min-height: 52pt;
     /* Clearance ridotta per dispositivi bassi */
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10pt);
+    padding-bottom: calc(var(--safe-bottom) + 10pt);
   }
   
   .mobile-content {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 56pt);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 54pt);
+    padding-top: calc(var(--safe-top) + 56pt);
+    padding-bottom: calc(var(--safe-bottom) + 54pt);
   }
 }
 
@@ -369,12 +369,12 @@
   
   .mobile-navbar {
     min-height: 48pt;
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10pt);
+    padding-bottom: calc(var(--safe-bottom) + 10pt);
   }
   
   .mobile-content {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 50pt);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 50pt);
+    padding-top: calc(var(--safe-top) + 50pt);
+    padding-bottom: calc(var(--safe-bottom) + 50pt);
   }
 }
 
@@ -382,10 +382,10 @@
 @media (min-height: 800px) {
   .mobile-navbar {
     /* Clearance ottimale per dispositivi grandi */
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
+    padding-bottom: calc(var(--safe-bottom) + 12pt);
   }
   
   .mobile-content {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 60pt);
+    padding-bottom: calc(var(--safe-bottom) + 60pt);
   }
 }

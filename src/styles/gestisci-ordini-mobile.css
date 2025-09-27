@@ -15,10 +15,10 @@
 .gestisci-ordini-header {
   flex-shrink: 0;
   padding: 16px;
-  padding-top: max(env(safe-area-inset-top), 0px) + 16px;
+  padding-top: max(var(--safe-top), 0px) + 16px;
   background: #fff9dc;
   border-bottom: 1px solid #e2d6aa;
-  z-index: 100;
+  z-index: var(--z-modal);
 }
 
 /* Tabs fissi */
@@ -26,7 +26,7 @@
   flex-shrink: 0;
   padding: 16px 16px 0 16px;
   background: #fff9dc;
-  z-index: 90;
+  z-index: var(--z-tabs);
 }
 
 /* Area contenuto scrollabile */
@@ -35,7 +35,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 16px;
-  padding-bottom: max(env(safe-area-inset-bottom), 0px) + 16px;
+  padding-bottom: max(var(--safe-bottom), 0px) + 16px;
   
   /* Ottimizzazioni scroll mobile */
   -webkit-overflow-scrolling: touch;
@@ -110,7 +110,7 @@
 @media (max-height: 600px) {
   /* iPhone 8/SE ottimizzazioni */
   .gestisci-ordini-header {
-    padding-top: max(env(safe-area-inset-top), 0px) + 12px;
+    padding-top: max(var(--safe-top), 0px) + 12px;
     padding-bottom: 12px;
   }
   
@@ -126,7 +126,7 @@
 @media (orientation: landscape) and (max-height: 500px) {
   /* Landscape compatto */
   .gestisci-ordini-header {
-    padding-top: max(env(safe-area-inset-top), 0px) + 8px;
+    padding-top: max(var(--safe-top), 0px) + 8px;
     padding-bottom: 8px;
   }
   
@@ -142,11 +142,11 @@
 @media (min-height: 800px) {
   /* iPhone 15 Pro Max ottimizzazioni */
   .gestisci-ordini-header {
-    padding-top: max(env(safe-area-inset-top), 0px) + 20px;
+    padding-top: max(var(--safe-top), 0px) + 20px;
   }
   
   .gestisci-ordini-content {
-    padding-bottom: max(env(safe-area-inset-bottom), 0px) + 20px;
+    padding-bottom: max(var(--safe-bottom), 0px) + 20px;
   }
 }
 

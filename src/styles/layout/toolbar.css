@@ -3,12 +3,12 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(env(safe-area-inset-bottom) - 8px);
-  z-index: 150; /* SOTTO L'HEADER (z-index 200) MA SOPRA IL CONTENUTO */
+  bottom: calc(var(--safe-bottom) - 8px);
+  z-index: var(--z-toolbar); /* SOTTO L'HEADER MA SOPRA IL CONTENUTO */
   background: var(--brand-bg);
   background: var(--bg);
   border-top: 1px solid var(--border);
-  padding: 6px calc(12px + env(safe-area-inset-right)) 6px calc(12px + env(safe-area-inset-left));
+  padding: 6px calc(12px + var(--safe-right)) 6px calc(12px + var(--safe-left));
   display: grid;
   grid-template-columns: auto auto auto 1fr; /* UI POLISH v11: primi 3 auto, ultimo occupa spazio rimanente */
   gap: 6px; /* RIDOTTO: da 10px a 6px per compattare i primi 3 pulsanti */
