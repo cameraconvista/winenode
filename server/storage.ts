@@ -2,7 +2,7 @@ import { wines, googleSheetLinks, type Wine, type InsertWine, type GoogleSheetLi
 import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
 
-export interface IStorage {
+interface IStorage {
   getWines(): Promise<Wine[]>;
   getWineById(id: number): Promise<Wine | undefined>;
   createWine(insertWine: InsertWine): Promise<Wine>;
@@ -19,7 +19,7 @@ export interface IStorage {
   deleteGoogleSheetLink(userId: string): Promise<boolean>;
 }
 
-export class DatabaseStorage implements IStorage {
+class DatabaseStorage implements IStorage {
   async getWines(): Promise<Wine[]> {
     return await db.select().from(wines);
   }
