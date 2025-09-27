@@ -1,4 +1,5 @@
 import { pgTable, serial, integer, decimal, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { z } from 'zod';
 
 /**
  * Tabella wines - Catalogo vini con inventario e informazioni fornitore
@@ -53,3 +54,49 @@ export type GoogleSheetLink = typeof googleSheetLinks.$inferSelect;
  * Timestamp gestiti automaticamente dal database
  */
 export type InsertGoogleSheetLink = typeof googleSheetLinks.$inferInsert;
+
+// Schema di validazione Zod per Wine
+export const WineSchema = z.object({
+  id: z.number().int().positive(),
+  name: z.string().min(1).max(255),
+  type: z.enum(['rosso', 'bianco', 'bollicine', 'rosato']),
+  supplier: z.string().min(1).max(255),
+  inventory: z.number().int().min(0),
+  minStock: z.number().int().min(0),
+  price: z.string().regex(/^\d+(\.\d{1,2})?$/, 'Prezzo deve essere un numero decimale valido'),
+  vintage: z.string().max(10).nullable(),
+  region: z.string().max(255).nullable(),
+  description: z.string().max(1000).nullable(),
+  userId: z.string().max(255).nullable(),
+});
+
+// Schema di validazione Zod per InsertWine
+export const InsertWineSchema = z.object({
+  name: z.string().min(1, 'Nome è obbligatorio').max(255),
+  type: z.enum(['rosso', 'bianco', 'bollicine', 'rosato'], {
+    message: 'Tipo deve essere: rosso, bianco, bollicine o rosato'
+  }),
+  supplier: z.string().min(1, 'Fornitore è obbligatorio').max(255),
+  inventory: z.number().int().min(0, 'Inventario non può essere negativo').default(3),
+  minStock: z.number().int().min(0, 'Stock minimo non può essere negativo').default(2),
+  price: z.string().regex(/^\d+(\.\d{1,2})?$/, 'Prezzo deve essere un numero decimale valido'),
+  vintage: z.string().max(10).nullable().optional(),
+  region: z.string().max(255).nullable().optional(),
+  description: z.string().max(1000).nullable().optional(),
+  userId: z.string().max(255).nullable().optional(),
+});
+
+// Schema di validazione Zod per GoogleSheetLink
+export const GoogleSheetLinkSchema = z.object({
+  id: z.number().int().positive(),
+  userId: z.string().min(1).max(255),
+  sheetUrl: z.string().url('URL Google Sheet non valido').max(1000),
+  createdAt: z.date().nullable(),
+  updatedAt: z.date().nullable(),
+});
+
+// Schema di validazione Zod per InsertGoogleSheetLink
+export const InsertGoogleSheetLinkSchema = z.object({
+  userId: z.string().min(1, 'User ID è obbligatorio').max(255),
+  sheetUrl: z.string().url('URL Google Sheet non valido').max(1000),
+});
