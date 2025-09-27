@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.recovery/
+Backup_Automatico/
+*.config.js
+*.config.ts

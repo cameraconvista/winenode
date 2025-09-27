@@ -174,7 +174,10 @@ export default function FornitoriPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h5 className="text-sm font-medium text-cream uppercase">
-                            {supplier.fornitore.toUpperCase()}
+                            {(supplier as any)?.fornitore?.toUpperCase?.() 
+                              ?? (supplier as any)?.name?.toUpperCase?.() 
+                              ?? (supplier as any)?.ragioneSociale?.toUpperCase?.() 
+                              ?? "FORNITORE"}
                           </h5>
                         </div>
                         <div className="p-1.5 text-gray-500 rounded-md">

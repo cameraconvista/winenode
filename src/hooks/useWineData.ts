@@ -161,7 +161,7 @@ export function useWineData() {
         .eq('vini.user_id', getUserId());
 
       const giacenze = new Map(
-        (dbGiacenze || []).map(g => [g.vini?.nome_vino?.trim().toLowerCase(), g.giacenzaa || 0])
+        (dbGiacenze || []).map(g => [g.vini?.[0]?.nome_vino?.trim().toLowerCase(), g.giacenzaa || 0])
       );
 
       const ordered = winesFromCsv.map((w, index) => ({

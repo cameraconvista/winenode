@@ -179,7 +179,7 @@ export async function importFromGoogleSheet(googleSheetUrl: string, userId: stri
     // Debug: mostra tutti i fogli disponibili
     const availableSheets = doc.sheetsByIndex.map(sheet => sheet.title);
     console.log('📋 Fogli disponibili nel Google Sheet:', availableSheets);
-    console.log('📅 Data ultimo aggiornamento Google Sheet:', doc.lastUpdatedTime);
+    // Rimuovo log lastUpdatedTime (proprietà non tipizzata)
     
     const sheetsToImport = Object.keys(CATEGORY_MAPPINGS);
     console.log('🔍 Fogli da cercare:', sheetsToImport);
