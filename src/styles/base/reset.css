@@ -17,8 +17,7 @@ input[inputMode="decimal"] {
   appearance: textfield;
 }
 
-@layer base {
-  html {
+html {
     font-family: 'Inter', system-ui, sans-serif;
     height: 100%;
     overflow: hidden; /* LAYOUT STANDARD: solo lista scorre */
@@ -62,7 +61,6 @@ input[inputMode="decimal"] {
     writing-mode: initial !important;
     text-orientation: initial !important;
   }
-}
 
 /* Forza nessun highlight su tutti gli stati */
 * {
