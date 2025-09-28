@@ -191,53 +191,28 @@ export const ordiniService = {
         throw new Error(`Data ordine non valida: ${ordine.data}`);
       }
 
-      // 2. Risolvi fornitore ID se necessario
-      let fornitoreId = ordine.fornitoreId;
-      
-      if (!fornitoreId || !isValidUuid(fornitoreId)) {
-        console.log('🔍 Risoluzione fornitore da nome:', ordine.fornitore);
-        
-        // Cerca fornitore per nome
-        const { data: fornitoreData, error: fornitoreError } = await supabase
-          .from('fornitori')
-          .select('id')
-          .eq('nome', ordine.fornitore)
-          .limit(1)
-          .single();
-
-        if (fornitoreError || !fornitoreData) {
-          console.error('❌ Fornitore non trovato:', ordine.fornitore);
-          throw new Error(`Fornitore non trovato: ${ordine.fornitore}`);
-        }
-
-        fornitoreId = fornitoreData.id;
-        console.log('✅ Fornitore risolto:', ordine.fornitore, '→', fornitoreId);
+      // 2. Valida nome fornitore
+      if (!ordine.fornitore || ordine.fornitore.trim().length === 0) {
+        throw new Error('Nome fornitore obbligatorio');
       }
 
-      // 3. Valida UUID fornitore
-      if (!isValidUuid(fornitoreId)) {
-        throw new Error(`FORNITORE_ID_INVALID: ${fornitoreId}`);
-      }
-
-      // 4. Sanifica valori numerici
+      // 3. Sanifica valori numerici
       const totale = Number(ordine.totale);
-      const bottiglie = Number(ordine.bottiglie || 0);
 
-      if (isNaN(totale) || isNaN(bottiglie)) {
-        throw new Error('Valori numerici non validi per totale o bottiglie');
+      if (isNaN(totale)) {
+        throw new Error('Valore totale non valido');
       }
 
-      // 5. Costruisci payload per DB
+      // 5. Costruisci payload per DB (allineato alle colonne reali)
       const payloadSanitized = {
-        fornitore_id: fornitoreId, // UUID per DB
+        fornitore: ordine.fornitore, // Nome fornitore (come nella query di lettura)
         totale: totale,
-        bottiglie: bottiglie,
         data: normalizedDate, // YYYY-MM-DD
-        stato: ordine.stato,
-        items: JSON.stringify(ordine.dettagli || []) // JSONB per dettagli
+        stato: ordine.stato || 'sospeso',
+        contenuto: JSON.stringify(ordine.dettagli || []) // JSON per dettagli
       };
 
-      console.log('🧾 Payload insert:', payloadSanitized);
+      console.log('🧾 Payload insert (schema-aligned):', Object.keys(payloadSanitized), payloadSanitized);
 
       const { data, error } = await supabase
         .from('ordini')
@@ -261,10 +236,6 @@ export const ordiniService = {
         if (error.message.includes('INVALID_DATE')) {
           console.error('❌ Data ordine non valida (atteso DD/MM/YYYY o YYYY-MM-DD)');
           throw new Error('Data ordine non valida. Formato atteso: DD/MM/YYYY');
-        }
-        if (error.message.includes('FORNITORE_ID_INVALID')) {
-          console.error('❌ ID fornitore non valido (atteso UUID)');
-          throw new Error('ID fornitore non valido');
         }
       }
       throw error;
