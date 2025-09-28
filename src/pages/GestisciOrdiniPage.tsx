@@ -4,12 +4,14 @@ import { X, Package, Eye, Check, Trash2 } from 'lucide-react';
 import { useOrdini, Ordine } from '../contexts/OrdiniContext';
 import OrdineRicevutoCard from '../components/orders/OrdineRicevutoCard';
 import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazioneModal';
+import WhatsAppOrderModal from '../components/modals/WhatsAppOrderModal';
 import { ORDINI_LABELS } from '../constants/ordiniLabels';
 import { isFeatureEnabled } from '../config/featureFlags';
 import QuantityPicker from '../components/QuantityPicker';
 import GestisciOrdiniInventoryModal from '../components/GestisciOrdiniInventoryModal';
 import SmartGestisciModal from '../components/modals/SmartGestisciModal';
 import ConfirmArchiveModal from '../components/modals/ConfirmArchiveModal';
+import { OrderDetail } from '../utils/buildWhatsAppMessage';
 import '../styles/gestisci-ordini-mobile.css';
 
 type TabType = 'inviati' | 'archiviati';
@@ -28,6 +30,11 @@ export default function GestisciOrdiniPage() {
   const [draftQuantities, setDraftQuantities] = useState<Record<string, Record<number, number>>>({});
   const [showConfirmArchive, setShowConfirmArchive] = useState(false);
   const [pendingArchiveOrder, setPendingArchiveOrder] = useState<{ordineId: string, quantities: Record<number, number>} | null>(null);
+  
+  // Stati per il modale WhatsApp
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [whatsAppOrderDetails, setWhatsAppOrderDetails] = useState<OrderDetail[]>([]);
+  const [whatsAppSupplierName, setWhatsAppSupplierName] = useState<string>('');
   
   const {
     ordiniInviati,
@@ -327,6 +334,28 @@ export default function GestisciOrdiniPage() {
     setPendingArchiveOrder(null);
   };
 
+  const handleOpenWhatsAppModal = (ordine: Ordine) => {
+    if (!ordine.dettagli) return;
+    
+    // Converte i dettagli ordine nel formato richiesto dal modale WhatsApp
+    const orderDetails: OrderDetail[] = ordine.dettagli.map(dettaglio => ({
+      wineName: dettaglio.wineName,
+      vintage: undefined, // OrdineDettaglio non ha vintage, sarà undefined
+      quantity: dettaglio.quantity,
+      unit: dettaglio.unit as 'bottiglie' | 'cartoni'
+    }));
+    
+    setWhatsAppOrderDetails(orderDetails);
+    setWhatsAppSupplierName(ordine.fornitore);
+    setShowWhatsAppModal(true);
+  };
+
+  const handleCloseWhatsAppModal = () => {
+    setShowWhatsAppModal(false);
+    setWhatsAppOrderDetails([]);
+    setWhatsAppSupplierName('');
+  };
+
 
   const handleConfermaModifiche = async (ordineId: string) => {
     const ordine = ordiniInviati.find(o => o.id === ordineId);
@@ -612,12 +641,37 @@ export default function GestisciOrdiniPage() {
                       </h4>
                     </div>
                     {activeTab === 'inviati' && (
-                      <span 
-                        className="px-2 py-1 rounded text-xs font-medium"
-                        style={{ background: '#16a34a', color: '#fff9dc' }}
-                      >
-                        {ORDINI_LABELS.badges.creato}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {/* Pulsante WhatsApp */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenWhatsAppModal(ordine);
+                          }}
+                          className="flex items-center justify-center rounded transition-colors hover:bg-black/5"
+                          style={{ 
+                            width: '28px', 
+                            height: '28px',
+                            padding: '4px'
+                          }}
+                          aria-label="Invia ordine via WhatsApp"
+                        >
+                          <img 
+                            src="/whatsapp.png" 
+                            alt="WhatsApp" 
+                            className="w-5 h-5"
+                            style={{ filter: 'none' }}
+                          />
+                        </button>
+                        
+                        {/* Badge CREATO */}
+                        <span 
+                          className="px-2 py-1 rounded text-xs font-medium"
+                          style={{ background: '#16a34a', color: '#fff9dc' }}
+                        >
+                          {ORDINI_LABELS.badges.creato}
+                        </span>
+                      </div>
                     )}
                   </div>
 
@@ -932,6 +986,14 @@ export default function GestisciOrdiniPage() {
           const dettaglio = ordine?.dettagli?.[parseInt(index)];
           return sum + (qty * (dettaglio?.unitPrice || 0));
         }, 0) : undefined}
+      />
+
+      {/* Modale WhatsApp */}
+      <WhatsAppOrderModal
+        isOpen={showWhatsAppModal}
+        onClose={handleCloseWhatsAppModal}
+        orderDetails={whatsAppOrderDetails}
+        supplierName={whatsAppSupplierName}
       />
     </div>
   );

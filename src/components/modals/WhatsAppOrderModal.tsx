@@ -15,11 +15,10 @@ export default function WhatsAppOrderModal({
   orderDetails,
   supplierName
 }: WhatsAppOrderModalProps) {
+  // ✅ TUTTI GLI HOOK A TOP-LEVEL - SEMPRE CHIAMATI NELLO STESSO ORDINE
   const [copySuccess, setCopySuccess] = useState(false);
 
-  if (!isOpen) return null;
-
-  // Genera il messaggio WhatsApp
+  // Genera il messaggio WhatsApp (sempre, anche se modale chiusa)
   const message = buildWhatsAppMessage(orderDetails);
 
   // Handler per apertura WhatsApp
@@ -62,19 +61,23 @@ export default function WhatsAppOrderModal({
     }
   };
 
-  // Handler per chiusura con ESC
+  // ✅ Hook ESC SEMPRE CHIAMATO - Guard interna per attivazione
   React.useEffect(() => {
+    // Guard interna: attiva solo quando modale è aperta
+    if (!isOpen) return;
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  // ✅ RENDER CONDIZIONALE DOPO TUTTI GLI HOOK
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">

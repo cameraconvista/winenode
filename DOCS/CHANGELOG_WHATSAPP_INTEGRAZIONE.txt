@@ -127,8 +127,101 @@ MONITORAGGIO:
 - Compatibilità WhatsApp Web/Mobile
 - Performance su device lenti
 
+=== BUGFIX HOOK ORDER VIOLATION ===
+DATA: 28/09/2025 15:54
+ERRORE: "Rendered more hooks than during the previous render"
+
+CAUSA ROOT IDENTIFICATA:
+❌ Hook useEffect chiamato DOPO return null condizionale
+❌ Violazione regole React: Hook order instabile tra render
+❌ Linea 20: if (!isOpen) return null; (prima degli Hook)
+❌ Linea 66: React.useEffect(...) (chiamato condizionalmente)
+
+SEQUENZA PROBLEMATICA:
+1. isOpen=false → return null (linea 20) → useEffect saltato
+2. isOpen=true → useEffect chiamato (linea 66)
+3. React rileva cambio numero/ordine Hook → ERROR
+
+FIX IMPLEMENTATO:
+✅ Spostato return null DOPO tutti gli Hook (linea 80)
+✅ Hook useEffect sempre chiamato a top-level
+✅ Guard interna: if (!isOpen) return; dentro useEffect
+✅ Ordine Hook stabile: useState → useEffect → render condizionale
+
+CODICE CORRETTO:
+```typescript
+// ✅ Hook sempre chiamati nello stesso ordine
+const [copySuccess, setCopySuccess] = useState(false);
+const message = buildWhatsAppMessage(orderDetails);
+
+React.useEffect(() => {
+  if (!isOpen) return; // Guard interna
+  // ... logica ESC
+}, [isOpen, onClose]);
+
+// ✅ Render condizionale DOPO tutti gli Hook
+if (!isOpen) return null;
+```
+
+RISULTATO:
+✅ Errore Hook Order eliminato
+✅ Modale funzionante (apri/chiudi/ESC/WhatsApp/copia)
+✅ Performance invariate
+✅ Layout e stili invariati
+✅ TypeScript: 0 errori
+✅ ESLint: 0 errori (solo warnings pre-esistenti)
+
+=== FEATURE EXTENSION: PULSANTE WHATSAPP IN GESTISCI ORDINI ===
+DATA: 28/09/2025 16:14
+OBIETTIVO: Aggiungere pulsante icona WhatsApp nei box ordini CREATI (Gestisci Ordini)
+
+IMPLEMENTAZIONE:
+✅ Import WhatsAppOrderModal in GestisciOrdiniPage.tsx
+✅ Aggiunto stato modale: showWhatsAppModal, whatsAppOrderDetails, whatsAppSupplierName
+✅ Handler handleOpenWhatsAppModal(): converte OrdineDettaglio → OrderDetail
+✅ Handler handleCloseWhatsAppModal(): cleanup stati
+✅ Pulsante icona WhatsApp accanto al badge "CREATO"
+
+POSIZIONAMENTO UI:
+✅ Icona WhatsApp (28x28px) + Badge CREATO in flex container
+✅ Allineamento perfetto in linea orizzontale
+✅ Click pulsante: e.stopPropagation() + apertura modale
+✅ Asset: /public/whatsapp.png (icona verde esistente)
+✅ Hover effect: hover:bg-black/5 per feedback visivo
+
+LOGICA RIUSO:
+✅ Stesso WhatsAppOrderModal già implementato
+✅ Stessa buildWhatsAppMessage utility
+✅ Conversione dati: OrdineDettaglio.wineName/quantity/unit → OrderDetail
+✅ Vintage: undefined (OrdineDettaglio non ha vintage)
+✅ SupplierName: ordine.fornitore
+
+FLUSSO UTENTE GESTISCI ORDINI:
+1. Tab "Creati" → Box ordine con badge "CREATO" + icona WhatsApp
+2. Click icona WhatsApp → Apre stesso modale di Riepilogo Ordine
+3. Preview messaggio: Camera con Vista + Ordine vini + Data + Lista
+4. "Apri WhatsApp" / "Copia testo" / "Annulla" → Stesso comportamento
+
+VINCOLI RISPETTATI:
+✅ Zero modifiche layout pulsanti "Gestisci"/"Elimina"
+✅ Zero impatto su logica ordini esistente
+✅ Riuso completo componenti WhatsApp esistenti
+✅ Condizione rendering: activeTab === 'inviati' (tab Creati)
+✅ Accessibilità: aria-label="Invia ordine via WhatsApp"
+
+TEST COMPLETATI:
+✅ Icona WhatsApp visibile accanto al badge CREATO
+✅ Click icona apre modale WhatsApp con preview corretta
+✅ Messaggio formato: Camera con Vista + fornitore + lista vini
+✅ "Apri WhatsApp" funziona con deep-link
+✅ "Copia testo" funziona correttamente
+✅ Layout responsive mantenuto
+✅ Nessuna interferenza con pulsanti Gestisci/Elimina
+
 === STATUS FINALE ===
 ✅ IMPLEMENTAZIONE COMPLETA
+✅ BUGFIX HOOK ORDER RISOLTO
+✅ FEATURE EXTENSION GESTISCI ORDINI COMPLETATA
 ✅ ZERO REGRESSIONI LAYOUT
 ✅ FUNZIONALITÀ TESTATA E OPERATIVA
 ✅ DOCUMENTAZIONE AGGIORNATA
