@@ -1,0 +1,97 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  # Existing CI jobs would go here (build, test, lint, etc.)
+  
+  db-migrations-guard:
+    name: Database Migrations Guard
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Check for unauthorized DB migrations
+        run: |
+          echo "🔍 Checking for unauthorized database migrations..."
+          
+          # Get changed files in this PR
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          
+          # Define patterns for DDL commands (case insensitive)
+          DDL_PATTERNS=(
+            "CREATE INDEX"
+            "CREATE TYPE" 
+            "CREATE TABLE"
+            "ALTER TABLE"
+            "ADD CONSTRAINT"
+            "DROP INDEX"
+            "DROP TYPE"
+            "DROP TABLE"
+            "DROP CONSTRAINT"
+          )
+          
+          # Check for DDL in non-DOCS files
+          VIOLATIONS_FOUND=false
+          
+          for file in $CHANGED_FILES; do
+            # Skip DOCS/ directory and .md files
+            if [[ "$file" == DOCS/* ]] || [[ "$file" == *.md ]]; then
+              continue
+            fi
+            
+            # Check SQL files and potential migration files
+            if [[ "$file" == *.sql ]] || [[ "$file" == *migration* ]] || [[ "$file" == *schema* ]]; then
+              echo "📄 Checking file: $file"
+              
+              # Check if file exists and is readable
+              if [[ -f "$file" ]]; then
+                for pattern in "${DDL_PATTERNS[@]}"; do
+                  if grep -qi "$pattern" "$file"; then
+                    echo "❌ VIOLATION: Found '$pattern' in $file"
+                    VIOLATIONS_FOUND=true
+                  fi
+                done
+              fi
+            fi
+          done
+          
+          # Check if PR has the allow-db-migrations label
+          HAS_LABEL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" \
+            | jq -r '.[] | select(.name=="allow-db-migrations") | .name')
+          
+          if [[ "$VIOLATIONS_FOUND" == "true" ]]; then
+            if [[ "$HAS_LABEL" == "allow-db-migrations" ]]; then
+              echo "✅ DB migrations found but PR has 'allow-db-migrations' label - ALLOWED"
+              exit 0
+            else
+              echo ""
+              echo "🚫 DATABASE MIGRATIONS BLOCKED"
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              echo "❌ This PR contains database DDL commands but is in NO-SUPABASE mode."
+              echo ""
+              echo "📋 OPTIONS:"
+              echo "1. Add label 'allow-db-migrations' to this PR if authorized"
+              echo "2. Move DDL commands to DOCS/ directory for documentation"
+              echo "3. Coordinate with database admin for proper migration"
+              echo ""
+              echo "📚 REFERENCE:"
+              echo "- DOCS/TODO_SUPABASE.md - Pending migrations"
+              echo "- DOCS/DB_MIGRATION_GUIDE.md - Execution guide"
+              echo "- DOCS/PLAYBOOK_MIGRAZIONI.md - Full playbook"
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              exit 1
+            fi
+          else
+            echo "✅ No unauthorized database migrations found"
+          fi
