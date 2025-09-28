@@ -23,7 +23,7 @@ export default function PinPad({
   const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
   return (
-    <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto p-4 justify-center items-center">
+    <div className="grid grid-cols-3 gap-6 max-w-sm mx-auto p-4 justify-center items-center">
       {/* Digits 1-9 */}
       {digits.slice(0, 9).map((digit) => (
         <button

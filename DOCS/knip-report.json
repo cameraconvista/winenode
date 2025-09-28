@@ -1,0 +1,2 @@
+ERROR: Error loading /Users/dero/Documents/winenode_main/drizzle.config.ts
+Reason: DATABASE_URL, ensure the database is provisioned

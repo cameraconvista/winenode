@@ -1,0 +1,257 @@
+{
+  "App.tsx": [
+    "components/IntroPage.tsx",
+    "contexts/OrdiniContext.tsx",
+    "hooks/useFirstLaunch.ts",
+    "pages/CreaOrdinePage.tsx",
+    "pages/FoglioExcelPage.tsx",
+    "pages/FornitoriPage.tsx",
+    "pages/GestisciOrdiniPage.tsx",
+    "pages/HomePage.tsx",
+    "pages/ImportaPage.tsx",
+    "pages/ManualWineInsertPage.tsx",
+    "pages/PreferenzePage.tsx",
+    "pages/RiepilogoOrdinePage.tsx",
+    "utils/resetFirstLaunch.ts"
+  ],
+  "components/AddSupplierModal.tsx": [
+    "lib/supabase.ts"
+  ],
+  "components/EditSupplierModal.tsx": [
+    "hooks/useSuppliers.ts",
+    "lib/supabase.ts"
+  ],
+  "components/FilterModal.tsx": [
+    "services/fornitori.ts"
+  ],
+  "components/FornitoreSelector.tsx": [
+    "hooks/useSuppliers.ts"
+  ],
+  "components/GestisciOrdiniInventoryModal.tsx": [
+    "constants/ordiniLabels.ts"
+  ],
+  "components/HomeInventoryModal.tsx": [],
+  "components/IntroPage.tsx": [],
+  "components/QuantityPicker.tsx": [],
+  "components/WineDetailsModal.tsx": [
+    "hooks/useWines.ts"
+  ],
+  "components/modals/CarrelloOrdiniModal 2.tsx": [],
+  "components/modals/CarrelloOrdiniModal.tsx": [],
+  "components/modals/ConfermaEliminazioneModal 2.tsx": [],
+  "components/modals/ConfermaEliminazioneModal.tsx": [],
+  "components/modals/ConfirmArchiveModal.tsx": [
+    "constants/ordiniLabels.ts"
+  ],
+  "components/modals/NuovoOrdineModal 2.tsx": [
+    "services/fornitori.ts"
+  ],
+  "components/modals/NuovoOrdineModal.tsx": [
+    "services/fornitori.ts"
+  ],
+  "components/modals/SmartGestisciModal 2.tsx": [
+    "components/GestisciOrdiniInventoryModal.tsx",
+    "components/modals/ConfirmArchiveModal.tsx",
+    "config/featureFlags.ts",
+    "constants/ordiniLabels.ts",
+    "hooks/useWines.ts",
+    "utils/buttonStyles.ts"
+  ],
+  "components/modals/SmartGestisciModal.tsx": [
+    "components/GestisciOrdiniInventoryModal.tsx",
+    "components/modals/ConfirmArchiveModal.tsx",
+    "config/featureFlags.ts",
+    "constants/ordiniLabels.ts",
+    "hooks/useWines.ts",
+    "utils/buttonStyles.ts"
+  ],
+  "components/modals/WhatsAppOrderModal.tsx": [
+    "utils/buildWhatsAppMessage.ts"
+  ],
+  "components/orders/OrdineRicevutoCard.tsx": [
+    "config/featureFlags.ts",
+    "constants/ordiniLabels.ts",
+    "contexts/OrdiniContext.tsx"
+  ],
+  "components/search/WineSearchBar 2.tsx": [],
+  "components/search/WineSearchBar.tsx": [],
+  "components/security/OrdersPinModal.tsx": [
+    "components/security/PinModal.css",
+    "components/security/PinPad.tsx"
+  ],
+  "components/security/PinModal.css": [],
+  "components/security/PinPad.tsx": [],
+  "config/constants 2.ts": [],
+  "config/constants.ts": [],
+  "config/featureFlags 2.ts": [],
+  "config/featureFlags.ts": [],
+  "config/features 2.ts": [],
+  "config/features.ts": [],
+  "constants/ordiniLabels 2.ts": [],
+  "constants/ordiniLabels.ts": [],
+  "contexts/OrdiniContext 2.tsx": [
+    "config/featureFlags.ts",
+    "hooks/useSupabaseOrdini.ts",
+    "hooks/useWines.ts"
+  ],
+  "contexts/OrdiniContext.tsx": [
+    "config/featureFlags.ts",
+    "hooks/useSupabaseOrdini.ts",
+    "hooks/useWines.ts"
+  ],
+  "data/wines.ts": [],
+  "hooks/useAutoSizeText.ts": [],
+  "hooks/useCarrelloOrdini.ts": [],
+  "hooks/useColumnResize.ts": [],
+  "hooks/useCreaOrdine.ts": [],
+  "hooks/useDebounce.ts": [],
+  "hooks/useFirstLaunch.ts": [],
+  "hooks/useNuovoOrdine 2.ts": [],
+  "hooks/useNuovoOrdine.ts": [],
+  "hooks/useOrdersPinGate.ts": [],
+  "hooks/useSupabaseOrdini.ts": [
+    "contexts/OrdiniContext.tsx",
+    "lib/supabase.ts"
+  ],
+  "hooks/useSuppliers.ts": [
+    "lib/supabase.ts"
+  ],
+  "hooks/useTipologie.ts": [
+    "config/constants.ts",
+    "lib/supabase.ts"
+  ],
+  "hooks/useWineData 2.ts": [
+    "config/constants.ts",
+    "lib/constants.ts",
+    "lib/supabase.ts",
+    "utils/wineUtils.ts"
+  ],
+  "hooks/useWineData.ts": [
+    "config/constants.ts",
+    "lib/constants.ts",
+    "lib/supabase.ts",
+    "utils/wineUtils.ts"
+  ],
+  "hooks/useWineSearch.ts": [
+    "hooks/useDebounce.ts"
+  ],
+  "hooks/useWines.ts": [
+    "lib/supabase.ts"
+  ],
+  "index.css": [
+    "styles/base/reset.css",
+    "styles/base/tokens.css",
+    "styles/components/icons.css",
+    "styles/components/wine-cards.css",
+    "styles/layout/header.css",
+    "styles/layout/mobile-standard.css",
+    "styles/layout/toolbar.css",
+    "styles/mobile/responsive.css",
+    "styles/mobile/rotation-lock.css",
+    "styles/mobile/scroll-fix.css",
+    "styles/utils/layout.css"
+  ],
+  "lib/constants.ts": [],
+  "lib/googleSheets.ts": [],
+  "lib/importFromGoogleSheet.ts": [
+    "lib/googleSheets.ts",
+    "lib/supabase.ts"
+  ],
+  "lib/supabase.ts": [],
+  "lib/utils.ts": [],
+  "lib/wineProcessing.ts": [],
+  "main.tsx": [
+    "App.tsx",
+    "index.css"
+  ],
+  "pages/CreaOrdinePage.tsx": [
+    "hooks/useCreaOrdine.ts",
+    "hooks/useWines.ts"
+  ],
+  "pages/FoglioExcelPage.tsx": [],
+  "pages/FornitoriPage.tsx": [
+    "components/AddSupplierModal.tsx",
+    "components/EditSupplierModal.tsx",
+    "hooks/useSuppliers.ts",
+    "lib/supabase.ts"
+  ],
+  "pages/GestisciOrdiniPage.tsx": [
+    "components/GestisciOrdiniInventoryModal.tsx",
+    "components/QuantityPicker.tsx",
+    "components/modals/ConfermaEliminazioneModal.tsx",
+    "components/modals/ConfirmArchiveModal.tsx",
+    "components/modals/SmartGestisciModal.tsx",
+    "components/modals/WhatsAppOrderModal.tsx",
+    "components/orders/OrdineRicevutoCard.tsx",
+    "config/featureFlags.ts",
+    "constants/ordiniLabels.ts",
+    "contexts/OrdiniContext.tsx",
+    "styles/gestisci-ordini-mobile.css",
+    "utils/buildWhatsAppMessage.ts"
+  ],
+  "pages/HomePage.tsx": [
+    "components/FilterModal.tsx",
+    "components/HomeInventoryModal.tsx",
+    "components/WineDetailsModal.tsx",
+    "components/modals/CarrelloOrdiniModal.tsx",
+    "components/modals/NuovoOrdineModal.tsx",
+    "components/search/WineSearchBar.tsx",
+    "components/security/OrdersPinModal.tsx",
+    "config/features.ts",
+    "hooks/useAutoSizeText.ts",
+    "hooks/useCarrelloOrdini.ts",
+    "hooks/useNuovoOrdine.ts",
+    "hooks/useOrdersPinGate.ts",
+    "hooks/useWineSearch.ts",
+    "hooks/useWines.ts",
+    "lib/supabase.ts"
+  ],
+  "pages/ImportaPage.tsx": [],
+  "pages/ManualWineInsertPage.tsx": [
+    "config/constants.ts",
+    "hooks/useWines.ts",
+    "lib/supabase.ts"
+  ],
+  "pages/PreferenzePage.tsx": [
+    "lib/supabase.ts"
+  ],
+  "pages/RiepilogoOrdinePage.tsx": [
+    "components/modals/WhatsAppOrderModal.tsx",
+    "contexts/OrdiniContext.tsx",
+    "hooks/useCreaOrdine.ts",
+    "hooks/useWines.ts",
+    "utils/buildWhatsAppMessage.ts"
+  ],
+  "pages/TabellaViniPage.tsx": [],
+  "services/fornitori.ts": [
+    "lib/supabase.ts"
+  ],
+  "styles/base/reset.css": [],
+  "styles/base/tokens.css": [],
+  "styles/components/icons.css": [],
+  "styles/components/wine-cards.css": [],
+  "styles/gestisci-ordini-mobile.css": [],
+  "styles/layout/header.css": [],
+  "styles/layout/mobile-standard.css": [],
+  "styles/layout/toolbar.css": [],
+  "styles/mobile/responsive.css": [],
+  "styles/mobile/rotation-lock.css": [],
+  "styles/mobile/scroll-fix.css": [],
+  "styles/utils/layout.css": [],
+  "test/setup 2.ts": [],
+  "test/setup.ts": [],
+  "utils/buildWhatsAppMessage 2.ts": [],
+  "utils/buildWhatsAppMessage.ts": [],
+  "utils/buttonStyles 2.ts": [],
+  "utils/buttonStyles.ts": [],
+  "utils/resetFirstLaunch.ts": [],
+  "utils/sanitization 2.ts": [],
+  "utils/sanitization.ts": [],
+  "utils/wineUtils 2.ts": [
+    "lib/constants.ts"
+  ],
+  "utils/wineUtils.ts": [
+    "lib/constants.ts"
+  ],
+  "vite-env.d.ts": []
+}
