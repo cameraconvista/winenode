@@ -74,6 +74,8 @@
     "@eslint/js": "^9.36.0",
     "@iconify-json/lucide": "^1.2.68",
     "@iconify-json/tabler": "^1.2.23",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

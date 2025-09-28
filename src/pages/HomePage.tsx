@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import TablerShoppingCart from '~icons/tabler/shopping-cart';
+import TablerFilter from '~icons/tabler/filter';
+import TablerBell from '~icons/tabler/bell';
+import TablerSearch from '~icons/tabler/search';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import HomeInventoryModal from '../components/HomeInventoryModal';
@@ -369,7 +373,7 @@ export default function HomePage() {
             className="nav-btn btn-ordine"
             title="Carrello Ordini"
           >
-            <div className="icon"></div>
+            <TablerShoppingCart className="icon" aria-hidden="true" />
           </button>
           
           <button 
@@ -387,11 +391,13 @@ export default function HomePage() {
               appearance: 'none'
             } as React.CSSProperties}
           >
-            <div className="icon" style={{
-              background: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)',
-              WebkitMask: 'url("/filtro.png") center/contain no-repeat',
-              mask: 'url("/filtro.png") center/contain no-repeat'
-            }}></div>
+            <TablerFilter 
+              className="icon" 
+              aria-hidden="true"
+              style={{
+                color: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)'
+              }}
+            />
           </button>
           
           <button
@@ -409,11 +415,13 @@ export default function HomePage() {
               appearance: 'none'
             } as React.CSSProperties}
           >
-            <div className="icon" style={{
-              background: filters.showAlertsOnly ? 'white' : 'var(--text)',
-              WebkitMask: 'url("/allert.png") center/contain no-repeat',
-              mask: 'url("/allert.png") center/contain no-repeat'
-            }}></div>
+            <TablerBell 
+              className="icon" 
+              aria-hidden="true"
+              style={{
+                color: filters.showAlertsOnly ? 'white' : 'var(--text)'
+              }}
+            />
           </button>
           
           {/* Icona lente ricerca (se feature abilitata) */}
@@ -434,11 +442,13 @@ export default function HomePage() {
                 appearance: 'none'
               } as React.CSSProperties}
             >
-              <div className="icon" style={{
-                background: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
-                WebkitMask: 'url("/lente.png") center/contain no-repeat',
-                mask: 'url("/lente.png") center/contain no-repeat'
-              }}></div>
+              <TablerSearch 
+                className="icon" 
+                aria-hidden="true"
+                style={{
+                  color: wineSearch.isSearchOpen ? 'white' : 'var(--text)'
+                }}
+              />
             </button>
           )}
         </div>
