@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import TablerShoppingCart from '~icons/tabler/shopping-cart';
-import TablerFilter from '~icons/tabler/filter';
-import TablerBell from '~icons/tabler/bell';
-import TablerSearch from '~icons/tabler/search';
+import PhosphorCart from '~icons/ph/shopping-cart-light';
+import PhosphorFunnel from '~icons/ph/funnel-light';
+import PhosphorBell from '~icons/ph/bell-light';
+import PhosphorMagnifyingGlass from '~icons/ph/magnifying-glass-light';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import HomeInventoryModal from '../components/HomeInventoryModal';
@@ -373,7 +373,7 @@ export default function HomePage() {
             className="nav-btn btn-ordine"
             title="Carrello Ordini"
           >
-            <TablerShoppingCart className="icon" aria-hidden="true" />
+            <PhosphorCart className="icon" aria-hidden="true" />
           </button>
           
           <button 
@@ -391,7 +391,7 @@ export default function HomePage() {
               appearance: 'none'
             } as React.CSSProperties}
           >
-            <TablerFilter 
+            <PhosphorFunnel 
               className="icon" 
               aria-hidden="true"
               style={{
@@ -415,7 +415,7 @@ export default function HomePage() {
               appearance: 'none'
             } as React.CSSProperties}
           >
-            <TablerBell 
+            <PhosphorBell 
               className="icon" 
               aria-hidden="true"
               style={{
@@ -442,7 +442,7 @@ export default function HomePage() {
                 appearance: 'none'
               } as React.CSSProperties}
             >
-              <TablerSearch 
+              <PhosphorMagnifyingGlass 
                 className="icon" 
                 aria-hidden="true"
                 style={{

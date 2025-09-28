@@ -35,12 +35,9 @@ div[class*="alert"],
 .alert-triangle {
   width: 18px !important;
   height: 18px !important;
-  background: #541111 !important; /* FORZATO: colore brand in tutti gli stati */
-  -webkit-mask: url("/allert.png") center/contain no-repeat !important;
-  mask: url("/allert.png") center/contain no-repeat !important;
+  /* Rimosso mask allert.png - ora usa icone SVG */
   display: inline-block !important;
-  color: transparent !important;
-  fill: #541111 !important;
+  color: #541111 !important;
   stroke: #541111 !important;
   /* Mantieni la stessa posizione/margini del vecchio simbolo */
 }

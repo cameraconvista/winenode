@@ -177,7 +177,7 @@
 .mobile-navbar .nav-btn .icon {
   width: var(--nav-icon);
   height: var(--nav-icon);
-  background: var(--text);
+  /* Rimosso background per permettere icone SVG */
   flex-shrink: 0;
 }
 
@@ -185,36 +185,20 @@
 .mobile-navbar .nav-btn:not(.btn-tutti) .label {
   display: none;
 }
-
 .mobile-navbar .nav-btn:focus-visible {
   box-shadow: 0 0 0 3px rgba(84, 17, 17, 0.18);
   border-radius: 10pt;
 }
 
-/* === ICONE SPECIFICHE === */
-.mobile-navbar .btn-ordine .icon {
-  -webkit-mask: url("/carrello.png") center/contain no-repeat;
-  mask: url("/carrello.png") center/contain no-repeat;
-}
+/* === ICONE MODERNE SVG === */
+/* Rimosse vecchie regole PNG mask - ora usa icone SVG Tabler */
 
-.mobile-navbar .btn-filtri .icon {
-  -webkit-mask: url("/filtro.png") center/contain no-repeat;
-  mask: url("/filtro.png") center/contain no-repeat;
-  width: 17pt;
-  height: 17pt;
-}
-
-.mobile-navbar .btn-allert .icon {
-  -webkit-mask: url("/allert.png") center/contain no-repeat;
-  mask: url("/allert.png") center/contain no-repeat;
-}
-
-.mobile-navbar .btn-search .icon {
-  /* Icona lente - usa lente.png con mask pattern */
-  -webkit-mask: url("/lente.png") center/contain no-repeat;
-  mask: url("/lente.png") center/contain no-repeat;
-  width: 24pt;
-  height: 24pt;
+/* Tratto più elegante per icone bottom bar */
+.mobile-navbar .nav-btn .icon svg,
+.mobile-navbar .nav-btn svg.icon,
+.mobile-navbar .nav-btn .icon {
+  stroke-width: 1.5 !important; /* Tratto più sottile ed elegante */
+  stroke: currentColor !important; /* Assicura che il stroke sia visibile */
 }
 
 /* === GRUPPO ICONE === */

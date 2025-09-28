@@ -125,3 +125,6 @@
   border-radius: 50%;
   border: 1px solid var(--bg);
 }
+
+/* ALLERT → campanella SVG (legacy toolbar - probabilmente non più usato) */
+/* Rimosso regole mask allert.png - ora usa icone SVG */

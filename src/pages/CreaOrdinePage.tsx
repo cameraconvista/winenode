@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Minus, Plus } from 'lucide-react';
+import PhosphorBell from '~icons/ph/bell-light';
 import useWines from '../hooks/useWines';
 import { useCreaOrdine } from '../hooks/useCreaOrdine';
 
@@ -133,14 +134,11 @@ export default function CreaOrdinePage() {
                       </div>
                       {isLowStock && (
                         <div className="text-xs flex items-center gap-1 mt-1" style={{ color: '#dc2626' }}>
-                          <div 
+                          <PhosphorBell 
                             className="w-3 h-3 flex-shrink-0"
-                            style={{
-                              WebkitMask: 'url("/allert.png") center/contain no-repeat',
-                              mask: 'url("/allert.png") center/contain no-repeat',
-                              background: '#dc2626'
-                            }}
-                          ></div>
+                            style={{ color: '#dc2626' }}
+                            aria-hidden="true"
+                          />
                           Sotto soglia
                         </div>
                       )}
