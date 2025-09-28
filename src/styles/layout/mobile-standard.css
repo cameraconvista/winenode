@@ -229,24 +229,27 @@
   /* Variabili locali per controllo granulare */
   --nav-icon-gap: 8pt;
   --nav-icon-vert-offset: 6pt; /* Sposta icone verso basso di 6pt (circa 25% di 24pt) */
-  --nav-safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
+  --nav-safe-bottom: calc(env(safe-area-inset-bottom) + 12pt);
 }
+.mobile-navbar .btn-tutti .label,
 .mobile-navbar .btn-tutti .label {
   display: block !important;
   color: #541111 !important;
+  text-align: center !important;
   font-weight: 600 !important;
   width: 100% !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
   transition: font-size 0.2s ease-in-out !important;
-  /* Font-size gestito dinamicamente da useAutoSizeText */
+  font-size: clamp(11px, 2.8vw, 14px) !important; /* Ridotto leggermente, responsive */
+  line-height: 1.2 !important; /* Compatto ma leggibile */
 }
 
 /* Supporto per vecchia classe bottom-toolbar per compatibilità */
 .bottom-toolbar .btn-tutti,
 .mobile-navbar .btn-tutti {
-  background: #FFFFFF !important;
+  background: #FFFFFF !important; /* Bianco confermato */
   border: 1px solid var(--border) !important;
   border-radius: 12pt !important;
   position: relative;
@@ -255,17 +258,19 @@
   align-items: center !important;
   justify-content: center !important;
   gap: 4pt !important;
-  padding: 8pt 16pt !important;
-  min-width: 120pt !important;
-  min-height: 36pt !important;
+  padding: 6pt clamp(10px, 2.5vw, 14px) !important; /* Padding verticale ridotto per allineamento */
+  min-width: clamp(70px, 18vw, 90px) !important;
+  height: var(--nav-icon) !important; /* Altezza uguale alle icone per allineamento perfetto */
   box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important;
   margin-left: auto !important;
+  /* Allineamento verticale forzato */
+  align-self: center !important;
 }
 
 .bottom-toolbar .btn-tutti .label,
 .mobile-navbar .btn-tutti .label {
   display: block !important;
-  color: #541111 !important;
+  color: #541111 !important; /* Testo scuro su sfondo bianco */
   text-align: center !important;
   font-weight: 600 !important;
   width: 100% !important;
@@ -274,6 +279,8 @@
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
   transition: font-size 0.2s ease-in-out !important;
+  font-size: clamp(11px, 2.8vw, 14px) !important;
+  line-height: 1.2 !important;
 }
 
 /* Stati hover/active per chip */

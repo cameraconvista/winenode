@@ -1,0 +1,78 @@
+REPORT PILL "TUTTI" RIDIMENSIONAMENTO - WineNode
+Data: 28/09/2025 17:18
+Versione: 1.1.0
+
+=== DIAGNOSI COMPONENTE PILL "TUTTI" ===
+
+COMPONENTE IDENTIFICATO:
+- File: src/pages/HomePage.tsx (riga 452)
+- Classe: "nav-btn btn-tutti"
+- Instanziato nella navbar Home
+
+STILI ATTUALI PROBLEMATICI:
+- File: src/styles/layout/mobile-standard.css (righe 247-277)
+
+DIMENSIONI ATTUALI (.mobile-navbar .btn-tutti):
+- padding: 8pt 16pt (TROPPO GRANDE)
+- min-width: 120pt (ECCESSIVO per "Tutti")
+- min-height: 36pt
+- border-radius: 12pt
+- gap: 4pt
+
+FONT ATTUALI (.btn-tutti .label):
+- font-size: Gestito dinamicamente da useAutoSizeText
+- font-weight: 600
+- line-height: 1.3
+
+PROBLEMA IDENTIFICATO:
+- Padding orizzontale 16pt troppo generoso
+- Min-width 120pt crea "bolla gigante"
+- Proporzioni non bilanciate con icone navbar (var(--nav-icon))
+
+=== MODIFICHE RICHIESTE ===
+
+RIDUZIONE PADDING (-12%):
+- Da: padding: 8pt 16pt
+- A: padding: 8pt 12pt (riduzione ~25% orizzontale)
+
+RIDUZIONE MIN-WIDTH:
+- Da: min-width: 120pt
+- A: min-width: 80pt (più proporzionato)
+
+RIDUZIONE FONT-SIZE:
+- Riduzione minima per compattezza
+- Mantenere leggibilità e contrasto
+
+MANTENERE:
+- Touch target ≥44px (min-height: 36pt + padding = OK)
+- Border-radius: 12pt
+- Colori e ombre esistenti
+- Allineamento verticale centrato
+
+=== MODIFICHE IMPLEMENTATE ===
+
+PADDING ORIZZONTALE:
+- PRIMA: padding: 8pt 16pt
+- DOPO: padding: 8pt clamp(10px, 2.5vw, 14px)
+- RIDUZIONE: ~25% più compatto, responsive
+
+MIN-WIDTH:
+- PRIMA: min-width: 120pt
+- DOPO: min-width: clamp(70px, 18vw, 90px)  
+- RIDUZIONE: ~33% più proporzionato
+
+FONT-SIZE:
+- PRIMA: Gestito dinamicamente da useAutoSizeText
+- DOPO: font-size: clamp(11px, 2.8vw, 14px)
+- RIDUZIONE: Font leggermente più piccolo ma leggibile
+
+LINE-HEIGHT:
+- AGGIUNTO: line-height: 1.2 (compatto ma leggibile)
+
+RISULTATO ATTESO:
+- Pill "Tutti" più compatto e proporzionato
+- Responsive su tutti i device
+- Touch target ≥44px mantenuto
+- Allineamento migliorato con icone navbar
+
+STATO: Modifiche implementate, pronto per test
