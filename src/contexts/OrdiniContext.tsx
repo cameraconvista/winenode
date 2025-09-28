@@ -97,7 +97,7 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       };
 
       // Verifica che l'ordine non esista già prima di aggiungerlo
-      if (ordine.tipo === 'inviato') {
+      if (['sospeso', 'inviato'].includes(ordine.stato)) {
         setOrdiniInviati(prev => {
           const exists = prev.some(o => o.id === ordineId);
           if (exists) {

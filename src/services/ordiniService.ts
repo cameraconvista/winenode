@@ -78,54 +78,108 @@ export interface Ordine {
   bottiglie: number;
   data: string;
   stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato';
-  tipo: 'inviato' | 'ricevuto';
   dettagli?: OrdineDettaglio[];
 }
 
 // Funzioni pure per operazioni database
 export const ordiniService = {
-  // Carica tutti gli ordini dal database con cache e AbortController
+  // Carica tutti gli ordini dal database con strategia robusta (join + fallback)
   async loadOrdini(signal?: AbortSignal): Promise<{
     inviati: Ordine[];
     storico: Ordine[];
   }> {
     const cacheKey = 'ordini:all';
-    
-    // Verifica cache prima di fare query
     const cached = cache.get<{ inviati: Ordine[]; storico: Ordine[] }>(cacheKey);
+    
     if (cached) {
       console.log('✅ Cache hit for ordini');
       return cached;
     }
-    console.log('🔄 Caricando ordini da Supabase...');
 
-    // Verifica se richiesta è stata cancellata
+    console.log('📊 Caricamento ordini da Supabase...');
+
+    // Verifica se richiesta è stata cancellata prima di iniziare
     if (signal?.aborted) {
       throw new Error('Request aborted');
     }
 
-    const { data: ordiniData, error: ordiniError } = await supabase
-      .from('ordini')
-      .select(`
-        id,
-        fornitore,
-        totale,
-        contenuto,
-        stato,
-        data,
-        created_at,
-        fornitori!fornitore(nome)
-      `)
-      .order('created_at', { ascending: false });
+    let ordiniData: any[] = [];
+
+    // TENTATIVO A: Join esplicito (se FK esiste)
+    try {
+      const { data, error } = await supabase
+        .from('ordini')
+        .select(`
+          id,
+          ${FORNITORE_UUID_COL},
+          ${DATA_COL},
+          totale,
+          contenuto,
+          stato,
+          created_at,
+          fornitori:${FORNITORE_UUID_COL} ( id, nome )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        console.log('✅ Join con fornitori riuscito');
+        ordiniData = data.map(ordine => ({
+          ...ordine,
+          fornitoreNome: (ordine as any).fornitori?.nome || 'Fornitore sconosciuto'
+        }));
+      } else {
+        throw new Error('Join fallito, uso fallback');
+      }
+    } catch (joinError) {
+      console.log('⚠️ Join fallito, uso strategia fallback two-step');
+      
+      // TENTATIVO B: Fallback automatico (nessun FK richiesto)
+      // 1) Fetch ordini "flat" (senza join)
+      const { data: ordiniRaw, error: e1 } = await supabase
+        .from('ordini')
+        .select(`
+          id,
+          ${FORNITORE_UUID_COL},
+          ${DATA_COL},
+          totale,
+          contenuto,
+          stato,
+          created_at
+        `)
+        .order('created_at', { ascending: false });
+
+      if (e1) {
+        console.error('❌ Errore nel caricamento ordini:', e1);
+        throw new Error(`Errore nel caricamento ordini: ${e1.message}`);
+      }
+
+      // 2) Risolvi nomi fornitori con un'unica query
+      const fornitoreIds = [...new Set(ordiniRaw?.map(o => o[FORNITORE_UUID_COL]).filter(Boolean))] as string[];
+      let fornitoriMap = new Map<string, string>();
+
+      if (fornitoreIds.length > 0) {
+        const { data: fornitori, error: e2 } = await supabase
+          .from('fornitori')
+          .select('id, nome')
+          .in('id', fornitoreIds);
+
+        if (!e2 && fornitori) {
+          fornitoriMap = new Map(fornitori.map(f => [f.id, f.nome]));
+        }
+      }
+
+      // 3) Mappa DTO finale
+      ordiniData = (ordiniRaw || []).map(o => ({
+        ...o,
+        fornitoreNome: fornitoriMap.get(o[FORNITORE_UUID_COL]) || 'Fornitore sconosciuto'
+      }));
+
+      console.log('✅ Fallback two-step completato');
+    }
 
     // Verifica di nuovo se richiesta è stata cancellata dopo query
     if (signal?.aborted) {
       throw new Error('Request aborted');
-    }
-
-    if (ordiniError) {
-      console.error('❌ Errore nel caricamento ordini:', ordiniError);
-      throw new Error(`Errore nel caricamento ordini: ${ordiniError.message}`);
     }
 
     const ordiniProcessati: Ordine[] = (ordiniData || []).map(ordine => {
@@ -151,13 +205,12 @@ export const ordiniService = {
 
       return {
         id: ordine.id,
-        fornitore: (ordine as any).fornitori?.nome || 'Fornitore sconosciuto', // Nome dal join
-        fornitoreId: ordine.fornitore, // UUID per compatibilità
+        fornitore: ordine.fornitoreNome || 'Fornitore sconosciuto', // Nome risolto (join o fallback)
+        fornitoreId: ordine[FORNITORE_UUID_COL], // UUID per compatibilità
         totale: ordine.totale,
         bottiglie,
-        data: ordine.data,
+        data: ordine[DATA_COL],
         stato: ordine.stato,
-        tipo: ['ricevuto', 'archiviato'].includes(ordine.stato) ? 'ricevuto' : 'inviato',
         dettagli
       };
     });

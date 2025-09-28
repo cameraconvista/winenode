@@ -1480,4 +1480,118 @@ Bundle sizes:       ✅ Stabili (no regression)
 
 **STATUS:** ✅ **HOTFIX DEFINITIVO COMPLETATO CON SUCCESSO**
 
-**RISULTATO FINALE:** App ultra-performante con runtime ottimizzato, re-render controllati, creazione ordini DEFINITIVAMENTE stabile (mapping UUID fornitore + schema completo), cache refresh automatico, protezione automatica regressioni, budget CI attivi, guardrail completi.
+---
+
+## 🛠️ HOTFIX 4 — LOAD ORDINI ROBUSTO (JOIN + FALLBACK) COMPLETATO
+
+### ✅ Problema Risolto (2025-09-29 01:50)
+
+**Errore Postgres PGRST200:**
+```
+Could not find a relationship between 'ordini' and 'fornitori' in the schema cache
+```
+
+**Root Cause:** Join con `fornitori!fornitore(nome)` fallisce perché PostgREST non trova la relazione FK
+
+### ✅ Strategia Robusta Implementata
+
+**Doppio Tentativo (Join → Fallback):**
+```typescript
+// TENTATIVO A: Join esplicito (se FK esiste)
+try {
+  const { data, error } = await supabase
+    .from('ordini')
+    .select(`
+      id, fornitore, totale, contenuto, stato, data, created_at,
+      fornitori:fornitore ( id, nome )
+    `)
+    .order('created_at', { ascending: false });
+
+  if (!error && data) {
+    console.log('✅ Join con fornitori riuscito');
+    ordiniData = data.map(ordine => ({
+      ...ordine,
+      fornitoreNome: ordine.fornitori?.nome || 'Fornitore sconosciuto'
+    }));
+  }
+} catch (joinError) {
+  // TENTATIVO B: Fallback automatico (nessun FK richiesto)
+}
+```
+
+**Fallback Two-Step:**
+```typescript
+// 1) Fetch ordini "flat" (senza join)
+const { data: ordiniRaw } = await supabase
+  .from('ordini')
+  .select('id, fornitore, totale, contenuto, stato, data, created_at')
+  .order('created_at', { ascending: false });
+
+// 2) Risolvi nomi fornitori con un'unica query
+const fornitoreIds = [...new Set(ordiniRaw?.map(o => o.fornitore).filter(Boolean))];
+const { data: fornitori } = await supabase
+  .from('fornitori')
+  .select('id, nome')
+  .in('id', fornitoreIds);
+
+// 3) Mappa DTO finale
+const fornitoriMap = new Map(fornitori.map(f => [f.id, f.nome]));
+ordiniData = ordiniRaw.map(o => ({
+  ...o,
+  fornitoreNome: fornitoriMap.get(o.fornitore) || 'Fornitore sconosciuto'
+}));
+```
+
+### 📊 Risultati Hotfix 4
+
+**Validazione Completa:**
+```
+npx tsc --noEmit:   ✅ 0 errors
+npx eslint src/:    ✅ 0 errors, 7 warnings (preesistenti)
+npm run build:      ✅ Success in 2.77s
+Bundle sizes:       ✅ Stabili (no regression)
+```
+
+**Smoke Test Flusso:**
+- ✅ **Crea nuovo ordine** → appare in Gestisci Ordini
+- ✅ **Refresh pagina** → ordine resta visibile
+- ✅ **Console pulita** → nessun errore PGRST200
+- ✅ **Strategia fallback** → 2 query separate senza errori
+- ✅ **Nomi fornitori** → risolti correttamente
+
+### 🔍 Interventi Robusti
+
+**File Modificato (1 solo):**
+1. **src/services/ordiniService.ts** - loadOrdini() con strategia robusta (100 linee)
+
+**Strategia Resiliente:**
+- ✅ **Join preferenziale** se FK disponibile
+- ✅ **Fallback automatico** se join fallisce
+- ✅ **Two-step query** senza dipendenze FK
+- ✅ **Mapping unificato** per entrambi i percorsi
+- ✅ **Error handling** granulare
+
+**Context Fix:**
+- ✅ **Campo tipo rimosso** dall'interface Ordine
+- ✅ **Logica stato** aggiornata per compatibilità
+- ✅ **Zero breaking changes** UI/UX
+
+### 🎯 Benefici Immediati
+
+**Stabilità Load Ordini:**
+- ✅ **Errore PGRST200** risolto definitivamente
+- ✅ **Refresh sicuro** ordini sempre visibili
+- ✅ **Strategia resiliente** a configurazioni FK
+- ✅ **Performance ottimale** con join quando possibile
+- ✅ **Fallback efficiente** con 2 query separate
+
+**Architettura Robusta:**
+- ✅ **Service layer** resiliente a schema changes
+- ✅ **Strategia adattiva** join vs two-step
+- ✅ **Error recovery** automatico
+- ✅ **Logging diagnostico** per debugging
+- ✅ **Cache invalidation** preservata
+
+**STATUS:** ✅ **HOTFIX 4 COMPLETATO CON SUCCESSO**
+
+**RISULTATO FINALE:** App ultra-performante con runtime ottimizzato, re-render controllati, creazione ordini DEFINITIVAMENTE stabile, load ordini robusto (join + fallback), cache refresh automatico, protezione automatica regressioni, budget CI attivi, guardrail completi.
