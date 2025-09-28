@@ -1,0 +1,52 @@
+name: Performance Budget Check
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+
+jobs:
+  performance-budget:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Check bundle size limits
+      run: npm run size-limit
+      
+    - name: Run dependency audit (non-blocking)
+      run: |
+        echo "## Dependency Audit Report" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        npx depcheck || echo "Depcheck completed with warnings"
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      continue-on-error: true
+      
+    - name: TypeScript check
+      run: npm run typecheck
+      
+    - name: ESLint check  
+      run: npm run lint
+      
+    - name: Bundle analysis summary
+      run: |
+        echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+        echo "Performance budget check completed successfully ✅" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Bundle Sizes:" >> $GITHUB_STEP_SUMMARY
+        ls -la dist/assets/*.js | head -10 >> $GITHUB_STEP_SUMMARY || true
