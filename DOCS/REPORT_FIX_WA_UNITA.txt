@@ -1,0 +1,128 @@
+REPORT DIAGNOSI FIX WHATSAPP + UNITÀ CREA ORDINE - 28/09/2025
+================================================================
+
+🎯 FILE ANALIZZATI:
+- src/components/modals/WhatsAppOrderModal.tsx (199 righe)
+- src/utils/buildWhatsAppMessage.ts (71 righe)
+- src/pages/CreaOrdinePage.tsx (282 righe)
+- src/hooks/useCreaOrdine.ts (82 righe)
+
+══════════════════════════════════════════════════════════════════════════════
+# A) DIAGNOSI WHATSAPP - TESTO NON PRECOMPILATO SU MOBILE
+
+🔍 PROBLEMI IDENTIFICATI:
+
+**A1) ORDINE FALLBACK ERRATO:**
+- Linea 30-35: Prima prova wa.me (web), poi whatsapp:// (mobile app)
+- PROBLEMA: Su mobile dovrebbe provare prima whatsapp:// per app nativa
+- CAUSA: Ordine invertito causa apertura web invece di app mobile
+
+**A2) ENCODING CORRETTO MA MIGLIORABILE:**
+- buildWhatsAppMessage.ts linea 49: return lines.join('\n')
+- buildWhatsAppUrl.ts linea 58: encodeURIComponent(message)
+- ✅ Encoding già corretto, ma manca normalizzazione CRLF
+
+**A3) APERTURA SINCRONA CORRETTA:**
+- ✅ window.open chiamato direttamente nel click handler (linea 31, 35)
+- ✅ Nessun await/RPC prima dell'apertura
+- ✅ Nessuna chiusura modale prima dell'open
+
+**CAUSA ROOT:** Ordine fallback mobile-first errato
+
+══════════════════════════════════════════════════════════════════════════════
+# B) DIAGNOSI CREA ORDINE - UNITÀ AUTO-SWITCH
+
+🔍 PROBLEMI IDENTIFICATI:
+
+**B1) DEFAULT UNITÀ SBAGLIATO:**
+- useCreaOrdine.ts linea 33: unit: 'bottiglie' (dovrebbe essere 'cartoni')
+- PROBLEMA: Nuovi item partono con 'bottiglie' invece di 'cartoni'
+
+**B2) RESET QUANTITÀ SU CAMBIO UNITÀ:**
+- useCreaOrdine.ts linea 47-48: newItems[existingIndex].quantity = 0
+- PROBLEMA: Cambiare unità azzera la quantità (comportamento indesiderato)
+- CAUSA: Reset automatico impedisce persistenza quantità per unità
+
+**B3) LOGICA UI CORRETTA:**
+- CreaOrdinePage.tsx linea 200: currentItem.unit === 'cartoni' default
+- ✅ UI già mostra 'Cartoni' come default se currentItem non esiste
+- ✅ Nessun useEffect che auto-cambia unità in base a quantità
+
+**CAUSA ROOT:** 
+1. Default 'bottiglie' invece di 'cartoni' in nuovo item
+2. Reset quantità su cambio unità impedisce workflow manuale
+
+══════════════════════════════════════════════════════════════════════════════
+# C) PIANO IMPLEMENTAZIONE
+
+**FIX A) WHATSAPP MOBILE-FIRST:**
+1. Invertire ordine fallback: whatsapp:// → wa.me → web.whatsapp.com
+2. Aggiungere normalizzazione CRLF in buildWhatsAppMessage
+3. Parametri window.open ottimizzati per mobile
+
+**FIX B) UNITÀ MANUALE DEFAULT CARTONI:**
+1. Cambiare default da 'bottiglie' → 'cartoni' in nuovo item
+2. Rimuovere reset quantità su cambio unità
+3. Mantenere quantità esistente quando si cambia unità
+
+══════════════════════════════════════════════════════════════════════════════
+# D) FILE DA MODIFICARE
+
+**WHATSAPP:**
+- src/components/modals/WhatsAppOrderModal.tsx (handler apertura)
+- src/utils/buildWhatsAppMessage.ts (normalizzazione messaggio)
+
+**CREA ORDINE:**
+- src/hooks/useCreaOrdine.ts (default + logica cambio unità)
+
+STATO: Diagnosi completata, cause identificate, piano implementazione definito.
+
+══════════════════════════════════════════════════════════════════════════════
+# E) IMPLEMENTAZIONE COMPLETATA - 28/09/2025
+
+✅ **FIX A) WHATSAPP MOBILE-FIRST COMPLETATO:**
+
+**File modificati:**
+- src/utils/buildWhatsAppMessage.ts (83 righe, +12 righe)
+- src/components/modals/WhatsAppOrderModal.tsx (199 righe, modifiche handler)
+
+**Modifiche applicate:**
+1. ✅ Normalizzazione messaggio: CRLF→LF + trim finale (linea 50-51)
+2. ✅ Nuove funzioni URL: buildWhatsAppMobileUrl, buildWhatsAppWebUrl
+3. ✅ Sequenza mobile-first: whatsapp:// → wa.me → web.whatsapp.com
+4. ✅ Apertura sincrona con parametri noopener,noreferrer
+5. ✅ Log success non bloccante con setTimeout(0)
+
+**Risultato atteso:**
+- Su mobile: Apre app WhatsApp nativa con testo precompilato
+- Su desktop: Fallback a web.whatsapp.com con testo precompilato
+- Messaggio normalizzato senza caratteri problematici
+
+✅ **FIX B) UNITÀ MANUALE DEFAULT CARTONI COMPLETATO:**
+
+**File modificati:**
+- src/hooks/useCreaOrdine.ts (82 righe, modifiche logica)
+
+**Modifiche applicate:**
+1. ✅ Default nuovo item: 'bottiglie' → 'cartoni' (linea 33)
+2. ✅ Rimosso reset quantità su cambio unità (linea 47-48)
+3. ✅ Persistenza quantità esistente quando si cambia unità
+4. ✅ Fallback 'cartoni' per nuovi item senza unità specificata
+
+**Risultato atteso:**
+- Nuove righe partono con "Cartoni" selezionato
+- Cambiare unità mantiene la quantità esistente
+- Selezione unità completamente manuale (no auto-switch)
+
+══════════════════════════════════════════════════════════════════════════════
+# F) COMMIT SUGGERITI
+
+```bash
+git add src/utils/buildWhatsAppMessage.ts src/components/modals/WhatsAppOrderModal.tsx
+git commit -m "fix(wa): mobile deep-link with proper encoding & sync open"
+
+git add src/hooks/useCreaOrdine.ts
+git commit -m "fix(order): unit selection manual-only (default cartoni)"
+```
+
+STATO FINALE: Entrambi i fix implementati, pronti per test su dispositivi reali.
