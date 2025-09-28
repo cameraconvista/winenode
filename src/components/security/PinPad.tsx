@@ -7,6 +7,7 @@ interface PinPadProps {
   onSubmit: () => void;
   disabled?: boolean;
   canSubmit?: boolean;
+  isValidPin?: boolean;
 }
 
 export default function PinPad({ 
@@ -14,7 +15,8 @@ export default function PinPad({
   onDelete, 
   onSubmit, 
   disabled = false,
-  canSubmit = false 
+  canSubmit = false,
+  isValidPin = false
 }: PinPadProps) {
   const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
@@ -47,17 +49,18 @@ export default function PinPad({
         type="button"
         onClick={onDelete}
         disabled={disabled}
-        className="h-14 w-14 rounded-full border-2 font-bold transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
+        className="h-14 w-14 rounded-full border-2 font-bold text-xl transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
         style={{
           backgroundColor: '#fff9dc',
           color: '#541111',
           borderColor: 'rgba(84, 17, 17, 0.4)',
+          fontSize: '18px',
           minHeight: '56px',
           minWidth: '56px'
         }}
         aria-label="Cancella"
       >
-        <Delete size={20} />
+        C
       </button>
       
       <button
@@ -84,9 +87,9 @@ export default function PinPad({
         disabled={disabled || !canSubmit}
         className="h-14 w-14 rounded-full border-2 font-bold transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
         style={{
-          backgroundColor: canSubmit && !disabled ? '#22c55e' : '#fff9dc',
-          color: canSubmit && !disabled ? '#ffffff' : '#541111',
-          borderColor: canSubmit && !disabled ? '#16a34a' : 'rgba(84, 17, 17, 0.4)',
+          backgroundColor: isValidPin && canSubmit && !disabled ? '#22c55e' : '#fff9dc',
+          color: isValidPin && canSubmit && !disabled ? '#ffffff' : '#541111',
+          borderColor: isValidPin && canSubmit && !disabled ? '#16a34a' : 'rgba(84, 17, 17, 0.4)',
           minHeight: '56px',
           minWidth: '56px'
         }}

@@ -26,12 +26,14 @@ export default function OrdersPinModal({
 }: OrdersPinModalProps) {
   const [pinBuffer, setPinBuffer] = useState('');
   const [showError, setShowError] = useState(false);
+  const [isValidPin, setIsValidPin] = useState(false);
 
   // Reset buffer quando il modale si apre/chiude
   useEffect(() => {
     if (open) {
       setPinBuffer('');
       setShowError(false);
+      setIsValidPin(false);
     }
   }, [open]);
 
@@ -59,12 +61,22 @@ export default function OrdersPinModal({
 
   const handleDigit = (digit: string) => {
     if (pinBuffer.length < 4) {
-      setPinBuffer(prev => prev + digit);
+      const newBuffer = pinBuffer + digit;
+      setPinBuffer(newBuffer);
+      
+      // Verifica se il PIN è corretto quando è completo
+      if (newBuffer.length === 4) {
+        const isValid = validatePin(newBuffer);
+        setIsValidPin(isValid);
+      } else {
+        setIsValidPin(false);
+      }
     }
   };
 
   const handleDelete = () => {
     setPinBuffer(prev => prev.slice(0, -1));
+    setIsValidPin(false);
   };
 
   const handleSubmit = () => {
@@ -75,6 +87,7 @@ export default function OrdersPinModal({
       } else {
         setShowError(true);
         setPinBuffer('');
+        setIsValidPin(false);
         onInvalidPin();
         
         // Rimuovi errore dopo 2 secondi
@@ -174,6 +187,7 @@ export default function OrdersPinModal({
           onSubmit={handleSubmit}
           disabled={isLocked}
           canSubmit={pinBuffer.length === 4}
+          isValidPin={isValidPin}
         />
 
         {/* Pulsante ESC */}
