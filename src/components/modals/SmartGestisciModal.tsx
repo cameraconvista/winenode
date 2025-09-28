@@ -135,7 +135,14 @@ export default function SmartGestisciModal({
         <header className="mobile-header">
           <div className="header-content">
             <div className="logo-wrap">
-              <img src="/logo1.png" alt="WINENODE" loading="eager" />
+              <img 
+                src="/logo1.png" 
+                alt="WINENODE" 
+                loading="lazy"
+                decoding="async"
+                width="48"
+                height="48"
+              />
             </div>
           </div>
         </header>

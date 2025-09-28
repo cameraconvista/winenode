@@ -114,6 +114,10 @@ export default function PreferenzePage() {
               src="/logo1.png"
               alt="WINENODE"
               className="h-32 w-auto object-contain"
+              loading="lazy"
+              decoding="async"
+              width="128"
+              height="128"
             />
             <button
               onClick={() => navigate('/')}

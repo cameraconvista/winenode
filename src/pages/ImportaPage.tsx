@@ -30,6 +30,10 @@ export default function ImportaPage() {
               src="/logo1.png"
               alt="WINENODE"
               className="h-24 w-auto object-contain"
+              loading="lazy"
+              decoding="async"
+              width="96"
+              height="96"
             />
 
             <div className="w-10"></div>

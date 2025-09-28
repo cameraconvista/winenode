@@ -31,6 +31,10 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
           src="/logo1.png" 
           alt="WineNode Logo" 
           className="w-full h-auto object-contain"
+          loading="lazy"
+          decoding="async"
+          width="200"
+          height="200"
           style={{ 
             filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
             maxWidth: 'min(50vw, 192px)',

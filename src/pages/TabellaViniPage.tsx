@@ -108,6 +108,10 @@ export default function TabellaViniPage() {
                 src="/logo1.png"
                 alt="WINENODE"
                 className="h-12 w-auto object-contain"
+                loading="lazy"
+                decoding="async"
+                width="48"
+                height="48"
               />
             </div>
 

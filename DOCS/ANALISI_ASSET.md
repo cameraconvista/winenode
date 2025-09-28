@@ -97,108 +97,12 @@ Beneficio: 1.7KB + 3 HTTP request reduction
 | `filtro.png` | 24x24px | PNG | 72 | ✅ Icon standard |
 | `lente.png` | 24x24px | PNG | 72 | ✅ Icon standard |
 | `logo1.png` | 128x128px | PNG | 144 | ✅ Logo standard |
-| `logo1.webp` | 128x128px | WebP | 144 | ✅ Logo ottimizzato |
 | `iconwinenode.png` | 64x64px | PNG | 72 | ✅ App icon |
 | `whatsapp.png` | 32x32px | PNG | 72 | ✅ Social icon |
 
 ### ✅ COERENZA STILISTICA OTTIMA
 - Icone 24x24px uniformi
-- Logo 128x128px appropriato
-- Palette colori coerente
-- Stile flat design consistente
-
----
-
-## 📱 ANALISI RESPONSIVE E RETINA
-
-### Supporto High-DPI
-```
-❌ MANCANTI - Varianti @2x per Retina:
-- allert@2x.png (48x48px)
-- carrello@2x.png (48x48px)
-- filtro@2x.png (48x48px)
-- lente@2x.png (48x48px)
-
-✅ PRESENTE - Logo ottimizzato:
-- logo1.webp (formato moderno)
-```
-
-### Mobile Optimization
-- Dimensioni appropriate per touch (24px+ target)
-- Contrasto sufficiente per outdoor viewing
-- Formato PNG compatibile con tutti i browser
-
----
-
-## 🚀 OPPORTUNITÀ OTTIMIZZAZIONE
-
-### 1. Lazy Loading Implementation
-```typescript
-// Attuale: Eager loading
-<img src="/allert.png" />
-
-// Proposto: Lazy loading per asset non critici
-<img src="/allert.png" loading="lazy" />
-```
-
-### 2. Preload Asset Critici
-```html
-<!-- Header HTML - Asset critici above-the-fold -->
-<link rel="preload" href="/logo1.webp" as="image">
-<link rel="preload" href="/iconwinenode.png" as="image">
-```
-
-### 3. Dynamic Import per Asset Condizionali
-```typescript
-// WhatsApp icon solo se feature abilitata
-const whatsappIcon = await import('/whatsapp.png');
-```
-
----
-
-## 📊 PERFORMANCE IMPACT
-
-### Baseline Attuale
-- **Asset totali:** 8 file
-- **Dimensione totale:** 19.2KB
-- **HTTP requests:** 8 (se tutti caricati)
-- **Formato moderno:** 12.5% (solo logo)
-
-### Target Ottimizzato
-- **Asset totali:** 8 file (invariato)
-- **Dimensione totale:** ~16KB (-17%)
-- **HTTP requests:** 5 (sprite + lazy loading)
-- **Formato moderno:** 100% (WebP migration)
-
-### Metriche Web Vitals
-```
-LCP Impact: Minimo (asset non above-the-fold)
-FID Impact: Zero (nessun JavaScript asset)
-CLS Impact: Zero (dimensioni fisse)
-```
-
----
-
-## 🔧 RACCOMANDAZIONI IMPLEMENTAZIONE
-
-### Priorità P0 - Quick Wins (1h)
-1. **Preload asset critici** nel `<head>`
-2. **Lazy loading** per asset below-the-fold
-3. **Alt text** appropriati per accessibilità
-
-### Priorità P1 - Ottimizzazione (2-3h)
-1. **WebP conversion** per asset rimanenti
-2. **Sprite sheet** per icone correlate
-3. **@2x variants** per Retina display
-
-### Priorità P2 - Advanced (4-6h)
-1. **Dynamic imports** condizionali
-2. **Image optimization pipeline** (build-time)
-3. **CDN integration** per asset statici
-
----
-
-## 🛠️ IMPLEMENTAZIONE TECNICA
+- Logo 128x128px
 
 ### 1. Vite Asset Optimization
 ```typescript
