@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PhosphorCart from '~icons/ph/shopping-cart-light';
@@ -167,7 +167,7 @@ export default function HomePage() {
     ? wineSearch.filteredWines.filter(wine => baseFilteredWines.some(bw => bw.id === wine.id))
     : baseFilteredWines;
 
-  const handleInventoryChange = async (id: string, value: number) => {
+  const handleInventoryChange = useCallback(async (id: string, value: number) => {
     const adjusted = Math.max(0, value);
     console.log('🔄 Aggiornamento giacenza:', id, 'da', wines.find(w => w.id === id)?.inventory, 'a', adjusted);
 
@@ -185,17 +185,16 @@ export default function HomePage() {
       // In caso di errore, forza il refresh per sincronizzare
       await refreshWines();
     }
-  };
+  }, [wines, updateWineInventory, refreshWines]);
 
-  const handleWineClick = (wine: WineType) => {
+  const handleWineClick = useCallback((wine: WineType) => {
     setSelectedWine(wine);
     setShowWineDetailsModal(true);
-  };
+  }, []);
 
-
-  const handleTabChange = (category: string) => {
+  const handleTabChange = useCallback((category: string) => {
     setActiveTab(category);
-  };
+  }, []);
 
 
   const handleUpdateWine = async (id: string, updates: Partial<WineType>): Promise<void> => {

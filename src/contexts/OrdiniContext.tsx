@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { useSupabaseOrdini } from '../hooks/useSupabaseOrdini';
 import { isFeatureEnabled } from '../config/featureFlags';
 import useWines from '../hooks/useWines';
@@ -315,7 +315,7 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <OrdiniContext.Provider value={{
+    <OrdiniContext.Provider value={useMemo(() => ({
       ordiniInviati,
       ordiniStorico,
       loading,
@@ -325,7 +325,17 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       confermaRicezioneOrdine,
       eliminaOrdineInviato,
       eliminaOrdineStorico
-    }}>
+    }), [
+      ordiniInviati,
+      ordiniStorico,
+      loading,
+      aggiungiOrdine,
+      aggiornaStatoOrdine,
+      aggiornaQuantitaOrdine,
+      confermaRicezioneOrdine,
+      eliminaOrdineInviato,
+      eliminaOrdineStorico
+    ])}>
       {children}
     </OrdiniContext.Provider>
   );
@@ -337,4 +347,51 @@ export function useOrdini() {
     throw new Error('useOrdini must be used within an OrdiniProvider');
   }
   return context;
+}
+
+// Selectors per ridurre re-render
+export function useOrdiniInviati() {
+  const context = useContext(OrdiniContext);
+  if (context === undefined) {
+    throw new Error('useOrdiniInviati must be used within an OrdiniProvider');
+  }
+  return context.ordiniInviati;
+}
+
+export function useOrdiniStorico() {
+  const context = useContext(OrdiniContext);
+  if (context === undefined) {
+    throw new Error('useOrdiniStorico must be used within an OrdiniProvider');
+  }
+  return context.ordiniStorico;
+}
+
+export function useOrdiniLoading() {
+  const context = useContext(OrdiniContext);
+  if (context === undefined) {
+    throw new Error('useOrdiniLoading must be used within an OrdiniProvider');
+  }
+  return context.loading;
+}
+
+export function useOrdiniActions() {
+  const context = useContext(OrdiniContext);
+  if (context === undefined) {
+    throw new Error('useOrdiniActions must be used within an OrdiniProvider');
+  }
+  return useMemo(() => ({
+    aggiungiOrdine: context.aggiungiOrdine,
+    aggiornaStatoOrdine: context.aggiornaStatoOrdine,
+    aggiornaQuantitaOrdine: context.aggiornaQuantitaOrdine,
+    confermaRicezioneOrdine: context.confermaRicezioneOrdine,
+    eliminaOrdineInviato: context.eliminaOrdineInviato,
+    eliminaOrdineStorico: context.eliminaOrdineStorico
+  }), [
+    context.aggiungiOrdine,
+    context.aggiornaStatoOrdine,
+    context.aggiornaQuantitaOrdine,
+    context.confermaRicezioneOrdine,
+    context.eliminaOrdineInviato,
+    context.eliminaOrdineStorico
+  ]);
 }

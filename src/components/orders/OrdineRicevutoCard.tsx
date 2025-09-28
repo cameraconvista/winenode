@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Eye, Check, Trash2, Plus, Minus } from 'lucide-react';
 import { Ordine, OrdineDettaglio } from '../../contexts/OrdiniContext';
 import { ORDINI_LABELS } from '../../constants/ordiniLabels';
@@ -12,7 +12,7 @@ interface OrdineRicevutoCardProps {
   onAggiornaQuantita: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
 }
 
-export default function OrdineRicevutoCard({
+const OrdineRicevutoCard = memo(function OrdineRicevutoCard({
   ordine,
   onVisualizza,
   onConfermaRicezione,
@@ -190,4 +190,6 @@ export default function OrdineRicevutoCard({
       </div>
     </div>
   );
-}
+});
+
+export default OrdineRicevutoCard;

@@ -1,5 +1,6 @@
 // Service layer neutro per operazioni ordini - risolve circular dependency
 import { supabase } from '../lib/supabase';
+import { normalizeToPgDate } from '../utils/dateForPg';
 
 // Cache in-memory con TTL per ottimizzazione performance
 interface CacheEntry<T> {
@@ -53,6 +54,9 @@ class CacheManager {
 
 // Cache globale per il service
 const cache = new CacheManager();
+
+// Configurazione tipo colonna data in DB
+const DATA_COLUMN_TYPE: 'date' | 'timestamp' = 'date';
 
 // Tipi locali per evitare dipendenze circolari
 export interface OrdineDettaglio {
@@ -175,29 +179,50 @@ export const ordiniService = {
   async createOrdine(ordine: Omit<Ordine, 'id'>): Promise<string> {
     console.log('📝 Creando nuovo ordine:', ordine);
 
-    const { data, error } = await supabase
-      .from('ordini')
-      .insert({
-        fornitore: ordine.fornitore,
-        totale: ordine.totale,
-        contenuto: JSON.stringify(ordine.dettagli || []),
-        stato: ordine.stato,
-        data: ordine.data
-      })
-      .select('id')
-      .single();
+    try {
+      // Normalizza la data per Postgres
+      let normalizedDate: string;
+      try {
+        normalizedDate = normalizeToPgDate(ordine.data);
+        console.log('📅 Data normalizzata:', ordine.data, '→', normalizedDate);
+      } catch (dateError) {
+        console.error('❌ Data ordine non valida (atteso DD/MM/YYYY o YYYY-MM-DD):', ordine.data);
+        throw new Error(`Data ordine non valida: ${ordine.data}`);
+      }
 
-    if (error) {
-      console.error('❌ Errore nella creazione ordine:', error);
-      throw new Error(`Errore nella creazione ordine: ${error.message}`);
+      // Usa data normalizzata (YYYY-MM-DD) per colonna date
+      const dbDateValue = normalizedDate;
+
+      const { data, error } = await supabase
+        .from('ordini')
+        .insert({
+          fornitore: ordine.fornitore,
+          totale: ordine.totale,
+          contenuto: JSON.stringify(ordine.dettagli || []),
+          stato: ordine.stato,
+          data: dbDateValue
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        console.error('❌ Errore nella creazione ordine:', error);
+        throw new Error(`Errore nella creazione ordine: ${error.message}`);
+      }
+
+      console.log('✅ Ordine creato con ID:', data.id);
+      
+      // Invalida cache ordini dopo creazione
+      cache.invalidate('ordini');
+      
+      return data.id;
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('INVALID_DATE')) {
+        console.error('❌ Data ordine non valida (atteso DD/MM/YYYY o YYYY-MM-DD)');
+        throw new Error('Data ordine non valida. Formato atteso: DD/MM/YYYY');
+      }
+      throw error;
     }
-
-    console.log('✅ Ordine creato con ID:', data.id);
-    
-    // Invalida cache ordini dopo creazione
-    cache.invalidate('ordini');
-    
-    return data.id;
   },
 
   // Aggiorna stato ordine
