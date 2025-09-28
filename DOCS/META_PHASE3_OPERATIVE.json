@@ -1,0 +1,306 @@
+{
+  "timestamp": "2025-09-28T03:12:35+02:00",
+  "phase": "PHASE3_ANALYSIS_OPERATIVE",
+  "backup_created": "backup_phase3_ANALYSIS_20250928_0312.tar",
+  "backup_size_mb": 11.2,
+  
+  "husky": {
+    "status": "INSTALLED_BUT_INACTIVE",
+    "hooks_present": [
+      "pre-commit", "pre-push", "prepare-commit-msg", "commit-msg",
+      "post-commit", "post-checkout", "post-merge", "pre-rebase"
+    ],
+    "active_hooks": [],
+    "commands_executed": "NONE - hooks directory exists but no custom hooks configured",
+    "estimated_time": "0s (inactive)",
+    "failure_policy": "N/A - not configured",
+    "cross_platform_compatibility": "UNKNOWN - no hooks to test",
+    "issues": [
+      "Husky installed in package.json but no custom hooks configured",
+      "Directory .husky/_/ contains default templates only",
+      "npm script 'prepare' references husky install but no hooks active"
+    ]
+  },
+  
+  "github_workflows": {
+    "status": "PARTIALLY_CONFIGURED",
+    "workflows": [
+      {
+        "file": "ci.yml",
+        "name": "CI Pipeline", 
+        "triggers": {
+          "pull_request": ["main", "develop"],
+          "push": ["main", "develop"]
+        },
+        "jobs": [
+          {
+            "name": "db-migrations-guard",
+            "runs_on": "ubuntu-latest",
+            "condition": "github.event_name == 'pull_request'",
+            "steps": [
+              "Checkout code (actions/checkout@v4)",
+              "Check for unauthorized DB migrations (custom script)"
+            ],
+            "node_version": "N/A - no Node.js setup",
+            "cache": "NONE - no cache configured",
+            "estimated_duration": "30-60s"
+          }
+        ],
+        "secrets_used": ["GITHUB_TOKEN"],
+        "artifacts": "NONE",
+        "bundle_guard": false,
+        "size_check": false
+      }
+    ],
+    "missing_standard_jobs": [
+      "install dependencies",
+      "lint check", 
+      "typecheck",
+      "build",
+      "test"
+    ],
+    "issues": [
+      "Only DB migrations guard configured, missing standard CI pipeline",
+      "No Node.js setup or dependency installation",
+      "No cache configuration for performance",
+      "No build verification or testing"
+    ]
+  },
+  
+  "recovery": {
+    "status": "BASIC_CONFIGURED",
+    "structure": {
+      "directory": ".recovery/",
+      "files": [
+        "current-state.json",
+        "snapshots/ (empty directory)"
+      ],
+      "total_size_kb": 0.8,
+      "last_updated": "2025-09-25T21:21:37.592Z"
+    },
+    "purpose": "Project state tracking and recovery snapshots",
+    "retention_policy": "NONE - no automatic cleanup",
+    "current_state": {
+      "snapshot_id": "recovery-2025-09-25T21-21-37-589Z",
+      "branch": "main",
+      "last_commit": "d2be4b8cd3f6cc1d0305522566bdebeccfc55247",
+      "active_task": "Task generico",
+      "reports_tracked": 5
+    },
+    "issues": [
+      "No retention policy - could accumulate indefinitely",
+      "Snapshots directory empty - recovery system not actively used",
+      "No automated cleanup or rotation"
+    ]
+  },
+  
+  "scripts": {
+    "status": "COMPREHENSIVE_IMPLEMENTED",
+    "total_files": 13,
+    "files": [
+      {
+        "name": "auto-commit.js",
+        "size_kb": 11.9,
+        "responsibility": "Automated GitHub commits with logging",
+        "npm_script": "commit:auto",
+        "used_in_workflows": false
+      },
+      {
+        "name": "backup-system.js", 
+        "size_kb": 11.3,
+        "responsibility": "Complete backup/restore system with rotation",
+        "npm_scripts": ["backup", "backup:list", "backup:restore", "restore-confirm"],
+        "used_in_workflows": false
+      },
+      {
+        "name": "backup.js",
+        "size_kb": 5.0,
+        "responsibility": "Legacy backup script",
+        "npm_script": "backup:full",
+        "status": "DUPLICATE/LEGACY",
+        "used_in_workflows": false
+      },
+      {
+        "name": "cleanup.js",
+        "size_kb": 13.3,
+        "responsibility": "Find obsolete/duplicate/large unused files",
+        "npm_script": "cleanup",
+        "used_in_workflows": false
+      },
+      {
+        "name": "config-check.js",
+        "size_kb": 9.2,
+        "responsibility": "Verify configurations (.env, tsconfig, etc)",
+        "npm_script": "config-check",
+        "used_in_workflows": false
+      },
+      {
+        "name": "file-size-check.js",
+        "size_kb": 6.6,
+        "responsibility": "Analyze file dimensions",
+        "npm_script": "file-size-check", 
+        "used_in_workflows": false
+      },
+      {
+        "name": "pre-commit-check.js",
+        "size_kb": 8.2,
+        "responsibility": "Pre-commit hooks with ESLint and size checks",
+        "npm_script": "pre-commit",
+        "used_in_workflows": false,
+        "max_lines_warning": 500,
+        "max_lines_block": 800
+      },
+      {
+        "name": "project-diagnose.js",
+        "size_kb": 13.6,
+        "responsibility": "Complete project diagnosis and health check",
+        "npm_scripts": ["diagnose", "diagnose:force"],
+        "used_in_workflows": false
+      },
+      {
+        "name": "project-info.js",
+        "size_kb": 12.9,
+        "responsibility": "Project summary with health score",
+        "npm_script": "project-info",
+        "used_in_workflows": false
+      },
+      {
+        "name": "recovery-system.cjs",
+        "size_kb": 8.3,
+        "responsibility": "Project state recovery and snapshots",
+        "npm_scripts": ["recovery", "recovery:save", "recovery:restore", "recovery:auto"],
+        "used_in_workflows": false
+      },
+      {
+        "name": "setup-local.js",
+        "size_kb": 13.5,
+        "responsibility": "Local development environment setup",
+        "npm_script": "setup:local",
+        "used_in_workflows": false
+      },
+      {
+        "name": "supabase-doc-generator.js",
+        "size_kb": 10.7,
+        "responsibility": "Live Supabase documentation generation",
+        "npm_scripts": ["supabase:doc", "supabase:doc:check"],
+        "used_in_workflows": false
+      },
+      {
+        "name": "template-component.js",
+        "size_kb": 11.7,
+        "responsibility": "React/TypeScript component generator",
+        "npm_script": "template",
+        "used_in_workflows": false
+      }
+    ],
+    "duplicates_found": [
+      {
+        "primary": "backup-system.js",
+        "duplicate": "backup.js",
+        "recommendation": "Deprecate backup.js, use backup-system.js"
+      }
+    ],
+    "orphaned_scripts": [],
+    "missing_npm_references": [],
+    "exit_code_robustness": "GOOD - all scripts have proper error handling",
+    "logging_quality": "EXCELLENT - Italian timestamps and detailed logging"
+  },
+  
+  "root_config": {
+    "package_json": {
+      "status": "WELL_ORGANIZED",
+      "scripts_count": 32,
+      "dependencies_count": 28,
+      "dev_dependencies_count": 21,
+      "scripts_analysis": {
+        "dev_scripts": ["dev", "build", "preview", "start"],
+        "quality_scripts": ["lint", "lint:fix", "test", "test:ci", "typecheck"],
+        "utility_scripts": ["backup", "backup:list", "backup:restore", "restore-confirm", "cleanup", "diagnose", "project-info"],
+        "automation_scripts": ["commit:auto", "supabase:doc", "setup:local"],
+        "orphaned_scripts": [],
+        "unused_scripts": ["backup:full"]
+      },
+      "lockfile_present": true,
+      "lockfile_type": "package-lock.json"
+    },
+    
+    "tsconfig_json": {
+      "status": "RELAXED_CONFIG",
+      "strictness": "LOW - strict: false",
+      "base_url": ".",
+      "paths_configured": true,
+      "module_resolution": "bundler",
+      "skip_lib_check": true,
+      "impact": "Faster builds but less type safety"
+    },
+    
+    "vite_config": {
+      "status": "WELL_CONFIGURED",
+      "aliases": ["@", "@orders"],
+      "plugins": ["react"],
+      "build_target": "es2020",
+      "sourcemap": true,
+      "external_deps": ["google-auth-library", "gcp-metadata", "child_process", "fs", "os", "path"]
+    },
+    
+    "eslint_config": {
+      "status": "GOVERNANCE_ACTIVE",
+      "type": "eslint.config.js (flat config)",
+      "rules": {
+        "max_lines": "800 (relaxed from 500)",
+        "max_lines_per_function": "200-400 (context dependent)",
+        "complexity": "20-30",
+        "architectural_governance": true
+      },
+      "environments": ["browser (React/TS)", "node (scripts/server)"],
+      "ignored_paths": ["dist", "node_modules", ".recovery", "Backup_Automatico"]
+    },
+    
+    "gitignore": {
+      "status": "BASIC_COVERAGE",
+      "covers_node_modules": true,
+      "covers_dist": true,
+      "covers_env_files": true,
+      "missing_coverage": [
+        "Backup_Automatico/*.tar",
+        "*.tar.gz",
+        ".recovery/snapshots/*",
+        "coverage/",
+        ".nyc_output/"
+      ]
+    },
+    
+    "missing_files": {
+      "gitattributes": "NOT_PRESENT - no EOL/diff rules configured",
+      "editorconfig": "NOT_PRESENT - no editor consistency rules",
+      "npmrc": "NOT_PRESENT - using default npm settings",
+      "nvmrc": "NOT_PRESENT - no Node.js version pinning"
+    }
+  },
+  
+  "summary": {
+    "overall_status": "PARTIALLY_CONFIGURED",
+    "strengths": [
+      "Comprehensive scripts ecosystem (13 utility scripts)",
+      "Robust backup system with rotation and integrity checks",
+      "ESLint governance with architectural rules",
+      "Well-organized package.json with clear script categories",
+      "TypeScript and Vite properly configured"
+    ],
+    "critical_issues": [
+      "Husky installed but no active hooks configured",
+      "GitHub Actions missing standard CI pipeline (lint, test, build)",
+      "No Node.js version pinning (.nvmrc missing)",
+      "Recovery system underutilized (empty snapshots)",
+      "Missing .gitattributes and .editorconfig for team consistency"
+    ],
+    "recommendations": [
+      "Configure Husky pre-commit hooks using existing pre-commit-check.js",
+      "Implement complete CI pipeline in GitHub Actions",
+      "Add .nvmrc for Node.js version consistency",
+      "Improve .gitignore coverage for backup files",
+      "Add .editorconfig and .gitattributes for team standards",
+      "Deprecate legacy backup.js in favor of backup-system.js"
+    ]
+  }
+}
