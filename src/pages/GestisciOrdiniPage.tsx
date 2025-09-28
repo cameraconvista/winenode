@@ -656,6 +656,8 @@ export default function GestisciOrdiniPage() {
                             src="/whatsapp.png" 
                             alt="WhatsApp" 
                             className="w-5 h-5"
+                            loading="lazy"
+                            decoding="async"
                             style={{ filter: 'none' }}
                           />
                         </button>

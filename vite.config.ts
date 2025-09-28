@@ -43,7 +43,15 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     rollupOptions: {
-      external: ['google-auth-library', 'gcp-metadata', 'child_process', 'fs', 'os', 'path']
+      external: ['google-auth-library', 'gcp-metadata', 'child_process', 'fs', 'os', 'path'],
+      output: {
+        manualChunks: {
+          // Vendor chunks stabili per caching ottimale
+          'react-core': ['react', 'react-dom'],
+          'supabase-core': ['@supabase/supabase-js'],
+          'icons-core': ['lucide-react']
+        }
+      }
     },
     commonjsOptions: {
       include: [/node_modules/]

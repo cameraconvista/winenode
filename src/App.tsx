@@ -1,9 +1,10 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { OrdiniProvider } from './contexts/OrdiniContext'
 import IntroPage from './components/IntroPage'
 import { useFirstLaunch } from './hooks/useFirstLaunch'
+import { initMainRoutesPrefetch } from './utils/prefetch'
 // Import utility per testing in development
 import './utils/resetFirstLaunch'
 
@@ -23,6 +24,13 @@ const GestisciOrdiniPage = lazy(() => import('./pages/GestisciOrdiniPage'))
 
 function App() {
   const { isFirstLaunch, isLoading, markIntroCompleted } = useFirstLaunch()
+
+  // Inizializza prefetch delle rotte principali su idle
+  useEffect(() => {
+    if (!isFirstLaunch && !isLoading) {
+      initMainRoutesPrefetch();
+    }
+  }, [isFirstLaunch, isLoading]);
 
   // Mostra l'IntroPage solo al primo avvio
   if (isFirstLaunch && !isLoading) {
@@ -48,13 +56,15 @@ function App() {
         }>
           <Routes>
           <Route path="/" element={<HomePage />} />
-          {/* RIMOSSO: Route /settings eliminata */}
-          {/* RIMOSSO: Route /settings/fornitori eliminata */}
-          {/* RIMOSSO: Route archivi eliminate */}
-          {/* RIMOSSO: Route /settings/preferenze eliminata */}
-          {/* RIMOSSO: Route /settings/account eliminata */}
+          <Route path="/fornitori" element={<FornitoriPage />} />
+          <Route path="/gestisci-ordini" element={<GestisciOrdiniPage />} />
+          <Route path="/crea-ordine" element={<CreaOrdinePage />} />
+          <Route path="/riepilogo-ordine" element={<RiepilogoOrdinePage />} />
           <Route path="/manual-wine-insert" element={<ManualWineInsertPage />} />
+          <Route path="/preferenze" element={<PreferenzePage />} />
+          <Route path="/importa" element={<ImportaPage />} />
           <Route path="/foglio-excel" element={<FoglioExcelPage />} />
+          {/* Legacy routes per compatibilità */}
           <Route path="/orders/create/:supplier" element={<CreaOrdinePage />} />
           <Route path="/orders/summary/:supplier" element={<RiepilogoOrdinePage />} />
           <Route path="/orders/manage" element={<GestisciOrdiniPage />} />
