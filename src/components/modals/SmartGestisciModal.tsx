@@ -140,38 +140,32 @@ export default function SmartGestisciModal({
           </div>
         </header>
 
-        {/* HEADER STICKY */}
-        <div 
-          className="sticky border-b"
-          style={{ 
-            background: 'var(--bg)', 
-            borderColor: '#e2d6aa',
-            top: 'calc(var(--safe-top) + 60pt)',
-            zIndex: 40,
-            paddingTop: '16px',
-            paddingBottom: '16px',
-            paddingLeft: '16px',
-            paddingRight: '16px'
-          }}
-        >
-          <div className="text-center">
-            <div className="text-center mb-2">
-              <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
-                Gestisci Ordine
-              </h2>
-            </div>
-            <p className="text-base" style={{ color: '#7a4a30' }}>
-              Fornitore: {fornitore.toUpperCase()}
-            </p>
-          </div>
-        </div>
-
         {/* CONTENT SCROLLABILE */}
         <main className="mobile-content">
-          <div className="wine-list-container" style={{ paddingTop: '16px' }}>
+          <div className="wine-list-container"
+            style={{
+              height: '100%',
+              overflow: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              overscrollBehavior: 'none',
+              touchAction: 'pan-y',
+              scrollBehavior: 'smooth'
+            }}
+          >
+            {/* Header centrato */}
+            <div className="text-center mb-6">
+              <div className="text-center mb-2">
+                <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
+                  Gestisci Ordine
+                </h2>
+              </div>
+              <p className="text-base" style={{ color: '#7a4a30' }}>
+                Fornitore: {fornitore.toUpperCase()}
+              </p>
+            </div>
 
             {/* Lista righe scrollabile */}
-            <div className="px-3 py-4 space-y-2">
+            <div className="px-3 py-4 space-y-2" style={{ paddingBottom: '100px' }}>
               {dettagli.map((dettaglio, index) => {
                 const currentQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
                 const producer = getWineProducer(dettaglio.wineName);
