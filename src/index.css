@@ -12,6 +12,9 @@
 /* Components - Wine Cards */
 @import './styles/components/wine-cards.css';
 
+/* Components - Icons */
+@import './styles/components/icons.css';
+
 /* Utils - Layout e Scrollbar */
 @import './styles/utils/layout.css';
 

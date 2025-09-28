@@ -1,0 +1,190 @@
+/* === STILI BASE ICONE - ICONIFY + UNPLUGIN-ICONS === */
+
+/* Regole base per tutte le icone */
+.icon {
+  /* Dimensione standard */
+  width: 24px;
+  height: 24px;
+  
+  /* Stile stroke per icone outline */
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  
+  /* Colore tramite currentColor per ereditare dal parent */
+  color: currentColor;
+  fill: currentColor;
+  
+  /* Display inline per allineamento con testo */
+  display: inline-block;
+  vertical-align: middle;
+  
+  /* Transizione smooth per hover/focus */
+  transition: all 0.2s ease-in-out;
+  
+  /* Flex shrink per layout responsive */
+  flex-shrink: 0;
+}
+
+/* Varianti dimensioni */
+.icon-xs {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.5;
+}
+
+.icon-sm {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.5;
+}
+
+.icon-md {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+}
+
+.icon-lg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2;
+}
+
+.icon-xl {
+  width: 40px;
+  height: 40px;
+  stroke-width: 1.5;
+}
+
+/* Varianti colore per contesti specifici */
+.icon-primary {
+  color: var(--text, #541111);
+}
+
+.icon-secondary {
+  color: var(--muted, #7a4a30);
+}
+
+.icon-accent {
+  color: var(--accent, #1a7f37);
+}
+
+.icon-danger {
+  color: var(--danger, #d33b2f);
+}
+
+.icon-warn {
+  color: var(--warn, #d4a300);
+}
+
+.icon-muted {
+  color: var(--muted-text, #9b9b9b);
+}
+
+/* Stati interattivi */
+.icon-interactive {
+  cursor: pointer;
+}
+
+.icon-interactive:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.icon-interactive:active {
+  transform: scale(0.95);
+}
+
+/* Icone in pulsanti */
+button .icon,
+.btn .icon {
+  margin-right: 8px;
+}
+
+button .icon:last-child,
+.btn .icon:last-child {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+button .icon:only-child,
+.btn .icon:only-child {
+  margin: 0;
+}
+
+/* Icone in input */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-icon-left {
+  left: 12px;
+}
+
+.input-icon-right {
+  right: 12px;
+}
+
+/* Icone in liste */
+.list-item .icon {
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Icone in card header */
+.card-header .icon {
+  margin-right: 8px;
+}
+
+/* Icone in navigation */
+.nav-item .icon {
+  margin-right: 8px;
+}
+
+/* Responsive: riduci dimensioni su mobile */
+@media (max-width: 640px) {
+  .icon-responsive {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .icon-lg.icon-responsive {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .icon-xl.icon-responsive {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Accessibilità */
+.icon[aria-hidden="true"] {
+  pointer-events: none;
+}
+
+/* Loading state per icone dinamiche */
+.icon-loading {
+  animation: icon-spin 1s linear infinite;
+}
+
+@keyframes icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Focus visible per accessibilità */
+.icon-interactive:focus-visible {
+  outline: 2px solid var(--focus, rgba(212,163,0,0.28));
+  outline-offset: 2px;
+  border-radius: 4px;
+}

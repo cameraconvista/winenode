@@ -1,9 +1,21 @@
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import Icons from 'unplugin-icons/vite'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    Icons({
+      // Configurazione unplugin-icons
+      compiler: 'jsx',
+      jsx: 'react',
+      defaultStyle: 'display: inline-block;',
+      defaultClass: 'icon',
+      scale: 1,
+      autoInstall: true
+    })
+  ],
   server: {
     host: 'localhost',
     port: 3000,
