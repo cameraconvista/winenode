@@ -1,31 +1,31 @@
 # REPORT ULTIMA MODIFICA - WINENODE
 
-**Data:** 28/09/2025 01:46  
-**Sessione:** FASE 2 - src/ (Modalità NO-SUPABASE)  
-**Durata:** ~1 minuto  
+**Data:** 28/09/2025 01:56  
+**Sessione:** Governance & Diagnostica (NO-SUPABASE)  
+**Durata:** ~10 minuti  
 **Backup:** backup_28092025_014622.tar.gz
 
 ---
 
 ## 🎯 OBIETTIVO COMPLETATO
 
-Pulizia cartella `src/` in modalità NO-SUPABASE, rimozione orfani confermati da audit. Operazione completata senza modifiche (file target già assenti). Preparata documentazione completa per migrazioni database Supabase pendenti.
+Consolidamento deliverable migrazioni DB + introduzione guardrail/diagnostica a rischio zero. Implementati sistemi di governance CI, diagnostica query locale e pre-check SQL completi. Zero modifiche a Supabase, modalità NO-SUPABASE rispettata.
 
 ---
 
 ## 📊 RISULTATI QUANTITATIVI
 
-### Pulizia src/ (NO-SUPABASE)
-- **File target**: 3 orfani da audit (SearchModal.tsx, WineCard.tsx, wheel-picker.css)
-- **File rimossi**: 0 (già assenti dal repository)
-- **Byte risparmiati**: 0 (cleanup già eseguito)
-- **Regressioni**: 0 (typecheck + build verdi)
+### Governance & Diagnostica (NO-SUPABASE)
+- **Guardrail CI**: Job db-migrations-guard attivo (soft-block con label)
+- **Diagnostica locale**: Modulo query performance (toggle DIAGNOSTICS_ENABLED)
+- **Pre-check SQL**: Sezione READ-ONLY aggiunta agli script migrazioni
+- **Documentazione**: PLAYBOOK_MIGRAZIONI.md + REPORT_DIAGNOSTICA_QUERY.md
 
-### Documentazione Supabase Preparata
-- **TODO_SUPABASE.md**: Piano migrazioni DB pendenti
-- **DB_MIGRATIONS_SCRIPTS.sql**: Script SQL completi
-- **DB_MIGRATION_GUIDE.md**: Guida esecuzione amministratore
-- **LOG_DB_MIGRATIONS.txt**: Template documentazione
+### Consolidamento Migrazioni DB
+- **[PLAYBOOK_MIGRAZIONI.md](./PLAYBOOK_MIGRAZIONI.md)**: Indice completo + checklist esecuzione
+- **[DB_MIGRATIONS_SCRIPTS.sql](./DB_MIGRATIONS_SCRIPTS.sql)**: Aggiornato con PRE-CHECK read-only
+- **[REPORT_DIAGNOSTICA_QUERY.md](./REPORT_DIAGNOSTICA_QUERY.md)**: Guida diagnostica performance
+- **CI Pipeline**: Protezione automatica contro migrazioni non autorizzate
 
 ---
 
@@ -58,11 +58,18 @@ DOCS/
 - **Qualità**: ✅ Mantenuta (typecheck + build verdi)
 - **Documentazione**: ✅ LOG_SRC_PHASE2.txt creato
 
-### Preparazione Migrazioni Supabase
-- **TODO_SUPABASE.md**: ✅ Piano completo migrazioni DB pendenti
-- **Script SQL**: ✅ DB_MIGRATIONS_SCRIPTS.sql (SH-06, SH-02, SH-03)
-- **Guida esecuzione**: ✅ DB_MIGRATION_GUIDE.md per amministratore
-- **Template log**: ✅ LOG_DB_MIGRATIONS.txt per documentazione
+### Governance & Diagnostica (NO-SUPABASE)
+- **Guardrail CI**: ✅ Job db-migrations-guard (soft-block su PR non autorizzate)
+- **Diagnostica locale**: ✅ Modulo query performance (disattivo default)
+- **Pre-check SQL**: ✅ Sezione READ-ONLY negli script migrazioni
+- **Documentazione**: ✅ PLAYBOOK_MIGRAZIONI.md + REPORT_DIAGNOSTICA_QUERY.md
+
+### MIGRAZIONI SUPABASE — CONSOLIDATE E PROTETTE
+- **[PLAYBOOK_MIGRAZIONI.md](./PLAYBOOK_MIGRAZIONI.md)**: ✅ Indice completo + checklist
+- **[DB_MIGRATIONS_SCRIPTS.sql](./DB_MIGRATIONS_SCRIPTS.sql)**: ✅ Script + PRE-CHECK read-only
+- **[DB_MIGRATION_GUIDE.md](./DB_MIGRATION_GUIDE.md)**: ✅ Guida amministratore
+- **[REPORT_DIAGNOSTICA_QUERY.md](./REPORT_DIAGNOSTICA_QUERY.md)**: ✅ Diagnostica performance
+- **STATO**: ENTERPRISE-READY - Protetto da guardrail CI
 
 ---
 
