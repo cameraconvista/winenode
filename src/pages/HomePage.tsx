@@ -441,8 +441,10 @@ export default function HomePage() {
               className="icon" 
               style={{
                 color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
-                width: '20px',
-                height: '20px'
+                width: '22px',
+                height: '22px',
+                strokeWidth: '2px',
+                fill: 'none'
               }}
             />
             <span className="label" style={{

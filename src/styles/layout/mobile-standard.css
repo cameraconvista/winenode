@@ -110,6 +110,10 @@
   position: fixed;
   bottom: -8pt; /* SPOSTA NAVBAR PIÙ IN BASSO di 8pt */
   left: 0;
+  
+  /* Variabili per spaziature icone (non influenzano "Tutti") */
+  --nav-icon-gap: 8pt;
+  --nav-icon-right-inset: 12pt;
   right: 0;
   z-index: var(--z-navbar); /* Sopra header e content */
   background: var(--bg);
@@ -210,6 +214,12 @@
 .mobile-navbar .btn-allert .icon {
   -webkit-mask: url("/allert.png") center/contain no-repeat;
   mask: url("/allert.png") center/contain no-repeat;
+}
+
+.mobile-navbar .btn-search .icon {
+  /* Icona lente - usa Lucide React con stili corretti */
+  width: 22pt;
+  height: 22pt;
 }
 
 /* === CHIP "TUTTI" === */

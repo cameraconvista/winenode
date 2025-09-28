@@ -5,9 +5,15 @@ Implementa una funzionalità di ricerca locale e reattiva nella HomePage per fil
 
 ## UX/UI
 - **Icona lente**: Posizionata nella bottom navbar tra campanella e pulsante "Tutti"
+- **Asset icona**: Lucide React Search con `fill="none"`, `strokeWidth="2px"`, dimensioni 22pt
 - **Campo ricerca**: Appare sopra la lista vini quando attivato
 - **Filtro reattivo**: Debounce 200ms, case-insensitive, accent-insensitive
 - **Clear rapido**: Pulsante ✕ per svuotare, Esc per chiudere
+
+## Layout Navbar
+- **Gruppo icone**: Carrello, Filtri, Alert, **Lente** (con variabili spacing)
+- **Pulsante "Tutti"**: Invariato, posizionato a destra con `margin-left: auto`
+- **Variabili CSS**: `--nav-icon-gap: 8pt`, `--nav-icon-right-inset: 12pt`
 
 ## Feature Flag
 ```typescript
