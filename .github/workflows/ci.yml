@@ -96,6 +96,18 @@ jobs:
       - name: Bundle Size Guard
         run: npm run bundle:guard
   
+  wa_soft_guard:
+    name: WhatsApp Soft Guard
+    runs-on: ubuntu-latest
+    needs: [ build_test ]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: WhatsApp Pattern Detection
+        run: ./scripts/wa-soft-guard.sh
+  
   db-migrations-guard:
     name: Database Migrations Guard
     runs-on: ubuntu-latest
