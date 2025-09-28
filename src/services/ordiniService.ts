@@ -55,8 +55,10 @@ class CacheManager {
 // Cache globale per il service
 const cache = new CacheManager();
 
-// Configurazione tipo colonna data in DB
-const DATA_COLUMN_TYPE: 'date' | 'timestamp' = 'date';
+// Configurazione schema ordini (da DOCS/04-SUPABASE_SCHEMA.md)
+const FORNITORE_UUID_COL = 'fornitore'; // UUID REFERENCES fornitori(id)
+const DATA_COL = 'data'; // TIMESTAMP WITH TIME ZONE
+const DATA_COLUMN_TYPE: 'date' | 'timestamp' = 'timestamp';
 
 // Tipi locali per evitare dipendenze circolari
 export interface OrdineDettaglio {
@@ -111,7 +113,8 @@ export const ordiniService = {
         contenuto,
         stato,
         data,
-        created_at
+        created_at,
+        fornitori!fornitore(nome)
       `)
       .order('created_at', { ascending: false });
 
@@ -148,7 +151,8 @@ export const ordiniService = {
 
       return {
         id: ordine.id,
-        fornitore: ordine.fornitore,
+        fornitore: (ordine as any).fornitori?.nome || 'Fornitore sconosciuto', // Nome dal join
+        fornitoreId: ordine.fornitore, // UUID per compatibilità
         totale: ordine.totale,
         bottiglie,
         data: ordine.data,
@@ -191,9 +195,32 @@ export const ordiniService = {
         throw new Error(`Data ordine non valida: ${ordine.data}`);
       }
 
-      // 2. Valida nome fornitore
-      if (!ordine.fornitore || ordine.fornitore.trim().length === 0) {
-        throw new Error('Nome fornitore obbligatorio');
+      // 2. Risolvi UUID fornitore
+      let fornitoreId = ordine.fornitoreId;
+      
+      if (!fornitoreId || !isValidUuid(fornitoreId)) {
+        console.log('🔍 Risoluzione fornitore da nome:', ordine.fornitore);
+        
+        // Cerca fornitore per nome per ottenere UUID
+        const { data: fornitoreData, error: fornitoreError } = await supabase
+          .from('fornitori')
+          .select('id')
+          .eq('nome', ordine.fornitore)
+          .limit(1)
+          .single();
+
+        if (fornitoreError || !fornitoreData) {
+          console.error('❌ Fornitore non trovato:', ordine.fornitore);
+          throw new Error(`Fornitore non trovato: ${ordine.fornitore}`);
+        }
+
+        fornitoreId = fornitoreData.id;
+        console.log('✅ Fornitore risolto:', ordine.fornitore, '→', fornitoreId);
+      }
+
+      // 3. Valida UUID fornitore
+      if (!isValidUuid(fornitoreId)) {
+        throw new Error(`FORNITORE_ID_INVALID: ${fornitoreId}`);
       }
 
       // 3. Sanifica valori numerici
@@ -203,16 +230,20 @@ export const ordiniService = {
         throw new Error('Valore totale non valido');
       }
 
-      // 5. Costruisci payload per DB (allineato alle colonne reali)
+      // 4. Costruisci payload per DB (schema reale da DOCS/04-SUPABASE_SCHEMA.md)
+      const dbDateValue = DATA_COLUMN_TYPE === 'timestamp' 
+        ? new Date(normalizedDate + 'T00:00:00.000Z').toISOString()
+        : normalizedDate;
+
       const payloadSanitized = {
-        fornitore: ordine.fornitore, // Nome fornitore (come nella query di lettura)
+        [FORNITORE_UUID_COL]: fornitoreId, // UUID fornitore (non nome)
         totale: totale,
-        data: normalizedDate, // YYYY-MM-DD
+        [DATA_COL]: dbDateValue, // TIMESTAMP WITH TIME ZONE
         stato: ordine.stato || 'sospeso',
-        contenuto: JSON.stringify(ordine.dettagli || []) // JSON per dettagli
+        contenuto: ordine.dettagli || [] // JSONB per dettagli
       };
 
-      console.log('🧾 Payload insert (schema-aligned):', Object.keys(payloadSanitized), payloadSanitized);
+      console.log('🧾 ordini: payload keys', Object.keys(payloadSanitized));
 
       const { data, error } = await supabase
         .from('ordini')
@@ -236,6 +267,10 @@ export const ordiniService = {
         if (error.message.includes('INVALID_DATE')) {
           console.error('❌ Data ordine non valida (atteso DD/MM/YYYY o YYYY-MM-DD)');
           throw new Error('Data ordine non valida. Formato atteso: DD/MM/YYYY');
+        }
+        if (error.message.includes('FORNITORE_ID_INVALID')) {
+          console.error('❌ ID fornitore non valido (atteso UUID)');
+          throw new Error('ID fornitore non valido');
         }
       }
       throw error;
