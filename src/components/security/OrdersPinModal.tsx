@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import PinPad from './PinPad';
+import './PinModal.css';
 
 interface OrdersPinModalProps {
   open: boolean;
@@ -34,9 +35,13 @@ export default function OrdersPinModal({
     }
   }, [open]);
 
-  // Focus trap e ESC handler
+  // Focus trap, ESC handler e body scroll lock
   useEffect(() => {
     if (!open) return;
+
+    // Lock body scroll
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -45,7 +50,11 @@ export default function OrdersPinModal({
     };
 
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = originalStyle;
+    };
   }, [open, onClose]);
 
   const handleDigit = (digit: string) => {
@@ -84,15 +93,23 @@ export default function OrdersPinModal({
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 pin-modal-overlay"
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby="pin-modal-title"
+      style={{
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingTop: 'env(safe-area-inset-top)'
+      }}
     >
       <div 
-        className="w-full max-w-md mx-4 rounded-lg shadow-lg p-6"
-        style={{ backgroundColor: '#541111' }}
+        className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl p-6 relative"
+        style={{ 
+          backgroundColor: '#541111',
+          maxHeight: '90vh',
+          overflow: 'auto'
+        }}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -104,8 +121,10 @@ export default function OrdersPinModal({
             Accesso Ordini
           </h2>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-lg transition-colors hover:bg-opacity-20 hover:bg-white"
+            className="p-2 rounded-full transition-colors hover:bg-opacity-20 hover:bg-white touch-manipulation"
+            style={{ minHeight: '44px', minWidth: '44px' }}
             aria-label="Chiudi"
           >
             <X size={24} style={{ color: '#fff9dc' }} />
@@ -115,17 +134,20 @@ export default function OrdersPinModal({
         {/* PIN Display */}
         <div className="mb-6">
           <div className="text-center mb-4">
-            <p className="text-sm mb-2" style={{ color: '#fff9dc' }}>
+            <p className="text-base mb-4" style={{ color: '#fff9dc', fontSize: '16px' }}>
               Inserisci il PIN per accedere agli ordini
             </p>
-            <div className="flex justify-center gap-2">
+            <div className="flex justify-center gap-3">
               {[0, 1, 2, 3].map((index) => (
                 <div
                   key={index}
-                  className="w-4 h-4 rounded-full border-2"
+                  className={`w-5 h-5 rounded-full border-2 transition-all duration-200 ${
+                    showError ? 'animate-pulse' : ''
+                  }`}
                   style={{
                     backgroundColor: index < pinBuffer.length ? '#fff9dc' : 'transparent',
-                    borderColor: '#fff9dc'
+                    borderColor: '#fff9dc',
+                    transform: showError ? 'scale(1.1)' : 'scale(1)'
                   }}
                 />
               ))}
@@ -162,8 +184,8 @@ export default function OrdersPinModal({
         />
 
         {/* Info */}
-        <div className="mt-4 text-center">
-          <p className="text-xs opacity-70" style={{ color: '#fff9dc' }}>
+        <div className="mt-6 text-center">
+          <p className="text-sm opacity-70" style={{ color: '#fff9dc', fontSize: '14px' }}>
             Premi ESC o clicca fuori per chiudere
           </p>
         </div>

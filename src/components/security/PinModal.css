@@ -1,0 +1,70 @@
+/* PIN Modal Touch Optimizations */
+
+.pin-modal-overlay {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.pin-button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.pin-button:active {
+  transform: scale(0.98) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.1s ease-out !important;
+}
+
+.pin-button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Prevent zoom on iOS */
+.pin-modal input,
+.pin-modal textarea,
+.pin-modal select {
+  font-size: 16px !important;
+}
+
+/* Safe area support */
+@supports (padding: env(safe-area-inset-top)) {
+  .pin-modal-overlay {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Animation optimizations */
+.pin-indicator {
+  will-change: transform, background-color;
+}
+
+.pin-error-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Touch feedback */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Scale utility class */
+.active\:scale-98:active {
+  transform: scale(0.98);
+}

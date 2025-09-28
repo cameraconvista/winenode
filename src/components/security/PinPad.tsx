@@ -19,19 +19,24 @@ export default function PinPad({
   const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
   return (
-    <div className="grid grid-cols-3 gap-3 max-w-xs mx-auto">
+    <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto p-4">
       {/* Digits 1-9 */}
       {digits.slice(0, 9).map((digit) => (
         <button
           key={digit}
+          type="button"
           onClick={() => onDigit(digit)}
           disabled={disabled}
-          className="h-12 w-12 rounded-lg border border-opacity-30 font-semibold text-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-14 w-14 rounded-full border-2 font-bold text-xl transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
           style={{
             backgroundColor: '#fff9dc',
             color: '#541111',
-            borderColor: 'rgba(84, 17, 17, 0.3)'
+            borderColor: 'rgba(84, 17, 17, 0.4)',
+            fontSize: '18px',
+            minHeight: '56px',
+            minWidth: '56px'
           }}
+          aria-label={`Numero ${digit}`}
         >
           {digit}
         </button>
@@ -39,42 +44,56 @@ export default function PinPad({
       
       {/* Bottom row: Delete, 0, Submit */}
       <button
+        type="button"
         onClick={onDelete}
         disabled={disabled}
-        className="h-12 w-12 rounded-lg border border-opacity-30 font-semibold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+        className="h-14 w-14 rounded-full border-2 font-bold transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
         style={{
           backgroundColor: '#fff9dc',
           color: '#541111',
-          borderColor: 'rgba(84, 17, 17, 0.3)'
+          borderColor: 'rgba(84, 17, 17, 0.4)',
+          minHeight: '56px',
+          minWidth: '56px'
         }}
+        aria-label="Cancella"
       >
-        <Delete size={18} />
+        <Delete size={20} />
       </button>
       
       <button
+        type="button"
         onClick={() => onDigit('0')}
         disabled={disabled}
-        className="h-12 w-12 rounded-lg border border-opacity-30 font-semibold text-lg transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="h-14 w-14 rounded-full border-2 font-bold text-xl transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
         style={{
           backgroundColor: '#fff9dc',
           color: '#541111',
-          borderColor: 'rgba(84, 17, 17, 0.3)'
+          borderColor: 'rgba(84, 17, 17, 0.4)',
+          fontSize: '18px',
+          minHeight: '56px',
+          minWidth: '56px'
         }}
+        aria-label="Numero 0"
       >
         0
       </button>
       
       <button
+        type="button"
         onClick={onSubmit}
         disabled={disabled || !canSubmit}
-        className="h-12 w-12 rounded-lg border border-opacity-30 font-semibold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+        className="h-14 w-14 rounded-full border-2 font-bold transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
         style={{
           backgroundColor: canSubmit && !disabled ? '#541111' : '#fff9dc',
           color: canSubmit && !disabled ? '#fff9dc' : '#541111',
-          borderColor: 'rgba(84, 17, 17, 0.3)'
+          borderColor: 'rgba(84, 17, 17, 0.4)',
+          minHeight: '56px',
+          minWidth: '56px'
         }}
+        aria-label="Conferma PIN"
+        aria-disabled={disabled || !canSubmit}
       >
-        <Check size={18} />
+        <Check size={20} />
       </button>
     </div>
   );
