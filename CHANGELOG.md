@@ -5,6 +5,45 @@ Tutte le modifiche importanti a questo progetto saranno documentate in questo fi
 Il formato è basato su [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## feat: ricerca lente in Home - filtro locale reattivo — 2025-09-28
+
+### Added
+- **Ricerca locale reattiva** nella HomePage per filtrare vini per nome
+- **Icona lente** nella bottom navbar con toggle intuitivo (apri/chiudi)
+- **Hook useWineSearch** con debounce 200ms e normalizzazione accenti
+- **Componente WineSearchBar** con campo input e pulsante clear
+- **Feature flag** `searchLens` per abilitazione/disabilitazione
+
+### Changed
+- **Navbar ottimizzata** con layout flexbox: gruppo icone a sinistra + pulsante "Tutti" a destra
+- **Icona lente** sostituita con asset `lente.png` usando pattern mask coerente
+- **Spaziature icone** ottimizzate con variabili CSS (`--nav-icon-gap: 8pt`)
+- **Pulsante "Tutti"** ripristinato nella posizione originale con stili invariati
+
+### Technical Details
+- **Filtro intelligente**: case/accent-insensitive ("aligo" trova "Aligoté")
+- **Performance**: O(n) su dataset già filtrato, nessuna chiamata rete aggiuntiva
+- **UX mobile**: Touch targets ≥44px, safe-area insets, feedback visivo
+- **Accessibilità**: Aria-labels dinamici, focus automatico, gestione tastiera
+- **Toggle behavior**: Click lente apre/chiude + reset automatico query
+
+### Files Added
+- `src/config/features.ts` - Feature flags sistema
+- `src/hooks/useWineSearch.ts` - Logica ricerca e stato
+- `src/hooks/useDebounce.ts` - Utility debounce riusabile
+- `src/components/search/WineSearchBar.tsx` - UI campo ricerca
+- `DOCS/FEATURES_SEARCH_LENS.md` - Documentazione completa
+- `public/lente.png` - Asset icona lente WineNode style
+
+### Status
+- **Build time**: 4.41s (invariato)
+- **TypeScript**: ✅ Zero errori
+- **ESLint**: ✅ Passed
+- **Funzionalità**: Ricerca completamente operativa con toggle intuitivo
+- **Layout**: Navbar ottimizzata, zero regressioni
+
+---
+
 ## chore: lint to zero (hasOwnProperty) — 2025-09-27
 
 ### Changed

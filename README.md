@@ -9,6 +9,36 @@ Sistema completo di gestione inventario vini con sincronizzazione Google Sheets,
 - **Integrazione**: Google Sheets per sincronizzazione automatica
 - **Sviluppo**: Ottimizzato per Winsurf Cascade
 
+## ✨ Funzionalità Principali
+
+### 🍷 Gestione Inventario
+- **Catalogo vini completo** con denominazioni, produttori, annate
+- **Gestione scorte** con alert automatici per giacenze basse
+- **Aggiornamento quantità** con feedback visivo e animazioni
+
+### 🔍 Ricerca Avanzata
+- **Ricerca locale reattiva** per nome vino (debounce 200ms)
+- **Filtro case/accent-insensitive** ("aligo" trova "Aligoté")
+- **Toggle intuitivo** con icona lente nella navbar
+- **Reset automatico** alla chiusura
+
+### 📱 Mobile-First Design
+- **Navbar ottimizzata** con icone raggruppate e pulsante "Tutti"
+- **Touch targets ≥44px** per accessibilità
+- **Safe-area insets** per iPhone con notch
+- **Tema light** con palette coerente WineNode
+
+### 🛒 Sistema Ordini
+- **Creazione ordini** con selezione quantità intuitive
+- **Gestione stati** (sospeso → inviato → ricevuto → archiviato)
+- **Riepilogo dettagliato** con totali e conferma
+- **Modifica quantità** in fase di ricezione
+
+### 🔄 Sincronizzazione
+- **Google Sheets integration** per import automatico
+- **Backup automatico** con rotazione e verifica integrità
+- **Database Supabase** con RLS e API REST
+
 ## 🚀 Setup Sviluppo Locale
 
 ### Prerequisiti
