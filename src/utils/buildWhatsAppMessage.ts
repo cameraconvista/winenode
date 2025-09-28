@@ -22,13 +22,16 @@ export function buildWhatsAppMessage(
 ): string {
   const lines: string[] = [];
   
-  // Intestazione fissa
-  lines.push('Camera con Vista');
+  // Intestazione fissa - Nuovo ordine
   lines.push('Ordine vini');
+  lines.push('');
+  lines.push('Camera con Vista');
+  lines.push('');
   
   // Data in formato italiano
   const formattedDate = date.toLocaleDateString('it-IT');
-  lines.push(`Data: ${formattedDate}`);
+  lines.push(formattedDate);
+  lines.push('');
   
   // Elenco articoli (solo nome, annata opzionale, quantità, unità)
   orderDetails.forEach(item => {
