@@ -19,6 +19,14 @@
 - **[DB_MIGRATION_GUIDE.md](./DB_MIGRATION_GUIDE.md)** - Guida amministratore
 - **[REPORT_DIAGNOSTICA_QUERY.md](./REPORT_DIAGNOSTICA_QUERY.md)** - Diagnostica performance
 
+### Sistema Backup
+- **Nome file**: `backup_YYYYMMDD_HHMM.tar` (formato ISO, no compressione)
+- **Percorso**: `Backup_Automatico/` 
+- **Policy**: Rotazione automatica → **max 3 file**; il nuovo elimina il più vecchio
+- **Comando**: `npm run backup:full` - Crea backup completo con rotazione
+- **Contenuto**: Intero repository esclusi `node_modules`, `.git`, `Backup_Automatico/*.tar*`
+- **Nota**: I vecchi `backup_housekeeping_*` e `backup_ddMMyyyy_*` NON sono soggetti alla rotazione e possono essere rimossi manualmente se non più necessari
+
 ---
 
 ## 📊 REPORT ANALISI COMPONENTI
