@@ -46,7 +46,16 @@ export function buildWhatsAppMessage(
     lines.push(line);
   });
   
-  return lines.join('\n');
+  // Normalizzazione per WhatsApp
+  let message = lines.join('\n');
+  
+  // Rimuovi spazi superflui all'inizio di ogni riga
+  message = message.replace(/^\s+/gm, '');
+  
+  // Assicura che i fine riga siano \n (non \r\n)
+  message = message.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  
+  return message;
 }
 
 /**
@@ -60,6 +69,16 @@ export function buildWhatsAppUrl(message: string): string {
 }
 
 /**
+ * Costruisce URL WhatsApp Web per desktop
+ * @param message Testo messaggio
+ * @returns URL web.whatsapp.com con testo encodato
+ */
+export function buildWebWhatsAppUrl(message: string): string {
+  const encodedMessage = encodeURIComponent(message);
+  return `https://web.whatsapp.com/send?text=${encodedMessage}`;
+}
+
+/**
  * Costruisce URL WhatsApp fallback per app mobile
  * @param message Testo messaggio
  * @returns URL whatsapp:// con testo encodato
@@ -67,4 +86,13 @@ export function buildWhatsAppUrl(message: string): string {
 export function buildWhatsAppFallbackUrl(message: string): string {
   const encodedMessage = encodeURIComponent(message);
   return `whatsapp://send?text=${encodedMessage}`;
+}
+
+/**
+ * Rileva se il dispositivo è mobile (iOS/Android)
+ * @returns true se mobile, false se desktop
+ */
+export function isMobileDevice(): boolean {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
 }
