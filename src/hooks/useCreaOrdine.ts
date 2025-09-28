@@ -26,11 +26,11 @@ export function useCreaOrdine() {
         
         return newItems;
       } else if (delta > 0) {
-        // Aggiungi nuovo item se delta positivo
+        // Aggiungi nuovo item se delta positivo - DEFAULT CARTONI
         return [...prev, {
           wineId,
           quantity: delta,
-          unit: 'bottiglie'
+          unit: 'cartoni'
         }];
       }
       
@@ -44,16 +44,15 @@ export function useCreaOrdine() {
       
       if (existingIndex >= 0) {
         const newItems = [...prev];
-        // Reset quantità a 0 quando si cambia unità
-        newItems[existingIndex].quantity = 0;
+        // MANTIENI quantità esistente quando si cambia unità (selezione manuale)
         newItems[existingIndex].unit = unit;
         return newItems;
       } else {
-        // Crea nuovo item se non esiste
+        // Crea nuovo item se non esiste - DEFAULT CARTONI
         return [...prev, {
           wineId,
           quantity: 0,
-          unit
+          unit: unit || 'cartoni'
         }];
       }
     });
