@@ -155,5 +155,27 @@ PROSSIMI PASSI:
 3. Conferma workflow CI limitato a main
 
 ===============================================================================
-STATO: COMPLETATO CON SUCCESSO
+HARDENING DEFINITIVO (2025-09-28 23:31:30)
+===============================================================================
+
+PULIZIA BRANCH FINALE:
+✅ Eliminato feat/ui-create-order-tweaks (locale + remoto)
+✅ Eliminato feat/intro-splash (remoto)
+✅ Solo main rimanente (locale + remoto)
+
+GOVERNANCE BLINDATA:
+✅ Config Git hardened (ff-only, no auto-upstream)
+✅ Workflow limitati a main
+✅ Script ufficiale: commit-direct-v2.js
+✅ Nessun hook attivo
+✅ Archivio governance: ARCHIVE/git_governance/20250928_233130/
+
+POLICY DEFINITIVA:
+- Commit diretto su main (ff-only) OBBLIGATORIO
+- Vietato branch/PR automatici
+- Esecuzione non interattiva
+- Unico canale: scripts/commit-direct-v2.js
+
+===============================================================================
+STATO: HARDENING DEFINITIVO COMPLETATO
 ===============================================================================
