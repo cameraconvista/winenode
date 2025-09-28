@@ -28,10 +28,6 @@ export default function RiepilogoOrdinePage() {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
 
-  // Debug: log per verificare ordineItems
-  console.log('🔍 RiepilogoOrdine - ordineItems:', ordineItems);
-  console.log('🔍 RiepilogoOrdine - ordineItems.length:', ordineItems.length);
-
   // Calcola dettagli ordine
   const ordineDetails = ordineItems.map(item => {
     const wine = wines.find(w => w.id === item.wineId);
@@ -50,10 +46,6 @@ export default function RiepilogoOrdinePage() {
   });
 
   const totalOrdine = ordineDetails.reduce((sum, detail) => sum + detail.totalPrice, 0);
-
-  // Debug: log per verificare ordineDetails
-  console.log('🔍 RiepilogoOrdine - ordineDetails:', ordineDetails);
-  console.log('🔍 RiepilogoOrdine - ordineDetails.length:', ordineDetails.length);
 
   // Prepara dati per WhatsApp (senza prezzi)
   const whatsAppOrderDetails: OrderDetail[] = ordineDetails.map(detail => ({
@@ -189,7 +181,7 @@ export default function RiepilogoOrdinePage() {
             overscrollBehavior: 'none',
             touchAction: 'pan-y',
             scrollBehavior: 'smooth',
-            paddingTop: '24px', // Ridotto per mostrare la prima scheda correttamente
+            paddingTop: '120px', // Ripristinato per mostrare tutte le schede
             paddingBottom: '120px' // Spazio per footer + contenuto completo
           }}
         >
@@ -204,10 +196,10 @@ export default function RiepilogoOrdinePage() {
               <p style={{ color: '#fff9dc' }}>Nessun vino selezionato</p>
             </div>
           ) : (
-            <div className="space-y-2">
-              {ordineDetails.map((detail) => (
+            <div className="space-y-2" style={{ marginTop: '16px' }}> {/* Spazio tra titolo e prima scheda */}
+              {ordineDetails.map((detail, index) => (
                 <div
-                  key={detail.wineId}
+                  key={`${detail.wineId}-${index}`} // Chiave unica con indice per evitare conflitti
                   className="p-4 rounded-lg border"
                   style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}
                 >
