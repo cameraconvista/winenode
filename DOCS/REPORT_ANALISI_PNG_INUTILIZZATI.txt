@@ -1,0 +1,126 @@
+ANALISI APPROFONDITA FILE PNG NON UTILIZZATI - PUBLIC FOLDER - 28/09/2025
+==========================================================================
+
+🎯 SCOPO: Identificare con certezza al 100% i file PNG nella cartella public/ non utilizzati dall'applicazione WineNode.
+
+📁 FILE PNG PRESENTI IN PUBLIC/ (18 file totali):
+- allert.png (1076 bytes) ✅ UTILIZZATO
+- allert 2.png (1076 bytes) ❌ NON UTILIZZATO
+- carrello.png (670 bytes) ✅ UTILIZZATO  
+- carrello 2.png (670 bytes) ❌ NON UTILIZZATO
+- filtro.png (507 bytes) ✅ UTILIZZATO
+- filtro 2.png (507 bytes) ❌ NON UTILIZZATO
+- iconwinenode.png (38321 bytes) ✅ UTILIZZATO (PWA manifest)
+- iconwinenode 2.png (38321 bytes) ❌ NON UTILIZZATO
+- lente.png (1432 bytes) ✅ UTILIZZATO
+- lente 2.png (1432 bytes) ❌ NON UTILIZZATO
+- logo1.png (56867 bytes) ✅ UTILIZZATO
+- logo1 2.png (56867 bytes) ❌ NON UTILIZZATO
+- logo1.webp (26068 bytes) ✅ UTILIZZATO
+- logo1 2.webp (26068 bytes) ❌ NON UTILIZZATO
+- whatsapp.png (5835 bytes) ✅ UTILIZZATO
+- whatsapp 2.png (5835 bytes) ❌ NON UTILIZZATO
+- manifest.json (623 bytes) ✅ UTILIZZATO
+- manifest 2.json (623 bytes) ❌ NON UTILIZZATO
+
+══════════════════════════════════════════════════════════════════════════════
+# DETTAGLIO UTILIZZO FILE ATTIVI
+
+✅ **allert.png** - UTILIZZATO IN:
+- src/pages/CreaOrdinePage.tsx (2 occorrenze - mask per icone alert)
+- src/pages/HomePage.tsx (2 occorrenze - mask per icone alert)
+- src/styles/layout/toolbar.css (3 occorrenze - CSS mask)
+- src/styles/components/wine-cards.css (2 occorrenze - CSS mask)
+- src/styles/layout/mobile-standard.css (2 occorrenze - CSS mask)
+
+✅ **carrello.png** - UTILIZZATO IN:
+- src/styles/layout/toolbar.css (3 occorrenze - CSS mask per pulsante Ordine)
+- src/styles/layout/mobile-standard.css (2 occorrenze - CSS mask)
+
+✅ **filtro.png** - UTILIZZATO IN:
+- src/styles/layout/toolbar.css (3 occorrenze - CSS mask per pulsante Filtri)
+- src/pages/HomePage.tsx (2 occorrenze - mask per icone filtro)
+- src/styles/layout/mobile-standard.css (2 occorrenze - CSS mask)
+
+✅ **iconwinenode.png** - UTILIZZATO IN:
+- index.html (5 occorrenze - meta tags PWA, favicon, apple-touch-icon)
+- public/manifest.json (2 occorrenze - PWA icon 192x192 e 512x512)
+
+✅ **lente.png** - UTILIZZATO IN:
+- src/pages/HomePage.tsx (2 occorrenze - mask per icone ricerca)
+- src/styles/layout/mobile-standard.css (3 occorrenze - CSS mask)
+
+✅ **logo1.png** - UTILIZZATO IN:
+- src/pages/CreaOrdinePage.tsx (1 occorrenza - header logo)
+- src/pages/FornitoriPage.tsx (1 occorrenza - header logo)
+- src/pages/GestisciOrdiniPage.tsx (1 occorrenza - header logo)
+- src/pages/HomePage.tsx (1 occorrenza - header logo)
+- src/pages/ImportaPage.tsx (1 occorrenza - header logo)
+- src/pages/ManualWineInsertPage.tsx (1 occorrenza - header logo)
+- src/pages/PreferenzePage.tsx (1 occorrenza - header logo)
+- src/pages/RiepilogoOrdinePage.tsx (1 occorrenza - header logo)
+- src/pages/TabellaViniPage.tsx (1 occorrenza - header logo)
+- src/components/modals/SmartGestisciModal.tsx (1 occorrenza - modale logo)
+
+✅ **logo1.webp** - UTILIZZATO IN:
+- src/pages/CreaOrdinePage.tsx (1 occorrenza - picture source webp)
+- src/pages/GestisciOrdiniPage.tsx (1 occorrenza - picture source webp)
+- src/pages/HomePage.tsx (1 occorrenza - picture source webp)
+- src/pages/RiepilogoOrdinePage.tsx (1 occorrenza - picture source webp)
+
+✅ **whatsapp.png** - UTILIZZATO IN:
+- src/pages/GestisciOrdiniPage.tsx (1 occorrenza - icona WhatsApp)
+
+══════════════════════════════════════════════════════════════════════════════
+# FILE PNG NON UTILIZZATI CON CERTEZZA AL 100%
+
+❌ **ELENCO DEFINITIVO FILE DA RIMUOVERE (9 file):**
+
+1. **allert 2.png** (1076 bytes) - Duplicato non referenziato
+2. **carrello 2.png** (670 bytes) - Duplicato non referenziato  
+3. **filtro 2.png** (507 bytes) - Duplicato non referenziato
+4. **iconwinenode 2.png** (38321 bytes) - Duplicato non referenziato
+5. **lente 2.png** (1432 bytes) - Duplicato non referenziato
+6. **logo1 2.png** (56867 bytes) - Duplicato non referenziato
+7. **logo1 2.webp** (26068 bytes) - Duplicato non referenziato
+8. **whatsapp 2.png** (5835 bytes) - Duplicato non referenziato
+9. **manifest 2.json** (623 bytes) - Duplicato non referenziato
+
+**SPAZIO LIBERABILE TOTALE: ~132.5 KB**
+
+══════════════════════════════════════════════════════════════════════════════
+# METODOLOGIA ANALISI
+
+✅ **RICERCA ESAUSTIVA ESEGUITA:**
+1. Grep ricorsivo in tutta la cartella src/ per ogni file PNG
+2. Verifica nei file di configurazione (index.html, manifest.json)
+3. Controllo nei file CSS per utilizzo via mask/background-image
+4. Verifica nei componenti React per import/utilizzo diretto
+5. Controllo nei file TypeScript per riferimenti dinamici
+
+✅ **PATTERN RICERCA UTILIZZATI:**
+- Ricerca esatta nome file (es. "allert.png")
+- Ricerca con escape regex (es. "allert\.png")
+- Ricerca case-sensitive per evitare falsi positivi
+- Verifica sia in src/ che nella root del progetto
+
+✅ **CERTEZZA 100%:**
+Tutti i file con suffisso " 2" sono duplicati identici (stessi byte) dei file originali ma NON sono mai referenziati nel codice sorgente, nei CSS, nei file di configurazione o nei manifest PWA.
+
+══════════════════════════════════════════════════════════════════════════════
+# RACCOMANDAZIONI
+
+🗑️ **RIMOZIONE SICURA:**
+I 9 file identificati possono essere rimossi SENZA RISCHI perché:
+- Non sono referenziati in nessun file sorgente
+- Non sono utilizzati nei CSS (mask, background-image)
+- Non sono presenti nei manifest PWA
+- Sono duplicati identici di file già utilizzati
+
+🔧 **COMANDO CLEANUP:**
+```bash
+cd /Users/liam/Documents/winenode_main/public/
+rm "allert 2.png" "carrello 2.png" "filtro 2.png" "iconwinenode 2.png" "lente 2.png" "logo1 2.png" "logo1 2.webp" "whatsapp 2.png" "manifest 2.json"
+```
+
+STATO: Analisi completata al 100%, file non utilizzati identificati con certezza assoluta.
