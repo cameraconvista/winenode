@@ -18,7 +18,7 @@ const loadSavedColumnWidths = () => {
     if (saved) {
       const parsed = JSON.parse(saved);
       const hasAllCols = Object.keys(defaultColumnWidths).every((key) =>
-        parsed.hasOwnProperty(key),
+        Object.prototype.hasOwnProperty.call(parsed, key),
       );
       if (hasAllCols) return parsed;
     }
