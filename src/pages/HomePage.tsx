@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
+import { Filter, Plus, Database, AlertTriangle, X, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
 import HomeInventoryModal from '../components/HomeInventoryModal';
 import CarrelloOrdiniModal from '../components/modals/CarrelloOrdiniModal';
 import NuovoOrdineModal from '../components/modals/NuovoOrdineModal';
+import { WineSearchBar } from '../components/search/WineSearchBar';
 
 import useWines from '../hooks/useWines';
 import { useAutoSizeText } from '../hooks/useAutoSizeText';
 import { useCarrelloOrdini } from '../hooks/useCarrelloOrdini';
 import { useNuovoOrdine } from '../hooks/useNuovoOrdine';
+import { useWineSearch } from '../hooks/useWineSearch';
 import { supabase } from '../lib/supabase';
+import { isFeatureEnabled } from '../config/features';
 
 import { WineType } from '../hooks/useWines';
 
@@ -79,7 +82,8 @@ export default function HomePage() {
   });
   
 
-  const filteredWines = wines
+  // Prima applico i filtri esistenti, poi la ricerca se abilitata
+  const baseFilteredWines = wines
     .filter(wine => {
     const normalizedType = (wine.type || '').toLowerCase(); // ✅ FIX crash
 
@@ -123,6 +127,14 @@ export default function HomePage() {
     // ✅ Per le singole tipologie, mantieni ordine originale del database/Google Sheet
     return 0;
   });
+
+  // Hook ricerca vini (solo se feature abilitata)
+  const wineSearch = useWineSearch(baseFilteredWines);
+
+  // Applico la ricerca se feature abilitata e ricerca attiva
+  const filteredWines = isFeatureEnabled('searchLens') && wineSearch.isFiltering 
+    ? wineSearch.filteredWines.filter(wine => baseFilteredWines.some(bw => bw.id === wine.id))
+    : baseFilteredWines;
 
   const handleInventoryChange = async (id: string, value: number) => {
     const adjusted = Math.max(0, value);
@@ -255,7 +267,16 @@ export default function HomePage() {
             scrollBehavior: 'smooth'
           }}
         >
-          
+          {/* Barra di ricerca (se feature abilitata) */}
+          {isFeatureEnabled('searchLens') && (
+            <WineSearchBar
+              isOpen={wineSearch.isSearchOpen}
+              searchQuery={wineSearch.searchQuery}
+              onQueryChange={wineSearch.updateQuery}
+              onClose={wineSearch.closeSearch}
+              onClear={wineSearch.clearSearch}
+            />
+          )}
 
           {filteredWines.length === 0 ? (
             <p className="text-center text-sm" style={{ color: 'var(--muted)' }}>
@@ -397,6 +418,38 @@ export default function HomePage() {
             color: filters.showAlertsOnly ? 'white' : 'var(--text)'
           }}>Alert</span>
         </button>
+        
+        {/* Icona lente ricerca (se feature abilitata) */}
+        {isFeatureEnabled('searchLens') && (
+          <button
+            onClick={wineSearch.openSearch}
+            className="nav-btn btn-search"
+            title="Cerca vini"
+            aria-label="Apri ricerca"
+            style={{ 
+              background: wineSearch.isSearchOpen ? 'var(--accent)' : 'transparent',
+              color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
+              borderRadius: '8px',
+              border: 'none',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent',
+              WebkitAppearance: 'none',
+              appearance: 'none'
+            } as React.CSSProperties}
+          >
+            <Search 
+              className="icon" 
+              style={{
+                color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
+                width: '20px',
+                height: '20px'
+              }}
+            />
+            <span className="label" style={{
+              color: wineSearch.isSearchOpen ? 'white' : 'var(--text)'
+            }}>Cerca</span>
+          </button>
+        )}
         
         <button
           onClick={() => {/* Toggle dropdown logic */}}
