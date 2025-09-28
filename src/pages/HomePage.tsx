@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Filter, Plus, Database, AlertTriangle, X, Search } from 'lucide-react';
+import { Filter, Plus, Database, AlertTriangle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FilterModal from '../components/FilterModal';
 import WineDetailsModal from '../components/WineDetailsModal';
@@ -417,10 +417,10 @@ export default function HomePage() {
           {/* Icona lente ricerca (se feature abilitata) */}
           {isFeatureEnabled('searchLens') && (
             <button
-              onClick={wineSearch.openSearch}
+              onClick={wineSearch.toggleSearch}
               className="nav-btn btn-search"
-              title="Cerca vini"
-              aria-label="Apri ricerca"
+              title={wineSearch.isSearchOpen ? "Chiudi ricerca" : "Cerca vini"}
+              aria-label={wineSearch.isSearchOpen ? "Chiudi ricerca" : "Apri ricerca"}
               style={{ 
                 background: wineSearch.isSearchOpen ? 'var(--accent)' : 'transparent',
                 color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
@@ -432,16 +432,11 @@ export default function HomePage() {
                 appearance: 'none'
               } as React.CSSProperties}
             >
-              <Search 
-                className="icon" 
-                style={{
-                  color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
-                  width: '22px',
-                  height: '22px',
-                  strokeWidth: '2px',
-                  fill: 'none'
-                }}
-              />
+              <div className="icon" style={{
+                background: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
+                WebkitMask: 'url("/lente.png") center/contain no-repeat',
+                mask: 'url("/lente.png") center/contain no-repeat'
+              }}></div>
             </button>
           )}
         </div>

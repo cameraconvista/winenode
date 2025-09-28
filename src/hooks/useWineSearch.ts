@@ -56,6 +56,14 @@ export const useWineSearch = (wines: Wine[]) => {
     setSearchQuery('');
   }, []);
   
+  const toggleSearch = useCallback(() => {
+    if (isSearchOpen) {
+      closeSearch();
+    } else {
+      openSearch();
+    }
+  }, [isSearchOpen, closeSearch, openSearch]);
+  
   const clearSearch = useCallback(() => {
     setSearchQuery('');
   }, []);
@@ -75,6 +83,7 @@ export const useWineSearch = (wines: Wine[]) => {
     // Actions
     openSearch,
     closeSearch,
+    toggleSearch,
     clearSearch,
     updateQuery,
   };

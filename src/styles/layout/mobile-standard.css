@@ -213,9 +213,11 @@
 }
 
 .mobile-navbar .btn-search .icon {
-  /* Icona lente - usa Lucide React con stili corretti */
-  width: 22pt;
-  height: 22pt;
+  /* Icona lente - usa lente.png con mask pattern */
+  -webkit-mask: url("/lente.png") center/contain no-repeat;
+  mask: url("/lente.png") center/contain no-repeat;
+  width: 24pt;
+  height: 24pt;
 }
 
 /* === GRUPPO ICONE === */

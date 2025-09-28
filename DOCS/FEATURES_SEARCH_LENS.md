@@ -39,6 +39,7 @@ wineSearch.isFiltering      // Se sta filtrando
 // Actions
 wineSearch.openSearch()     // Apre il campo
 wineSearch.closeSearch()    // Chiude e resetta
+wineSearch.toggleSearch()   // Toggle apri/chiudi
 wineSearch.clearSearch()    // Svuota query
 wineSearch.updateQuery(q)   // Aggiorna query
 ```
