@@ -2,26 +2,10 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useSupabaseOrdini } from '../hooks/useSupabaseOrdini';
 import { isFeatureEnabled } from '../config/featureFlags';
 import useWines from '../hooks/useWines';
+import { Ordine, OrdineDettaglio } from '../services/ordiniService';
 
-export interface OrdineDettaglio {
-  wineId: string;
-  wineName: string;
-  quantity: number;
-  unit: 'bottiglie' | 'cartoni';
-  unitPrice: number;
-  totalPrice: number;
-}
-
-export interface Ordine {
-  id: string;
-  fornitore: string;
-  totale: number;
-  bottiglie: number;
-  data: string;
-  stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato'; // Stati validi database Supabase
-  tipo: 'inviato' | 'ricevuto';
-  dettagli?: OrdineDettaglio[];
-}
+// Re-export per compatibilità con componenti esistenti
+export type { Ordine, OrdineDettaglio };
 
 interface OrdiniContextType {
   ordiniInviati: Ordine[];
