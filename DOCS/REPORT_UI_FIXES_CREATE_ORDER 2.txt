@@ -1,0 +1,47 @@
+# REPORT UI FIXES - PAGINA "CREA ORDINE"
+Data: 28/09/2025
+Branch: feat/ui-create-order-tweaks
+
+## MODIFICHE APPLICATE
+
+### File Modificato:
+- src/pages/CreaOrdinePage.tsx
+
+### Fix Implementati:
+
+A) HEADER - Rimozione freccia indietro + centraggio titoli
+   - Rimossa icona ArrowLeft dal header della pagina
+   - Centrati "Crea Ordine" e "Fornitore: {NOME}" senza dipendenza da icona
+   - Padding e safe-area invariati
+
+B) CARD VINI - Uniformazione colore sfondo
+   - Tutte le card ora usano sfondo giallo standard (#fff2b8)
+   - Rimosso sfondo rosa (#fef2f2) per vini sotto soglia
+   - Mantenuti bordi rossi (#fecaca) per vini sotto soglia
+
+C) ICONA SOTTO SOGLIA - Campanella minimale
+   - Sostituita emoji 🔔 con icona /allert.png (12x12px)
+   - Stessa icona usata in HomePage e altre pagine
+   - Colore rosso (#dc2626) mantenuto per coerenza
+
+D) PULSANTI FOOTER - Dimensioni uniformi
+   - "Indietro" e "Conferma Ordine" ora hanno stessa larghezza (flex: 1)
+   - minWidth: 120px e minHeight: 44px per entrambi
+   - Allineamento perfetto sulla baseline
+
+## IMPATTO:
+- Zero regressioni funzionali
+- Modifiche solo su CreaOrdinePage.tsx
+- Nessun componente condiviso alterato
+- Layout responsive mantenuto
+- Stati e logica invariati
+
+## TEST VISIVI:
+✅ Titoli centrati senza freccia
+✅ Card tutte gialle con campanella minimale
+✅ Pulsanti footer uniformi e allineati
+✅ Nessun overflow o shift layout
+✅ Hot reload funzionante
+
+## ROLLBACK:
+Disponibile via: git checkout main

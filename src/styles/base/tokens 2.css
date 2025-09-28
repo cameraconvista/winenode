@@ -26,16 +26,10 @@
   --shadow-mobile: 0 1px 6px rgba(0,0,0,0.08); /* ombra più leggera per mobile */
   --focus: 0 0 0 3px rgba(212,163,0,0.28); /* focus accessibile sul chiaro */
   
+  /* Colori specifici mobile per compatibilità */
   --brand-primary: rgb(84, 17, 17);    /* #541111 in RGB per iOS/Android */
   --brand-bg: rgb(255, 249, 220);      /* #fff9dc in RGB per iOS/Android */
   --brand-surface: rgb(255, 238, 193); /* #ffeec1 in RGB per iOS/Android */
-
-  /* Navbar mobile responsive variables */
-  --nav-height: clamp(56px, 7.5vh, 72px);
-  --nav-icon: clamp(22px, 2.6vh, 28px);
-  --nav-padding-y: clamp(6px, 1.2vh, 10px);
-  --nav-gap: clamp(4px, 1vh, 8px);
-  --nav-bottom-offset: calc(env(safe-area-inset-bottom) + var(--nav-padding-y));
 
   /* Safe-area centralizzate (AZ-003 DRY) */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -52,4 +46,7 @@
   --z-toolbar: 150;    /* Toolbar principale */
   --z-topbar: 200;     /* Header principale */
   --z-toast: 9999;     /* Notifiche e toast */
+
+  /* Navbar mobile positioning */
+  --nav-bottom-offset: calc(env(safe-area-inset-bottom) + 4pt); /* Ridotto ~20% da 8pt a 4pt */
 }

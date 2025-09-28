@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "generated_at": "2025-09-28T02:36:00+02:00",
+    "phase": "PHASE1_ANALYSIS_ONLY",
+    "backup_created": "backup_housekeeping_PHASE1_20250928_0236.tar.gz",
+    "total_files": 57,
+    "total_size_bytes": 354847
+  },
+  "inventory": {
+    "DOCS": {
+      "total_files": 56,
+      "categories": {
+        "reports": 15,
+        "piano_azione": 11,
+        "logs": 11,
+        "governance": 4,
+        "mock_data": 4,
+        "schema": 4,
+        "other": 7
+      },
+      "files": [
+        {
+          "path": "DOCS/CHANGELOG.md",
+          "size": 3117,
+          "mtime": "2025-09-23T16:19:10",
+          "sha256": "f6bc5984c07429ebc3af06ab0cab1ac0a0cb6c3964f35ee37192617d980de104",
+          "git_activity": 2,
+          "pattern": "CHANGELOG",
+          "category": "governance"
+        },
+        {
+          "path": "DOCS/COMMIT_LOG.md", 
+          "size": 3381,
+          "mtime": "2025-09-28T02:35:57",
+          "sha256": "b07e55e61f37cca46fea77c8877ed9c393a0a3ed8e466d6d80391d8df555398a",
+          "git_activity": 8,
+          "pattern": "LOG",
+          "category": "governance"
+        },
+        {
+          "path": "DOCS/LOG_DB_MIGRATIONS.txt",
+          "size": 6804,
+          "mtime": "2025-09-28T02:26:32", 
+          "sha256": "30239e8768d994ad651f5ccbb7a21c876f999551593783658a93dd888906af7e",
+          "git_activity": 2,
+          "pattern": "LOG_DB_MIGRATIONS",
+          "category": "governance"
+        },
+        {
+          "path": "DOCS/PLAYBOOK_MIGRAZIONI.md",
+          "size": 4973,
+          "mtime": "2025-09-28T02:29:08",
+          "sha256": "b975d9502152f51904b63e293e2da1ab7fff4932baf4fb8b7b1a1e8593929fec", 
+          "git_activity": 2,
+          "pattern": "PLAYBOOK",
+          "category": "governance"
+        },
+        {
+          "path": "DOCS/REPORT_ULTIMA_MODIFICA.md",
+          "size": 7392,
+          "mtime": "2025-09-28T02:27:48",
+          "sha256": "939088ffff9d88bd54741054fb9486b88ceb7ec8038e3e39777a10654914a29a",
+          "git_activity": 5,
+          "pattern": "REPORT_ULTIMA_MODIFICA", 
+          "category": "governance"
+        }
+      ]
+    },
+    "dev-notes": {
+      "total_files": 1,
+      "files": [
+        {
+          "path": "dev-notes/crea-ordine-diagnosi.md",
+          "size": 2391,
+          "mtime": "2025-09-24T10:34:02",
+          "sha256": "35c96ee67aefed954ed3d56b83b493e59e56d4e5b3a4290faaf10c475173f4fb",
+          "git_activity": 2,
+          "category": "draft"
+        }
+      ]
+    }
+  },
+  "cross_references": {
+    "high_reference": ["DOCS/COMMIT_LOG.md", "DOCS/REPORT_ULTIMA_MODIFICA.md"],
+    "medium_reference": ["DOCS/LOG_DB_MIGRATIONS.txt", "DOCS/PLAYBOOK_MIGRAZIONI.md"],
+    "low_reference": ["DOCS/CHANGELOG.md"],
+    "no_reference": ["DOCS/mock/*", "DOCS/schema_changes/*"]
+  },
+  "staleness_analysis": {
+    "active_recent": 42,
+    "stale_90_days": 8,
+    "legacy_180_days": 6
+  }
+}

@@ -1,0 +1,137 @@
+/* === LISTA VINI — TESTI GRIGI + CAMPANELLA #541111 === */
+
+/* Disabilita highlight e stati attivi sui box durante scroll/tap */
+.wine-card {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+}
+
+.wine-card:hover,
+.wine-card:active,
+.wine-card:focus {
+  background-color: var(--surface-2) !important;
+  transform: none !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* === LISTA VINI — TESTI GRIGI + CAMPANELLA #541111 === */
+.wine-item .producer, 
+.wine-item .vintage,
+.card-vino .producer, 
+.card-vino .vintage {
+  color: var(--muted-text);
+  font-weight: normal; /* SOLO font-weight da grassetto a regolare */
+}
+
+/* Campanella dentro i box vino con colore brand scuro - FORZATO IN TUTTI GLI STATI */
+.wine-item .alert-icon, 
+.card-vino .alert-icon,
+.alert-icon,
+span[class*="alert"],
+div[class*="alert"],
+.alert-triangle {
+  width: 18px !important;
+  height: 18px !important;
+  background: #541111 !important; /* FORZATO: colore brand in tutti gli stati */
+  -webkit-mask: url("/allert.png") center/contain no-repeat !important;
+  mask: url("/allert.png") center/contain no-repeat !important;
+  display: inline-block !important;
+  color: transparent !important;
+  fill: #541111 !important;
+  stroke: #541111 !important;
+  /* Mantieni la stessa posizione/margini del vecchio simbolo */
+}
+
+/* Forza #541111 anche negli stati interattivi */
+.wine-item .alert-icon:hover,
+.wine-item .alert-icon:active,
+.wine-item .alert-icon:focus,
+.card-vino .alert-icon:hover,
+.card-vino .alert-icon:active,
+.card-vino .alert-icon:focus,
+.alert-icon:hover,
+.alert-icon:active,
+.alert-icon:focus,
+span[class*="alert"]:hover,
+span[class*="alert"]:active,
+span[class*="alert"]:focus {
+  background: #541111 !important;
+  fill: #541111 !important;
+  stroke: #541111 !important;
+  color: transparent !important;
+}
+
+/* Disattiva eventuale triangolo precedente */
+.wine-item .alert-triangle, 
+.card-vino .alert-triangle {
+  display: none !important;
+}
+
+/* === ELIMINARE HIGHLIGHT/EVIDENZIAZIONE SUI BOX VINI === */
+.wine-card,
+.wine-item,
+.card-vino {
+  -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.wine-card:active,
+.wine-item:active,
+.card-vino:active,
+.wine-card:focus,
+.wine-item:focus,
+.card-vino:focus,
+.wine-card:hover,
+.wine-item:hover,
+.card-vino:hover {
+  background-color: var(--surface-2) !important; /* mantieni colore originale */
+  transform: none !important;
+  box-shadow: var(--shadow) !important; /* mantieni ombra originale */
+  outline: none !important;
+  border-color: var(--border) !important;
+}
+
+/* Ottimizzazioni performance mobile */
+.wine-card,
+.wine-item,
+.card-vino {
+  will-change: auto;
+  contain: layout style paint;
+}
+
+/* === UI POLISH v11: ALTEZZA BOX RIDOTTA === */
+.wine-card {
+  /* Riduci padding verticale per box più compatti */
+  padding-top: calc(0.375rem * 0.9) !important; /* da p-1.5 (6px) a 5.4px */
+  padding-bottom: calc(0.375rem * 0.9) !important;
+  min-height: calc(55px) !important; /* Altezza minima ridotta */
+}
+
+/* Responsive: riduci anche il padding per schermi più grandi */
+@media (min-width: 640px) {
+  .wine-card {
+    padding-top: calc(0.5rem * 0.9) !important; /* da p-2 (8px) a 7.2px */
+    padding-bottom: calc(0.5rem * 0.9) !important;
+    min-height: calc(58px) !important;
+  }
+}
+
+/* Assicura che il contenuto interno rimanga centrato verticalmente */
+.wine-card > div {
+  min-height: inherit;
+  align-items: center !important;
+}
+
+/* Mantieni i pulsanti +/- e campanella centrati verticalmente */
+.wine-card .alert-icon,
+.wine-card button {
+  align-self: center !important;
+}

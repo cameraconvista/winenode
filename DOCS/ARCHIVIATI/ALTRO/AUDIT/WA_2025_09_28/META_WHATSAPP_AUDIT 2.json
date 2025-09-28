@@ -1,0 +1,84 @@
+{
+  "audit_metadata": {
+    "phase": "WA-1",
+    "type": "ANALYSIS-ONLY",
+    "timestamp": "2025-09-28T03:51:00+02:00",
+    "analyst": "Cascade AI",
+    "scope": "Identificazione residui WhatsApp nel progetto WineNode",
+    "methodology": "Scansione pattern regex + analisi dipendenze + classificazione rischi"
+  },
+  "scan_summary": {
+    "total_files_scanned": 127,
+    "patterns_searched": [
+      "whatsapp|wa\\.me|api\\.whatsapp\\.com|whatsapp://send|intent://send\\?text",
+      "fa-?whatsapp|whatsappLink|whatsappUrl|WhatsappShareButton",
+      "encodeURIComponent.*text|buildWhatsApp|formatWhatsApp|shareWhatsApp",
+      "data_invio_whatsapp|whatsapp_text|message_text|note_whatsapp",
+      "VITE_WHATSAPP|WHATSAPP_|DEFAULT_WHATSAPP|SUPPLIER_WHATSAPP"
+    ],
+    "file_extensions": ["ts", "tsx", "js", "jsx", "css", "scss", "md", "json", "sql", "sh", "svg", "png", "webp", "ico"],
+    "excluded_paths": ["node_modules/", "dist/", ".git/", "coverage/", ".cache/"],
+    "matches_found": 1,
+    "false_positives": 0
+  },
+  "findings": [
+    {
+      "id": "WA-001",
+      "path": "DOCS/SCHEMA_UNICO.sql",
+      "type": "sql",
+      "matches": [
+        {
+          "pattern": "data_invio_whatsapp",
+          "line": 79,
+          "excerpt": "  data_invio_whatsapp TIMESTAMP WITH TIME ZONE,       -- Data invio WhatsApp",
+          "context_before": "  data TIMESTAMP WITH TIME ZONE DEFAULT NOW(),         -- Data creazione ordine",
+          "context_after": "  data_ricevimento TIMESTAMP WITH TIME ZONE,          -- Data ricezione merce"
+        }
+      ],
+      "imports": [],
+      "importers": [],
+      "label": "PRESERVARE (SUPABASE)",
+      "risk": "basso",
+      "notes": "Colonna database per timestamp invio WhatsApp. Essenziale per futuro ripristino feature. Schema Supabase deve rimanere intatto per compatibilità.",
+      "usage_analysis": {
+        "is_referenced": false,
+        "is_imported": false,
+        "is_active_in_runtime": false,
+        "last_usage_estimate": "unknown"
+      },
+      "preservation_reason": "Database schema column required for future WhatsApp feature restoration"
+    }
+  ],
+  "classification_summary": {
+    "PRESERVARE (SUPABASE)": 1,
+    "CORE_NON_WHATSAPP": 0,
+    "LEGACY_ATTIVO": 0,
+    "STALE": 0,
+    "ORPHAN": 0,
+    "ASSET_WHATSAPP": 0,
+    "DOCS_WHATSAPP": 0
+  },
+  "risk_assessment": {
+    "alto": 0,
+    "medio": 0,
+    "basso": 1,
+    "total_critical": 0,
+    "total_safe_to_remove": 0,
+    "total_preserve": 1
+  },
+  "dependency_graph": {
+    "isolated_nodes": 1,
+    "connected_components": 0,
+    "import_chains": [],
+    "circular_dependencies": []
+  },
+  "recommendations": {
+    "immediate_actions": [],
+    "phase2_candidates": [],
+    "preserve_mandatory": [
+      "DOCS/SCHEMA_UNICO.sql:79 - data_invio_whatsapp column"
+    ],
+    "cleanup_safe": [],
+    "requires_approval": []
+  }
+}

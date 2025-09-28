@@ -103,37 +103,34 @@
   /* ZERO margin per eliminare completamente gap */
   margin: 0 !important;
   /* ASSICURA che ultima card sia sempre 100% visibile */
-  box-sizing: border-box;
 }
 
 /* === NAVBAR FISSA === */
 .mobile-navbar {
   position: fixed;
-  bottom: 0; /* Ancorato al bordo effettivo */
+  bottom: var(--nav-bottom-offset, calc(env(safe-area-inset-bottom) + 4pt)); /* RIDOTTO ~20%: da 8pt a 4pt + safe-area */
   left: 0;
   right: 0;
-  z-index: var(--z-navbar);
+  z-index: var(--z-navbar); /* Sopra header e content */
   background: var(--bg);
-  
-  /* Dimensioni responsive */
-  height: var(--nav-height);
-  
-  /* Layout ottimizzato */
+  /* RIMOZIONE ARTEFATTI: nessun bordo, gap, separatore */
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  /* PADDING DINAMICO ADATTIVO per safe-area */
+  /* Top: 8pt spazio interno */
+  /* Bottom: 8pt spazio controllato (ridotto da 12pt) */
+  /* Left/Right: var(--safe-left/right) + 8pt spazio laterale */
+  padding: 8pt calc(env(safe-area-inset-left) + 8pt) 8pt calc(env(safe-area-inset-right) + 8pt);
+  /* ALTEZZA TOTALE: 56-64px per standard app */
+  min-height: 56px;
+  /* LAYOUT FLEX per distribuzione icone */
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  
-  /* Padding responsive con safe-area */
-  padding: var(--nav-padding-y) calc(var(--safe-left) + 12px) var(--nav-bottom-offset) calc(var(--safe-right) + 12px);
-  gap: var(--nav-gap);
-  
-  /* Rimozione artefatti */
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  transform: none;
+  justify-content: space-between;
+  /* BACKDROP GLASSMORPHISM per look app-nativo */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* Rimuovi eventuali pseudo-elementi separatori */
@@ -144,10 +141,7 @@
 
 /* === PULSANTI NAVBAR === */
 .mobile-navbar .nav-btn {
-  /* Touch target responsive ma minimo 44px */
-  min-height: 44px;
-  min-width: 44px;
-  height: var(--nav-icon);
+  height: 44pt; /* Touch target minimo */
   background: transparent;
   border: none;
   outline: none;
@@ -155,28 +149,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0;
+  color: var(--text);
   cursor: pointer;
-  transition: all 0.2s ease;
-  
-  /* Mobile optimizations */
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
+  position: relative;
+  /* Touch target e accessibilità */
+  min-width: 44pt;
   touch-action: manipulation;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  -webkit-tap-highlight-color: transparent !important;
+  /* MOBILE: Previeni colori di sistema */
+  -webkit-appearance: none !important;
+  appearance: none !important;
 }
 
 .mobile-navbar .nav-btn:not(.btn-tutti) {
-  width: var(--nav-icon);
+  width: 44pt;
   flex-shrink: 0;
 }
 
 .mobile-navbar .nav-btn .icon {
-  width: var(--nav-icon);
-  height: var(--nav-icon);
+  width: 24pt;
+  height: 24pt;
   background: var(--text);
   flex-shrink: 0;
 }
@@ -231,9 +224,28 @@
   --nav-icon-vert-offset: 6pt; /* Sposta icone verso basso di 6pt (circa 25% di 24pt) */
   --nav-safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
 }
+
+/* === CHIP "TUTTI" === */
+.mobile-navbar .btn-tutti {
+  background: #FFFFFF !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12pt !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4pt !important;
+  padding: 8pt 16pt !important;
+  min-width: 120pt !important;
+  min-height: 36pt !important;
+  box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important;
+  margin-left: auto !important;
+}
+
 .mobile-navbar .btn-tutti .label {
   display: block !important;
   color: #541111 !important;
+  text-align: center !important;
   font-weight: 600 !important;
   width: 100% !important;
   overflow: hidden !important;

@@ -1,0 +1,179 @@
+CHANGELOG NAV BOTTOM RESPONSIVE - WineNode
+Data: 28/09/2025 17:12
+Versione: 1.1.0
+
+=== FIX DEFINITIVO NAVBAR INFERIORE RESPONSIVE ===
+
+OBIETTIVO: Navbar bottom perfettamente leggibile, centrata, responsive su tutti i device
+
+PROBLEMI RISOLTI:
+1. **Posizionamento errato** (bottom: -8pt → bottom: 0)
+2. **Dimensioni fisse** (pt/px → clamp responsive)
+3. **Spazio eccessivo** sopra la navbar
+4. **Pill "Tutti" tagliato** su schermi piccoli
+5. **Touch targets** non conformi su device piccoli
+
+=== MODIFICHE IMPLEMENTATE ===
+
+**FILE MODIFICATI:**
+
+1. **src/styles/base/tokens.css**
+   - Variabili responsive navbar:
+     - --nav-height: clamp(56px, 7.5vh, 72px)
+     - --nav-icon: clamp(22px, 2.6vh, 28px)
+     - --nav-padding-y: clamp(6px, 1.2vh, 10px)
+     - --nav-gap: clamp(4px, 1vh, 8px)
+     - --nav-bottom-offset: calc(env(safe-area-inset-bottom) + var(--nav-padding-y))
+
+2. **src/styles/layout/mobile-standard.css**
+   - Navbar: Posizionamento e dimensioni responsive
+   - Pulsanti: Touch targets conformi (min 44px)
+   - Pill "Tutti": Protezione overflow con max-width
+
+=== DETTAGLI TECNICI ===
+
+**POSIZIONAMENTO NAVBAR:**
+```css
+/* PRIMA (PROBLEMATICO) */
+.mobile-navbar {
+  bottom: -8pt; /* Gap eccessivo */
+  min-height: 56pt; /* Fisso */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
+}
+
+/* DOPO (RESPONSIVE) */
+.mobile-navbar {
+  bottom: 0; /* Ancorato al bordo */
+  height: var(--nav-height); /* clamp(56px, 7.5vh, 72px) */
+  padding: var(--nav-padding-y) calc(var(--safe-left) + 12px) var(--nav-bottom-offset) calc(var(--safe-right) + 12px);
+}
+```
+
+**DIMENSIONI RESPONSIVE:**
+```css
+/* Variabili clamp per adattamento fluido */
+--nav-height: clamp(56px, 7.5vh, 72px);    /* Altezza navbar */
+--nav-icon: clamp(22px, 2.6vh, 28px);      /* Dimensione icone */
+--nav-padding-y: clamp(6px, 1.2vh, 10px);  /* Padding verticale */
+--nav-gap: clamp(4px, 1vh, 8px);           /* Gap tra elementi */
+```
+
+**TOUCH TARGETS CONFORMI:**
+```css
+.mobile-navbar .nav-btn {
+  min-height: 44px; /* Accessibilità garantita */
+  min-width: 44px;
+  height: var(--nav-icon); /* Responsive ma conforme */
+}
+```
+
+**PROTEZIONE PILL "TUTTI":**
+```css
+.mobile-navbar .btn-tutti {
+  max-width: clamp(60px, 15vw, 100px); /* Adattivo */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+```
+
+=== RISULTATI ATTESI ===
+
+**RESPONSIVE BEHAVIOR:**
+- **iPhone SE (320px)**: Icone 22px, navbar 56px, gap 4px
+- **iPhone 12 (390px)**: Icone ~24px, navbar ~60px, gap ~6px  
+- **iPhone 12 Pro Max (428px)**: Icone 28px, navbar 72px, gap 8px
+- **iPad (768px+)**: Dimensioni massime mantenute
+
+**POSIZIONAMENTO:**
+- ✅ Navbar ancorata al bordo effettivo (bottom: 0)
+- ✅ Safe-area iOS/Android rispettata
+- ✅ Spazio visivo ottimizzato (no gap eccessivo)
+
+**ACCESSIBILITÀ:**
+- ✅ Touch targets ≥44px garantiti
+- ✅ Tap area conforme su tutti i device
+- ✅ Pill "Tutti" sempre visibile (no clipping)
+
+**CROSS-DEVICE:**
+- ✅ Scaling fluido senza breakpoint fissi
+- ✅ Viewport height responsive (7.5vh)
+- ✅ Protezione overflow su schermi stretti
+
+=== VARIABILI CSS INTRODOTTE ===
+
+**RESPONSIVE CLAMP:**
+- --nav-height: 56px → 72px (7.5vh)
+- --nav-icon: 22px → 28px (2.6vh)  
+- --nav-padding-y: 6px → 10px (1.2vh)
+- --nav-gap: 4px → 8px (1vh)
+
+**SAFE-AREA INTEGRATION:**
+- --nav-bottom-offset: env(safe-area-inset-bottom) + padding
+- --safe-left/right: env(safe-area-inset-left/right)
+
+=== PRIMA/DOPO MISURE ===
+
+**NAVBAR HEIGHT:**
+- Prima: 56pt fisso (~75px)
+- Dopo: clamp(56px, 7.5vh, 72px) responsive
+
+**ICONE SIZE:**
+- Prima: 24pt fisso (~32px)
+- Dopo: clamp(22px, 2.6vh, 28px) adaptive
+
+**BOTTOM OFFSET:**
+- Prima: -8pt (gap visivo ~10-15px)
+- Dopo: 0 + safe-area (ancorato preciso)
+
+**PILL "TUTTI" WIDTH:**
+- Prima: auto (rischio overflow)
+- Dopo: clamp(60px, 15vw, 100px) protetto
+
+=== TEST MANUALI RICHIESTI ===
+
+**iPhone (Safari):**
+- [ ] Navbar centrata senza gap eccessivo
+- [ ] Icone dimensioni appropriate per schermo
+- [ ] Pill "Tutti" completamente visibile
+- [ ] Touch targets ≥44px facilmente tappabili
+
+**Android (Chrome):**
+- [ ] Safe-area gesture navigation rispettata
+- [ ] Scaling responsive su diverse densità
+- [ ] Nessun clipping elementi navbar
+
+**Landscape Mode:**
+- [ ] Navbar mantiene proporzioni corrette
+- [ ] Altezza ridotta ma leggibile (7.5vh)
+- [ ] Touch targets ancora conformi
+
+**Schermi Piccoli (<360px):**
+- [ ] Pill "Tutti" con ellipsis se necessario
+- [ ] Icone minime (22px) ma leggibili
+- [ ] Gap ridotto (4px) ma funzionale
+
+=== ROLLBACK PROCEDURE ===
+
+Per ripristinare comportamento precedente:
+```css
+/* tokens.css - rimuovere variabili */
+/* --nav-height, --nav-icon, --nav-padding-y, --nav-gap, --nav-bottom-offset */
+
+/* mobile-standard.css - ripristinare */
+.mobile-navbar {
+  bottom: -8pt;
+  min-height: 56pt;
+  max-height: 64pt;
+}
+```
+
+=== GUARDRAIL RISPETTATI ===
+
+- ✅ Nessuna nuova dipendenza
+- ✅ Nessun refactor strutturale  
+- ✅ Solo CSS responsive (no JS device detection)
+- ✅ Compatibilità con modali esistenti (z-index preservato)
+- ✅ Zero impatto su altre pagine
+
+STATO: Fix responsive implementato, pronto per test cross-device

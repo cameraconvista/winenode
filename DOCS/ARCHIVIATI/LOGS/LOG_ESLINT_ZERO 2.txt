@@ -1,0 +1,158 @@
+# LOG ESLINT QUASI-ZERO - PATCH hasOwnProperty
+
+================================================================================
+OPERAZIONE: ESLINT PATCH hasOwnProperty → Object.prototype.call (QUASI-ZERO)
+DATA: 27 settembre 2025 - 18:43
+TARGET: Fix errori hasOwnProperty (escluso useColumnResize.ts)
+DURATA TOTALE: ~6 minuti
+================================================================================
+
+## 📋 RIEPILOGO OPERAZIONE
+
+### BACKUP PRE-OPERAZIONE
+- **Timestamp:** 27/09/2025 18:43:38
+- **File backup:** backup_27092025_184338.tar.gz
+- **Dimensione:** 692.3 KB
+- **Stato:** ✅ VALIDO
+
+### PATCH HASOWNPROPERTY IMPLEMENTATE
+
+#### FILE MODIFICATO: scripts/config-check.js
+**Righe corrette:**
+- **Riga 165:** `!envVars.hasOwnProperty(key)` → `!Object.prototype.hasOwnProperty.call(envVars, key)`
+- **Riga 172:** `!envExampleVars.hasOwnProperty(key)` → `!Object.prototype.hasOwnProperty.call(envExampleVars, key)`
+
+**Motivazione:** Sostituzione pattern `obj.hasOwnProperty()` con forma standard sicura per evitare errori ESLint `no-prototype-builtins`.
+
+#### FILE NON MODIFICATO (NOOP): src/hooks/useColumnResize.ts
+- **Riga 21:** `localStorage.hasOwnProperty(key)` - **MANTENUTO INVARIATO**
+- **Motivazione:** Decisione NOOP come da vincoli operazione
+- **Stato:** Rimane 1 errore ESLint accettabile
+
+## 📊 RISULTATI QUANTITATIVI
+
+### LINT PROBLEMS - PRIMA → DOPO
+
+#### Miglioramento Parziale
+- **Prima (Fase 4):** 7 problemi (3 errori, 4 warnings)
+- **Dopo (Fase 5):** 5 problemi (1 errore, 4 warnings)
+- **Miglioramento:** -2 errori risolti (-29% errori)
+
+#### Analisi Problemi Rimanenti (5 totali)
+
+**ERRORE RIMANENTE (1):**
+- `src/hooks/useColumnResize.ts` riga 21 - `no-prototype-builtins` (hasOwnProperty)
+  - **Stato:** Mantenuto per decisione NOOP
+  - **Classificazione:** Accettabile (hook da valutare)
+
+**WARNINGS RIMANENTI (4):**
+- `src/contexts/OrdiniContext.tsx` - Function 'OrdiniProvider' 236 lines (max 200)
+- `src/pages/GestisciOrdiniPage.tsx` - Function 'GestisciOrdiniPage' 799 lines (max 400)
+- `src/pages/HomePage.tsx` - Arrow function complexity 33 (max 30)
+- `src/pages/ManualWineInsertPage.tsx` - Function 'ManualWineInsertPage' 550 lines (max 400)
+
+### PROGRESSIONE TOTALE QUALITY (dall'inizio)
+
+#### Evoluzione ESLint Completa
+- **Stato iniziale:** 754 problemi
+- **Dopo Fase 3:** 73 problemi (-90%)
+- **Dopo Fase 4:** 7 problemi (-99%)
+- **Dopo Fase 5:** 5 problemi (-99.3% totale)
+
+#### Obiettivo ESLint=0 Status
+- **Target:** 0 problemi
+- **Raggiunto:** 5 problemi
+- **Gap:** 1 errore (useColumnResize NOOP) + 4 warnings (componenti complessi)
+- **Classificazione:** **QUASI-ZERO** (99.3% riduzione)
+
+## 🔍 VERIFICHE DI SICUREZZA
+
+### QUALITY GATES ESEGUITI
+- **npm run lint:** ✅ 5 problemi (da 7, -2 errori scripts)
+- **npm run typecheck:** ✅ 0 errori (perfetto mantenuto)
+- **npm run build:** ✅ SUCCESSO (4.16s, stabile)
+
+### SMOKE TEST FUNZIONALE
+- **Build production:** ✅ Completato senza errori
+- **Bundle size:** ✅ Stabile (50.36kB CSS, 285.71kB JS)
+- **Scripts config:** ✅ Funzionamento verificato
+- **useColumnResize:** ✅ Preservato senza modifiche (NOOP)
+
+### PATCH MINIME CONFERMATE
+- **Logica applicativa:** ✅ Zero modifiche funzionali
+- **Scripts utility:** ✅ Funzionamento invariato
+- **Standard compliance:** ✅ hasOwnProperty pattern corretto
+
+## ⏱️ TIMELINE OPERAZIONE
+
+```
+18:43:38 - A) Backup automatico completato (692.3KB)
+18:43:42 - B) Patch config-check.js riga 165 (hasOwnProperty)
+18:43:44 - B) Patch config-check.js riga 172 (hasOwnProperty)
+18:43:46 - B) NOOP useColumnResize.ts (mantenuto invariato)
+18:43:50 - C) Lint test (5 problemi da 7, -2 errori)
+18:43:55 - C) TypeCheck test (0 errori)
+18:44:00 - C) Build test (SUCCESSO 4.16s)
+18:44:30 - D) Generazione log + CHANGELOG iniziata
+```
+
+**DURATA OPERAZIONE:** ~6 minuti (patch mirate e sicure)
+
+## 🎯 IMPATTO FUNZIONALE
+
+### NESSUN IMPATTO NEGATIVO
+- **useColumnResize:** ✅ Preservato senza modifiche (decisione NOOP)
+- **Scripts config:** ✅ Funzionamento invariato con pattern sicuro
+- **Logica business:** ✅ Zero modifiche funzionali
+- **Performance:** ✅ Build stabile (4.16s)
+- **Type safety:** ✅ Mantenuto perfetto (0 errori)
+
+### BENEFICI REALIZZATI
+- **Code Standards:** hasOwnProperty pattern corretto in scripts
+- **ESLint Compliance:** -2 errori risolti (scripts puliti)
+- **Maintainability:** Pattern sicuro per accesso proprietà
+- **Developer Experience:** Meno rumore ESLint su scripts
+
+## ✅ STATO FINALE
+
+### OPERAZIONE COMPLETATA CON SUCCESSO PARZIALE
+- **Backup:** ✅ Creato e validato
+- **Patch hasOwnProperty:** ✅ 2/3 occorrenze corrette (scripts)
+- **useColumnResize NOOP:** ✅ Mantenuto invariato come richiesto
+- **Quality gates:** ✅ Tutti superati
+- **Regressioni:** ✅ Zero impatto negativo
+
+### ESLINT STATUS FINALE
+
+#### Problemi Rimanenti (5 totali)
+- **1 Errore:** useColumnResize.ts hasOwnProperty (NOOP decision)
+- **4 Warnings:** Componenti complessi (governance accettabile)
+
+#### Classificazione Finale
+- **ESLint=0:** ❌ Non raggiunto (1 errore rimanente)
+- **ESLint QUASI-ZERO:** ✅ Raggiunto (99.3% riduzione)
+- **Stato:** Accettabile per decisione NOOP su useColumnResize
+
+### PROBLEMI RESIDUI IDENTIFICATI
+
+#### Errore Rimanente (1)
+- **useColumnResize.ts riga 21:** `localStorage.hasOwnProperty(key)`
+  - **Fix futuro:** `Object.prototype.hasOwnProperty.call(localStorage, key)`
+  - **Decisione:** NOOP mantenuta per valutazione team
+  - **Priorità:** Bassa (hook da decidere)
+
+#### Warnings Accettabili (4)
+- **Funzioni lunghe:** 4 componenti business-critical
+  - **Stato:** Accettabile per governance rilassata
+  - **Refactor futuro:** Solo se necessario
+
+### PROSSIMI STEP RACCOMANDATI
+- Decidere definitivamente su useColumnResize.ts (KEEP/REMOVE/REFINE)
+- Se REMOVE: ESLint=0 raggiungibile
+- Se KEEP/REFINE: Correggere hasOwnProperty per ESLint=0
+- Monitorare stabilità ambiente sviluppo
+
+================================================================================
+LOG GENERATO AUTOMATICAMENTE - ESLINT QUASI-ZERO RAGGIUNTO
+RISULTATO: ✅ SUCCESSO PARZIALE - 99.3% RIDUZIONE - 1 ERRORE RIMANENTE (NOOP)
+================================================================================

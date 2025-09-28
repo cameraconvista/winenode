@@ -1,0 +1,137 @@
+/* === OTTIMIZZAZIONI MOBILE/TABLET SPECIFICHE === */
+
+/* Smartphone (fino a 767px) - OTTIMIZZAZIONI MOBILE + iPhone 8/9 + iPod Touch 4 */
+@media screen and (max-width: 767px) {
+  /* Header ottimizzato per mobile */
+  .app-topbar {
+    padding-bottom: 3px !important; /* ridotto per container più compatto */
+  }
+  
+  .app-topbar .logo-wrap {
+    padding-top: calc(var(--safe-top) + 4px) !important;
+  }
+  
+  .app-topbar .logo-wrap img {
+    height: 39px !important; /* +40% mantenuto anche su mobile */
+  }
+  
+  /* Toolbar ottimizzata per mobile */
+  .bottom-toolbar {
+    padding: 6px calc(8px + var(--safe-right)) 6px calc(8px + var(--safe-left)) !important;
+    gap: 6px !important; /* ridotto per schermi piccoli */
+  }
+  
+  .bottom-toolbar .nav-btn {
+    height: 50px !important; /* ridotto per iPhone 8/9 */
+    gap: 0 !important;
+  }
+  
+  .bottom-toolbar .nav-btn .icon {
+    width: 26px !important; /* leggermente più grande per touch */
+    height: 26px !important;
+  }
+  
+  /* Pulsante "Tutti" mobile - caret + label */
+  .bottom-toolbar .btn-tutti::before {
+    width: 10px !important;
+    height: 10px !important;
+    border-width: 2px 2px 0 0 !important;
+  }
+  
+  .bottom-toolbar .btn-tutti .label {
+    font-size: 9px !important;
+    max-width: 50px !important;
+  }
+}
+
+/* iPhone 8/9 specifico (375px width) */
+@media screen and (max-width: 375px) {
+  .bottom-toolbar {
+    gap: 4px !important;
+  }
+  
+  .bottom-toolbar .nav-btn .icon {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  .bottom-toolbar .btn-tutti::before {
+    width: 8px !important;
+    height: 8px !important;
+  }
+  
+  .bottom-toolbar .btn-tutti .label {
+    font-size: 8px !important;
+    max-width: 45px !important;
+  }
+}
+
+/* iPod Touch 4 specifico (320px width) */
+@media screen and (max-width: 320px) {
+  .app-topbar .logo-wrap img {
+    height: 39px !important; /* +40% mantenuto anche su iPod Touch */
+  }
+  
+  .bottom-toolbar {
+    padding: 4px 6px !important;
+    gap: 2px !important;
+  }
+  
+  .bottom-toolbar .nav-btn {
+    height: 46px !important;
+  }
+  
+  .bottom-toolbar .nav-btn .icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  
+  .bottom-toolbar .btn-tutti::before {
+    width: 8px !important;
+    height: 8px !important;
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* Header tablet */
+  header {
+    padding: 12px 24px !important;
+  }
+  
+  header img {
+    height: 40px !important;
+  }
+  
+  /* Main content tablet */
+  main {
+    margin-top: 64px !important;
+    margin-bottom: 68px !important;
+    height: calc(100vh - 132px) !important;
+  }
+  
+  /* Toolbar bottom tablet */
+  .bottom-toolbar {
+    padding: 8px calc(16px + var(--safe-right)) calc(8px + var(--safe-bottom)) calc(16px + var(--safe-left)) !important;
+    gap: 8px !important;
+  }
+  
+  .bottom-toolbar .nav-btn {
+    height: 52px !important;
+    font-size: 11px !important;
+  }
+  
+  .bottom-toolbar .nav-btn svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  
+  .bottom-toolbar .nav-btn .emoji {
+    font-size: 18px !important;
+  }
+  
+  .bottom-toolbar select {
+    font-size: 11px !important;
+    height: 52px !important;
+  }
+}

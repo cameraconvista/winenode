@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-09-25T21:21:37.592Z",
+  "snapshotId": "recovery-2025-09-25T21-21-37-589Z",
+  "branch": "main",
+  "lastCommit": "d2be4b8cd3f6cc1d0305522566bdebeccfc55247 feat: Implementa conferma ordini con giacenze in Creati + rimozione tab Storico",
+  "modifiedFiles": [
+    ".recovery/current-state.json",
+    "src/components/orders/OrdineRicevutoCard.tsx",
+    "src/pages/GestisciOrdiniPage.tsx",
+    ".recovery/snapshots/recovery-2025-09-25T21-14-28-219Z/",
+    "REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt"
+  ],
+  "activeTask": "Task generico",
+  "reports": [
+    "REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt",
+    "REPORT_CONFERMA_IN_CREATI_E_RIMOZIONE_STORICO.txt",
+    "REPORT_OTTIMIZZAZIONE_TESTI_GESTISCI_ORDINI.txt",
+    "REPORT_RIMOZIONE_ICONE_GESTISCI_ORDINI.txt",
+    "REPORT_CENTRALIZZAZIONE_LABELS_GESTISCI_ORDINI.txt"
+  ]
+}

@@ -1,0 +1,111 @@
+/* === MOBILE SCROLL FIX === */
+
+/* Previeni scroll su elementi che non dovrebbero scrollare */
+.homepage-container,
+.app-topbar,
+.bottom-toolbar {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto; /* Disabilita momentum scrolling su elementi fissi */
+}
+
+/* Ottimizza il contenitore di scroll principale per mobile */
+.homepage-container main > div {
+  /* Contenitore lista vini */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none !important; /* BLOCCA COMPLETAMENTE RUBBER BAND */
+  overscroll-behavior-y: none !important;
+  overscroll-behavior-x: none !important;
+  scroll-snap-type: none; /* Evita snap indesiderati */
+  /* ANTI-BOUNCE iOS SPECIFICO */
+  -webkit-transform: translateZ(0); /* Forza layer compositing */
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+/* Previeni interferenze touch sui pulsanti */
+.wine-card button,
+.bottom-toolbar button,
+.nav-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Assicura che header e toolbar siano sempre visibili */
+@supports (position: sticky) {
+  .app-topbar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+  }
+  
+  .bottom-toolbar {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: calc(var(--safe-bottom) - 8px);
+  }
+}
+
+/* Fallback per browser che non supportano sticky */
+@supports not (position: sticky) {
+  .app-topbar,
+  .bottom-toolbar {
+    position: fixed;
+  }
+}
+
+/* Previeni zoom accidentale su input */
+input[type="number"],
+select {
+  font-size: 16px; /* Previene zoom su iOS */
+}
+
+/* Migliora la performance di scroll su mobile */
+.homepage-container {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+.homepage-container main > div {
+  contain: layout style;
+  will-change: scroll-position;
+}
+
+/* GARANTISCE VISIBILITÀ PRIMO E ULTIMO ELEMENTO */
+.wine-card:first-child {
+  margin-top: 0 !important;
+  scroll-margin-top: 8px; /* Spazio sopra quando si scrolla al primo elemento */
+}
+
+.wine-card:last-child {
+  margin-bottom: 0 !important;
+  scroll-margin-bottom: 8px; /* Spazio sotto quando si scrolla all'ultimo elemento */
+}
+
+/* PREVIENI SCROLL OLTRE I LIMITI */
+.homepage-container main > div {
+  /* Forza i limiti di scroll */
+  scroll-padding-top: 8px;
+  scroll-padding-bottom: 8px;
+}
+
+/* iOS SAFARI SPECIFICO - ELIMINA RUBBER BAND DEFINITIVAMENTE */
+@supports (-webkit-overflow-scrolling: touch) {
+  .homepage-container main > div {
+    -webkit-overflow-scrolling: touch;
+    overflow-anchor: none; /* Previeni auto-scroll indesiderato */
+    overscroll-behavior: none !important;
+  }
+  
+  /* Previeni il bounce su iOS */
+  .homepage-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+}

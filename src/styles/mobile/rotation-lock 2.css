@@ -1,0 +1,40 @@
+/* === BLOCCO ROTAZIONE MOBILE - SOLO VERTICALE === */
+@media screen and (max-width: 767px) and (orientation: landscape) {
+  html {
+    transform: rotate(90deg);
+    transform-origin: center center;
+    width: 100vh;
+    height: 100vw;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  
+  body {
+    transform: rotate(-90deg);
+    transform-origin: center center;
+    width: 100vh;
+    height: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  /* Messaggio discreto per informare l'utente */
+  body::before {
+    content: "📱 App ottimizzata per visualizzazione verticale";
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(251, 191, 36, 0.95);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: var(--z-toast);
+    white-space: nowrap;
+  }
+}
