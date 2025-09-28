@@ -172,6 +172,36 @@ npm run project-info   # Riepilogo progetto
 npm run commit:auto    # Commit automatico GitHub
 ```
 
+### Recovery System
+Sistema di snapshot leggeri per ripristino rapido dello stato operativo:
+
+**Che cos'è:** Snapshot automatici dello stato del repository (configurazioni, script, documentazione) senza segreti o dipendenze pesanti.
+
+**Dove:** `.recovery/snapshots/` con naming `recovery_YYYYMMDD_HHMM.tar`
+
+**Retention:** Mantiene 5 snapshot più recenti (configurabile via `RECOVERY_KEEP`)
+
+**Comandi:**
+```bash
+npm run recovery:snapshot  # Crea nuovo snapshot
+npm run recovery:rotate    # Applica retention policy  
+npm run recovery:gc        # Snapshot + rotate automatico
+```
+
+**Ripristino locale:**
+```bash
+# Lista snapshot disponibili
+ls -la .recovery/snapshots/
+
+# Ripristina snapshot specifico
+tar -xf .recovery/snapshots/recovery_YYYYMMDD_HHMM.tar
+
+# Reinstalla dipendenze se necessario
+npm ci && npm run build
+```
+
+**Sicurezza:** Gli snapshot non contengono file `.env` o segreti. Le credenziali sono gestite via GitHub Secrets per CI/CD.
+
 ## 🎨 Design
 
 - Tema chiaro con palette #fff9dc
