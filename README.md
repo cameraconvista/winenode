@@ -124,9 +124,42 @@ Il sistema include 12 vini di esempio con:
 - Regioni di produzione
 - Annate specifiche
 
+## ⚙️ Operazioni & Standards di Team
+
+### Versione Node.js
+- Usa `nvm use` per allineare la versione Node (file .nvmrc)
+- Versione corrente: 22.15.0
+
+### Formattazione Codice
+- Regole di formattazione gestite da .editorconfig
+- Indent: 2 spazi, EOL: LF, UTF-8 encoding
+- Trim trailing whitespace automatico
+
+### Git & Repository
+- .gitattributes normalizza EOL e migliora i diff
+- .gitignore copre backup/recovery/coverage
+- Commit atomici con messaggi descrittivi
+
+### Scripts Disponibili
+```bash
+# Backup e recovery
+npm run backup          # Crea backup completo
+npm run backup:list     # Lista backup disponibili
+npm run diagnose        # Analisi salute progetto
+
+# Qualità codice
+npm run lint           # ESLint check
+npm run typecheck      # TypeScript check
+npm run test:ci        # Test con coverage
+
+# Utility
+npm run cleanup        # Trova file obsoleti
+npm run project-info   # Riepilogo progetto
+```
+
 ## 🎨 Design
 
-- Tema scuro con gradiente bordeaux
+- Tema chiaro con palette #fff9dc
 - Animazioni fluide e responsive
 - Accessibilità mobile ottimizzata
 - Interfaccia utente intuitiva
