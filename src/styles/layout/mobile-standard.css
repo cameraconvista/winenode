@@ -110,10 +110,6 @@
   position: fixed;
   bottom: -8pt; /* SPOSTA NAVBAR PIÙ IN BASSO di 8pt */
   left: 0;
-  
-  /* Variabili per spaziature icone (non influenzano "Tutti") */
-  --nav-icon-gap: 8pt;
-  --nav-icon-right-inset: 12pt;
   right: 0;
   z-index: var(--z-navbar); /* Sopra header e content */
   background: var(--bg);
@@ -124,16 +120,16 @@
   /* Misure standard: 56-64pt */
   min-height: 56pt;
   max-height: 64pt;
+  
+  /* Layout: gruppo icone a sinistra + pulsante "Tutti" a destra */
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
   /* SAFE-AREA ADATTIVA: FaceID vs non-FaceID */
-  /* iPhone con FaceID: var(--safe-bottom) + 12pt */
-  /* iPhone 8/SE/Android: 12pt fissi */
   padding-bottom: calc(var(--safe-bottom) + 12pt);
   padding-top: 6pt;
   padding-left: calc(12pt + var(--safe-left));
   padding-right: calc(12pt + var(--safe-right));
-  /* Layout grid per pulsanti */
-  display: grid;
-  grid-template-columns: auto auto auto 1fr;
   gap: 6pt;
   align-items: center;
   /* NESSUN border-radius che può creare gap */
@@ -220,6 +216,13 @@
   /* Icona lente - usa Lucide React con stili corretti */
   width: 22pt;
   height: 22pt;
+}
+
+/* === GRUPPO ICONE === */
+.mobile-navbar .nav-icons-group {
+  display: flex;
+  align-items: center;
+  gap: 8pt;
 }
 
 /* === CHIP "TUTTI" === */

@@ -360,75 +360,23 @@ export default function HomePage() {
 
       {/* NAVBAR FISSA IN BASSO */}
       <nav className="mobile-navbar">
-        <button 
-          onClick={openCarrelloModal}
-          className="nav-btn btn-ordine"
-          title="Carrello Ordini"
-        >
-          <div className="icon"></div>
-          <span className="label">Ordine</span>
-        </button>
-        
-        <button 
-          onClick={() => setShowFilterModal(true)} 
-          className="nav-btn btn-filtri"
-          title="Filtri"
-          style={{ 
-            background: (filters.wineType || filters.supplier) ? '#d4a300' : 'transparent',
-            color: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)',
-            borderRadius: '8px',
-            border: 'none',
-            outline: 'none',
-            WebkitTapHighlightColor: 'transparent',
-            WebkitAppearance: 'none',
-            appearance: 'none'
-          } as React.CSSProperties}
-        >
-          <div className="icon" style={{
-            background: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)',
-            WebkitMask: 'url("/filtro.png") center/contain no-repeat',
-            mask: 'url("/filtro.png") center/contain no-repeat'
-          }}></div>
-          <span className="label" style={{
-            color: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)'
-          }}>Filtri</span>
-        </button>
-        
-        <button
-          onClick={() => setFilters(prev => ({ ...prev, showAlertsOnly: !prev.showAlertsOnly }))}
-          className="nav-btn btn-allert"
-          title={filters.showAlertsOnly ? "Mostra tutti i vini" : "Mostra solo vini in esaurimento"}
-          style={{ 
-            background: filters.showAlertsOnly ? 'var(--danger)' : 'transparent',
-            color: filters.showAlertsOnly ? 'white' : 'var(--text)',
-            borderRadius: '8px',
-            border: 'none',
-            outline: 'none',
-            WebkitTapHighlightColor: 'transparent',
-            WebkitAppearance: 'none',
-            appearance: 'none'
-          } as React.CSSProperties}
-        >
-          <div className="icon" style={{
-            background: filters.showAlertsOnly ? 'white' : 'var(--text)',
-            WebkitMask: 'url("/allert.png") center/contain no-repeat',
-            mask: 'url("/allert.png") center/contain no-repeat'
-          }}></div>
-          <span className="label" style={{
-            color: filters.showAlertsOnly ? 'white' : 'var(--text)'
-          }}>Alert</span>
-        </button>
-        
-        {/* Icona lente ricerca (se feature abilitata) */}
-        {isFeatureEnabled('searchLens') && (
-          <button
-            onClick={wineSearch.openSearch}
-            className="nav-btn btn-search"
-            title="Cerca vini"
-            aria-label="Apri ricerca"
+        {/* Gruppo icone a sinistra */}
+        <div className="nav-icons-group">
+          <button 
+            onClick={openCarrelloModal}
+            className="nav-btn btn-ordine"
+            title="Carrello Ordini"
+          >
+            <div className="icon"></div>
+          </button>
+          
+          <button 
+            onClick={() => setShowFilterModal(true)} 
+            className="nav-btn btn-filtri"
+            title="Filtri"
             style={{ 
-              background: wineSearch.isSearchOpen ? 'var(--accent)' : 'transparent',
-              color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
+              background: (filters.wineType || filters.supplier) ? '#d4a300' : 'transparent',
+              color: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)',
               borderRadius: '8px',
               border: 'none',
               outline: 'none',
@@ -437,22 +385,68 @@ export default function HomePage() {
               appearance: 'none'
             } as React.CSSProperties}
           >
-            <Search 
-              className="icon" 
-              style={{
-                color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
-                width: '22px',
-                height: '22px',
-                strokeWidth: '2px',
-                fill: 'none'
-              }}
-            />
-            <span className="label" style={{
-              color: wineSearch.isSearchOpen ? 'white' : 'var(--text)'
-            }}>Cerca</span>
+            <div className="icon" style={{
+              background: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)',
+              WebkitMask: 'url("/filtro.png") center/contain no-repeat',
+              mask: 'url("/filtro.png") center/contain no-repeat'
+            }}></div>
           </button>
-        )}
+          
+          <button
+            onClick={() => setFilters(prev => ({ ...prev, showAlertsOnly: !prev.showAlertsOnly }))}
+            className="nav-btn btn-allert"
+            title={filters.showAlertsOnly ? "Mostra tutti i vini" : "Mostra solo vini in esaurimento"}
+            style={{ 
+              background: filters.showAlertsOnly ? 'var(--danger)' : 'transparent',
+              color: filters.showAlertsOnly ? 'white' : 'var(--text)',
+              borderRadius: '8px',
+              border: 'none',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent',
+              WebkitAppearance: 'none',
+              appearance: 'none'
+            } as React.CSSProperties}
+          >
+            <div className="icon" style={{
+              background: filters.showAlertsOnly ? 'white' : 'var(--text)',
+              WebkitMask: 'url("/allert.png") center/contain no-repeat',
+              mask: 'url("/allert.png") center/contain no-repeat'
+            }}></div>
+          </button>
+          
+          {/* Icona lente ricerca (se feature abilitata) */}
+          {isFeatureEnabled('searchLens') && (
+            <button
+              onClick={wineSearch.openSearch}
+              className="nav-btn btn-search"
+              title="Cerca vini"
+              aria-label="Apri ricerca"
+              style={{ 
+                background: wineSearch.isSearchOpen ? 'var(--accent)' : 'transparent',
+                color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
+                borderRadius: '8px',
+                border: 'none',
+                outline: 'none',
+                WebkitTapHighlightColor: 'transparent',
+                WebkitAppearance: 'none',
+                appearance: 'none'
+              } as React.CSSProperties}
+            >
+              <Search 
+                className="icon" 
+                style={{
+                  color: wineSearch.isSearchOpen ? 'white' : 'var(--text)',
+                  width: '22px',
+                  height: '22px',
+                  strokeWidth: '2px',
+                  fill: 'none'
+                }}
+              />
+            </button>
+          )}
+        </div>
         
+        {/* Pulsante "Tutti" a destra */}
         <button
           onClick={() => {/* Toggle dropdown logic */}}
           className="nav-btn btn-tutti"
