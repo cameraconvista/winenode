@@ -134,20 +134,25 @@ export default function SmartGestisciModal({
         {/* CONTENT SCROLLABILE */}
         <main className="mobile-content">
           <div className="wine-list-container">
-            {/* Riga fornitore semplice */}
-            <div className="p-4">
-              <p className="text-sm font-medium" style={{ color: '#541111' }}>
+            {/* Header centrato come Crea Ordine */}
+            <div className="text-center mb-6">
+              <div className="text-center mb-2">
+                <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
+                  Gestisci Ordine
+                </h2>
+              </div>
+              <p className="text-base" style={{ color: '#7a4a30' }}>
                 Fornitore: {fornitore.toUpperCase()}
               </p>
             </div>
 
             {/* Lista righe scrollabile */}
-            <div className="px-3 py-4 space-y-3">
+            <div className="px-3 py-4 space-y-2">
               {dettagli.map((dettaglio, index) => {
                 const currentQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
                 
                 return (
-                  <div key={index} className="bg-white rounded-lg border py-2 px-3" style={{ borderColor: '#e2d6aa' }}>
+                  <div key={index} className="rounded-lg border py-3 px-4" style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}>
                     {/* Layout: titolo a sinistra, quantità a destra */}
                     <div className="flex items-start justify-between">
                       {/* Nome vino - max 2 righe con ellissi */}
@@ -164,17 +169,22 @@ export default function SmartGestisciModal({
                         </h4>
                       </div>
                       
-                      {/* Box quantità a destra */}
+                      {/* Box quantità a destra - più compatto */}
                       <div className="flex flex-col items-center flex-shrink-0">
                         <div
                           onClick={() => handleQuantityClick(index)}
-                          className="px-2 py-1 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50"
+                          className="px-3 py-2 rounded border cursor-pointer transition-all duration-200 hover:bg-gray-50"
                           style={{ 
                             borderColor: '#e2d6aa',
-                            background: 'white'
+                            background: 'white',
+                            minWidth: '44px',
+                            minHeight: '36px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                           }}
                         >
-                          <span className="text-lg font-bold" style={{ color: '#541111' }}>
+                          <span className="text-base font-bold" style={{ color: '#541111' }}>
                             {currentQuantity}
                           </span>
                         </div>
@@ -191,27 +201,50 @@ export default function SmartGestisciModal({
           </div>
         </main>
 
-        {/* NAVBAR FISSA */}
-        <nav className="mobile-navbar">
-          <button
-            onClick={handleCancel}
-            {...getStandardButtonStyles({ variant: 'neutral' })}
-            title="Annulla"
-          >
-            Annulla
-          </button>
-          <button
-            onClick={handleConfirm}
-            {...getStandardButtonStyles({ variant: 'primary' })}
-            title="Conferma Modifiche"
-            style={{
-              ...getStandardButtonStyles({ variant: 'primary' }).style,
-              marginLeft: 'auto'
-            }}
-          >
-            CONFERMA MODIFICHE
-          </button>
-        </nav>
+        {/* FOOTER FISSO */}
+        <footer 
+          className="fixed bottom-0 left-0 right-0 p-4 border-t"
+          style={{ 
+            background: '#fff9dc', 
+            borderColor: '#e2d6aa',
+            paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
+            zIndex: 50
+          }}
+        >
+          <div className="flex gap-3">
+            <button
+              onClick={handleCancel}
+              className="px-6 py-3 rounded-lg font-medium transition-colors"
+              style={{ 
+                background: '#fff2b8', 
+                color: '#541111',
+                border: '1px solid #e2d6aa',
+                minHeight: '44px',
+                minWidth: '120px',
+                flex: '1',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent'
+              }}
+            >
+              Annulla
+            </button>
+            <button
+              onClick={handleConfirm}
+              className="px-6 py-3 rounded-lg font-medium transition-colors"
+              style={{ 
+                background: '#16a34a',
+                color: '#fff9dc',
+                minHeight: '44px',
+                minWidth: '120px',
+                flex: '1',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent'
+              }}
+            >
+              CONFERMA MODIFICHE
+            </button>
+          </div>
+        </footer>
       </div>
 
       {/* Modale quantità */}
