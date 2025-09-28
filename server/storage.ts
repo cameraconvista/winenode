@@ -1,6 +1,7 @@
 import { wines, googleSheetLinks, type Wine, type InsertWine, type GoogleSheetLink, type InsertGoogleSheetLink } from "../shared/schema";
 import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
+import { queryDiagnostics } from "./utils/queryDiagnostics";
 
 interface IStorage {
   getWines(): Promise<Wine[]>;
@@ -61,11 +62,15 @@ class DatabaseStorage implements IStorage {
   }
 
   async getWinesByType(type: string): Promise<Wine[]> {
-    return await db.select().from(wines).where(eq(wines.type, type));
+    return await queryDiagnostics.measureTypeQuery(async () => {
+      return await db.select().from(wines).where(eq(wines.type, type));
+    });
   }
 
   async getWinesBySupplier(supplier: string): Promise<Wine[]> {
-    return await db.select().from(wines).where(eq(wines.supplier, supplier));
+    return await queryDiagnostics.measureSupplierQuery(async () => {
+      return await db.select().from(wines).where(eq(wines.supplier, supplier));
+    });
   }
 
   async getLowStockWines(): Promise<Wine[]> {
@@ -80,8 +85,10 @@ class DatabaseStorage implements IStorage {
 
   // Google Sheet Link methods
   async getGoogleSheetLink(userId: string): Promise<GoogleSheetLink | undefined> {
-    const [link] = await db.select().from(googleSheetLinks).where(eq(googleSheetLinks.userId, userId));
-    return link || undefined;
+    return await queryDiagnostics.measureUserIdQuery(async () => {
+      const [link] = await db.select().from(googleSheetLinks).where(eq(googleSheetLinks.userId, userId));
+      return link || undefined;
+    });
   }
 
   async saveGoogleSheetLink(userId: string, sheetUrl: string): Promise<GoogleSheetLink> {
