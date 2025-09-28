@@ -46,7 +46,9 @@ export function buildWhatsAppMessage(
     lines.push(line);
   });
   
-  return lines.join('\n');
+  // Normalizza CRLF → LF e trim finale
+  const message = lines.join('\n').replace(/\r?\n/g, '\n').trim();
+  return message;
 }
 
 /**
@@ -60,11 +62,21 @@ export function buildWhatsAppUrl(message: string): string {
 }
 
 /**
- * Costruisce URL WhatsApp fallback per app mobile
+ * Costruisce URL WhatsApp per app mobile (priorità)
  * @param message Testo messaggio
  * @returns URL whatsapp:// con testo encodato
  */
-export function buildWhatsAppFallbackUrl(message: string): string {
+export function buildWhatsAppMobileUrl(message: string): string {
   const encodedMessage = encodeURIComponent(message);
   return `whatsapp://send?text=${encodedMessage}`;
+}
+
+/**
+ * Costruisce URL WhatsApp web fallback
+ * @param message Testo messaggio
+ * @returns URL web.whatsapp.com con testo encodato
+ */
+export function buildWhatsAppWebUrl(message: string): string {
+  const encodedMessage = encodeURIComponent(message);
+  return `https://web.whatsapp.com/send?text=${encodedMessage}`;
 }

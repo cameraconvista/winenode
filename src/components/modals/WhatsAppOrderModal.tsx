@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, Copy, X } from 'lucide-react';
-import { buildWhatsAppMessage, buildWhatsAppUrl, buildWhatsAppFallbackUrl, OrderDetail } from '../../utils/buildWhatsAppMessage';
+import { buildWhatsAppMessage, buildWhatsAppUrl, buildWhatsAppMobileUrl, buildWhatsAppWebUrl, OrderDetail } from '../../utils/buildWhatsAppMessage';
 
 interface WhatsAppOrderModalProps {
   isOpen: boolean;
@@ -21,22 +21,34 @@ export default function WhatsAppOrderModal({
   // Genera il messaggio WhatsApp (sempre, anche se modale chiusa)
   const message = buildWhatsAppMessage(orderDetails);
 
-  // Handler per apertura WhatsApp
+  // Handler per apertura WhatsApp - Mobile First
   const handleOpenWhatsApp = () => {
-    const url = buildWhatsAppUrl(message);
-    const fallbackUrl = buildWhatsAppFallbackUrl(message);
+    const mobileUrl = buildWhatsAppMobileUrl(message);
+    const waUrl = buildWhatsAppUrl(message);
+    const webUrl = buildWhatsAppWebUrl(message);
     
+    // Sequenza mobile-first con fallback
     try {
-      // Prova prima con wa.me (web/mobile)
-      window.open(url, '_blank');
+      // 1. Prova app mobile nativa (iOS/Android)
+      window.open(mobileUrl, '_blank', 'noopener,noreferrer');
     } catch (error) {
       try {
-        // Fallback per app mobile
-        window.open(fallbackUrl, '_blank');
+        // 2. Fallback wa.me (universale)
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
       } catch (fallbackError) {
-        console.warn('Impossibile aprire WhatsApp:', error, fallbackError);
+        try {
+          // 3. Fallback web WhatsApp (desktop)
+          window.open(webUrl, '_blank', 'noopener,noreferrer');
+        } catch (webError) {
+          console.warn('Impossibile aprire WhatsApp:', error, fallbackError, webError);
+        }
       }
     }
+    
+    // Log success dopo apertura (non bloccante)
+    setTimeout(() => {
+      console.log('✅ WhatsApp aperto con messaggio precompilato');
+    }, 0);
   };
 
   // Handler per copia testo
