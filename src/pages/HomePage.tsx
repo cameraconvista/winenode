@@ -330,9 +330,6 @@ export default function HomePage() {
                         </div>
                       </div>
                     </div>
-                    {wine.inventory <= wine.minStock && (
-                      <PhosphorBell className="alert-icon flex-shrink-0" aria-hidden="true" />
-                    )}
                     <div className="flex items-center flex-shrink-0 ml-auto">
                       <span 
                         onClick={e => { 
@@ -354,6 +351,17 @@ export default function HomePage() {
                         }}
                       >
                         {wine.inventory || 0}
+                        {wine.inventory <= wine.minStock && (
+                          <PhosphorBell 
+                            className="ml-1 flex-shrink-0" 
+                            style={{ 
+                              width: '14px', 
+                              height: '14px', 
+                              color: 'var(--danger)' 
+                            }}
+                            aria-hidden="true" 
+                          />
+                        )}
                       </span>
                     </div>
                   </div>
