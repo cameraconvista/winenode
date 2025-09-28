@@ -247,7 +247,8 @@ export default function RiepilogoOrdinePage() {
               minWidth: '120px',
               flex: '1',
               touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent'
+              WebkitTapHighlightColor: 'transparent',
+              fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
           >
             Indietro
@@ -263,10 +264,11 @@ export default function RiepilogoOrdinePage() {
               minWidth: '120px',
               flex: '1',
               touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent'
+              WebkitTapHighlightColor: 'transparent',
+              fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
           >
-            Conferma
+            Conferma Ordine
           </button>
         </div>
       </footer>

@@ -235,7 +235,8 @@ export default function CreaOrdinePage() {
               minWidth: '120px',
               flex: '1',
               touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent'
+              WebkitTapHighlightColor: 'transparent',
+              fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
           >
             Indietro
@@ -264,11 +265,12 @@ export default function CreaOrdinePage() {
               minWidth: '120px',
               flex: '1',
               touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent'
+              WebkitTapHighlightColor: 'transparent',
+              fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
             disabled={totalBottiglie === 0}
           >
-            Gestisci
+            Gestisci Ordine
           </button>
         </div>
       </footer>

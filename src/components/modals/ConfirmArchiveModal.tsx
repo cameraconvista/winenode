@@ -89,7 +89,8 @@ export default function ConfirmArchiveModal({
               background: 'white', 
               color: '#541111',
               border: '1px solid #e2d6aa',
-              minHeight: '44px'
+              minHeight: '44px',
+              fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
           >
             <X className="h-4 w-4" />
@@ -100,7 +101,8 @@ export default function ConfirmArchiveModal({
             className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors"
             style={{ 
               background: '#16a34a', 
-              color: '#fff9dc' 
+              color: '#fff9dc',
+              fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
           >
             <Check className="h-4 w-4" />
