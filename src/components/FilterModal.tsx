@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Filter, ChevronDown, Search, Calendar, RotateCcw, Bell, Truck } from 'lucide-react';
+import { X, Filter, ChevronDown, Search, Calendar, Bell } from 'lucide-react';
+import { getFornitoriNames } from '../services/fornitori';
 
 interface FilterModalProps {
   open: boolean
@@ -10,7 +11,6 @@ interface FilterModalProps {
     showAlertsOnly: boolean
   }
   onFiltersChange: (filters: any) => void
-  suppliers: string[]
   wines: Array<{ type?: string }>
 }
 
@@ -19,9 +19,35 @@ export default function FilterModal({
   onOpenChange, 
   filters, 
   onFiltersChange, 
-  suppliers,
   wines 
 }: FilterModalProps) {
+  const [suppliers, setSuppliers] = useState<string[]>([]);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(false);
+
+  // Carica fornitori dalla tabella public.fornitori
+  useEffect(() => {
+    if (!open) return;
+    
+    const loadSuppliers = async () => {
+      setLoadingSuppliers(true);
+      try {
+        // Cleanup cache localStorage se presente
+        localStorage.removeItem('cachedSuppliers');
+        localStorage.removeItem('filters');
+        
+        const fornitoriNames = await getFornitoriNames();
+        setSuppliers(fornitoriNames);
+      } catch (error) {
+        console.error('Errore caricamento fornitori:', error);
+        setSuppliers([]);
+      } finally {
+        setLoadingSuppliers(false);
+      }
+    };
+
+    loadSuppliers();
+  }, [open]);
+
   if (!open) return null
 
   // Extract unique wine types from actual wine data
@@ -39,7 +65,7 @@ export default function FilterModal({
         overflowY: 'auto'
       }}>
         <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold" style={{ color: '#fff9dc' }}>🔍 Filtri</h3>
+            <h3 className="text-xl font-bold" style={{ color: '#fff9dc' }}>Filtri</h3>
             <button
               onClick={() => onOpenChange(false)}
               className="transition-colors"
@@ -53,7 +79,7 @@ export default function FilterModal({
         <div className="space-y-4 p-4 rounded-lg" style={{ background: '#fff9dc' }}>
             <div>
               <label className="block text-sm font-medium mb-2" style={{ color: '#541111' }}>
-                🍷 Tipo
+                Tipo
               </label>
               <select
                 value={filters.wineType}
@@ -75,29 +101,29 @@ export default function FilterModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 flex items-center gap-2" style={{ color: '#541111' }}>
-                <Truck className="h-4 w-4" style={{ color: '#b45309' }} />
+              <label className="block text-sm font-medium mb-2" style={{ color: '#541111' }}>
                 Fornitore
               </label>
               <select
                 value={filters.supplier}
                 onChange={(e) => onFiltersChange({ ...filters, supplier: e.target.value })}
+                disabled={loadingSuppliers}
                 className="w-full p-3 rounded-lg appearance-none focus:ring-2 focus:outline-none"
                 style={{
                   background: '#fff9dc',
                   color: '#541111',
-                  border: '1px solid rgba(84, 17, 17, 0.2)'
+                  border: '1px solid rgba(84, 17, 17, 0.2)',
+                  opacity: loadingSuppliers ? 0.6 : 1
                 }}
               >
-                <option value="">Tutti i fornitori</option>
-                {suppliers
-                  .filter(supplier => supplier && supplier.trim()) // Remove empty suppliers
-                  .sort()
-                  .map(supplier => (
-                    <option key={supplier} value={supplier}>
-                      {supplier}
-                    </option>
-                  ))}
+                <option value="">
+                  {loadingSuppliers ? 'Caricamento fornitori...' : 'Tutti i fornitori'}
+                </option>
+                {!loadingSuppliers && suppliers.map(supplier => (
+                  <option key={supplier} value={supplier}>
+                    {supplier}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -123,28 +149,23 @@ export default function FilterModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={() => onFiltersChange({ wineType: '', supplier: '', showAlertsOnly: false })}
-            className="flex-1 px-4 py-2 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-            style={{
-              background: '#541111',
-              color: '#fff9dc',
-              border: 'none'
+            className="flex-1 px-4 py-3 rounded-lg font-medium transition-colors"
+            style={{ 
+              background: '#dc2626', 
+              color: '#fff9dc'
             }}
           >
-            <div className="w-4 h-4 bg-gradient-to-b from-red-500 to-red-700 rounded shadow-sm flex items-center justify-center border border-red-800">
-              <X className="h-3 w-3 text-white font-bold stroke-2" />
-            </div>
             Reset
           </button>
           <button
             onClick={() => onOpenChange(false)}
-            className="flex-1 px-4 py-2 font-medium rounded-lg transition-colors"
-            style={{
-              background: '#541111',
-              color: '#fff9dc',
-              border: 'none'
+            className="flex-1 px-4 py-3 rounded-lg font-medium transition-colors"
+            style={{ 
+              background: '#16a34a', 
+              color: '#fff9dc'
             }}
           >
-            ✅ Applica
+            Applica
           </button>
         </div>
       </div>

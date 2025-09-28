@@ -352,12 +352,25 @@ export default function HomePage() {
           onClick={() => setShowFilterModal(true)} 
           className="nav-btn btn-filtri"
           title="Filtri"
+          style={{ 
+            background: (filters.wineType || filters.supplier) ? '#d4a300' : 'transparent',
+            color: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)',
+            borderRadius: '8px',
+            border: 'none',
+            outline: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            WebkitAppearance: 'none',
+            appearance: 'none'
+          } as React.CSSProperties}
         >
-          <div className="icon"></div>
-          <span className="label">Filtri</span>
-          {(filters.wineType || filters.supplier) && (
-            <div className="badge"></div>
-          )}
+          <div className="icon" style={{
+            background: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)',
+            WebkitMask: 'url("/filtro.png") center/contain no-repeat',
+            mask: 'url("/filtro.png") center/contain no-repeat'
+          }}></div>
+          <span className="label" style={{
+            color: (filters.wineType || filters.supplier) ? 'white' : 'var(--text)'
+          }}>Filtri</span>
         </button>
         
         <button
@@ -433,7 +446,6 @@ export default function HomePage() {
         onOpenChange={setShowFilterModal} 
         filters={filters} 
         onFiltersChange={setFilters}
-        suppliers={suppliers}
         wines={wines}
       />
       <WineDetailsModal wine={selectedWine} open={showWineDetailsModal} onOpenChange={setShowWineDetailsModal} onUpdateWine={handleUpdateWine} suppliers={suppliers} />
