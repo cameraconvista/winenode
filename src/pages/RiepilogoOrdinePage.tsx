@@ -235,7 +235,7 @@ export default function RiepilogoOrdinePage() {
           zIndex: 50
         }}
       >
-        <div className="flex gap-3">
+        <div className="flex flex-nowrap gap-3">
           <button
             onClick={handleModificaOrdine}
             className="px-6 py-3 rounded-lg font-medium transition-colors"

@@ -81,13 +81,15 @@ export default function ConfirmArchiveModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t flex gap-3" style={{ borderColor: '#e2d6aa' }}>
+        <div className="p-6 border-t flex flex-nowrap gap-3" style={{ borderColor: '#e2d6aa' }}>
           <button
             onClick={onCancel}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors"
             style={{ 
-              background: '#6b7280', 
-              color: '#fff9dc' 
+              background: 'white', 
+              color: '#541111',
+              border: '1px solid #e2d6aa',
+              minHeight: '44px'
             }}
           >
             <X className="h-4 w-4" />

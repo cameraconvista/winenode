@@ -140,6 +140,31 @@ export default function SmartGestisciModal({
           </div>
         </header>
 
+        {/* HEADER STICKY TESTI */}
+        <div 
+          className="sticky top-0 z-40 border-b"
+          style={{ 
+            background: '#fff9dc',
+            borderColor: '#e2d6aa',
+            paddingTop: '16px',
+            paddingBottom: '16px',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            '--header-height': '88px'
+          } as React.CSSProperties & { '--header-height': string }}
+        >
+          <div className="text-center">
+            <div className="text-center mb-2">
+              <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
+                Gestisci Ordine
+              </h2>
+            </div>
+            <p className="text-base" style={{ color: '#7a4a30' }}>
+              Fornitore: {fornitore.toUpperCase()}
+            </p>
+          </div>
+        </div>
+
         {/* CONTENT SCROLLABILE */}
         <main className="mobile-content">
           <div className="wine-list-container"
@@ -149,20 +174,10 @@ export default function SmartGestisciModal({
               WebkitOverflowScrolling: 'touch',
               overscrollBehavior: 'none',
               touchAction: 'pan-y',
-              scrollBehavior: 'smooth'
+              scrollBehavior: 'smooth',
+              paddingTop: 'var(--header-height, 88px)'
             }}
           >
-            {/* Header centrato */}
-            <div className="text-center mb-6">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
-                  Gestisci Ordine
-                </h2>
-              </div>
-              <p className="text-base" style={{ color: '#7a4a30' }}>
-                Fornitore: {fornitore.toUpperCase()}
-              </p>
-            </div>
 
             {/* Lista righe scrollabile */}
             <div className="px-3 py-4 space-y-2" style={{ paddingBottom: '100px' }}>
@@ -235,7 +250,7 @@ export default function SmartGestisciModal({
             zIndex: 50
           }}
         >
-          <div className="flex gap-3">
+          <div className="flex flex-nowrap gap-3">
             <button
               onClick={handleCancel}
               className="px-6 py-3 rounded-lg font-medium transition-colors"
