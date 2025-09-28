@@ -11,12 +11,14 @@ import HomeInventoryModal from '../components/HomeInventoryModal';
 import CarrelloOrdiniModal from '../components/modals/CarrelloOrdiniModal';
 import NuovoOrdineModal from '../components/modals/NuovoOrdineModal';
 import { WineSearchBar } from '../components/search/WineSearchBar';
+import OrdersPinModal from '../components/security/OrdersPinModal';
 
 import useWines from '../hooks/useWines';
 import { useAutoSizeText } from '../hooks/useAutoSizeText';
 import { useCarrelloOrdini } from '../hooks/useCarrelloOrdini';
 import { useNuovoOrdine } from '../hooks/useNuovoOrdine';
 import { useWineSearch } from '../hooks/useWineSearch';
+import { useOrdersPinGate } from '../hooks/useOrdersPinGate';
 import { supabase } from '../lib/supabase';
 import { isFeatureEnabled } from '../config/features';
 
@@ -65,7 +67,35 @@ export default function HomePage() {
     closeCarrelloModal,
     handleNuovoOrdine,
     handleGestisciOrdini
-  } = useCarrelloOrdini({ onNuovoOrdine: openNuovoOrdineModal });
+  } = useCarrelloOrdini();
+
+  // Hook per gestire il PIN gate degli ordini
+  const {
+    isOrdersUnlocked,
+    isPinModalOpen,
+    isLocked,
+    lockoutCountdown,
+    attempts,
+    openPinModal,
+    closePinModal,
+    validatePin,
+    unlock
+  } = useOrdersPinGate();
+
+  // Handler per il click del carrello con PIN gate
+  const handleCarrelloClick = () => {
+    if (isOrdersUnlocked) {
+      openCarrelloModal();
+    } else {
+      openPinModal();
+    }
+  };
+
+  // Handler per PIN valido
+  const handleValidPin = () => {
+    unlock();
+    openCarrelloModal();
+  };
 
   // Auto-sizing per il testo del chip "Tutti"
   const chipDisplayText = activeTab === 'TUTTI I VINI' ? 'Tutti' : 
@@ -377,7 +407,7 @@ export default function HomePage() {
         {/* Gruppo icone a sinistra */}
         <div className="nav-icons-group">
           <button 
-            onClick={openCarrelloModal}
+            onClick={handleCarrelloClick}
             className="nav-btn btn-ordine"
             title="Carrello Ordini"
           >
@@ -534,6 +564,17 @@ export default function HomePage() {
         isOpen={isNuovoOrdineModalOpen}
         onOpenChange={closeNuovoOrdineModal}
         onAvanti={handleAvanti}
+      />
+
+      <OrdersPinModal
+        open={isPinModalOpen}
+        onClose={closePinModal}
+        onValidPin={handleValidPin}
+        onInvalidPin={() => {}} // Gestito internamente dal modale
+        validatePin={validatePin}
+        isLocked={isLocked}
+        lockoutCountdown={lockoutCountdown}
+        attempts={attempts}
       />
       
     </div>
