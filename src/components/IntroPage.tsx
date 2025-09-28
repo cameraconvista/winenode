@@ -39,13 +39,13 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
         />
       </div>
       
-      {/* Footer "By DERO" posizionato più in alto per visibilità mobile */}
+      {/* Footer "By DERO" posizionato a tre quarti della pagina */}
       <div 
         className={`absolute left-0 right-0 flex items-center justify-center transition-opacity duration-500 ${
           fadeIn ? 'opacity-100' : 'opacity-0'
         }`}
         style={{ 
-          bottom: 'max(env(safe-area-inset-bottom), 0px) + 80px',
+          top: '75%',
           color: '#541111'
         }}
       >

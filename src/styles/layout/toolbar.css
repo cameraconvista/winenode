@@ -46,7 +46,7 @@
 .bottom-toolbar .nav-btn .icon {
   width: 24px;
   height: 24px;
-  background: var(--text) !important; /* FORZA VISIBILITÀ ICONE */
+  /* Rimosso background per permettere icone SVG */
   flex-shrink: 0;
   opacity: 1 !important; /* ASSICURA VISIBILITÀ */
 }
@@ -61,31 +61,9 @@
   border-radius: 10px;
 }
 
-/* ORDINE → icona carrello.png (MANTENUTO per pulsante visivo) */
-.bottom-toolbar .btn-ordine .icon {
-  -webkit-mask: url("/carrello.png") center/contain no-repeat;
-  mask: url("/carrello.png") center/contain no-repeat;
-  background: var(--text);
-}
+/* ICONE MODERNE - Rimosse vecchie immagini PNG, ora usa icone SVG Tabler */
 
-/* FILTRI → icona filtro.png (ridotta ulteriormente -15%) */
-.bottom-toolbar .btn-filtri .icon {
-  -webkit-mask: url("/filtro.png") center/contain no-repeat;
-  mask: url("/filtro.png") center/contain no-repeat;
-  background: var(--text);
-  width: 17px !important; /* -15% da 20px = 17px */
-  height: 17px !important;
-  opacity: 1 !important; /* mantieni visibilità ottimale */
-}
-
-/* ALLERT → campanella allert.png */
-.bottom-toolbar .btn-allert .icon {
-  -webkit-mask: url("/allert.png") center/contain no-repeat;
-  mask: url("/allert.png") center/contain no-repeat;
-  background: var(--text);
-}
-
-/* TUTTI → CHIP BIANCO CON CARET A SINISTRA + LABEL DINAMICA - UI POLISH v11 */
+/* TUTTI → CHIP BIANCO CON FRECCIA A SINISTRA + LABEL DINAMICA - UI POLISH v11 */
 .bottom-toolbar .btn-tutti {
   background: #FFFFFF !important; /* Sfondo bianco pieno */
   border: 1px solid var(--border) !important; /* Bordo soft coerente */
