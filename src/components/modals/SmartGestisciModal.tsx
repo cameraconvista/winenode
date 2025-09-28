@@ -8,6 +8,7 @@ import { getStandardButtonStyles, getNavbarTwoButtonLayout } from '../../utils/b
 
 interface DettaglioOrdine {
   wineName: string;
+  wineDescription?: string; // Produttore/descrizione
   quantity: number;
   unit: string;
   unitPrice: number;
@@ -131,20 +132,35 @@ export default function SmartGestisciModal({
           </div>
         </header>
 
+        {/* HEADER STICKY */}
+        <div 
+          className="sticky border-b"
+          style={{ 
+            background: 'var(--bg)', 
+            borderColor: '#e2d6aa',
+            top: 'calc(var(--safe-top) + 60pt)',
+            zIndex: 40,
+            paddingTop: '16px',
+            paddingBottom: '16px',
+            paddingLeft: '16px',
+            paddingRight: '16px'
+          }}
+        >
+          <div className="text-center">
+            <div className="text-center mb-2">
+              <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
+                Gestisci Ordine
+              </h2>
+            </div>
+            <p className="text-base" style={{ color: '#7a4a30' }}>
+              Fornitore: {fornitore.toUpperCase()}
+            </p>
+          </div>
+        </div>
+
         {/* CONTENT SCROLLABILE */}
         <main className="mobile-content">
-          <div className="wine-list-container">
-            {/* Header centrato come Crea Ordine */}
-            <div className="text-center mb-6">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
-                  Gestisci Ordine
-                </h2>
-              </div>
-              <p className="text-base" style={{ color: '#7a4a30' }}>
-                Fornitore: {fornitore.toUpperCase()}
-              </p>
-            </div>
+          <div className="wine-list-container" style={{ paddingTop: '16px' }}>
 
             {/* Lista righe scrollabile */}
             <div className="px-3 py-4 space-y-2">
@@ -155,7 +171,7 @@ export default function SmartGestisciModal({
                   <div key={index} className="rounded-lg border py-3 px-4" style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}>
                     {/* Layout: titolo a sinistra, quantità a destra */}
                     <div className="flex items-start justify-between">
-                      {/* Nome vino - max 2 righe con ellissi */}
+                      {/* Nome vino + produttore */}
                       <div className="flex-1 pr-3">
                         <h4 className="font-medium text-sm leading-tight" 
                             style={{ 
@@ -167,6 +183,11 @@ export default function SmartGestisciModal({
                             }}>
                           {dettaglio.wineName}
                         </h4>
+                        {dettaglio.wineDescription && (
+                          <p className="text-xs mt-1" style={{ color: '#7a4a30' }}>
+                            {dettaglio.wineDescription}
+                          </p>
+                        )}
                       </div>
                       
                       {/* Box quantità a destra - più compatto */}
@@ -216,7 +237,7 @@ export default function SmartGestisciModal({
               onClick={handleCancel}
               className="px-6 py-3 rounded-lg font-medium transition-colors"
               style={{ 
-                background: '#fff2b8', 
+                background: 'white', 
                 color: '#541111',
                 border: '1px solid #e2d6aa',
                 minHeight: '44px',
@@ -226,7 +247,7 @@ export default function SmartGestisciModal({
                 WebkitTapHighlightColor: 'transparent'
               }}
             >
-              Annulla
+              Indietro
             </button>
             <button
               onClick={handleConfirm}
@@ -241,7 +262,7 @@ export default function SmartGestisciModal({
                 WebkitTapHighlightColor: 'transparent'
               }}
             >
-              CONFERMA MODIFICHE
+              Conferma modifiche
             </button>
           </div>
         </footer>
