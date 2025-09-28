@@ -5,6 +5,7 @@ import { isFeatureEnabled } from '../../config/featureFlags';
 import GestisciOrdiniInventoryModal from '../GestisciOrdiniInventoryModal';
 import ConfirmArchiveModal from './ConfirmArchiveModal';
 import { getStandardButtonStyles, getNavbarTwoButtonLayout } from '../../utils/buttonStyles';
+import useWines from '../../hooks/useWines';
 
 interface DettaglioOrdine {
   wineName: string;
@@ -34,6 +35,7 @@ export default function SmartGestisciModal({
   fornitore,
   dettagli
 }: SmartGestisciModalProps) {
+  const { wines } = useWines();
   const [modifiedQuantities, setModifiedQuantities] = useState<Record<number, number>>({});
   const [showQuantityModal, setShowQuantityModal] = useState(false);
   const [editingItem, setEditingItem] = useState<{index: number, originalValue: number, currentValue: number} | null>(null);
@@ -106,6 +108,12 @@ export default function SmartGestisciModal({
     onClose();
   };
 
+  // Funzione per recuperare il produttore dal nome del vino
+  const getWineProducer = (wineName: string) => {
+    const wine = wines.find(w => w.name === wineName);
+    return wine?.description || null;
+  };
+
   // Calcola riepilogo
   const totalConfermato = dettagli.reduce((acc, dettaglio, index) => {
     const quantity = modifiedQuantities[index] ?? dettaglio.quantity;
@@ -166,6 +174,7 @@ export default function SmartGestisciModal({
             <div className="px-3 py-4 space-y-2">
               {dettagli.map((dettaglio, index) => {
                 const currentQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
+                const producer = getWineProducer(dettaglio.wineName);
                 
                 return (
                   <div key={index} className="rounded-lg border py-3 px-4" style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}>
@@ -183,9 +192,9 @@ export default function SmartGestisciModal({
                             }}>
                           {dettaglio.wineName}
                         </h4>
-                        {dettaglio.wineDescription && (
+                        {producer && (
                           <p className="text-xs mt-1" style={{ color: '#7a4a30' }}>
-                            {dettaglio.wineDescription}
+                            {producer}
                           </p>
                         )}
                       </div>
