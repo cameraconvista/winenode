@@ -140,8 +140,23 @@ Il sistema include 12 vini di esempio con:
 - .gitignore copre backup/recovery/coverage
 - Commit atomici con messaggi descrittivi
 
+### CI/CD Pipeline
+La pipeline GitHub Actions esegue i job in sequenza:
+```
+setup → lint_typecheck → build_test
+```
+
+- **setup**: Installa Node.js da .nvmrc + cache npm
+- **lint_typecheck**: ESLint + TypeScript check obbligatori
+- **build_test**: Build Vite + test suite con coverage
+
 ### Scripts Disponibili
 ```bash
+# Build e sviluppo
+npm run build          # Build produzione Vite
+npm run test:ci        # Test con coverage
+npm run typecheck      # TypeScript check
+
 # Backup e recovery
 npm run backup          # Crea backup completo
 npm run backup:list     # Lista backup disponibili
@@ -149,12 +164,12 @@ npm run diagnose        # Analisi salute progetto
 
 # Qualità codice
 npm run lint           # ESLint check
-npm run typecheck      # TypeScript check
-npm run test:ci        # Test con coverage
+npm run lint:fix       # ESLint auto-fix
 
 # Utility
 npm run cleanup        # Trova file obsoleti
 npm run project-info   # Riepilogo progetto
+npm run commit:auto    # Commit automatico GitHub
 ```
 
 ## 🎨 Design
