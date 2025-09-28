@@ -71,33 +71,20 @@ export default function CreaOrdinePage() {
           flexDirection: 'column'
         }}>
           
-          {/* Titolo e Navigazione */}
+          {/* Titolo Centrato (senza freccia indietro) */}
           <div className="crea-ordine-header-section" style={{
             flexShrink: 0,
             padding: '16px',
             borderBottom: '1px solid #e2d6aa',
             background: '#fff9dc'
           }}>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleBack}
-                className="p-2 rounded-lg transition-colors"
-                style={{ 
-                  color: '#541111',
-                  minWidth: '44px',
-                  minHeight: '44px'
-                }}
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </button>
-              <div className="flex-1 text-center">
-                <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
-                  Crea Ordine
-                </h1>
-                <p className="text-sm" style={{ color: '#7a4a30' }}>
-                  Fornitore: {decodeURIComponent(supplier || '')}
-                </p>
-              </div>
+            <div className="text-center">
+              <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
+                Crea Ordine
+              </h1>
+              <p className="text-sm" style={{ color: '#7a4a30' }}>
+                Fornitore: {decodeURIComponent(supplier || '')}
+              </p>
             </div>
           </div>
 
@@ -128,7 +115,7 @@ export default function CreaOrdinePage() {
                   key={wine.id}
                   className="p-4 rounded-lg border"
                   style={{
-                    background: isLowStock ? '#fef2f2' : '#fff2b8',
+                    background: '#fff2b8',
                     borderColor: isLowStock ? '#fecaca' : '#e2d6aa'
                   }}
                 >
@@ -150,7 +137,15 @@ export default function CreaOrdinePage() {
                       </div>
                       {isLowStock && (
                         <div className="text-xs flex items-center gap-1 mt-1" style={{ color: '#dc2626' }}>
-                          🔔 Sotto soglia
+                          <div 
+                            className="w-3 h-3 flex-shrink-0"
+                            style={{
+                              WebkitMask: 'url("/allert.png") center/contain no-repeat',
+                              mask: 'url("/allert.png") center/contain no-repeat',
+                              background: '#dc2626'
+                            }}
+                          ></div>
+                          Sotto soglia
                         </div>
                       )}
                     </div>
@@ -237,6 +232,8 @@ export default function CreaOrdinePage() {
               color: '#541111',
               border: '1px solid #e2d6aa',
               minHeight: '44px',
+              minWidth: '120px',
+              flex: '1',
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent'
             }}
@@ -259,11 +256,13 @@ export default function CreaOrdinePage() {
                 console.log('❌ Nessuna bottiglia selezionata');
               }
             }}
-            className="flex-1 px-6 py-3 rounded-lg font-medium transition-colors"
+            className="px-6 py-3 rounded-lg font-medium transition-colors"
             style={{ 
               background: totalBottiglie > 0 ? '#16a34a' : '#d1c7b8',
               color: '#fff9dc',
               minHeight: '44px',
+              minWidth: '120px',
+              flex: '1',
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent'
             }}
