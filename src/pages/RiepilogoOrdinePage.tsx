@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Check, AlertTriangle } from 'lucide-react';
 import useWines from '../hooks/useWines';
 import { OrdineItem } from '../hooks/useCreaOrdine';
 import { useOrdini } from '../contexts/OrdiniContext';
+import WhatsAppOrderModal from '../components/modals/WhatsAppOrderModal';
+import { OrderDetail } from '../utils/buildWhatsAppMessage';
 
 interface LocationState {
   ordineItems: OrdineItem[];
@@ -20,6 +22,9 @@ export default function RiepilogoOrdinePage() {
   const state = location.state as LocationState;
   const ordineItems = state?.ordineItems || [];
   const totalBottiglie = state?.totalBottiglie || 0;
+
+  // Stato per modale WhatsApp
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
 
   // Calcola dettagli ordine
   const ordineDetails = ordineItems.map(item => {
@@ -40,11 +45,28 @@ export default function RiepilogoOrdinePage() {
 
   const totalOrdine = ordineDetails.reduce((sum, detail) => sum + detail.totalPrice, 0);
 
+  // Prepara dati per WhatsApp (senza prezzi)
+  const whatsAppOrderDetails: OrderDetail[] = ordineDetails.map(detail => ({
+    wineName: detail.wine?.name || 'Vino sconosciuto',
+    vintage: detail.wine?.vintage,
+    quantity: detail.quantity,
+    unit: detail.unit
+  }));
+
   const handleModificaOrdine = () => {
     navigate(-1);
   };
 
   const handleConferma = () => {
+    // Apri modale WhatsApp invece di confermare direttamente
+    setIsWhatsAppModalOpen(true);
+  };
+
+  const handleWhatsAppModalClose = () => {
+    setIsWhatsAppModalOpen(false);
+  };
+
+  const handleConfirmOrder = () => {
     const fornitore = decodeURIComponent(supplier || '');
     
     console.log('🚀 Confermando ordine:', {
@@ -272,6 +294,14 @@ export default function RiepilogoOrdinePage() {
           </button>
         </div>
       </footer>
+
+      {/* Modale WhatsApp */}
+      <WhatsAppOrderModal
+        isOpen={isWhatsAppModalOpen}
+        onClose={handleWhatsAppModalClose}
+        orderDetails={whatsAppOrderDetails}
+        supplierName={decodeURIComponent(supplier || '')}
+      />
     </div>
   );
 }

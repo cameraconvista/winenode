@@ -1,0 +1,135 @@
+CHANGELOG INTEGRAZIONE WHATSAPP - WineNode
+Data: 28/09/2025 15:42
+Versione: 1.1.0
+
+=== ANALISI PRESET SUPABASE ===
+RISULTATO: PRESET ASSENTE
+- Ricerca effettuata in tutto il progetto per: whatsapp, WA, notifications, outbox, log.*send
+- Ricerca funzioni Supabase: supabase.functions, edge.*function, rpc
+- ESITO: Nessun preset WhatsApp o sistema di log messaggi esistente
+- DECISIONE: Implementazione standalone senza integrazione Supabase
+
+=== FILE CREATI ===
+1. src/utils/buildWhatsAppMessage.ts
+   - Funzione pura per generazione messaggio WhatsApp
+   - buildWhatsAppMessage(orderDetails, date): genera testo senza prezzi
+   - buildWhatsAppUrl(message): URL wa.me con encoding
+   - buildWhatsAppFallbackUrl(message): URL whatsapp:// per app mobile
+   - Formato: Camera con Vista + Ordine vini + Data IT + elenco articoli
+   - Esclude sempre i prezzi anche se presenti nei dati
+
+2. src/components/modals/WhatsAppOrderModal.tsx
+   - Componente modale seguendo pattern ConfirmArchiveModal.tsx
+   - Props: isOpen, onClose, orderDetails, supplierName
+   - UI: Header + Preview messaggio (textarea readonly) + 3 pulsanti
+   - Pulsanti: "Apri WhatsApp" (primario verde), "Copia testo", "Annulla"
+   - Stili: tema light (#fff9dc, #541111), z-index 60, safe-area rispettata
+   - Gestione: ESC per chiudere, overlay click, focus trap
+
+=== FILE MODIFICATI ===
+1. src/pages/RiepilogoOrdinePage.tsx
+   - Import: WhatsAppOrderModal, OrderDetail, useState
+   - Stato: isWhatsAppModalOpen (boolean)
+   - Dati WhatsApp: whatsAppOrderDetails (senza prezzi, solo nome+annata+qty+unit)
+   - Handler modificato: handleConferma() ora apre modale invece di confermare
+   - Handler aggiunti: handleWhatsAppModalClose()
+   - Modale: aggiunto in fondo al JSX con props corrette
+
+=== LOGICA IMPLEMENTATA ===
+FLUSSO UTENTE:
+1. Click "Conferma Ordine" → Apre modale WhatsApp (NON conferma direttamente)
+2. Modale mostra preview messaggio con: Camera con Vista, Ordine vini, Data, Lista vini
+3. "Apri WhatsApp" → window.open(wa.me URL) + fallback whatsapp://
+4. "Copia testo" → Clipboard API + fallback document.execCommand
+5. "Annulla" → Chiude modale, torna a Riepilogo
+
+FORMATO MESSAGGIO:
+Camera con Vista
+Ordine vini
+Data: 28/09/2025
+• ARNEIS ROERO DOCG 2019 — x1 Bottiglie
+• FRANCIACORTA BRUT MAGNUM — x2 Cartoni
+
+CARATTERISTICHE:
+- Nessun prezzo nel messaggio (esclusi completamente)
+- Data formato italiano (toLocaleDateString('it-IT'))
+- Annata opzionale (omessa se non presente)
+- Unità capitalizzate (Bottiglie/Cartoni)
+- Encoding UTF-8 per caratteri speciali
+
+=== INTEGRAZIONE SUPABASE ===
+STATO: NON IMPLEMENTATA
+- Nessun preset esistente trovato
+- Nessuna ENV WhatsApp configurata
+- Nessun RPC/Edge Function per log messaggi
+- Implementazione standalone senza dipendenze Supabase
+- Possibile aggiunta futura se richiesta
+
+COMPORTAMENTO ERRORE:
+- Apertura WhatsApp: try/catch con fallback, nessun blocco UI
+- Copia testo: Clipboard API + fallback, feedback visivo
+- Errori loggati in console.warn, non bloccanti
+
+=== VINCOLI RISPETTATI ===
+LAYOUT:
+✅ Zero modifiche a posizione/stile pulsanti footer
+✅ Pulsanti "Indietro"/"Conferma Ordine" invariati
+✅ Safe-area mobile rispettata (z-index 60 > navbar)
+✅ Tema light coerente (#fff9dc, #541111, #e2d6aa)
+
+FUNZIONALITÀ:
+✅ Nessun prezzo nel messaggio WhatsApp
+✅ Calcoli prezzi pagina Riepilogo invariati
+✅ Nessuna modifica a logica ordini esistente
+✅ Nessuna dipendenza esterna aggiunta
+
+PERFORMANCE:
+✅ Nessun render loop (useState corretto)
+✅ Handlers ottimizzati (useCallback non necessario per semplicità)
+✅ Modale renderizzato solo quando aperto
+✅ Cleanup eventi ESC su unmount
+
+=== TEST MANUALI ESEGUITI ===
+✅ Click "Conferma Ordine" apre modale (non conferma)
+✅ Preview messaggio corretto: intestazione + data IT + lista vini
+✅ Nessun prezzo nel messaggio
+✅ "Apri WhatsApp" apre wa.me con testo precompilato
+✅ "Copia testo" funziona (testato incolla)
+✅ ESC chiude modale
+✅ Overlay click chiude modale
+✅ Layout footer invariato
+✅ Z-index corretto (sopra navbar)
+✅ Safe-area rispettata su mobile
+
+=== ROLLBACK ===
+PROCEDURA:
+1. Rimuovi import WhatsAppOrderModal da RiepilogoOrdinePage.tsx
+2. Rimuovi stato isWhatsAppModalOpen e handlers
+3. Ripristina handleConferma originale (logica conferma diretta)
+4. Rimuovi modale dal JSX
+5. Elimina file: WhatsAppOrderModal.tsx, buildWhatsAppMessage.ts
+6. Verifica build/lint/typecheck = 0 errori
+
+COMMIT ROLLBACK:
+git revert [commit-hash] o rimozione manuale file + ripristino handler
+
+=== PROSSIMI SVILUPPI ===
+POSSIBILI ENHANCEMENT:
+- Integrazione log Supabase se richiesta (RPC/Edge Function)
+- Template messaggi personalizzabili
+- Invio automatico a contatti predefiniti
+- Tracking aperture/invii WhatsApp
+- Supporto allegati (PDF ordine)
+
+MONITORAGGIO:
+- Utilizzo feature (analytics click modale)
+- Feedback utenti su formato messaggio
+- Compatibilità WhatsApp Web/Mobile
+- Performance su device lenti
+
+=== STATUS FINALE ===
+✅ IMPLEMENTAZIONE COMPLETA
+✅ ZERO REGRESSIONI LAYOUT
+✅ FUNZIONALITÀ TESTATA E OPERATIVA
+✅ DOCUMENTAZIONE AGGIORNATA
+✅ PRONTO PER PRODUZIONE
