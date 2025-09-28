@@ -116,18 +116,19 @@ export default function RiepilogoOrdinePage() {
             scrollBehavior: 'smooth'
           }}
         >
-        {/* HEADER STICKY INTERNO */}
+        {/* HEADER STICKY DEFINITIVO */}
         <div 
-          className="sticky top-0 z-50 border-b"
+          className="sticky top-0 z-50"
           style={{ 
             background: 'var(--bg)', 
-            borderColor: '#e2d6aa',
             paddingTop: '16px',
-            paddingBottom: '16px',
+            paddingBottom: '24px',
             marginLeft: '-16px',
             marginRight: '-16px',
             paddingLeft: '16px',
-            paddingRight: '16px'
+            paddingRight: '16px',
+            borderBottom: '1px solid #e2d6aa',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
           }}
         >
           {/* Riepilogo Header */}
@@ -147,8 +148,8 @@ export default function RiepilogoOrdinePage() {
           </h3>
         </div>
         
-        {/* Lista Ordini */}
-        <div className="mb-6" style={{ paddingTop: '16px' }}>
+        {/* Lista Ordini con Offset */}
+        <div className="mb-6" style={{ paddingTop: '24px' }}>
           
           {ordineDetails.length === 0 ? (
             <div 
@@ -159,11 +160,15 @@ export default function RiepilogoOrdinePage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {ordineDetails.map((detail) => (
+              {ordineDetails.map((detail, index) => (
                 <div
                   key={detail.wineId}
                   className="p-4 rounded-lg border"
-                  style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}
+                  style={{ 
+                    background: '#fff2b8', 
+                    borderColor: '#e2d6aa',
+                    borderTop: index === 0 ? 'none' : '1px solid #e2d6aa'
+                  }}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
