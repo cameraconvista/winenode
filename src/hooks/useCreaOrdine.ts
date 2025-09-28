@@ -44,6 +44,8 @@ export function useCreaOrdine() {
       
       if (existingIndex >= 0) {
         const newItems = [...prev];
+        // Reset quantità a 0 quando si cambia unità
+        newItems[existingIndex].quantity = 0;
         newItems[existingIndex].unit = unit;
         return newItems;
       } else {

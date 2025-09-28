@@ -105,7 +105,7 @@ export default function CreaOrdinePage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {supplierWines.map((wine) => {
               const isLowStock = wine.inventory <= wine.minStock;
               const currentItem = ordineItems.find(item => item.wineId === wine.id);
