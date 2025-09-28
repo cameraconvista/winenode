@@ -8,6 +8,7 @@ interface PinPadProps {
   disabled?: boolean;
   canSubmit?: boolean;
   isValidPin?: boolean;
+  showError?: boolean;
 }
 
 export default function PinPad({ 
@@ -16,12 +17,13 @@ export default function PinPad({
   onSubmit, 
   disabled = false,
   canSubmit = false,
-  isValidPin = false
+  isValidPin = false,
+  showError = false
 }: PinPadProps) {
   const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
   return (
-    <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto p-4">
+    <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto p-4 justify-center items-center">
       {/* Digits 1-9 */}
       {digits.slice(0, 9).map((digit) => (
         <button
@@ -87,9 +89,11 @@ export default function PinPad({
         disabled={disabled || !canSubmit}
         className="h-14 w-14 rounded-full border-2 font-bold transition-all duration-150 active:scale-98 active:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-manipulation"
         style={{
-          backgroundColor: isValidPin && canSubmit && !disabled ? '#22c55e' : '#fff9dc',
-          color: isValidPin && canSubmit && !disabled ? '#ffffff' : '#541111',
-          borderColor: isValidPin && canSubmit && !disabled ? '#16a34a' : 'rgba(84, 17, 17, 0.4)',
+          backgroundColor: showError && canSubmit && !disabled ? '#ef4444' : 
+                          isValidPin && canSubmit && !disabled ? '#22c55e' : '#fff9dc',
+          color: (showError || isValidPin) && canSubmit && !disabled ? '#ffffff' : '#541111',
+          borderColor: showError && canSubmit && !disabled ? '#dc2626' :
+                      isValidPin && canSubmit && !disabled ? '#16a34a' : 'rgba(84, 17, 17, 0.4)',
           minHeight: '56px',
           minWidth: '56px'
         }}

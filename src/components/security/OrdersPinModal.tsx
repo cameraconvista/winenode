@@ -9,9 +9,6 @@ interface OrdersPinModalProps {
   onValidPin: () => void;
   onInvalidPin: () => void;
   validatePin: (pin: string) => boolean;
-  isLocked: boolean;
-  lockoutCountdown: number;
-  attempts: number;
 }
 
 export default function OrdersPinModal({
@@ -19,10 +16,7 @@ export default function OrdersPinModal({
   onClose,
   onValidPin,
   onInvalidPin,
-  validatePin,
-  isLocked,
-  lockoutCountdown,
-  attempts
+  validatePin
 }: OrdersPinModalProps) {
   const [pinBuffer, setPinBuffer] = useState('');
   const [showError, setShowError] = useState(false);
@@ -119,7 +113,7 @@ export default function OrdersPinModal({
       <div 
         className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl p-6 relative"
         style={{ 
-          backgroundColor: '#541111',
+          background: 'linear-gradient(180deg, #6b1f1f 0%, #541111 50%, #4a0f0f 100%)',
           maxHeight: '90vh',
           overflow: 'auto'
         }}
@@ -168,27 +162,23 @@ export default function OrdersPinModal({
               }`}
               style={{ color: '#ff6b6b' }}
             >
-              PIN errato. Tentativi: {attempts}/3
-            </div>
-          )}
-
-          {/* Lockout Message */}
-          {isLocked && (
-            <div className="text-center text-sm mb-2" style={{ color: '#ff6b6b' }}>
-              Troppi tentativi. Riprova tra {lockoutCountdown}s
+              PIN errato
             </div>
           )}
         </div>
 
         {/* PIN Pad */}
-        <PinPad
-          onDigit={handleDigit}
-          onDelete={handleDelete}
-          onSubmit={handleSubmit}
-          disabled={isLocked}
-          canSubmit={pinBuffer.length === 4}
-          isValidPin={isValidPin}
-        />
+        <div className="flex justify-center items-center">
+          <PinPad
+            onDigit={handleDigit}
+            onDelete={handleDelete}
+            onSubmit={handleSubmit}
+            disabled={false}
+            canSubmit={pinBuffer.length === 4}
+            isValidPin={isValidPin}
+            showError={showError}
+          />
+        </div>
 
         {/* Pulsante ESC */}
         <div className="mt-6 text-center">

@@ -73,9 +73,6 @@ export default function HomePage() {
   const {
     isOrdersUnlocked,
     isPinModalOpen,
-    isLocked,
-    lockoutCountdown,
-    attempts,
     openPinModal,
     closePinModal,
     validatePin,
@@ -572,9 +569,6 @@ export default function HomePage() {
         onValidPin={handleValidPin}
         onInvalidPin={() => {}} // Gestito internamente dal modale
         validatePin={validatePin}
-        isLocked={isLocked}
-        lockoutCountdown={lockoutCountdown}
-        attempts={attempts}
       />
       
     </div>
