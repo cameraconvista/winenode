@@ -20,7 +20,8 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
   }, [onComplete])
 
   return (
-    <div className="min-h-screen bg-app-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-app-bg flex flex-col items-center justify-center px-4 relative">
+      {/* Logo centrato */}
       <div 
         className={`flex items-center justify-center transition-opacity duration-500 ${
           fadeIn ? 'opacity-100' : 'opacity-0'
@@ -35,6 +36,28 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
             maxHeight: '60vh'
           }}
         />
+      </div>
+      
+      {/* Footer "By DERO" in basso */}
+      <div 
+        className={`absolute bottom-0 left-0 right-0 flex items-center justify-center transition-opacity duration-500 ${
+          fadeIn ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ 
+          paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 24px',
+          color: '#541111'
+        }}
+      >
+        <span 
+          className="text-sm font-medium tracking-wide"
+          style={{ 
+            fontSize: '14px',
+            fontWeight: '500',
+            letterSpacing: '0.025em'
+          }}
+        >
+          By DERO
+        </span>
       </div>
     </div>
   )

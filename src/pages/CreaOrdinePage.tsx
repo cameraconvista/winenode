@@ -27,12 +27,8 @@ export default function CreaOrdinePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#fff9dc' }}>
-        <div className="text-center">
-          <div className="text-lg font-medium" style={{ color: '#541111' }}>
-            Caricamento vini...
-          </div>
-        </div>
+      <div className="min-h-screen bg-app-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
       </div>
     );
   }

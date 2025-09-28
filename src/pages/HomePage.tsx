@@ -212,10 +212,7 @@ export default function HomePage() {
 
   if (loading) return (
     <div className="min-h-screen bg-app-bg flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-8 h-8 border-2 border-app-warn border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-app-text">Caricamento vini...</p>
-      </div>
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
     </div>
   );
 
