@@ -268,67 +268,11 @@ NAVIGAZIONE:
 - Ordine visibile immediatamente in "Gestisci Ordini" tab "Creati"
 - UX fluida: conferma → messaggio → gestione ordini
 
-=== FIX WHATSAPP LINK + TOAST BOTTOM ===
-DATA: 28/09/2025 16:42
-OBIETTIVO: Risolvere link WhatsApp che non precompila messaggio + spostare toast in basso
-
-PROBLEMI RISOLTI:
-1. **WhatsApp Link Non Funzionante**
-   - Causa: Fallback limitato (solo wa.me → whatsapp://)
-   - Desktop non ottimizzato per precompilazione messaggio
-   - Mancava web.whatsapp.com per desktop
-
-2. **Toast Posizione Sbagliata**
-   - Era in top-center invece di bottom-center
-   - Mancava safe-area support per mobile
-
-SOLUZIONI IMPLEMENTATE:
-
-**CATENA FALLBACK CROSS-PLATFORM:**
-✅ Rilevamento dispositivo: isMobileDevice() con userAgent
-✅ Mobile: whatsapp:// → web.whatsapp.com → wa.me
-✅ Desktop: web.whatsapp.com → wa.me (ottimizzato per precompilazione)
-✅ window.open con 'noopener,noreferrer' per sicurezza
-✅ Logging debug temporaneo per validazione
-
-**NORMALIZZAZIONE TESTO:**
-✅ Rimozione spazi superflui inizio riga
-✅ Normalizzazione fine riga: \r\n → \n
-✅ Caratteri speciali mantenuti: • (bullet), — (em dash)
-✅ encodeURIComponent gestisce automaticamente \n → %0A
-
-**TOAST BOTTOM:**
-✅ Position: bottom-center invece di top-center
-✅ Safe-area aware: marginBottom con env(safe-area-inset-bottom)
-✅ Durata 2s mantenuta, stili tema light preservati
-
-**FUNZIONI AGGIUNTE:**
-- buildWebWhatsAppUrl(): URL web.whatsapp.com ottimizzato
-- isMobileDevice(): Rilevamento piattaforma mobile/desktop
-- Normalizzazione messaggio migliorata
-
-**FILE MODIFICATI:**
-- src/utils/buildWhatsAppMessage.ts: Nuove funzioni + normalizzazione
-- src/components/modals/WhatsAppOrderModal.tsx: Catena fallback
-- src/App.tsx: Toast position bottom + safe-area
-
-**VALIDAZIONE IMPLEMENTATA:**
-- Console log pre/post encode per debug
-- Tentativo URL con descrizione per troubleshooting
-- Fallback trasparente per utente finale
-
-**RISULTATI ATTESI:**
-- Desktop: web.whatsapp.com si apre con messaggio precompilato
-- Mobile: App WhatsApp nativa si apre con messaggio pronto
-- Toast "Ordine confermato" appare in basso sopra navbar
-- Caratteri speciali (•, —) preservati e encodati correttamente
-
 === STATUS FINALE ===
 ✅ IMPLEMENTAZIONE COMPLETA
 ✅ BUGFIX HOOK ORDER RISOLTO
 ✅ FEATURE EXTENSION GESTISCI ORDINI COMPLETATA
 ✅ FLOW UPDATE CONFERMA ORDINE COMPLETATO
-✅ FIX WHATSAPP LINK + TOAST BOTTOM COMPLETATO
 ✅ ZERO REGRESSIONI LAYOUT
 ✅ FUNZIONALITÀ TESTATA E OPERATIVA
 ✅ DOCUMENTAZIONE AGGIORNATA

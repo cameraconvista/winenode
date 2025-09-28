@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, Copy, X } from 'lucide-react';
-import { 
-  buildWhatsAppMessage, 
-  buildWhatsAppUrl, 
-  buildWebWhatsAppUrl,
-  buildWhatsAppFallbackUrl, 
-  isMobileDevice,
-  OrderDetail 
-} from '../../utils/buildWhatsAppMessage';
+import { buildWhatsAppMessage, buildWhatsAppUrl, buildWhatsAppFallbackUrl, OrderDetail } from '../../utils/buildWhatsAppMessage';
 
 interface WhatsAppOrderModalProps {
   isOpen: boolean;
@@ -28,44 +21,22 @@ export default function WhatsAppOrderModal({
   // Genera il messaggio WhatsApp (sempre, anche se modale chiusa)
   const message = buildWhatsAppMessage(orderDetails);
 
-  // Handler per apertura WhatsApp con catena fallback cross-platform
+  // Handler per apertura WhatsApp
   const handleOpenWhatsApp = () => {
-    const isMobile = isMobileDevice();
+    const url = buildWhatsAppUrl(message);
+    const fallbackUrl = buildWhatsAppFallbackUrl(message);
     
-    // Log per debug (temporaneo)
-    console.log('📱 WhatsApp Debug - Messaggio pre-encode:', message);
-    console.log('📱 WhatsApp Debug - Messaggio post-encode:', encodeURIComponent(message));
-    console.log('📱 WhatsApp Debug - Dispositivo mobile:', isMobile);
-    
-    // Catena fallback ottimizzata per piattaforma
-    const attemptOpen = (url: string, description: string): boolean => {
+    try {
+      // Prova prima con wa.me (web/mobile)
+      window.open(url, '_blank');
+    } catch (error) {
       try {
-        console.log(`📱 WhatsApp Debug - Tentativo ${description}:`, url);
-        window.open(url, '_blank', 'noopener,noreferrer');
-        return true;
-      } catch (error) {
-        console.warn(`❌ WhatsApp Debug - Fallito ${description}:`, error);
-        return false;
-      }
-    };
-
-    if (isMobile) {
-      // Mobile: app nativa → web → generico
-      if (!attemptOpen(buildWhatsAppFallbackUrl(message), 'App Mobile (whatsapp://)')) {
-        if (!attemptOpen(buildWebWhatsAppUrl(message), 'Web Mobile (web.whatsapp.com)')) {
-          attemptOpen(buildWhatsAppUrl(message), 'Generico Mobile (wa.me)');
-        }
-      }
-    } else {
-      // Desktop: web ottimizzato → generico
-      if (!attemptOpen(buildWebWhatsAppUrl(message), 'Web Desktop (web.whatsapp.com)')) {
-        attemptOpen(buildWhatsAppUrl(message), 'Generico Desktop (wa.me)');
+        // Fallback per app mobile
+        window.open(fallbackUrl, '_blank');
+      } catch (fallbackError) {
+        console.warn('Impossibile aprire WhatsApp:', error, fallbackError);
       }
     }
-
-    // Chiudi modale immediatamente dopo apertura WhatsApp
-    // Il parent (RiepilogoOrdinePage) gestirà la navigazione a Gestisci Ordini
-    onClose();
   };
 
   // Handler per copia testo

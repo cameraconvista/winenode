@@ -30,7 +30,7 @@ export function useCreaOrdine() {
         return [...prev, {
           wineId,
           quantity: delta,
-          unit: 'cartoni' // Default cambiato a cartoni per la maggior parte degli ordini
+          unit: 'bottiglie'
         }];
       }
       

@@ -181,8 +181,7 @@ export default function RiepilogoOrdinePage() {
             overscrollBehavior: 'none',
             touchAction: 'pan-y',
             scrollBehavior: 'smooth',
-            paddingTop: '120px', // Aumentato per compensare header sticky (~100px) + respiro
-            scrollMarginTop: '120px' // Fallback per browser che supportano scroll-margin
+            paddingTop: '16px'
           }}
         >
         {/* Lista Ordini */}
@@ -245,15 +244,19 @@ export default function RiepilogoOrdinePage() {
             </span>
           </div>
           
-          {/* Riga unica: bottiglie totali • Prezzi IVA esclusa */}
-          <div className="flex items-center justify-center gap-3 text-sm" style={{ color: '#7a4a30' }}>
-            <span>{totalBottiglie} bottiglie totali</span>
-            <span style={{ color: '#e2d6aa' }}>•</span>
-            <div className="flex items-center gap-2" style={{ color: '#d4a300' }}>
-              <AlertTriangle className="h-4 w-4" />
-              <span>Prezzi IVA esclusa</span>
-            </div>
+          <div className="text-center mb-3">
+            <p className="text-sm" style={{ color: '#7a4a30' }}>
+              {totalBottiglie} bottiglie totali
+            </p>
           </div>
+          
+          <div className="flex items-center justify-center gap-2 text-xs" style={{ color: '#d4a300' }}>
+            <AlertTriangle className="h-4 w-4" />
+            <span>Prezzi IVA esclusa</span>
+          </div>
+          <p className="text-center text-xs mt-1" style={{ color: '#7a4a30' }}>
+            Calcolato sui costi di acquisto
+          </p>
         </div>
         </div>
       </main>
@@ -264,7 +267,7 @@ export default function RiepilogoOrdinePage() {
         style={{ 
           background: '#fff9dc', 
           borderColor: '#e2d6aa',
-          paddingBottom: 'calc(max(env(safe-area-inset-bottom), 0px) + 28px)', // Aumentato da 16px a 28px (+12px più basso)
+          paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
           zIndex: 50
         }}
       >

@@ -46,7 +46,4 @@
   --z-toolbar: 150;    /* Toolbar principale */
   --z-topbar: 200;     /* Header principale */
   --z-toast: 9999;     /* Notifiche e toast */
-
-  /* Navbar mobile positioning */
-  --nav-bottom-offset: calc(env(safe-area-inset-bottom) + 4pt); /* Ridotto ~20% da 8pt a 4pt */
 }
