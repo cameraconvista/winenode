@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, Check, X } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { ORDINI_LABELS } from '../../constants/ordiniLabels';
 
 interface ConfirmArchiveModalProps {
@@ -84,7 +84,7 @@ export default function ConfirmArchiveModal({
         <div className="p-6 border-t flex flex-nowrap gap-3" style={{ borderColor: '#e2d6aa' }}>
           <button
             onClick={onCancel}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors"
+            className="flex-1 flex items-center justify-center px-4 py-3 rounded-xl font-medium transition-colors"
             style={{ 
               background: 'white', 
               color: '#541111',
@@ -93,19 +93,17 @@ export default function ConfirmArchiveModal({
               fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
           >
-            <X className="h-4 w-4" />
             {ORDINI_LABELS.qtyModal.confirmArchive.cancel}
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors"
+            className="flex-1 flex items-center justify-center px-4 py-3 rounded-xl font-medium transition-colors"
             style={{ 
               background: '#16a34a', 
               color: '#fff9dc',
               fontSize: window.innerWidth <= 767 ? '13px' : '16px'
             }}
           >
-            <Check className="h-4 w-4" />
             {ORDINI_LABELS.qtyModal.confirmArchive.confirm}
           </button>
         </div>

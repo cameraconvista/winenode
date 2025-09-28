@@ -142,7 +142,7 @@ export default function SmartGestisciModal({
 
         {/* HEADER STICKY TESTI */}
         <div 
-          className="sticky top-0 z-40 border-b"
+          className="sticky border-b"
           style={{ 
             background: '#fff9dc',
             borderColor: '#e2d6aa',
@@ -150,6 +150,8 @@ export default function SmartGestisciModal({
             paddingBottom: '16px',
             paddingLeft: '16px',
             paddingRight: '16px',
+            top: 'calc(var(--safe-area-inset-top, 0px) + 80px)',
+            zIndex: 40,
             '--header-height': '88px'
           } as React.CSSProperties & { '--header-height': string }}
         >
@@ -175,7 +177,7 @@ export default function SmartGestisciModal({
               overscrollBehavior: 'none',
               touchAction: 'pan-y',
               scrollBehavior: 'smooth',
-              paddingTop: 'var(--header-height, 88px)'
+              paddingTop: 'calc(var(--header-height, 88px) + 20px)'
             }}
           >
 
