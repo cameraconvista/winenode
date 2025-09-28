@@ -149,4 +149,26 @@ POSSIBILI CAUSE SCURIMENTO IPHONE:
 - Mancanza meta color-scheme
 - CSS color-adjust property
 
+AGGIORNAMENTO DIAGNOSI - 28/09/2025 17:24:
+
+=== PROBLEMI CONFERMATI DALL'IMMAGINE ===
+
+1. **PRIMA CARD TAGLIATA**: Visibile nell'immagine - prima card "FRANCIACORTA" parzialmente nascosta
+2. **SEZIONE TOTALI VERBOSA**: 3 righe separate invece di 1 riga unificata
+3. **TESTO SUPERFLUO**: "Calcolato sui costi di acquisto" da rimuovere
+4. **FOOTER POSIZIONE**: Può essere abbassato leggermente
+
+=== VALORI ATTUALI IDENTIFICATI ===
+
+CONTENITORE SCROLL:
+- paddingTop: '16px' (INSUFFICIENTE - causa taglio prima card)
+
+SEZIONE TOTALI (righe 247-259):
+- Riga 1: "24 bottiglie totali" (separata)
+- Riga 2: "⚠️ Prezzi IVA esclusa" (separata)  
+- Riga 3: "Calcolato sui costi di acquisto" (DA RIMUOVERE)
+
+FOOTER (righe 265-272):
+- paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px'
+
 STATO: Problemi identificati, soluzioni pronte per implementazione

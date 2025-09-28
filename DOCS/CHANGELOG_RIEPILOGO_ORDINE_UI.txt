@@ -37,8 +37,7 @@ PROBLEMI RISOLTI:
 paddingTop: '16px' // Prima card tagliata
 
 // DOPO (CORRETTO)
-paddingTop: '120px', // Compensa header sticky (~100px) + respiro
-scrollMarginTop: '120px' // Fallback browser moderni
+paddingTop: '24px' // Ottimizzato per mostrare prima scheda senza tagli
 ```
 
 **2. RIGA UNICA TOTALI:**
