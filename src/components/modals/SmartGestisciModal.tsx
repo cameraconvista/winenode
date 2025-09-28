@@ -280,7 +280,7 @@ export default function SmartGestisciModal({
                 WebkitTapHighlightColor: 'transparent'
               }}
             >
-              Conferma modifiche
+              Conferma
             </button>
           </div>
         </footer>

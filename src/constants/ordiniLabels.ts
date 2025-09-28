@@ -90,7 +90,7 @@ export const ORDINI_LABELS = {
     confirmArchive: {
       title: "Conferma archiviazione",
       body: "Vuoi confermare le modifiche alle quantità e archiviare l'ordine? Questa operazione aggiornerà le giacenze e sposterà l'ordine negli Archiviati.",
-      confirm: "Conferma e archivia",
+      confirm: "Conferma",
       cancel: "Annulla"
     },
     header: {

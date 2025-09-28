@@ -266,7 +266,7 @@ export default function RiepilogoOrdinePage() {
               WebkitTapHighlightColor: 'transparent'
             }}
           >
-            Conferma Ordine
+            Conferma
           </button>
         </div>
       </footer>
