@@ -1,0 +1,16 @@
+# Normalize line endings
+* text=auto eol=lf
+
+# Improve diffs for common text formats
+*.md diff=markdown
+*.sql diff=sql
+*.json linguist-language=JSON
+
+# Treat images and binaries properly
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.tar binary
+*.tar.gz binary
