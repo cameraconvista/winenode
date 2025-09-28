@@ -283,7 +283,12 @@ export default function HomePage() {
               {wines.length === 0 ? 'Nessun vino nel tuo inventario' : 'Nessun vino trovato con i filtri selezionati'}
             </p>
           ) : (
-            <div className="space-y-0.5 sm:space-y-1 overflow-x-hidden w-full">
+            <div 
+              className="space-y-0.5 sm:space-y-1 overflow-x-hidden w-full"
+              style={{
+                paddingBottom: 'calc(64pt + env(safe-area-inset-bottom, 0px) + 12pt)'
+              }}
+            >
               {filteredWines.map(wine => (
                 <div key={wine.id} className="wine-card rounded-lg overflow-x-hidden w-full max-w-full" style={{ 
                   background: 'var(--surface-2)',

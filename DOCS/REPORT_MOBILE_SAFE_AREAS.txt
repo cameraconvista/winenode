@@ -1,0 +1,124 @@
+REPORT DIAGNOSI MOBILE SAFE AREAS - WineNode
+Data: 28/09/2025 15:28
+Versione: 1.1.0
+
+=== 1. VIEWPORT & UNITS ===
+- Unità altezza: 100vh (problematico su iOS Safari)
+- Workaround iOS Safari: NON PRESENTE (causa potenziale)
+- Viewport meta: standard (width=device-width, initial-scale=1)
+- Units moderne (svh/dvh): NON UTILIZZATE
+
+PROBLEMA IDENTIFICATO: Uso rigido di 100vh causa salti quando barra URL iOS appare/scompare
+
+=== 2. SAFE-AREA ATTUALE ===
+Home:
+- Padding bottom: calc(var(--safe-bottom) + 12pt) 
+- Padding top: 6pt
+- Safe-area variables: --safe-bottom, --safe-left, --safe-right definite
+- Compensazione contenuto: INSUFFICIENTE
+
+Gestisci Ordine:
+- Header sticky top: calc(var(--safe-area-inset-top, 0px) + 80px)
+- Padding contenuto: calc(var(--header-height, 88px) + 20px)
+- Safe-area top: PARZIALMENTE IMPLEMENTATA
+
+PROBLEMA: Safe-area bottom non correttamente applicata alle liste scrollabili
+
+=== 3. BOTTOM NAVBAR ===
+Struttura DOM:
+- Gruppo icone: .nav-icons-group (PRESENTE)
+- Pill "Tutti": .btn-tutti separato (CORRETTO)
+- Layout: display: flex, justify-content: space-between
+
+Dimensioni:
+- Altezza barra: 56-64pt (min-max)
+- Container icone: 44pt (touch target)
+- Offset verticale icone: CENTRATO (problema: dovrebbe essere +25% verso basso)
+- Z-index barra: var(--z-navbar)
+- Z-index "Tutti": STESSO LIVELLO
+
+Lente:
+- Posizione: A destra campanella (CORRETTO)
+- Asset: lente.png con mask pattern (CORRETTO)
+- Hit-area: 44pt (CONFORME)
+
+PROBLEMA PRINCIPALE: Icone centrate verticalmente invece di spostate verso basso del 25%
+
+=== 4. GESTISCI ORDINE (HEADER/LOGO) ===
+Header:
+- Posizionamento: sticky
+- Top value: calc(var(--safe-area-inset-top, 0px) + 80px)
+- Z-index: 40
+- Background: #fff9dc con border-b
+
+Logo:
+- Posizione: Header fisso sopra sticky
+- Margini: POTENZIALE CONFLITTO con safe-area
+- Overflow: NON PROBLEMATICO
+- Compensazione safe-area top: PARZIALE
+
+PROBLEMA: Header sticky potrebbe non compensare correttamente safe-area su tutti i device
+
+=== 5. REGOLE GLOBALI INTERFERENTI ===
+Reset globali:
+- Button: appearance: none, border: none (CORRETTO)
+- SVG: fill/stroke gestiti localmente (CORRETTO)
+- Line-height: STANDARD
+- Overflow: touch scrolling attivo (CORRETTO)
+- Position: sticky supportato (CORRETTO)
+
+Z-index stack:
+- Navbar: var(--z-navbar) 
+- Header sticky: 40
+- Modali: 50-60
+- POTENZIALE CONFLITTO: z-index non definiti chiaramente
+
+=== CAUSE PROBABILI IDENTIFICATE ===
+
+1. NAVBAR ICONE TROPPO ALTE:
+   - Icone centrate verticalmente nel container
+   - Manca offset verso basso del 25%
+   - Safe-area bottom non correttamente applicata
+
+2. GESTISCI ORDINE HEADER:
+   - Safe-area top compensation insufficiente
+   - Sticky top value potrebbe essere troppo basso
+   - Logo header fisso potrebbe sovrapporsi
+
+3. VIEWPORT iOS:
+   - Uso rigido 100vh causa instabilità
+   - Mancano unità moderne svh/dvh
+   - Barra URL Safari non gestita
+
+4. LISTE SCROLLABILI:
+   - Padding-bottom insufficiente
+   - Contenuto scorre sotto navbar
+   - Safe-area bottom non propagata
+
+=== PRIORITÀ INTERVENTI ===
+
+CRITICO:
+1. Spostare icone navbar verso basso 25%
+2. Implementare safe-area bottom per liste
+3. Correggere header Gestisci Ordine
+
+IMPORTANTE:
+4. Sostituire 100vh con svh/dvh dove necessario
+5. Definire z-index stack coerente
+
+OTTIMIZZAZIONE:
+6. Migliorare compensazioni safe-area globali
+7. Test su device reali iOS/Android
+
+=== MISURE ATTUALI (da correggere) ===
+- Navbar height: 56-64pt
+- Icon container: 44pt (centrato)
+- Safe-area bottom: calc(var(--safe-bottom) + 12pt)
+- Header sticky top: 80px + safe-area
+- Lista padding-bottom: 100px (FISSO, dovrebbe essere dinamico)
+
+=== MISURE TARGET (post-fix) ===
+- Icon vertical offset: +25% container height (~11-16pt verso basso)
+- Lista padding-bottom: navbar-height + safe-area-bottom
+- Header sticky top: safe-area-top + design-offset
+- Viewport: min(100svh, 100dvh) dove applicabile

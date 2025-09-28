@@ -150,7 +150,7 @@ export default function SmartGestisciModal({
             paddingBottom: '16px',
             paddingLeft: '16px',
             paddingRight: '16px',
-            top: 'calc(var(--safe-area-inset-top, 0px) + 80px)',
+            top: 'calc(env(safe-area-inset-top, 0px) + 80px)',
             zIndex: 40,
             '--header-height': '88px'
           } as React.CSSProperties & { '--header-height': string }}
@@ -182,7 +182,9 @@ export default function SmartGestisciModal({
           >
 
             {/* Lista righe scrollabile */}
-            <div className="px-3 py-4 space-y-2" style={{ paddingBottom: '100px' }}>
+            <div className="px-3 py-4 space-y-2" style={{ 
+              paddingBottom: 'calc(64pt + env(safe-area-inset-bottom, 0px) + 12pt)' 
+            }}>
               {dettagli.map((dettaglio, index) => {
                 const currentQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
                 const producer = getWineProducer(dettaglio.wineName);

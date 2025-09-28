@@ -7,6 +7,9 @@ export const features = {
   // Ricerca lente in Home - filtro locale per nome vino
   searchLens: true,
   
+  // Mobile safe areas e navbar offset - fix icone navbar + compensazioni
+  mobileSafeAreas: true,
+  
   // Altre feature flags esistenti possono essere aggiunte qui
   // advancedFilters: false,
   // exportData: false,

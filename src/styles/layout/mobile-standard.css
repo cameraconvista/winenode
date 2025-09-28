@@ -126,10 +126,10 @@
   justify-content: space-between !important;
   align-items: center !important;
   /* SAFE-AREA ADATTIVA: FaceID vs non-FaceID */
-  padding-bottom: calc(var(--safe-bottom) + 12pt);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
   padding-top: 6pt;
-  padding-left: calc(12pt + var(--safe-left));
-  padding-right: calc(12pt + var(--safe-right));
+  padding-left: calc(12pt + env(safe-area-inset-left, 0px));
+  padding-right: calc(12pt + env(safe-area-inset-right, 0px));
   gap: 6pt;
   align-items: center;
   /* NESSUN border-radius che può creare gap */
@@ -224,7 +224,15 @@
 .mobile-navbar .nav-icons-group {
   display: flex;
   align-items: center;
-  gap: 8pt;
+  gap: var(--nav-icon-gap, 8pt);
+  
+  /* Offset verticale per spostare icone verso basso del 25% */
+  transform: translateY(var(--nav-icon-vert-offset, 25%));
+  
+  /* Variabili locali per controllo granulare */
+  --nav-icon-gap: 8pt;
+  --nav-icon-vert-offset: 25%; /* Sposta icone verso basso del 25% del container */
+  --nav-safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
 }
 
 /* === CHIP "TUTTI" === */
