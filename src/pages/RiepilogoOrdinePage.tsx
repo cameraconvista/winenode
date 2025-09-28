@@ -122,8 +122,9 @@ export default function RiepilogoOrdinePage() {
           style={{ 
             background: 'var(--bg)', 
             borderColor: '#e2d6aa',
-            paddingTop: '16px',
-            paddingBottom: '16px',
+            paddingTop: '8px',
+            paddingBottom: '20px',
+            marginTop: '-8px',
             marginLeft: '-16px',
             marginRight: '-16px',
             paddingLeft: '16px',
