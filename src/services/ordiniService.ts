@@ -1,6 +1,6 @@
 // Service layer neutro per operazioni ordini - risolve circular dependency
 import { supabase } from '../lib/supabase';
-import { normalizeToPgDate } from '../utils/dateForPg';
+import { normalizeToPgDate, isValidUuid } from '../utils/dateForPg';
 
 // Cache in-memory con TTL per ottimizzazione performance
 interface CacheEntry<T> {
@@ -70,7 +70,8 @@ export interface OrdineDettaglio {
 
 export interface Ordine {
   id: string;
-  fornitore: string;
+  fornitore: string; // Nome fornitore per UI (backward compatibility)
+  fornitoreId?: string; // UUID fornitore per DB
   totale: number;
   bottiglie: number;
   data: string;
@@ -180,7 +181,7 @@ export const ordiniService = {
     console.log('📝 Creando nuovo ordine:', ordine);
 
     try {
-      // Normalizza la data per Postgres
+      // 1. Normalizza la data per Postgres
       let normalizedDate: string;
       try {
         normalizedDate = normalizeToPgDate(ordine.data);
@@ -190,18 +191,57 @@ export const ordiniService = {
         throw new Error(`Data ordine non valida: ${ordine.data}`);
       }
 
-      // Usa data normalizzata (YYYY-MM-DD) per colonna date
-      const dbDateValue = normalizedDate;
+      // 2. Risolvi fornitore ID se necessario
+      let fornitoreId = ordine.fornitoreId;
+      
+      if (!fornitoreId || !isValidUuid(fornitoreId)) {
+        console.log('🔍 Risoluzione fornitore da nome:', ordine.fornitore);
+        
+        // Cerca fornitore per nome
+        const { data: fornitoreData, error: fornitoreError } = await supabase
+          .from('fornitori')
+          .select('id')
+          .eq('nome', ordine.fornitore)
+          .limit(1)
+          .single();
+
+        if (fornitoreError || !fornitoreData) {
+          console.error('❌ Fornitore non trovato:', ordine.fornitore);
+          throw new Error(`Fornitore non trovato: ${ordine.fornitore}`);
+        }
+
+        fornitoreId = fornitoreData.id;
+        console.log('✅ Fornitore risolto:', ordine.fornitore, '→', fornitoreId);
+      }
+
+      // 3. Valida UUID fornitore
+      if (!isValidUuid(fornitoreId)) {
+        throw new Error(`FORNITORE_ID_INVALID: ${fornitoreId}`);
+      }
+
+      // 4. Sanifica valori numerici
+      const totale = Number(ordine.totale);
+      const bottiglie = Number(ordine.bottiglie || 0);
+
+      if (isNaN(totale) || isNaN(bottiglie)) {
+        throw new Error('Valori numerici non validi per totale o bottiglie');
+      }
+
+      // 5. Costruisci payload per DB
+      const payloadSanitized = {
+        fornitore_id: fornitoreId, // UUID per DB
+        totale: totale,
+        bottiglie: bottiglie,
+        data: normalizedDate, // YYYY-MM-DD
+        stato: ordine.stato,
+        items: JSON.stringify(ordine.dettagli || []) // JSONB per dettagli
+      };
+
+      console.log('🧾 Payload insert:', payloadSanitized);
 
       const { data, error } = await supabase
         .from('ordini')
-        .insert({
-          fornitore: ordine.fornitore,
-          totale: ordine.totale,
-          contenuto: JSON.stringify(ordine.dettagli || []),
-          stato: ordine.stato,
-          data: dbDateValue
-        })
+        .insert(payloadSanitized)
         .select('id')
         .single();
 
@@ -212,14 +252,20 @@ export const ordiniService = {
 
       console.log('✅ Ordine creato con ID:', data.id);
       
-      // Invalida cache ordini dopo creazione
+      // 6. Invalida cache ordini dopo creazione
       cache.invalidate('ordini');
       
       return data.id;
     } catch (error) {
-      if (error instanceof Error && error.message.includes('INVALID_DATE')) {
-        console.error('❌ Data ordine non valida (atteso DD/MM/YYYY o YYYY-MM-DD)');
-        throw new Error('Data ordine non valida. Formato atteso: DD/MM/YYYY');
+      if (error instanceof Error) {
+        if (error.message.includes('INVALID_DATE')) {
+          console.error('❌ Data ordine non valida (atteso DD/MM/YYYY o YYYY-MM-DD)');
+          throw new Error('Data ordine non valida. Formato atteso: DD/MM/YYYY');
+        }
+        if (error.message.includes('FORNITORE_ID_INVALID')) {
+          console.error('❌ ID fornitore non valido (atteso UUID)');
+          throw new Error('ID fornitore non valido');
+        }
       }
       throw error;
     }

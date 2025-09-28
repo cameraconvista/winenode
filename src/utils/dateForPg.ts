@@ -118,3 +118,13 @@ export function isValidDateString(dateString: string): boolean {
     return false;
   }
 }
+
+/**
+ * Verifica se una stringa è un UUID v4 valido
+ * @param uuid - Stringa da verificare
+ * @returns true se è un UUID valido
+ */
+export function isValidUuid(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+}

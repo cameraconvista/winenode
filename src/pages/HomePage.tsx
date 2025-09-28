@@ -276,7 +276,6 @@ export default function HomePage() {
                 src="/logo1.png" 
                 alt="WINENODE"
                 loading="eager"
-                fetchPriority="high"
                 decoding="async"
               />
             </picture>

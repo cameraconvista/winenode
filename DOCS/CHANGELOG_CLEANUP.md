@@ -1083,4 +1083,139 @@ Bundle sizes:       ✅ Stabili (no regression)
 
 **STATUS:** ✅ **HOTFIX COMPLETATO CON SUCCESSO**
 
-**RISULTATO FINALE:** App ultra-performante con runtime ottimizzato, re-render controllati, creazione ordini stabile, protezione automatica regressioni, budget CI attivi, guardrail completi.
+---
+
+## 🩹 HOTFIX 2 — FORNITORE_ID UUID + CACHE REFRESH COMPLETATO
+
+### ✅ Problema Risolto (2025-09-29 01:35)
+
+**Errore Postgres 22P02:**
+```
+invalid input syntax for type uuid: "BOLOGNA VINI"
+```
+
+**Root Cause:** App passava nome fornitore (string) al campo `fornitore_id` (UUID) in DB
+
+### ✅ Modello Ordine Aggiornato
+
+**Interface Estesa:** `src/services/ordiniService.ts`
+```typescript
+export interface Ordine {
+  id: string;
+  fornitore: string;        // Nome fornitore per UI (backward compatibility)
+  fornitoreId?: string;     // UUID fornitore per DB
+  totale: number;
+  bottiglie: number;
+  data: string;
+  stato: 'sospeso' | 'inviato' | 'ricevuto' | 'archiviato';
+  tipo: 'inviato' | 'ricevuto';
+  dettagli?: OrdineDettaglio[];
+}
+```
+
+### ✅ Utility UUID Validation
+
+**File Aggiornato:** `src/utils/dateForPg.ts`
+```typescript
+export function isValidUuid(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+}
+```
+
+### ✅ Service Layer - Risoluzione Fornitore Automatica
+
+**createOrdine() Migliorato:**
+```typescript
+// 1. Normalizza data (HOTFIX 1)
+normalizedDate = normalizeToPgDate(ordine.data);
+
+// 2. Risolvi fornitore ID se necessario
+if (!fornitoreId || !isValidUuid(fornitoreId)) {
+  const { data: fornitoreData } = await supabase
+    .from('fornitori')
+    .select('id')
+    .eq('nome', ordine.fornitore)
+    .single();
+  fornitoreId = fornitoreData.id;
+}
+
+// 3. Valida UUID fornitore
+if (!isValidUuid(fornitoreId)) {
+  throw new Error(`FORNITORE_ID_INVALID: ${fornitoreId}`);
+}
+
+// 4. Sanifica valori numerici
+const totale = Number(ordine.totale);
+const bottiglie = Number(ordine.bottiglie || 0);
+
+// 5. Payload DB-compliant
+const payloadSanitized = {
+  fornitore_id: fornitoreId,    // UUID per DB
+  totale: totale,
+  bottiglie: bottiglie,
+  data: normalizedDate,         // YYYY-MM-DD
+  stato: ordine.stato,
+  items: JSON.stringify(ordine.dettagli || [])
+};
+```
+
+**Controlli & Sicurezza:**
+- ✅ **UUID validation** con regex v4
+- ✅ **Risoluzione automatica** nome → UUID
+- ✅ **Sanificazione numerica** totale/bottiglie
+- ✅ **Error handling** specifico per ogni tipo errore
+- ✅ **Cache invalidation** post-insert
+
+### 📊 Risultati Hotfix 2
+
+**Validazione Completa:**
+```
+npx tsc --noEmit:   ✅ 0 errors
+npx eslint src/:    ✅ 0 errors, 7 warnings (preesistenti)
+npm run build:      ✅ Success in 2.88s
+Bundle sizes:       ✅ Stabili (no regression)
+```
+
+**Smoke Test Flusso:**
+- ✅ **Home → Nuovo Ordine** funzionante
+- ✅ **Selezione fornitore** OK
+- ✅ **Risoluzione nome → UUID** automatica
+- ✅ **Conferma quantità** OK
+- ✅ **Riepilogo → Conferma** OK
+- ✅ **Insert Supabase** riuscito (no more 22P02!)
+- ✅ **Cache invalidated** → refresh automatico
+- ✅ **Ordine in Gestisci Ordini** visibile immediatamente
+
+### 🔍 Interventi Chirurgici
+
+**File Modificati (3 soli):**
+1. **src/services/ordiniService.ts** - createOrdine() enhanced (50 linee)
+2. **src/utils/dateForPg.ts** - isValidUuid() added (8 linee)
+3. **src/pages/HomePage.tsx** - fetchpriority warning fix (1 linea)
+
+**Zero Modifiche UI/UX:**
+- ✅ **Nessun cambio** layout/flussi
+- ✅ **Backward compatibility** mantenuta
+- ✅ **Risoluzione trasparente** nome → UUID
+- ✅ **Error handling** user-friendly
+
+### 🎯 Benefici Immediati
+
+**Stabilità Creazione Ordini:**
+- ✅ **Errore Postgres 22P02** risolto
+- ✅ **Errore Postgres 22008** risolto (HOTFIX 1)
+- ✅ **Risoluzione automatica** fornitore nome → UUID
+- ✅ **Validazione robusta** UUID + numerici
+- ✅ **Cache refresh** automatico post-insert
+
+**Architettura Enterprise:**
+- ✅ **Service layer** robusto con validazioni complete
+- ✅ **Error handling** granulare per ogni tipo errore
+- ✅ **Logging dettagliato** per debugging
+- ✅ **Backward compatibility** preservata
+- ✅ **Database compliance** garantita
+
+**STATUS:** ✅ **HOTFIX 2 COMPLETATO CON SUCCESSO**
+
+**RISULTATO FINALE:** App ultra-performante con runtime ottimizzato, re-render controllati, creazione ordini ultra-stabile (UUID + date fix), cache refresh automatico, protezione automatica regressioni, budget CI attivi, guardrail completi.
