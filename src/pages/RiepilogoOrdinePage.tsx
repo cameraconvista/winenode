@@ -104,20 +104,20 @@ export default function RiepilogoOrdinePage() {
         </div>
       </header>
 
-      {/* CONTENT SCROLLABILE */}
-      <main className="mobile-content">
-        <div className="wine-list-container"
-          style={{
-            height: '100%',
-            overflow: 'auto',
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'none',
-            touchAction: 'pan-y',
-            scrollBehavior: 'smooth'
-          }}
-        >
+      {/* HEADER STICKY */}
+      <div 
+        className="sticky top-0 z-40 bg-white border-b"
+        style={{ 
+          background: '#fff9dc', 
+          borderColor: '#e2d6aa',
+          paddingTop: 'calc(var(--safe-top) + 60pt)',
+          paddingBottom: '16px',
+          paddingLeft: '16px',
+          paddingRight: '16px'
+        }}
+      >
         {/* Riepilogo Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <div className="text-center mb-2">
             <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
               Riepilogo Ordine
@@ -128,11 +128,26 @@ export default function RiepilogoOrdinePage() {
           </p>
         </div>
 
-        {/* Dettaglio Ordine */}
+        <h3 className="text-lg font-semibold" style={{ color: '#541111' }}>
+          Dettaglio Ordine:
+        </h3>
+      </div>
+
+      {/* CONTENT SCROLLABILE */}
+      <main className="mobile-content">
+        <div className="wine-list-container"
+          style={{
+            height: '100%',
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'none',
+            touchAction: 'pan-y',
+            scrollBehavior: 'smooth',
+            paddingTop: '16px'
+          }}
+        >
+        {/* Lista Ordini */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4" style={{ color: '#541111' }}>
-            Dettaglio Ordine:
-          </h3>
           
           {ordineDetails.length === 0 ? (
             <div 
@@ -142,30 +157,30 @@ export default function RiepilogoOrdinePage() {
               <p style={{ color: '#fff9dc' }}>Nessun vino selezionato</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {ordineDetails.map((detail) => (
                 <div
                   key={detail.wineId}
                   className="p-4 rounded-lg border"
-                  style={{ background: '#541111', borderColor: '#8b7355' }}
+                  style={{ background: '#fff2b8', borderColor: '#e2d6aa' }}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-sm" style={{ color: '#fff9dc' }}>
+                      <h4 className="font-semibold text-sm" style={{ color: '#541111' }}>
                         {detail.wine?.name || 'Vino non trovato'}
                       </h4>
-                      <p className="text-xs" style={{ color: '#fef3c7' }}>
+                      <p className="text-xs" style={{ color: '#7a4a30' }}>
                         {detail.wine?.description} {detail.wine?.vintage && `(${detail.wine.vintage})`}
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium" style={{ color: '#fff9dc' }}>
+                      <div className="text-sm font-medium" style={{ color: '#541111' }}>
                         €{detail.totalPrice.toFixed(2)}
                       </div>
                     </div>
                   </div>
                   
-                  <div className="flex justify-between items-center text-xs" style={{ color: '#fef3c7' }}>
+                  <div className="flex justify-between items-center text-xs" style={{ color: '#7a4a30' }}>
                     <span>
                       {detail.quantity} {detail.unit} 
                       {detail.unit === 'cartoni' && ` (${detail.totalQuantityBottiglie} bottiglie)`}
@@ -186,7 +201,7 @@ export default function RiepilogoOrdinePage() {
             <span className="text-lg font-semibold" style={{ color: '#541111' }}>
               Totale Ordine:
             </span>
-            <span className="text-2xl font-bold" style={{ color: '#541111' }}>
+            <span className="text-lg font-bold" style={{ color: '#541111' }}>
               €{totalOrdine.toFixed(2)}
             </span>
           </div>
