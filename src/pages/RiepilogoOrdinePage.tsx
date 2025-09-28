@@ -181,7 +181,8 @@ export default function RiepilogoOrdinePage() {
             overscrollBehavior: 'none',
             touchAction: 'pan-y',
             scrollBehavior: 'smooth',
-            paddingTop: '24px' // Ridotto per mostrare la prima scheda correttamente
+            paddingTop: '24px', // Ridotto per mostrare la prima scheda correttamente
+            paddingBottom: '120px' // Spazio per footer + contenuto completo
           }}
         >
         {/* Lista Ordini */}
