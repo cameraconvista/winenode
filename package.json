@@ -37,7 +37,8 @@
     "setup:local": "node scripts/setup-local.js",
     "supabase:doc": "node scripts/supabase-doc-generator.js",
     "supabase:doc:check": "node scripts/supabase-doc-generator.js check",
-    "commit:auto": "node scripts/auto-commit.js"
+    "commit:auto": "node scripts/auto-commit.js",
+    "bundle:guard": "node scripts/bundle-guard.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
