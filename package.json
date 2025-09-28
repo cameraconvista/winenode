@@ -18,7 +18,6 @@
     "backup:list": "node scripts/backup-system.js list",
     "backup:restore": "node scripts/backup-system.js restore",
     "restore-confirm": "node scripts/backup-system.js restore-confirm",
-    "backup:full": "node scripts/backup.js",
     "recovery": "node scripts/recovery-system.cjs",
     "recovery:save": "node scripts/recovery-system.cjs save",
     "recovery:restore": "node scripts/recovery-system.cjs restore",
