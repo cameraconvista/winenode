@@ -53,7 +53,7 @@ function App() {
               marginBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
               zIndex: 9999 // Sopra il modale WhatsApp
             },
-            duration: 2000
+            duration: 3000
           }}
         />
       </div>

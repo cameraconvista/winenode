@@ -186,8 +186,9 @@ export default function CreaOrdinePage() {
                         onClick={() => handleUnitChange(wine.id, 'bottiglie')}
                         className="px-3 py-1 text-xs font-medium transition-colors"
                         style={{
-                          background: (!currentItem || currentItem.unit === 'bottiglie') ? '#8b7355' : 'white',
-                          color: (!currentItem || currentItem.unit === 'bottiglie') ? '#fff9dc' : '#541111'
+                          background: (currentItem?.unit === 'bottiglie') ? '#8b7355' : 'white',
+                          color: (currentItem?.unit === 'bottiglie') ? '#fff9dc' : '#541111',
+                          border: (currentItem?.unit === 'bottiglie') ? '2px solid #d4a300' : '1px solid #e2d6aa'
                         }}
                       >
                         Bottiglie
@@ -196,8 +197,9 @@ export default function CreaOrdinePage() {
                         onClick={() => handleUnitChange(wine.id, 'cartoni')}
                         className="px-3 py-1 text-xs font-medium transition-colors"
                         style={{
-                          background: (currentItem?.unit === 'cartoni') ? '#8b7355' : 'white',
-                          color: (currentItem?.unit === 'cartoni') ? '#fff9dc' : '#541111'
+                          background: (!currentItem || currentItem.unit === 'cartoni') ? '#8b7355' : 'white',
+                          color: (!currentItem || currentItem.unit === 'cartoni') ? '#fff9dc' : '#541111',
+                          border: (!currentItem || currentItem.unit === 'cartoni') ? '2px solid #d4a300' : '1px solid #e2d6aa'
                         }}
                       >
                         Cartoni
