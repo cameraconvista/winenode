@@ -43,13 +43,15 @@ function App() {
         
         {/* Toast notifications */}
         <Toaster 
-          position="top-center"
+          position="bottom-center"
           toastOptions={{
             style: {
               background: '#fff9dc',
               color: '#541111',
               border: '1px solid #e2d6aa',
-              fontSize: '14px'
+              fontSize: '14px',
+              marginBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
+              zIndex: 9999 // Sopra il modale WhatsApp
             },
             duration: 2000
           }}
