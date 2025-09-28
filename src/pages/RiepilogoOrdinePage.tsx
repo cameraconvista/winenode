@@ -118,13 +118,12 @@ export default function RiepilogoOrdinePage() {
         >
         {/* HEADER STICKY INTERNO */}
         <div 
-          className="sticky top-0 z-40 border-b mb-6"
+          className="sticky top-0 z-50 border-b"
           style={{ 
             background: 'var(--bg)', 
             borderColor: '#e2d6aa',
-            paddingTop: '8px',
-            paddingBottom: '20px',
-            marginTop: '-8px',
+            paddingTop: '16px',
+            paddingBottom: '16px',
             marginLeft: '-16px',
             marginRight: '-16px',
             paddingLeft: '16px',
@@ -147,8 +146,9 @@ export default function RiepilogoOrdinePage() {
             Dettaglio Ordine:
           </h3>
         </div>
+        
         {/* Lista Ordini */}
-        <div className="mb-6">
+        <div className="mb-6" style={{ paddingTop: '16px' }}>
           
           {ordineDetails.length === 0 ? (
             <div 
