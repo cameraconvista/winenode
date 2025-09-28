@@ -67,7 +67,7 @@ export default function HomePage() {
     closeCarrelloModal,
     handleNuovoOrdine,
     handleGestisciOrdini
-  } = useCarrelloOrdini();
+  } = useCarrelloOrdini({ onNuovoOrdine: openNuovoOrdineModal });
 
   // Hook per gestire il PIN gate degli ordini
   const {

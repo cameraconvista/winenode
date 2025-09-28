@@ -112,7 +112,7 @@ export default function OrdersPinModal({
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="text-center mb-6">
           <h2 
             id="pin-modal-title"
             className="text-xl font-bold"
@@ -120,15 +120,6 @@ export default function OrdersPinModal({
           >
             Accesso Ordini
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 rounded-full transition-colors hover:bg-opacity-20 hover:bg-white touch-manipulation"
-            style={{ minHeight: '44px', minWidth: '44px' }}
-            aria-label="Chiudi"
-          >
-            <X size={24} style={{ color: '#fff9dc' }} />
-          </button>
         </div>
 
         {/* PIN Display */}
@@ -137,19 +128,21 @@ export default function OrdersPinModal({
             <p className="text-base mb-4" style={{ color: '#fff9dc', fontSize: '16px' }}>
               Inserisci il PIN per accedere agli ordini
             </p>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-2">
               {[0, 1, 2, 3].map((index) => (
                 <div
                   key={index}
-                  className={`w-5 h-5 rounded-full border-2 transition-all duration-200 ${
-                    showError ? 'animate-pulse' : ''
+                  className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center font-mono text-lg font-bold transition-all duration-200 ${
+                    showError ? 'pin-error-shake' : ''
                   }`}
                   style={{
-                    backgroundColor: index < pinBuffer.length ? '#fff9dc' : 'transparent',
-                    borderColor: '#fff9dc',
-                    transform: showError ? 'scale(1.1)' : 'scale(1)'
+                    backgroundColor: '#fff9dc',
+                    borderColor: 'rgba(84, 17, 17, 0.4)',
+                    color: '#541111'
                   }}
-                />
+                >
+                  {pinBuffer[index] || ''}
+                </div>
               ))}
             </div>
           </div>
@@ -183,11 +176,22 @@ export default function OrdersPinModal({
           canSubmit={pinBuffer.length === 4}
         />
 
-        {/* Info */}
+        {/* Pulsante ESC */}
         <div className="mt-6 text-center">
-          <p className="text-sm opacity-70" style={{ color: '#fff9dc', fontSize: '14px' }}>
-            Premi ESC o clicca fuori per chiudere
-          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-2 rounded-lg border-2 font-medium transition-all duration-200 hover:bg-opacity-10 hover:bg-white touch-manipulation"
+            style={{
+              backgroundColor: 'transparent',
+              color: '#fff9dc',
+              borderColor: 'rgba(255, 249, 220, 0.4)',
+              minHeight: '44px'
+            }}
+            aria-label="Chiudi"
+          >
+            ESC
+          </button>
         </div>
       </div>
     </div>

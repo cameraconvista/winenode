@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Plus, Settings } from 'lucide-react';
+import PhosphorCart from '~icons/ph/shopping-cart-light';
 
 interface CarrelloOrdiniModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export default function CarrelloOrdiniModal({
         {/* Header */}
         <div className="flex items-center justify-between p-4 md:p-6">
           <div className="flex items-center gap-3">
-            <div className="text-2xl">🛒</div>
+            <PhosphorCart className="w-6 h-6" style={{ color: '#fff9dc' }} aria-hidden="true" />
             <h2 className="text-lg md:text-xl font-bold" style={{ color: '#fff9dc' }}>
               Carrello Ordini
             </h2>
