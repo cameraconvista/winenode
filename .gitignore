@@ -11,3 +11,12 @@ dist/
 .replit
 replit.nix
 attached_assets/
+
+# ---- winenode foundation (rt004) ----
+# Backups & recovery
+Backup_Automatico/*.tar
+*.tar.gz
+.recovery/snapshots/*
+# Coverage & test output
+coverage/
+.nyc_output/
