@@ -104,35 +104,6 @@ export default function RiepilogoOrdinePage() {
         </div>
       </header>
 
-      {/* HEADER STICKY */}
-      <div 
-        className="sticky top-0 z-40 bg-white border-b"
-        style={{ 
-          background: '#fff9dc', 
-          borderColor: '#e2d6aa',
-          paddingTop: 'calc(var(--safe-top) + 60pt)',
-          paddingBottom: '16px',
-          paddingLeft: '16px',
-          paddingRight: '16px'
-        }}
-      >
-        {/* Riepilogo Header */}
-        <div className="text-center mb-4">
-          <div className="text-center mb-2">
-            <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
-              Riepilogo Ordine
-            </h2>
-          </div>
-          <p className="text-base" style={{ color: '#7a4a30' }}>
-            Fornitore: {decodeURIComponent(supplier || '')}
-          </p>
-        </div>
-
-        <h3 className="text-lg font-semibold" style={{ color: '#541111' }}>
-          Dettaglio Ordine:
-        </h3>
-      </div>
-
       {/* CONTENT SCROLLABILE */}
       <main className="mobile-content">
         <div className="wine-list-container"
@@ -142,10 +113,39 @@ export default function RiepilogoOrdinePage() {
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'none',
             touchAction: 'pan-y',
-            scrollBehavior: 'smooth',
-            paddingTop: '16px'
+            scrollBehavior: 'smooth'
           }}
         >
+        {/* HEADER STICKY INTERNO */}
+        <div 
+          className="sticky top-0 z-40 border-b mb-6"
+          style={{ 
+            background: 'var(--bg)', 
+            borderColor: '#e2d6aa',
+            paddingTop: '16px',
+            paddingBottom: '16px',
+            marginLeft: '-16px',
+            marginRight: '-16px',
+            paddingLeft: '16px',
+            paddingRight: '16px'
+          }}
+        >
+          {/* Riepilogo Header */}
+          <div className="text-center mb-4">
+            <div className="text-center mb-2">
+              <h2 className="text-xl font-bold" style={{ color: '#541111' }}>
+                Riepilogo Ordine
+              </h2>
+            </div>
+            <p className="text-base" style={{ color: '#7a4a30' }}>
+              Fornitore: {decodeURIComponent(supplier || '')}
+            </p>
+          </div>
+
+          <h3 className="text-lg font-semibold" style={{ color: '#541111' }}>
+            Dettaglio Ordine:
+          </h3>
+        </div>
         {/* Lista Ordini */}
         <div className="mb-6">
           
