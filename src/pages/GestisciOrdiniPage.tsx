@@ -6,6 +6,7 @@ import OrdineRicevutoCard from '../components/orders/OrdineRicevutoCard';
 import ConfermaEliminazioneModal from '../components/modals/ConfermaEliminazioneModal';
 import WhatsAppOrderModal from '../components/modals/WhatsAppOrderModal';
 import { ORDINI_LABELS } from '../constants/ordiniLabels';
+import { formatDateIt } from '../utils/formatDate';
 import { isFeatureEnabled } from '../config/featureFlags';
 import QuantityPicker from '../components/QuantityPicker';
 import GestisciOrdiniInventoryModal from '../components/GestisciOrdiniInventoryModal';
@@ -677,7 +678,7 @@ export default function GestisciOrdiniPage() {
                   <div className="grid grid-cols-2 gap-4 mb-3 text-xs" style={{ color: '#7a4a30' }}>
                     <div>
                       <span className="block font-medium">{ORDINI_LABELS.dettagli.ordinato}</span>
-                      <span className="font-bold">{ordine.data}</span>
+                      <span className="font-bold">{formatDateIt(ordine.data)}</span>
                     </div>
                     <div>
                       <span className="block font-medium">{ORDINI_LABELS.dettagli.totale}</span>

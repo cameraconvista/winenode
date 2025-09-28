@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, AlertTriangle } from 'lucide-react';
+import { formatDateIt } from '../../utils/formatDate';
 
 interface ConfermaEliminazioneModalProps {
   isOpen: boolean;
@@ -81,7 +82,7 @@ export default function ConfermaEliminazioneModal({
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Data:</span>
-                  <span>{dettagliOrdine.data}</span>
+                  <span>{formatDateIt(dettagliOrdine.data)}</span>
                 </div>
               </div>
             </div>

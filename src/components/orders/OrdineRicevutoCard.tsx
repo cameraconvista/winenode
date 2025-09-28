@@ -2,6 +2,7 @@ import React, { useState, memo } from 'react';
 import { Eye, Check, Trash2, Plus, Minus } from 'lucide-react';
 import { Ordine, OrdineDettaglio } from '../../contexts/OrdiniContext';
 import { ORDINI_LABELS } from '../../constants/ordiniLabels';
+import { formatDateIt } from '../../utils/formatDate';
 import { isFeatureEnabled } from '../../config/featureFlags';
 
 interface OrdineRicevutoCardProps {
@@ -88,7 +89,7 @@ const OrdineRicevutoCard = memo(function OrdineRicevutoCard({
       <div className="grid grid-cols-2 gap-4 mb-3 text-xs" style={{ color: '#7a4a30' }}>
         <div>
           <span className="block font-medium">{ORDINI_LABELS.dettagli.ordinato}</span>
-          <span className="font-bold">{ordine.data}</span>
+          <span className="font-bold">{formatDateIt(ordine.data)}</span>
         </div>
         <div>
           <span className="block font-medium">{ORDINI_LABELS.dettagli.totale}</span>

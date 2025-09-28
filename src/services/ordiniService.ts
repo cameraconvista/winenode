@@ -55,10 +55,10 @@ class CacheManager {
 // Cache globale per il service
 const cache = new CacheManager();
 
-// Configurazione schema ordini (da DOCS/04-SUPABASE_SCHEMA.md)
-const FORNITORE_UUID_COL = 'fornitore'; // UUID REFERENCES fornitori(id)
-const DATA_COL = 'data'; // TIMESTAMP WITH TIME ZONE
-const DATA_COLUMN_TYPE: 'date' | 'timestamp' = 'timestamp';
+// Schema ordini (da DOCS/04-SUPABASE_SCHEMA.md)
+const FORNITORE_UUID_COL = 'fornitore';
+const DATA_COL = 'data';
+const DATA_COLUMN_TYPE = 'timestamp';
 
 // Tipi locali per evitare dipendenze circolari
 export interface OrdineDettaglio {
@@ -122,7 +122,7 @@ export const ordiniService = {
         .order('created_at', { ascending: false });
 
       if (!error && data) {
-        console.log('✅ Join con fornitori riuscito');
+        // Join con fornitori riuscito
         ordiniData = data.map(ordine => ({
           ...ordine,
           fornitoreNome: (ordine as any).fornitori?.nome || 'Fornitore sconosciuto'
@@ -131,7 +131,7 @@ export const ordiniService = {
         throw new Error('Join fallito, uso fallback');
       }
     } catch (joinError) {
-      console.log('⚠️ Join fallito, uso strategia fallback two-step');
+      // Join fallito, uso strategia fallback two-step
       
       // TENTATIVO B: Fallback automatico (nessun FK richiesto)
       // 1) Fetch ordini "flat" (senza join)
@@ -174,7 +174,7 @@ export const ordiniService = {
         fornitoreNome: fornitoriMap.get(o[FORNITORE_UUID_COL]) || 'Fornitore sconosciuto'
       }));
 
-      console.log('✅ Fallback two-step completato');
+      // Fallback two-step completato
     }
 
     // Verifica di nuovo se richiesta è stata cancellata dopo query
@@ -242,7 +242,7 @@ export const ordiniService = {
       let normalizedDate: string;
       try {
         normalizedDate = normalizeToPgDate(ordine.data);
-        console.log('📅 Data normalizzata:', ordine.data, '→', normalizedDate);
+        // Data normalizzata per Postgres
       } catch (dateError) {
         console.error('❌ Data ordine non valida (atteso DD/MM/YYYY o YYYY-MM-DD):', ordine.data);
         throw new Error(`Data ordine non valida: ${ordine.data}`);
@@ -268,7 +268,7 @@ export const ordiniService = {
         }
 
         fornitoreId = fornitoreData.id;
-        console.log('✅ Fornitore risolto:', ordine.fornitore, '→', fornitoreId);
+        // Fornitore risolto da nome a UUID
       }
 
       // 3. Valida UUID fornitore
@@ -296,7 +296,7 @@ export const ordiniService = {
         contenuto: ordine.dettagli || [] // JSONB per dettagli
       };
 
-      console.log('🧾 ordini: payload keys', Object.keys(payloadSanitized));
+      // Payload pronto per insert
 
       const { data, error } = await supabase
         .from('ordini')
