@@ -1,20 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronDown } from 'lucide-react';
+import { getFornitoriNames } from '../../services/fornitori';
 
 interface NuovoOrdineModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  suppliers: string[];
   onAvanti: (selectedSupplier: string) => void;
 }
 
 export default function NuovoOrdineModal({ 
   isOpen, 
   onOpenChange, 
-  suppliers,
   onAvanti 
 }: NuovoOrdineModalProps) {
   const [selectedSupplier, setSelectedSupplier] = useState('');
+  const [suppliers, setSuppliers] = useState<string[]>([]);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(false);
+
+  // Carica fornitori dalla tabella public.fornitori
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const loadSuppliers = async () => {
+      setLoadingSuppliers(true);
+      try {
+        const fornitoriNames = await getFornitoriNames();
+        setSuppliers(fornitoriNames);
+      } catch (error) {
+        console.error('Errore caricamento fornitori:', error);
+        setSuppliers([]);
+      } finally {
+        setLoadingSuppliers(false);
+      }
+    };
+
+    loadSuppliers();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -63,16 +84,18 @@ export default function NuovoOrdineModal({
             <select
               value={selectedSupplier}
               onChange={(e) => setSelectedSupplier(e.target.value)}
+              disabled={loadingSuppliers}
               className="w-full p-3 md:p-4 rounded-lg border appearance-none bg-white text-sm md:text-base pr-10"
               style={{ 
                 borderColor: '#e2d6aa',
-                color: selectedSupplier ? '#541111' : '#9b9b9b'
+                color: selectedSupplier ? '#541111' : '#9b9b9b',
+                opacity: loadingSuppliers ? 0.6 : 1
               }}
             >
               <option value="" disabled>
-                Scegli un fornitore...
+                {loadingSuppliers ? 'Caricamento fornitori...' : 'Scegli un fornitore...'}
               </option>
-              {suppliers.map((supplier) => (
+              {!loadingSuppliers && suppliers.map((supplier) => (
                 <option key={supplier} value={supplier} style={{ color: '#541111' }}>
                   {supplier}
                 </option>

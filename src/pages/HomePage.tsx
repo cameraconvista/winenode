@@ -469,7 +469,6 @@ export default function HomePage() {
       <NuovoOrdineModal
         isOpen={isNuovoOrdineModalOpen}
         onOpenChange={closeNuovoOrdineModal}
-        suppliers={suppliers}
         onAvanti={handleAvanti}
       />
       
