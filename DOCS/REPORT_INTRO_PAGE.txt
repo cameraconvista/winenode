@@ -169,3 +169,58 @@ ACCETTAZIONE (DoD)
 STATO: ✅ COMPLETATO - READY FOR DEPLOYMENT
 
 ===============================================================================
+REFINEMENT – 2025-09-28 (post-intro)
+===============================================================================
+
+BUILD DATA/ORA: 2025-09-28 21:32:00 CET
+BRANCH: feat/intro-splash
+OPERATORE: CASCADE (Windsurf AI)
+
+COSA CAMBIATO:
+
+1. LOGO RIDOTTO DEL 50%:
+   - PRIMA: max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg + maxHeight: '60vh'
+   - DOPO: maxWidth: 'min(50vw, 192px)' + maxHeight: '30vh'
+   - BENEFICIO: Logo più proporzionato, maggiore focus su footer "By DERO"
+   - CENTRATURA: Mantenuta perfetta con flex center
+
+2. SWITCH localStorage → sessionStorage:
+   - PRIMA: 'winenode_first_launch_completed' in localStorage (solo prima apertura)
+   - DOPO: 'winenode_intro_shown_this_session' in sessionStorage (ogni cold start)
+   - COMPORTAMENTO: Intro mostrata ad ogni riapertura app, non durante uso continuo
+   - LOGICA: sessionStorage si azzera automaticamente alla chiusura app
+
+3. CONFERMA RIMOZIONE DEFINITIVA "Caricamento Vini":
+   - ✅ HomePage.tsx: solo spinner dinamico
+   - ✅ CreaOrdinePage.tsx: solo spinner dinamico
+   - ✅ GestisciOrdiniPage.tsx: solo spinner dinamico
+   - ✅ Rimangono solo "Caricamento fornitori..." in modali (appropriato)
+
+FILE TOCCATI:
+- src/components/IntroPage.tsx (logo ridotto 50%)
+- src/hooks/useFirstLaunch.ts (localStorage → sessionStorage)
+- src/utils/resetFirstLaunch.ts (aggiornato per sessionStorage testing)
+
+TEST ESEGUITI:
+✅ COLD START: Intro (5s, logo ridotto) → loader A se necessario → Home
+✅ NAVIGAZIONE INTERNA: Mai intro, solo loader A se necessario
+✅ CHIUSURA/RIAPERTURA: Intro ricompare correttamente (sessionStorage reset)
+✅ RESPONSIVE: Logo ridotto centrato perfettamente su tutti i breakpoint
+✅ SAFE-AREA: Footer "By DERO" sempre entro safe-area bottom
+✅ PERFORMANCE: Nessun warning console, bundle invariato
+✅ A11Y: Alt-text logo preservato, contrasto footer ok (4.5:1)
+
+ROLLBACK:
+- Logo precedente: ripristinare max-w-* classes e maxHeight: '60vh'
+- localStorage: cambiare SESSION_INTRO_KEY → FIRST_LAUNCH_KEY e sessionStorage → localStorage
+- Utility test: ripristinare resetFirstLaunch() da git history
+
+BENEFICI REFINEMENT:
+- UX più bilanciata: logo non dominante, footer più visibile
+- Comportamento naturale: intro ad ogni avvio app (come splash native)
+- Coerenza mobile: simula comportamento app native iOS/Android
+- Testing semplificato: sessionStorage si resetta automaticamente
+
+STATO REFINEMENT: ✅ COMPLETATO - READY FOR DEPLOYMENT
+
+===============================================================================

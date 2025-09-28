@@ -30,10 +30,11 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
         <img 
           src="/logo1.png" 
           alt="WineNode Logo" 
-          className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto object-contain"
+          className="w-full h-auto object-contain"
           style={{ 
             filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
-            maxHeight: '60vh'
+            maxWidth: 'min(50vw, 192px)',
+            maxHeight: '30vh'
           }}
         />
       </div>

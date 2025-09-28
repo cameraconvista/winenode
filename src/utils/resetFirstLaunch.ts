@@ -1,14 +1,14 @@
-// Utility per testare il reset del primo avvio
+// Utility per testare il reset dell'intro (cold start simulation)
 // Da usare solo in sviluppo per testare l'IntroPage
 
-export const resetFirstLaunch = () => {
+export const resetIntroSession = () => {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('winenode_first_launch_completed')
-    console.log('🔄 First launch reset - ricarica la pagina per vedere l\'intro')
+    sessionStorage.removeItem('winenode_intro_shown_this_session')
+    console.log('🔄 Intro session reset - ricarica la pagina per vedere l\'intro')
   }
 }
 
 // Esponi la funzione globalmente in development
 if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-  (window as any).resetFirstLaunch = resetFirstLaunch
+  (window as any).resetIntroSession = resetIntroSession
 }

@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react'
 
-const FIRST_LAUNCH_KEY = 'winenode_first_launch_completed'
+const SESSION_INTRO_KEY = 'winenode_intro_shown_this_session'
 
 export const useFirstLaunch = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    // Controlla se l'utente ha già visto l'intro
-    const hasSeenIntro = localStorage.getItem(FIRST_LAUNCH_KEY)
-    setIsFirstLaunch(!hasSeenIntro)
+    // Controlla se l'intro è già stata mostrata in questa sessione
+    const hasSeenIntroThisSession = sessionStorage.getItem(SESSION_INTRO_KEY)
+    setIsFirstLaunch(!hasSeenIntroThisSession)
     setIsLoading(false)
   }, [])
 
   const markIntroCompleted = () => {
-    localStorage.setItem(FIRST_LAUNCH_KEY, 'true')
+    sessionStorage.setItem(SESSION_INTRO_KEY, 'true')
     setIsFirstLaunch(false)
   }
 
