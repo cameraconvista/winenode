@@ -331,7 +331,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     {wine.inventory <= wine.minStock && (
-                      <span className="alert-icon flex-shrink-0"></span>
+                      <PhosphorBell className="alert-icon flex-shrink-0" aria-hidden="true" />
                     )}
                     <div className="flex items-center flex-shrink-0 ml-auto">
                       <span 
