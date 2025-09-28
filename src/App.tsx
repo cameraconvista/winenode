@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import { OrdiniProvider } from './contexts/OrdiniContext'
 
 // Lazy loading per ottimizzare le prestazioni
@@ -39,6 +40,20 @@ function App() {
           <Route path="/orders/manage" element={<GestisciOrdiniPage />} />
           </Routes>
         </Suspense>
+        
+        {/* Toast notifications */}
+        <Toaster 
+          position="top-center"
+          toastOptions={{
+            style: {
+              background: '#fff9dc',
+              color: '#541111',
+              border: '1px solid #e2d6aa',
+              fontSize: '14px'
+            },
+            duration: 2000
+          }}
+        />
       </div>
     </OrdiniProvider>
   )

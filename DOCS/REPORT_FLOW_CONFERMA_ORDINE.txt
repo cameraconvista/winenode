@@ -1,0 +1,75 @@
+REPORT FLOW CONFERMA ORDINE - WineNode
+Data: 28/09/2025 16:26
+Versione: 1.1.0
+
+=== ANALISI TECNICA ATTUALE ===
+
+FILE COINVOLTI:
+1. src/pages/RiepilogoOrdinePage.tsx
+   - Handler attuale: handleConferma() → apre direttamente modale WhatsApp
+   - Handler separato: handleConfirmOrder() → salva ordine + naviga
+   - Stato: isWhatsAppModalOpen per controllo modale
+
+2. src/contexts/OrdiniContext.tsx
+   - Funzione: aggiungiOrdine(ordine: Omit<Ordine, 'id'>) → Promise<void>
+   - Tipo: ASINCRONA (await supabaseOrdini.salvaOrdine)
+   - Stato: aggiorna ordiniInviati con nuovo ordine
+   - Error handling: console.error se salvataggio fallisce
+
+3. src/components/modals/WhatsAppOrderModal.tsx
+   - Già implementato e funzionante
+   - Props: isOpen, onClose, orderDetails, supplierName
+
+4. src/utils/buildWhatsAppMessage.ts
+   - Utility già implementata per generazione messaggio
+   - Esclude prezzi automaticamente
+
+SISTEMA TOAST ESISTENTE:
+- Libreria: "sonner" (import { toast } from "sonner")
+- Già usato in ManualWineInsertPage.tsx
+- Metodi: toast.success(), toast.error(), toast.warning()
+- Z-index: var(--z-toast): 9999 (definito in tokens.css)
+
+=== FLUSSO ATTUALE (PROBLEMATICO) ===
+1. Click "Conferma Ordine" → handleConferma()
+2. Apre direttamente modale WhatsApp (NO salvataggio)
+3. Esiste handleConfirmOrder() separato ma NON usato dal pulsante
+
+=== FLUSSO RICHIESTO (NUOVO) ===
+1. Click "Conferma Ordine" → handleConferma() MODIFICATO
+2. Disabilita pulsante (loading state)
+3. await aggiungiOrdine() → salva in Supabase + aggiorna context
+4. Se successo: toast.success("Ordine confermato") + apri modale WhatsApp
+5. Se errore: toast.error("Errore durante la conferma. Riprova") + riabilita pulsante
+6. Riabilita pulsante quando modale chiuso
+
+=== AZIONE SALVATAGGIO ===
+- Funzione: aggiungiOrdine() da useOrdini()
+- Tipo: Promise<void> (asincrona)
+- Input: Omit<Ordine, 'id'> (ordine senza ID)
+- Output: void (ID generato internamente)
+- Stato: aggiorna ordiniInviati nel context
+- Persistenza: Supabase via supabaseOrdini.salvaOrdine()
+
+=== STATO ORDINE ===
+- Lista: ordiniInviati (context globale)
+- Visibilità: "Gestisci Ordini" tab "Creati"
+- Stato iniziale: 'sospeso' (valido per DB)
+- Tipo: 'inviato' (per categorizzazione)
+
+=== IMPLEMENTAZIONE RICHIESTA ===
+1. Aggiungere stato loading per pulsante
+2. Modificare handleConferma() per sequenza atomica
+3. Importare toast da "sonner"
+4. Gestire error handling con toast
+5. Mantenere apertura modale WhatsApp post-successo
+6. Zero modifiche a layout/stili pulsanti
+
+=== DIPENDENZE ===
+- sonner: GIÀ PRESENTE (no nuove dipendenze)
+- WhatsAppOrderModal: GIÀ IMPLEMENTATO
+- buildWhatsAppMessage: GIÀ IMPLEMENTATO
+- aggiungiOrdine: GIÀ IMPLEMENTATO
+
+CONCLUSIONE: Tutti i componenti necessari sono già presenti.
+Serve solo riorganizzare il flusso in handleConferma().

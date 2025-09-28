@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Check, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 import useWines from '../hooks/useWines';
 import { OrdineItem } from '../hooks/useCreaOrdine';
 import { useOrdini } from '../contexts/OrdiniContext';
@@ -23,8 +24,9 @@ export default function RiepilogoOrdinePage() {
   const ordineItems = state?.ordineItems || [];
   const totalBottiglie = state?.totalBottiglie || 0;
 
-  // Stato per modale WhatsApp
+  // Stati per modale WhatsApp e loading
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   // Calcola dettagli ordine
   const ordineDetails = ordineItems.map(item => {
@@ -57,47 +59,59 @@ export default function RiepilogoOrdinePage() {
     navigate(-1);
   };
 
-  const handleConferma = () => {
-    // Apri modale WhatsApp invece di confermare direttamente
-    setIsWhatsAppModalOpen(true);
+  const handleConferma = async () => {
+    if (isConfirming) return; // Previeni doppio click
+    
+    setIsConfirming(true);
+    
+    try {
+      const fornitore = decodeURIComponent(supplier || '');
+      
+      console.log('🚀 Confermando ordine:', {
+        fornitore,
+        ordineItems,
+        totalBottiglie,
+        totalOrdine
+      });
+
+      // Crea nuovo ordine
+      const nuovoOrdine = {
+        fornitore,
+        totale: totalOrdine,
+        bottiglie: totalBottiglie,
+        data: new Date().toLocaleDateString('it-IT'),
+        stato: 'sospeso' as const, // Stato valido per database: 'sospeso','inviato','ricevuto','archiviato'
+        tipo: 'inviato' as const,
+        dettagli: ordineDetails.map(detail => ({
+          wineId: detail.wineId,
+          wineName: detail.wine?.name || 'Vino sconosciuto',
+          quantity: detail.quantity,
+          unit: detail.unit,
+          unitPrice: detail.unitPrice,
+          totalPrice: detail.totalPrice
+        }))
+      };
+
+      // Salva ordine (operazione asincrona)
+      await aggiungiOrdine(nuovoOrdine);
+      
+      // Mostra toast di conferma
+      toast.success("Ordine confermato");
+      
+      // Apri modale WhatsApp dopo successo
+      setIsWhatsAppModalOpen(true);
+      
+    } catch (error) {
+      console.error('❌ Errore durante la conferma ordine:', error);
+      toast.error("Errore durante la conferma. Riprova");
+    } finally {
+      setIsConfirming(false);
+    }
   };
 
   const handleWhatsAppModalClose = () => {
     setIsWhatsAppModalOpen(false);
-  };
-
-  const handleConfirmOrder = () => {
-    const fornitore = decodeURIComponent(supplier || '');
-    
-    console.log('🚀 Confermando ordine:', {
-      fornitore,
-      ordineItems,
-      totalBottiglie,
-      totalOrdine
-    });
-
-    // Crea nuovo ordine
-    const nuovoOrdine = {
-      fornitore,
-      totale: totalOrdine,
-      bottiglie: totalBottiglie,
-      data: new Date().toLocaleDateString('it-IT'),
-      stato: 'sospeso' as const, // Stato valido per database: 'sospeso','inviato','ricevuto','archiviato'
-      tipo: 'inviato' as const,
-      dettagli: ordineDetails.map(detail => ({
-        wineId: detail.wineId,
-        wineName: detail.wine?.name || 'Vino sconosciuto',
-        quantity: detail.quantity,
-        unit: detail.unit,
-        unitPrice: detail.unitPrice,
-        totalPrice: detail.totalPrice
-      }))
-    };
-
-    // Aggiungi ordine agli inviati
-    aggiungiOrdine(nuovoOrdine);
-
-    // Naviga alla pagina Gestisci Ordini tab Inviati
+    // Naviga alla pagina Gestisci Ordini tab Creati dopo chiusura modale
     navigate('/orders/manage?tab=inviati');
   };
 
@@ -277,20 +291,21 @@ export default function RiepilogoOrdinePage() {
           </button>
           <button
             onClick={handleConferma}
-            disabled={ordineDetails.length === 0}
+            disabled={ordineDetails.length === 0 || isConfirming}
             className="px-6 py-3 rounded-lg font-medium transition-colors"
             style={{ 
-              background: ordineDetails.length > 0 ? '#16a34a' : '#d1c7b8',
+              background: (ordineDetails.length > 0 && !isConfirming) ? '#16a34a' : '#d1c7b8',
               color: '#fff9dc',
               minHeight: '44px',
               minWidth: '120px',
               flex: '1',
               touchAction: 'manipulation',
               WebkitTapHighlightColor: 'transparent',
-              fontSize: window.innerWidth <= 767 ? '13px' : '16px'
+              fontSize: window.innerWidth <= 767 ? '13px' : '16px',
+              opacity: isConfirming ? 0.7 : 1
             }}
           >
-            Conferma Ordine
+            {isConfirming ? 'Confermando...' : 'Conferma Ordine'}
           </button>
         </div>
       </footer>

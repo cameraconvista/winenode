@@ -218,10 +218,61 @@ TEST COMPLETATI:
 ✅ Layout responsive mantenuto
 ✅ Nessuna interferenza con pulsanti Gestisci/Elimina
 
+=== FLOW UPDATE: CONFERMA ORDINE → TOAST → MODALE WHATSAPP ===
+DATA: 28/09/2025 16:30
+OBIETTIVO: Nuovo flow atomico per conferma ordine con salvataggio, toast e apertura modale
+
+FLUSSO PRECEDENTE (PROBLEMATICO):
+- Click "Conferma Ordine" → Apre direttamente modale WhatsApp
+- Nessun salvataggio automatico dell'ordine
+- Utente doveva gestire manualmente il salvataggio
+
+FLUSSO NUOVO (ATOMICO):
+1. Click "Conferma Ordine" → Disabilita pulsante (anti-doppio click)
+2. await aggiungiOrdine() → Salva ordine in Supabase + aggiorna context
+3. toast.success("Ordine confermato") → Feedback immediato (2s)
+4. Apre modale WhatsApp con preview messaggio
+5. Chiusura modale → Naviga a "Gestisci Ordini" tab "Creati"
+
+IMPLEMENTAZIONE TECNICA:
+✅ Import toast da "sonner" in RiepilogoOrdinePage.tsx
+✅ Aggiunto stato isConfirming per loading button
+✅ Modificato handleConferma() per sequenza asincrona
+✅ Error handling con toast.error() se salvataggio fallisce
+✅ Configurato Toaster in App.tsx con tema light coerente
+✅ Navigazione automatica a /orders/manage?tab=inviati
+
+COMPONENTI MODIFICATI:
+- src/pages/RiepilogoOrdinePage.tsx: Nuovo flow conferma atomico
+- src/App.tsx: Aggiunto Toaster sonner con stili tema light
+
+STATI PULSANTE:
+- Normale: "Conferma Ordine" (verde #16a34a)
+- Loading: "Confermando..." (grigio #d1c7b8, opacity 0.7)
+- Disabilitato: Se ordine vuoto o durante conferma
+
+TOAST STYLING:
+- Position: top-center
+- Background: #fff9dc (tema light)
+- Color: #541111 (testo brand)
+- Border: #e2d6aa (coerente)
+- Duration: 2000ms (2 secondi)
+
+GESTIONE ERRORI:
+- Successo: toast.success() + apertura modale
+- Errore: toast.error() + pulsante riabilitato + NO modale
+- Idempotenza: Previene doppio click durante conferma
+
+NAVIGAZIONE:
+- Chiusura modale (qualsiasi modo) → /orders/manage?tab=inviati
+- Ordine visibile immediatamente in "Gestisci Ordini" tab "Creati"
+- UX fluida: conferma → messaggio → gestione ordini
+
 === STATUS FINALE ===
 ✅ IMPLEMENTAZIONE COMPLETA
 ✅ BUGFIX HOOK ORDER RISOLTO
 ✅ FEATURE EXTENSION GESTISCI ORDINI COMPLETATA
+✅ FLOW UPDATE CONFERMA ORDINE COMPLETATO
 ✅ ZERO REGRESSIONI LAYOUT
 ✅ FUNZIONALITÀ TESTATA E OPERATIVA
 ✅ DOCUMENTAZIONE AGGIORNATA

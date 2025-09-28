@@ -3,7 +3,8 @@
 /* Container principale - ZERO transform problematici */
 .homepage-container {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height per iOS Safari */
+  height: 100vh; /* Fallback per browser non supportati */
   overflow: hidden;
   position: relative;
   background: var(--bg);
@@ -227,11 +228,11 @@
   gap: var(--nav-icon-gap, 8pt);
   
   /* Offset verticale per spostare icone verso basso del 25% */
-  transform: translateY(var(--nav-icon-vert-offset, 25%));
+  transform: translateY(var(--nav-icon-vert-offset, 6pt));
   
   /* Variabili locali per controllo granulare */
   --nav-icon-gap: 8pt;
-  --nav-icon-vert-offset: 25%; /* Sposta icone verso basso del 25% del container */
+  --nav-icon-vert-offset: 6pt; /* Sposta icone verso basso di 6pt (circa 25% di 24pt) */
   --nav-safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
 }
 

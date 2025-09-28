@@ -90,6 +90,13 @@ export const FEATURE_FLAGS = {
     enabled: true,
     description: "Abilita dialog conferma archiviazione dopo modifica quantità con flusso completo",
     rollbackInstructions: "Impostare enabled: false per disabilitare dialog archiviazione"
+  },
+
+  // Mobile Safe Areas & Navbar Fix
+  MOBILE_SAFE_AREAS: {
+    enabled: true,
+    description: "Abilita fix mobile per safe-areas, navbar offset icone e viewport dinamico",
+    rollbackInstructions: "Impostare enabled: false per ripristinare layout mobile precedente"
   }
 } as const;
 

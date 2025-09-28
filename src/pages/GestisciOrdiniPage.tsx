@@ -482,7 +482,7 @@ export default function GestisciOrdiniPage() {
   return (
     <div className="homepage-container" style={{ 
       width: '100vw',
-      height: '100vh',
+      height: '100dvh', /* Dynamic viewport height per iOS Safari */
       maxWidth: '100%',
       overflow: 'hidden',
       position: 'relative',

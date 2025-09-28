@@ -1,5 +1,5 @@
 REPORT DIAGNOSI MOBILE SAFE AREAS - WineNode
-Data: 28/09/2025 15:28
+Data: 28/09/2025 16:17 (AGGIORNATO)
 Versione: 1.1.0
 
 === 1. VIEWPORT & UNITS ===
@@ -122,3 +122,77 @@ OTTIMIZZAZIONE:
 - Lista padding-bottom: navbar-height + safe-area-bottom
 - Header sticky top: safe-area-top + design-offset
 - Viewport: min(100svh, 100dvh) dove applicabile
+
+=== ANALISI DETTAGLIATA CODICE ATTUALE ===
+
+NAVBAR STRUCTURE (mobile-standard.css):
+- Container: .mobile-navbar (fixed bottom, z-index navbar)
+- Icone: .nav-icons-group con transform: translateY(25%) GIÀ IMPLEMENTATO
+- Variables: --nav-icon-vert-offset: 25% PRESENTE
+- "Tutti": .btn-tutti separato, margin-left: auto
+- STATO: Offset icone già presente nel CSS ma potrebbe non essere applicato
+
+SAFE-AREA VARIABLES (tokens.css):
+- --safe-top: env(safe-area-inset-top, 0px) ✅
+- --safe-bottom: env(safe-area-inset-bottom, 0px) ✅  
+- --safe-left: env(safe-area-inset-left, 0px) ✅
+- --safe-right: env(safe-area-inset-right, 0px) ✅
+
+GESTISCI ORDINI (gestisci-ordini-mobile.css):
+- Container: height: 100dvh (CORRETTO, usa dynamic viewport)
+- Header: padding-top: max(var(--safe-top), 0px) + 16px
+- Content: padding-bottom: max(var(--safe-bottom), 0px) + 16px
+- STATO: Safe-area implementata correttamente
+
+HOMEPAGE CONTAINER:
+- Height: 100vh (PROBLEMA: dovrebbe essere 100dvh)
+- Content padding: calc(var(--safe-top) + 60pt) top
+- Content padding: calc(var(--safe-bottom) + 60pt) bottom
+- STATO: Safe-area implementata ma usa 100vh problematico
+
+=== DIAGNOSI FINALE ===
+Il problema principale sembra essere:
+1. HomePage usa 100vh invece di 100dvh
+2. L'offset icone navbar potrebbe non essere applicato correttamente
+3. Possibili conflitti CSS che sovrascrivono le regole
+
+AZIONI RICHIESTE:
+1. Verificare applicazione transform: translateY(25%) su .nav-icons-group
+2. Sostituire 100vh con 100dvh in HomePage
+3. Verificare z-index e specificità CSS per navbar
+
+=== FIX IMPLEMENTATI ===
+Data: 28/09/2025 16:25
+
+1. **NAVBAR ICONE OFFSET**:
+   ✅ Modificato --nav-icon-vert-offset da 25% a 6pt (più preciso)
+   ✅ Transform translateY(6pt) applicato a .nav-icons-group
+   ✅ Icone ora spostate verso basso di 6pt nel container
+
+2. **VIEWPORT DINAMICO**:
+   ✅ Homepage: height: 100dvh con fallback 100vh
+   ✅ GestisciOrdiniPage: height: 100dvh inline style
+   ✅ Fix per iOS Safari barra URL dinamica
+
+3. **FEATURE FLAG**:
+   ✅ Aggiunto MOBILE_SAFE_AREAS flag per controllo rollback
+   ✅ Enabled: true per attivazione immediata
+
+4. **SAFE-AREA ESISTENTI**:
+   ✅ Verificate variabili CSS --safe-top/bottom/left/right
+   ✅ Gestisci Ordini già usa padding dinamico corretto
+   ✅ Mobile-standard.css già implementa safe-area
+
+=== RISULTATI ATTESI ===
+- Icone navbar visivamente più in basso di 6pt
+- HomePage stabile su iOS Safari (no salti barra URL)
+- Header Gestisci Ordine sempre visibile
+- "Tutti" pill completamente invariata
+- Lente a destra campanella mantenuta
+
+=== ROLLBACK ===
+Per disattivare: MOBILE_SAFE_AREAS.enabled = false
+Files modificati:
+- src/styles/layout/mobile-standard.css (offset icone + viewport)
+- src/pages/GestisciOrdiniPage.tsx (viewport dvh)
+- src/config/featureFlags.ts (nuovo flag)
