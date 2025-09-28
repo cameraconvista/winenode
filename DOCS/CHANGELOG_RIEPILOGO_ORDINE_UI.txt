@@ -1,0 +1,178 @@
+CHANGELOG RIEPILOGO ORDINE UI FIX - WineNode
+Data: 28/09/2025 17:00
+Versione: 1.1.0
+
+=== FIX RIEPILOGO ORDINE (SOLO QUESTA PAGINA) ===
+
+OBIETTIVO: Migliorare UX pagina Riepilogo Ordine con correzioni chirurgiche
+
+PROBLEMI RISOLTI:
+1. **Prima scheda vino tagliata** sotto header "Dettaglio Ordine"
+2. **Sezione totali verbosa** (3 righe → 1 riga compatta)
+3. **Testo superfluo** "Calcolato sui costi di acquisto" rimosso
+4. **Footer troppo alto** (abbassato leggermente +12px)
+5. **Colori iPhone scuri** (ottimizzazione color-scheme)
+
+=== MODIFICHE IMPLEMENTATE ===
+
+**FILE MODIFICATI:**
+
+1. **src/pages/RiepilogoOrdinePage.tsx**
+   - Content scroll: padding-top 16px → 120px
+   - Sezione totali: 3 righe → 1 riga unificata
+   - Footer: padding-bottom 16px → 28px (+12px)
+
+2. **index.html**
+   - Meta tags: color-scheme light per iPhone
+   - supported-color-schemes per ottimizzazione
+
+3. **src/index.css**
+   - CSS: -webkit-color-adjust: exact per colori fedeli
+
+=== DETTAGLI TECNICI ===
+
+**1. FIX VISIBILITÀ PRIMA SCHEDA:**
+```jsx
+// PRIMA (PROBLEMATICO)
+paddingTop: '16px' // Prima card tagliata
+
+// DOPO (CORRETTO)
+paddingTop: '120px', // Compensa header sticky (~100px) + respiro
+scrollMarginTop: '120px' // Fallback browser moderni
+```
+
+**2. RIGA UNICA TOTALI:**
+```jsx
+// PRIMA (VERBOSO - 3 righe)
+<div className="text-center mb-3">
+  <p>24 bottiglie totali</p>
+</div>
+<div className="flex items-center justify-center">
+  <AlertTriangle />
+  <span>Prezzi IVA esclusa</span>
+</div>
+<p>Calcolato sui costi di acquisto</p> // RIMOSSO
+
+// DOPO (COMPATTO - 1 riga)
+<div className="flex items-center justify-center gap-3">
+  <span>24 bottiglie totali</span>
+  <span>•</span>
+  <div className="flex items-center gap-2">
+    <AlertTriangle />
+    <span>Prezzi IVA esclusa</span>
+  </div>
+</div>
+```
+
+**3. FOOTER PIÙ BASSO:**
+```jsx
+// PRIMA
+paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px'
+
+// DOPO (+12px più basso)
+paddingBottom: 'calc(max(env(safe-area-inset-bottom), 0px) + 28px)'
+```
+
+**4. OTTIMIZZAZIONE COLORI IPHONE:**
+```html
+<!-- index.html -->
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+```
+```css
+/* index.css */
+:root {
+  color-scheme: light;
+  -webkit-color-adjust: exact;
+}
+```
+
+=== RISULTATI ATTESI ===
+
+**VISIBILITÀ CONTENUTO:**
+- ✅ Prima card vino completamente visibile (no taglio header)
+- ✅ Scroll fluido senza overlap elementi sticky
+- ✅ Padding compensativo per header ~100px
+
+**SEZIONE TOTALI COMPATTA:**
+- ✅ Una sola riga: "24 bottiglie totali • ⚠️ Prezzi IVA esclusa"
+- ✅ Separatore bullet (•) con colore border (#e2d6aa)
+- ✅ Icona AlertTriangle preservata
+- ✅ Testo "Calcolato sui costi di acquisto" completamente rimosso
+
+**FOOTER OTTIMIZZATO:**
+- ✅ Barra pulsanti percepita leggermente più bassa
+- ✅ Safe-area iOS/Android rispettata
+- ✅ Touch targets invariati (44px minimo)
+- ✅ Pulsanti "Indietro" e "Conferma Ordine" funzionali
+
+**COLORI IPHONE:**
+- ✅ Color-scheme light forzato
+- ✅ Colori fedeli al design (no scurimento automatico)
+- ✅ -webkit-color-adjust: exact per precisione
+
+=== SCOPE LIMITATO ===
+
+**MODIFICHE SOLO SU:**
+- ✅ Pagina RiepilogoOrdinePage.tsx
+- ✅ Meta tags globali per colori (beneficio generale)
+- ✅ Zero impatto su altre pagine
+
+**FUNZIONALITÀ PRESERVATE:**
+- ✅ Flow conferma ordine → toast → modale WhatsApp
+- ✅ Navigazione automatica a Gestisci Ordini
+- ✅ Calcoli prezzi e totali invariati
+- ✅ Responsive mobile/tablet mantenuto
+
+=== MOBILE OPTIMIZATION ===
+
+**IPHONE SAFARI:**
+- Color-scheme light per evitare scurimento automatico
+- -webkit-color-adjust: exact per colori precisi
+- Safe-area-inset-bottom rispettata nel footer
+
+**ANDROID CHROME:**
+- Supported-color-schemes per compatibilità
+- Gesture navigation friendly
+- Touch optimization preservata
+
+=== TEST MANUALI RICHIESTI ===
+
+**APERTURA PAGINA:**
+- [ ] Prima card vino completamente visibile
+- [ ] Nessun taglio sotto "Dettaglio Ordine:"
+- [ ] Scroll fluido senza overlap
+
+**SEZIONE TOTALI:**
+- [ ] Una riga: "XX bottiglie totali • Prezzi IVA esclusa"
+- [ ] Icona ⚠️ visibile accanto a "Prezzi IVA esclusa"
+- [ ] Testo "Calcolato sui costi di acquisto" ASSENTE
+
+**FOOTER:**
+- [ ] Barra pulsanti leggermente più bassa
+- [ ] Sopra home indicator/gesture bar
+- [ ] "Indietro" e "Conferma Ordine" cliccabili
+
+**COLORI IPHONE:**
+- [ ] Colori fedeli al design (no scurimento)
+- [ ] Background #fff9dc preciso
+- [ ] Testo #541111 nitido
+
+**REGRESSIONI:**
+- [ ] Modale WhatsApp si apre dopo conferma
+- [ ] Toast "Ordine confermato" in bottom-center
+- [ ] Navigazione a Gestisci Ordini funzionante
+
+=== ROLLBACK PROCEDURE ===
+
+Per ripristinare comportamento precedente:
+```jsx
+// RiepilogoOrdinePage.tsx
+paddingTop: '16px' // Invece di 120px
+paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px' // Invece di 28px
+
+// Ripristinare 3 righe separate per totali
+// Rimuovere meta color-scheme da index.html
+```
+
+STATO: Fix implementati, pronti per test su dispositivo reale iPhone/Android

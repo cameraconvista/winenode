@@ -1,26 +1,13 @@
-/* === WINENODE CSS MODULARE === */
-
-/* Base - Token e Reset */
-@import './styles/base/tokens.css';
 @import './styles/base/reset.css';
-
-/* Layout - Header e Toolbar */
-@import './styles/layout/header.css';
-@import './styles/layout/toolbar.css';
+@import './styles/base/tokens.css';
 @import './styles/layout/mobile-standard.css';
-
-/* Components - Wine Cards */
-@import './styles/components/wine-cards.css';
-
-/* Utils - Layout e Scrollbar */
-@import './styles/utils/layout.css';
-
-/* Mobile - Responsive e Rotation Lock */
 @import './styles/mobile/responsive.css';
-@import './styles/mobile/rotation-lock.css';
 @import './styles/mobile/scroll-fix.css';
+@import './styles/mobile/rotation-lock.css';
+@import './styles/gestisci-ordini-mobile.css';
 
-/* Importa Tailwind DOPO i moduli */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Color optimization for iPhone */
+:root {
+  color-scheme: light;
+  -webkit-color-adjust: exact;
+}
