@@ -202,6 +202,21 @@ npm ci && npm run build
 
 **Sicurezza:** Gli snapshot non contengono file `.env` o segreti. Le credenziali sono gestite via GitHub Secrets per CI/CD.
 
+### WhatsApp (futuro ripristino)
+Funzionalità di condivisione ordini via WhatsApp attualmente disattivata:
+
+**Documentazione:**
+- 📋 [DOCS/PLAYBOOK_RIPRISTINO_WHATSAPP.md](DOCS/PLAYBOOK_RIPRISTINO_WHATSAPP.md) - Guida completa per ripristino
+- 🔍 Audit completo archiviato in `DOCS/AUDIT/WA_2025_09_28/`
+
+**Controlli CI:**
+- **Soft Guard:** Rileva automaticamente pattern WhatsApp in CI (non bloccante)
+- **Hard Guard:** Setta `REQUIRE_WA_GUARD=fail` per bloccare CI se rileva WhatsApp
+
+**Feature Flag:**
+- `VITE_FEATURE_WHATSAPP=true|false` (default: false)
+- Pulsante WhatsApp visibile solo quando flag attivo
+
 ## 🎨 Design
 
 - Tema chiaro con palette #fff9dc
