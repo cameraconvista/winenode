@@ -2,6 +2,10 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { OrdiniProvider } from './contexts/OrdiniContext'
+import IntroPage from './components/IntroPage'
+import { useFirstLaunch } from './hooks/useFirstLaunch'
+// Import utility per testing in development
+import './utils/resetFirstLaunch'
 
 // Lazy loading per ottimizzare le prestazioni
 const HomePage = lazy(() => import('./pages/HomePage'))
@@ -18,6 +22,22 @@ const RiepilogoOrdinePage = lazy(() => import('./pages/RiepilogoOrdinePage'))
 const GestisciOrdiniPage = lazy(() => import('./pages/GestisciOrdiniPage'))
 
 function App() {
+  const { isFirstLaunch, isLoading, markIntroCompleted } = useFirstLaunch()
+
+  // Mostra l'IntroPage solo al primo avvio
+  if (isFirstLaunch && !isLoading) {
+    return <IntroPage onComplete={markIntroCompleted} />
+  }
+
+  // Loading state durante il controllo localStorage
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-app-bg">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
+      </div>
+    )
+  }
+
   return (
     <OrdiniProvider>
       <div className="min-h-screen bg-app-bg">
