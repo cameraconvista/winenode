@@ -103,45 +103,34 @@
   /* ZERO margin per eliminare completamente gap */
   margin: 0 !important;
   /* ASSICURA che ultima card sia sempre 100% visibile */
-  box-sizing: border-box;
 }
 
 /* === NAVBAR FISSA === */
 .mobile-navbar {
   position: fixed;
-  bottom: -8pt; /* SPOSTA NAVBAR PIÙ IN BASSO di 8pt */
+  bottom: var(--nav-bottom-offset, calc(env(safe-area-inset-bottom) + 4pt)); /* RIDOTTO ~20%: da 8pt a 4pt + safe-area */
   left: 0;
   right: 0;
   z-index: var(--z-navbar); /* Sopra header e content */
   background: var(--bg);
   /* RIMOZIONE ARTEFATTI: nessun bordo, gap, separatore */
   border: none !important;
-  border-top: none !important;
   box-shadow: none !important;
-  /* Misure standard: 56-64pt */
-  min-height: 56pt;
-  max-height: 64pt;
-  
-  /* Layout: gruppo icone a sinistra + pulsante "Tutti" a destra */
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  /* SAFE-AREA ADATTIVA: FaceID vs non-FaceID */
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt);
-  padding-top: 6pt;
-  padding-left: calc(12pt + env(safe-area-inset-left, 0px));
-  padding-right: calc(12pt + env(safe-area-inset-right, 0px));
-  gap: 6pt;
+  outline: none !important;
+  /* PADDING DINAMICO ADATTIVO per safe-area */
+  /* Top: 8pt spazio interno */
+  /* Bottom: 8pt spazio controllato (ridotto da 12pt) */
+  /* Left/Right: var(--safe-left/right) + 8pt spazio laterale */
+  padding: 8pt calc(env(safe-area-inset-left) + 8pt) 8pt calc(env(safe-area-inset-right) + 8pt);
+  /* ALTEZZA TOTALE: 56-64px per standard app */
+  min-height: 56px;
+  /* LAYOUT FLEX per distribuzione icone */
+  display: flex;
   align-items: center;
-  /* NESSUN border-radius che può creare gap */
-  border-radius: 0 !important;
-  /* NESSUN backdrop-filter problematico per iOS */
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  /* CRITICO iOS: nessun transform problematico */
-  transform: none !important;
-  will-change: auto !important;
-  contain: none !important;
+  justify-content: space-between;
+  /* BACKDROP GLASSMORPHISM per look app-nativo */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* Rimuovi eventuali pseudo-elementi separatori */

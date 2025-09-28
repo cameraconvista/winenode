@@ -1,0 +1,142 @@
+REPORT DIAGNOSI NAVBAR MOBILE - WineNode
+Data: 28/09/2025 16:53
+Versione: 1.1.0
+
+=== ANALISI COMPONENTI COINVOLTI ===
+
+COMPONENTE PRINCIPALE:
+- src/pages/HomePage.tsx (righe 367-526)
+  - Navbar: <nav className="mobile-navbar">
+  - Gruppo icone: <div className="nav-icons-group">
+  - Pulsante "Tutti": <button className="nav-btn btn-tutti">
+
+STILI CSS COINVOLTI:
+1. src/styles/layout/mobile-standard.css (righe 110-415)
+   - .mobile-navbar: Posizionamento principale
+   - .nav-icons-group: Layout icone
+   - .btn-tutti: Stili pulsante filtro
+
+2. src/styles/mobile/responsive.css (righe 19-135)
+   - .bottom-toolbar: Stili responsive per diverse dimensioni
+   - Breakpoint: ≤767px, ≤375px, ≤320px, 768-1024px
+
+3. src/styles/mobile/scroll-fix.css (righe 6-56)
+   - Posizionamento sticky/fixed fallback
+   - Touch action e tap highlight
+
+4. src/styles/base/tokens.css (righe 16, 43-48)
+   - --toolbar-bg: Colore background
+   - --z-navbar: Z-index (20)
+
+=== PROBLEMI IDENTIFICATI ===
+
+1. **POSIZIONAMENTO NAVBAR TROPPO ALTO**
+   - Attuale: bottom: -8pt (mobile-standard.css riga 112)
+   - Problema: Gap eccessivo dalla home indicator (~30-40px)
+   - Necessario: Ridurre gap del ~20% (portare a ~20-25px)
+
+2. **PULSANTE "TUTTI" VISIBILITÀ**
+   - Posizione: margin-left: auto (mobile-standard.css riga 253)
+   - Possibile clipping: Nessun overflow hidden rilevato nei parent
+   - Z-index: Stesso livello navbar (--z-navbar: 20)
+
+3. **ALTEZZA E TAP TARGETS**
+   - Navbar height: 44pt + padding (mobile-standard.css riga 155)
+   - Icone: 24pt x 24pt (mobile-standard.css riga 182-183)
+   - Tap target: 44pt x 44pt ✅ CONFORME
+
+4. **SAFE-AREA HANDLING**
+   - Attuale: bottom: -8pt (FISSO, non considera safe-area)
+   - Mancante: env(safe-area-inset-bottom) integration
+   - Responsive: Usa var(--safe-bottom) in alcuni breakpoint
+
+=== STILI ATTUALI CRITICI ===
+
+POSIZIONAMENTO NAVBAR:
+```css
+.mobile-navbar {
+  position: fixed;
+  bottom: -8pt; /* PROBLEMA: Troppo alto, non usa safe-area */
+  left: 0;
+  right: 0;
+  z-index: var(--z-navbar); /* 20 */
+}
+```
+
+PULSANTE "TUTTI":
+```css
+.mobile-navbar .btn-tutti {
+  background: #FFFFFF !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12pt !important;
+  margin-left: auto !important; /* Allineato a destra */
+}
+```
+
+RESPONSIVE BREAKPOINTS:
+```css
+/* Mobile ≤767px */
+.bottom-toolbar {
+  padding: 6px calc(8px + var(--safe-right)) 6px calc(8px + var(--safe-left));
+}
+
+/* Tablet 768-1024px */
+.bottom-toolbar {
+  padding: 8px calc(16px + var(--safe-right)) calc(8px + var(--safe-bottom)) calc(16px + var(--safe-left));
+}
+```
+
+=== MECCANICA STATI ICONE ===
+
+STATI ATTIVI:
+- Filtri: background: '#d4a300' quando attivi
+- Alert: background: 'var(--danger)' quando attivi  
+- Search: background: 'var(--accent)' quando attivi
+- Icone: Colore bianco quando background attivo
+
+DIMENSIONI ICONE:
+- Standard: 24pt x 24pt
+- Filtri: 17pt x 17pt (più piccola)
+- Mobile ≤375px: 24pt → 22pt
+- Mobile ≤320px: 22pt
+
+=== LAYERING E OVERFLOW ===
+
+Z-INDEX POLICY:
+- --z-navbar: 20 (navbar)
+- --z-modal: 100 (modali)
+- --z-toast: 9999 (toast)
+
+OVERFLOW CONTAINERS:
+- .homepage-container: overflow: hidden (mobile-standard.css)
+- .main-content: Nessun overflow hidden rilevato
+- .mobile-navbar: Nessun overflow hidden
+
+=== SAFE-AREA VARIABLES ===
+
+DEFINITE:
+- --safe-top, --safe-bottom, --safe-left, --safe-right
+- Usate in responsive.css ma NON in mobile-standard.css
+
+PROBLEMA: mobile-standard.css usa valori fissi (-8pt) invece di safe-area dinamiche
+
+=== SOLUZIONI RICHIESTE ===
+
+1. **RIDURRE GAP NAVBAR (~20%)**
+   - Da: bottom: -8pt
+   - A: bottom: calc(env(safe-area-inset-bottom) + 4pt)
+   - Variabile: --nav-bottom-offset per controllo
+
+2. **GARANTIRE VISIBILITÀ "TUTTI"**
+   - Verificare z-index coerente
+   - Assicurare no clipping parent containers
+
+3. **OTTIMIZZARE TAP TARGETS**
+   - Mantenere 44pt x 44pt minimo
+   - Uniformare altezza navbar (56-64px totali)
+
+4. **SAFE-AREA INTEGRATION**
+   - Sostituire valori fissi con env(safe-area-inset-bottom)
+   - Unificare approccio responsive
+
+STATO: Problemi identificati, soluzione pronta per implementazione
