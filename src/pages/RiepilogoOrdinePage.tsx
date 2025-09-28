@@ -181,21 +181,18 @@ export default function RiepilogoOrdinePage() {
         </div>
 
         {/* Totale Ordine */}
-        <div 
-          className="p-6 rounded-lg mb-6"
-          style={{ background: '#2e0d0d', border: '1px solid #541111' }}
-        >
+        <div className="mb-6">
           <div className="flex justify-between items-center mb-3">
-            <span className="text-lg font-semibold" style={{ color: '#fff9dc' }}>
+            <span className="text-lg font-semibold" style={{ color: '#541111' }}>
               Totale Ordine:
             </span>
-            <span className="text-2xl font-bold" style={{ color: '#fff9dc' }}>
+            <span className="text-2xl font-bold" style={{ color: '#541111' }}>
               €{totalOrdine.toFixed(2)}
             </span>
           </div>
           
           <div className="text-center mb-3">
-            <p className="text-sm" style={{ color: '#fff9dc' }}>
+            <p className="text-sm" style={{ color: '#7a4a30' }}>
               {totalBottiglie} bottiglie totali
             </p>
           </div>
@@ -204,43 +201,58 @@ export default function RiepilogoOrdinePage() {
             <AlertTriangle className="h-4 w-4" />
             <span>Prezzi IVA esclusa</span>
           </div>
-          <p className="text-center text-xs mt-1" style={{ color: '#9b9b9b' }}>
+          <p className="text-center text-xs mt-1" style={{ color: '#7a4a30' }}>
             Calcolato sui costi di acquisto
           </p>
         </div>
         </div>
       </main>
 
-      {/* NAVBAR FISSA */}
-      <nav className="mobile-navbar">
-        <button
-          onClick={handleModificaOrdine}
-          className="nav-btn"
-          title="Modifica Ordine"
-        >
-          <div className="icon" style={{
-            background: 'var(--text)',
-            WebkitMask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M10 19l-7-7m0 0l7-7m-7 7h18\'/%3E%3C/svg%3E") center/contain no-repeat',
-            mask: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M10 19l-7-7m0 0l7-7m-7 7h18\'/%3E%3C/svg%3E") center/contain no-repeat'
-          }}></div>
-          <span className="label">Modifica</span>
-        </button>
-        <button
-          onClick={handleConferma}
-          disabled={ordineDetails.length === 0}
-          className="px-6 py-3 rounded-lg font-medium transition-colors"
-          title="Conferma Ordine"
-          style={{ 
-            background: ordineDetails.length > 0 ? '#16a34a' : '#9b9b9b',
-            color: '#fff9dc',
-            opacity: ordineDetails.length === 0 ? 0.5 : 1,
-            marginLeft: 'auto',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          CONFERMA ORDINE
-        </button>
-      </nav>
+      {/* FOOTER FISSO */}
+      <footer 
+        className="fixed bottom-0 left-0 right-0 p-4 border-t"
+        style={{ 
+          background: '#fff9dc', 
+          borderColor: '#e2d6aa',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
+          zIndex: 50
+        }}
+      >
+        <div className="flex gap-3">
+          <button
+            onClick={handleModificaOrdine}
+            className="px-6 py-3 rounded-lg font-medium transition-colors"
+            style={{ 
+              background: 'white', 
+              color: '#541111',
+              border: '1px solid #e2d6aa',
+              minHeight: '44px',
+              minWidth: '120px',
+              flex: '1',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            Indietro
+          </button>
+          <button
+            onClick={handleConferma}
+            disabled={ordineDetails.length === 0}
+            className="px-6 py-3 rounded-lg font-medium transition-colors"
+            style={{ 
+              background: ordineDetails.length > 0 ? '#16a34a' : '#d1c7b8',
+              color: '#fff9dc',
+              minHeight: '44px',
+              minWidth: '120px',
+              flex: '1',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            Conferma Ordine
+          </button>
+        </div>
+      </footer>
     </div>
   );
 }
