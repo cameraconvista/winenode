@@ -21,6 +21,7 @@ export default function OrdersPinModal({
   const [pinBuffer, setPinBuffer] = useState('');
   const [showError, setShowError] = useState(false);
   const [isValidPin, setIsValidPin] = useState(false);
+  const [isInvalidPin, setIsInvalidPin] = useState(false);
 
   // Reset buffer quando il modale si apre/chiude
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function OrdersPinModal({
       setPinBuffer('');
       setShowError(false);
       setIsValidPin(false);
+      setIsInvalidPin(false);
     }
   }, [open]);
 
@@ -62,8 +64,10 @@ export default function OrdersPinModal({
       if (newBuffer.length === 4) {
         const isValid = validatePin(newBuffer);
         setIsValidPin(isValid);
+        setIsInvalidPin(!isValid);
       } else {
         setIsValidPin(false);
+        setIsInvalidPin(false);
       }
     }
   };
@@ -71,6 +75,7 @@ export default function OrdersPinModal({
   const handleDelete = () => {
     setPinBuffer(prev => prev.slice(0, -1));
     setIsValidPin(false);
+    setIsInvalidPin(false);
   };
 
   const handleSubmit = () => {
@@ -82,6 +87,7 @@ export default function OrdersPinModal({
         setShowError(true);
         setPinBuffer('');
         setIsValidPin(false);
+        setIsInvalidPin(false);
         onInvalidPin();
         
         // Rimuovi errore dopo 2 secondi
@@ -111,11 +117,12 @@ export default function OrdersPinModal({
       }}
     >
       <div 
-        className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl p-6 relative"
+        className="w-full mx-auto rounded-2xl shadow-2xl p-6 relative"
         style={{ 
           background: 'linear-gradient(180deg, #6b1f1f 0%, #541111 50%, #4a0f0f 100%)',
           maxHeight: '90vh',
-          overflow: 'auto'
+          overflow: 'auto',
+          maxWidth: '320px'
         }}
       >
         {/* Header */}
@@ -133,7 +140,7 @@ export default function OrdersPinModal({
         <div className="mb-6">
           <div className="text-center mb-4">
             <p className="text-base mb-4" style={{ color: '#fff9dc', fontSize: '16px' }}>
-              Inserisci il PIN per accedere agli ordini
+              Inserisci il PIN
             </p>
             <div className="flex justify-center gap-2">
               {[0, 1, 2, 3].map((index) => (
@@ -176,7 +183,7 @@ export default function OrdersPinModal({
             disabled={false}
             canSubmit={pinBuffer.length === 4}
             isValidPin={isValidPin}
-            showError={showError}
+            isInvalidPin={isInvalidPin}
           />
         </div>
 
