@@ -224,3 +224,61 @@ BENEFICI REFINEMENT:
 STATO REFINEMENT: ✅ COMPLETATO - READY FOR DEPLOYMENT
 
 ===============================================================================
+REFINEMENT – 2025-09-28 (post-intro) - FASE 2
+===============================================================================
+
+BUILD DATA/ORA: 2025-09-28 21:44:00 CET
+BRANCH: main
+OPERATORE: CASCADE (Windsurf AI)
+
+COSA CAMBIATO FASE 2:
+
+1. FIX POSIZIONE "BY DERO":
+   - PROBLEMA: Footer non visibile su dispositivi mobile
+   - SOLUZIONE: Spostato da bottom: 24px a bottom: 80px
+   - BENEFICIO: Maggiore visibilità su smartphone in verticale
+   - SAFE-AREA: Mantenuto rispetto env(safe-area-inset-bottom)
+
+2. PULIZIA SCRIPT DUPLICATI:
+   - ARCHIVIATI: Tutti i file " 2.js" spostati in ARCHIVE/scripts_legacy/
+   - ELIMINATI: 20+ duplicati dalla directory /scripts/
+   - MANTENUTI: Solo versioni principali degli script
+
+3. TASK COMMIT DIRETTO:
+   - CREATO: scripts/commit-direct.js per commit senza conferme
+   - FUNZIONALITÀ: stage → commit → push automatico
+   - COMPORTAMENTO: Non interattivo, nessun prompt "Run"
+   - BRANCH: Push su branch corrente, supporto merge su main
+
+4. TASK BACKUP AUTOMATICO:
+   - CREATO: scripts/backup-run.js wrapper semplificato
+   - ROTAZIONE: Mantiene max 3 backup, elimina il più vecchio
+   - PATTERN: backup_DDMMYYYY_HHMMSS.tar.gz
+   - ESCLUSIONI: node_modules, .git, dist, cache, file temporanei
+
+FILE CREATI/MODIFICATI FASE 2:
+- src/components/IntroPage.tsx (posizione BY DERO: +56px)
+- scripts/commit-direct.js (NUOVO - commit non interattivo)
+- scripts/backup-run.js (NUOVO - backup wrapper)
+- ARCHIVE/scripts_legacy/ (NUOVO - 20+ file duplicati archiviati)
+
+TEST ESEGUITI FASE 2:
+✅ BY DERO: Visibile su mobile, posizione ottimale
+✅ SCRIPT DUPLICATI: Archiviati senza impatto funzionale
+✅ COMMIT DIRETTO: Testato su branch corrente
+✅ BACKUP: Rotazione 3 file verificata
+
+BENEFICI FASE 2:
+- UX MOBILE: Footer "By DERO" sempre visibile
+- PULIZIA CODEBASE: -20 file duplicati, directory scripts organizzata
+- WORKFLOW GIT: Commit automatico senza interruzioni
+- BACKUP SICURO: Rotazione automatica, nessun accumulo file
+
+ROLLBACK FASE 2:
+- BY DERO: ripristinare bottom: 24px in IntroPage.tsx
+- Script duplicati: ripristinare da ARCHIVE/scripts_legacy/
+- Task nuovi: eliminare commit-direct.js e backup-run.js
+
+STATO FASE 2: ✅ COMPLETATO - READY FOR DEPLOYMENT
+
+===============================================================================

@@ -1,0 +1,143 @@
+===============================================================================
+DEV WORKFLOW GIT - WINENODE
+===============================================================================
+
+CREATO: 2025-09-28 21:44:00 CET
+VERSIONE: 1.0
+OPERATORE: CASCADE (Windsurf AI)
+
+===============================================================================
+COMMIT DIRETTO SENZA CONFERME
+===============================================================================
+
+OBIETTIVO:
+Eseguire commit e push automatici senza prompt interattivi o finestre "Run".
+
+SCRIPT PRINCIPALE:
+- File: scripts/commit-direct.js
+- Uso: node scripts/commit-direct.js "messaggio commit"
+- Comportamento: stage → commit → push in sequenza automatica
+
+FUNZIONALITÀ:
+✅ Stage automatico di tutti i file modificati
+✅ Commit con messaggio personalizzato o automatico
+✅ Push su branch corrente senza conferme
+✅ Gestione errori con log dettagliato
+✅ Verifica branch corrente prima del push
+✅ Nessun prompt "Run" o finestre interattive
+
+ESEMPI D'USO:
+
+1. COMMIT CON MESSAGGIO PERSONALIZZATO:
+   node scripts/commit-direct.js "feat(intro): fix posizione BY DERO"
+
+2. COMMIT AUTOMATICO (timestamp):
+   node scripts/commit-direct.js
+
+3. DA WINDSURF/CASCADE:
+   Comando: "esegui commit diretto"
+   Risultato: Commit automatico senza interruzioni
+
+FLUSSO OPERATIVO:
+
+1. VERIFICA BRANCH:
+   - Identifica branch corrente (main, feature, etc.)
+   - Log: "Branch corrente: main"
+
+2. STAGING:
+   - Esegue: git add .
+   - Include tutti i file modificati (rispetta .gitignore)
+
+3. VERIFICA MODIFICHE:
+   - Controlla se ci sono cambiamenti da committare
+   - Se nessuna modifica: termina con successo
+
+4. COMMIT:
+   - Messaggio personalizzato o auto-generato
+   - Formato auto: "chore: auto-commit DD/MM/YYYY HH:MM"
+
+5. PUSH:
+   - Push su origin/{branch_corrente}
+   - Gestione automatica conflitti (se possibile)
+
+6. REPORT:
+   - Log hash commit (primi 7 caratteri)
+   - Log branch di destinazione
+   - Nessuna apertura pagina "Compare & pull request"
+
+GESTIONE ERRORI:
+
+- CONFLITTI: Tentativo risoluzione automatica
+- BRANCH PROTETTO: Log errore, istruzioni manuali
+- NETWORK: Retry automatico (1 tentativo)
+- CREDENZIALI: Riferimento a .env per token GitHub
+
+SICUREZZA:
+
+- Rispetta .gitignore (no file sensibili)
+- Non forza push (--force mai utilizzato)
+- Backup automatico prima di operazioni rischiose
+- Log completo di tutte le operazioni
+
+INTEGRAZIONE WINDSURF:
+
+- Comando riconosciuto: "esegui commit diretto"
+- Nessuna finestra di conferma
+- Output in console con timestamp italiano
+- Compatibile con workflow Cascade AI
+
+===============================================================================
+BEST PRACTICES
+===============================================================================
+
+1. MESSAGGI COMMIT:
+   - Usa conventional commits: feat, fix, chore, docs
+   - Sii specifico: "feat(intro): fix posizione BY DERO"
+   - Evita messaggi generici: "update", "fix"
+
+2. FREQUENZA:
+   - Commit frequenti per feature piccole
+   - Un commit per logica/funzionalità completa
+   - Non committare codice non funzionante
+
+3. BRANCH STRATEGY:
+   - main: codice stabile e testato
+   - feature/*: nuove funzionalità
+   - hotfix/*: correzioni urgenti
+
+4. BEFORE COMMIT:
+   - Test funzionali completati
+   - Nessun warning/errore in console
+   - Documentazione aggiornata se necessario
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+PROBLEMA: "Push rifiutato (non-fast-forward)"
+SOLUZIONE: Script tenta pull automatico, poi retry push
+
+PROBLEMA: "Credenziali non configurate"
+SOLUZIONE: Verifica .env con GIT_REMOTE_URL e GITHUB_TOKEN
+
+PROBLEMA: "Branch protetto"
+SOLUZIONE: Usa feature branch, poi merge manuale
+
+PROBLEMA: "Nessuna modifica da committare"
+RISULTATO: Successo (nessuna azione necessaria)
+
+===============================================================================
+ROLLBACK
+===============================================================================
+
+Per disabilitare commit diretto:
+1. Rimuovi scripts/commit-direct.js
+2. Torna a workflow manuale: git add → git commit → git push
+3. Ripristina conferme interattive se necessario
+
+Per modificare comportamento:
+1. Edita scripts/commit-direct.js
+2. Modifica logica stage/commit/push
+3. Testa su branch di sviluppo prima di usare su main
+
+===============================================================================

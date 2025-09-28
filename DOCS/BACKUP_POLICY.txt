@@ -1,0 +1,216 @@
+===============================================================================
+BACKUP POLICY - WINENODE
+===============================================================================
+
+CREATO: 2025-09-28 21:44:00 CET
+VERSIONE: 1.0
+OPERATORE: CASCADE (Windsurf AI)
+
+===============================================================================
+ROTAZIONE AUTOMATICA MAX 3 BACKUP
+===============================================================================
+
+OBIETTIVO:
+Mantenere backup automatici del progetto con rotazione intelligente per evitare accumulo di file.
+
+CONFIGURAZIONE:
+- Directory: Backup_Automatico/
+- Formato: backup_DDMMYYYY_HHMMSS.tar.gz
+- Massimo: 3 file backup simultanei
+- Rotazione: Elimina automaticamente il più vecchio quando si crea il 4°
+
+SCRIPT PRINCIPALE:
+- File: scripts/backup-run.js (wrapper semplificato)
+- Base: scripts/backup-system.js (sistema completo)
+- Uso: node scripts/backup-run.js
+
+PATTERN NAMING:
+- Formato: backup_DDMMYYYY_HHMMSS.tar.gz
+- Esempio: backup_28092025_214400.tar.gz
+- Timestamp: Ora italiana (Europe/Rome)
+- Unicità: Suffisso automatico se duplicati
+
+ESCLUSIONI AUTOMATICHE:
+✅ node_modules/ (dipendenze npm)
+✅ .git/ (repository git)
+✅ dist/ (build output)
+✅ .DS_Store (file sistema macOS)
+✅ *.log (file di log)
+✅ .env* (credenziali sensibili)
+✅ Backup_Automatico/ (evita backup ricorsivi)
+✅ attached_assets/ (file temporanei)
+✅ *.tmp, *.temp (file temporanei)
+✅ .cache, .vscode, .idea (cache e IDE)
+
+===============================================================================
+FLUSSO OPERATIVO
+===============================================================================
+
+1. TRIGGER BACKUP:
+   - Comando: node scripts/backup-run.js
+   - Da Windsurf: "esegui backup"
+   - Automatico: nessun prompt di conferma
+
+2. VERIFICA ROTAZIONE:
+   - Conta backup esistenti in Backup_Automatico/
+   - Se ≥3: elimina il più vecchio per data di modifica
+   - Log: "Backup rimosso (rotazione): backup_xxx.tar.gz"
+
+3. CREAZIONE BACKUP:
+   - Genera nome univoco con timestamp
+   - Crea .tarignore temporaneo con esclusioni
+   - Comprime progetto in .tar.gz
+   - Verifica integrità archivio
+
+4. FINALIZZAZIONE:
+   - Sposta da .tmp a nome finale
+   - Calcola e mostra dimensione file
+   - Lista backup disponibili post-rotazione
+   - Log: "✅ Backup completato: backup_xxx.tar.gz"
+
+5. OUTPUT FINALE:
+   ```
+   📋 BACKUP DISPONIBILI DOPO ROTAZIONE:
+   
+   Nome                          Data Creazione      Dimensione
+   ----------------------------------------------------------------------
+   backup_28092025_214400.tar.gz 28/09/2025 21:44:00 1.2 MB (più recente)
+   backup_28092025_180618.tar.gz 28/09/2025 18:06:18 1.6 MB
+   backup_28092025_172333.tar.gz 28/09/2025 17:23:33 1.8 MB
+   ```
+
+===============================================================================
+ESEMPI D'USO
+===============================================================================
+
+1. BACKUP MANUALE:
+   ```bash
+   cd /path/to/winenode
+   node scripts/backup-run.js
+   ```
+
+2. BACKUP DA WINDSURF:
+   Comando: "esegui backup"
+   Risultato: Backup automatico con rotazione
+
+3. VERIFICA BACKUP ESISTENTI:
+   ```bash
+   node scripts/backup-system.js list
+   ```
+
+4. ANTEPRIMA CONTENUTO:
+   ```bash
+   node scripts/backup-system.js preview backup_28092025_214400.tar.gz
+   ```
+
+===============================================================================
+SICUREZZA E INTEGRITÀ
+===============================================================================
+
+VERIFICA INTEGRITÀ:
+- Test automatico archivio con tar -tzf
+- Fallback se backup corrotto
+- Log errori dettagliati
+
+ESCLUSIONI SICUREZZA:
+- .env: credenziali GitHub/Supabase
+- .env.*: varianti ambiente
+- *.log: possibili dati sensibili
+- node_modules: ricostruibile con npm install
+
+BACKUP TEMPORANEO:
+- Creazione con estensione .tmp
+- Rinomina solo se completato con successo
+- Pulizia automatica file temporanei
+
+ROTAZIONE SICURA:
+- Elimina solo file con pattern backup_*.tar.gz
+- Preserva README.md e altri file nella directory
+- Ordinamento per data di modifica (non nome file)
+
+===============================================================================
+RIPRISTINO BACKUP
+===============================================================================
+
+ANTEPRIMA OBBLIGATORIA:
+```bash
+node scripts/backup-system.js preview backup_28092025_214400.tar.gz
+```
+
+RIPRISTINO CON CONFERMA:
+```bash
+node scripts/backup-system.js restore backup_28092025_214400.tar.gz
+```
+
+SICUREZZA RIPRISTINO:
+- Backup automatico prima del ripristino
+- Anteprima contenuto obbligatoria
+- Conferma esplicita richiesta
+- Sovrascrittura controllata
+
+===============================================================================
+MONITORAGGIO E MANUTENZIONE
+===============================================================================
+
+DIMENSIONI TIPICHE:
+- Progetto base: ~1-2 MB compressi
+- Con assets: ~5-10 MB compressi
+- Limite pratico: <50 MB per backup
+
+FREQUENZA CONSIGLIATA:
+- Prima di modifiche importanti
+- Prima di deploy in produzione
+- Settimanale per progetti attivi
+- Su richiesta per test specifici
+
+PULIZIA MANUALE:
+Se necessario eliminare tutti i backup:
+```bash
+rm Backup_Automatico/backup_*.tar.gz
+```
+
+SPAZIO DISCO:
+- 3 backup × ~2MB = ~6MB totali
+- Rotazione automatica previene accumulo
+- Monitoraggio dimensioni in log
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+PROBLEMA: "Errore creazione backup"
+CAUSA: Permessi directory, spazio disco
+SOLUZIONE: Verifica permessi Backup_Automatico/
+
+PROBLEMA: "Backup corrotto"
+CAUSA: Interruzione durante creazione
+SOLUZIONE: File .tmp rimosso automaticamente, riprova
+
+PROBLEMA: "Rotazione non funziona"
+CAUSA: Pattern nome file non standard
+SOLUZIONE: Verifica formato backup_DDMMYYYY_HHMMSS.tar.gz
+
+PROBLEMA: "Backup troppo grande"
+CAUSA: File non esclusi correttamente
+SOLUZIONE: Verifica EXCLUDED_PATTERNS in backup-system.js
+
+===============================================================================
+ROLLBACK POLICY
+===============================================================================
+
+Per disabilitare backup automatico:
+1. Rimuovi scripts/backup-run.js
+2. Mantieni scripts/backup-system.js per uso manuale
+3. Backup esistenti rimangono disponibili
+
+Per modificare rotazione:
+1. Edita MAX_BACKUPS in scripts/backup-system.js
+2. Modifica da 3 a valore desiderato
+3. Testa con backup di prova
+
+Per cambiare esclusioni:
+1. Edita EXCLUDED_PATTERNS in scripts/backup-system.js
+2. Aggiungi/rimuovi pattern secondo necessità
+3. Verifica dimensioni backup risultanti
+
+===============================================================================
