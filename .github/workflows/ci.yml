@@ -7,7 +7,22 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  # Existing CI jobs would go here (build, test, lint, etc.)
+  setup:
+    name: Setup Node.js and Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
   
   db-migrations-guard:
     name: Database Migrations Guard
