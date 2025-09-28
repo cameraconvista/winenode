@@ -28,6 +28,10 @@ export default function RiepilogoOrdinePage() {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
 
+  // Debug: log per verificare ordineItems
+  console.log('🔍 RiepilogoOrdine - ordineItems:', ordineItems);
+  console.log('🔍 RiepilogoOrdine - ordineItems.length:', ordineItems.length);
+
   // Calcola dettagli ordine
   const ordineDetails = ordineItems.map(item => {
     const wine = wines.find(w => w.id === item.wineId);
@@ -46,6 +50,10 @@ export default function RiepilogoOrdinePage() {
   });
 
   const totalOrdine = ordineDetails.reduce((sum, detail) => sum + detail.totalPrice, 0);
+
+  // Debug: log per verificare ordineDetails
+  console.log('🔍 RiepilogoOrdine - ordineDetails:', ordineDetails);
+  console.log('🔍 RiepilogoOrdine - ordineDetails.length:', ordineDetails.length);
 
   // Prepara dati per WhatsApp (senza prezzi)
   const whatsAppOrderDetails: OrderDetail[] = ordineDetails.map(detail => ({
