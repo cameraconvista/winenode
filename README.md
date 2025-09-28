@@ -73,6 +73,24 @@ DATABASE_URL=postgres://user:password@host:port/database
 - **Interfaccia Mobile-First**: Ottimizzata per smartphone
 - **Ricerca e Filtri**: Ricerca avanzata per nome, fornitore, tipologia
 
+## 🍷 Tipologie Vini — Whitelist Compatibile Google Sheets
+
+Il database supporta una **whitelist estesa** di tipologie vini per mantenere compatibilità con la sincronizzazione Google Sheets:
+
+### Valori Ammessi
+- **Standard**: `rosso`, `bianco`, `bollicine`, `rosato`, `dolci`
+- **Storici**: `spumante`, `champagne`, `prosecco`
+
+### Raccomandazioni Google Sheets
+Per ottimizzare la sincronizzazione, si consiglia di normalizzare il foglio Google entro 30 giorni utilizzando le **5 etichette standard**:
+- `ROSSI` → `rosso`
+- `BIANCHI` → `bianco` 
+- `BOLLICINE ITALIANE/FRANCESI` → `bollicine`
+- `ROSATI` → `rosato`
+- `VINI DOLCI` → `dolci`
+
+> **Nota**: I valori storici (`spumante`, `champagne`, `prosecco`) rimangono supportati per retrocompatibilità ma si raccomanda la migrazione verso le etichette standard.
+
 ## 🛠️ Tecnologie
 
 - React 18 + TypeScript
