@@ -1,0 +1,106 @@
+REPORT DIAGNOSI NAV "TUTTI" - WineNode
+Data: 28/09/2025 17:44
+Versione: 1.1.0
+
+=== PROBLEMA IDENTIFICATO DALL'IMMAGINE ===
+
+DISALLINEAMENTO VERTICALE EVIDENTE:
+- Icone navbar (carrello, filtro, campanella, lente): allineate al bordo inferiore
+- Pulsante "Tutti": fluttua SOPRA le icone, non allineato verticalmente
+- Risultato: "Tutti" appare scollegato dalla barra, non integrato
+
+=== PERCORSI FILE IDENTIFICATI ===
+
+NAVBAR HOME:
+- File: src/pages/HomePage.tsx (righe 367-526)
+- Classe: "mobile-navbar"
+- Struttura DOM: <nav> → <div class="nav-icons-group"> + <button class="btn-tutti">
+
+COMPONENTE PILL "TUTTI":
+- File: src/pages/HomePage.tsx (righe 450-479)
+- Classe: "nav-btn btn-tutti"
+- NON è un componente separato, è inline nella HomePage
+
+STILI CSS:
+- File: src/styles/layout/mobile-standard.css
+- Regole: .mobile-navbar, .mobile-navbar .btn-tutti
+
+=== ANALISI DOM E COMPUTED STYLES ===
+
+WRAPPER NAVBAR (.mobile-navbar):
+- position: fixed
+- display: flex
+- bottom: 0
+- height: var(--nav-height) = clamp(56px, 7.5vh, 72px)
+- padding: var(--nav-padding-y) calc(var(--safe-left) + 12px) var(--nav-bottom-offset) calc(var(--safe-right) + 12px)
+- justify-content: space-between
+- align-items: center
+- z-index: var(--z-navbar) = 20
+
+CONTENITORE ITEMS (.nav-icons-group):
+- display: flex
+- align-items: center
+- gap: var(--nav-icon-gap, 8pt)
+- transform: translateY(var(--nav-icon-vert-offset, 6pt)) ← PROBLEMA POTENZIALE
+
+ELEMENTO PILL "TUTTI" (.btn-tutti):
+- background: #FFFFFF
+- border: 1px solid var(--border)
+- border-radius: 12pt
+- padding: 6pt clamp(10px, 2.5vw, 14px)
+- height: var(--nav-icon) ← PROBLEMA: dovrebbe essere uguale alle icone
+- margin-left: auto
+- align-self: center
+
+=== CAUSA ROOT IDENTIFICATA ===
+
+PROBLEMA PRINCIPALE: TRANSFORM VERTICALE SULLE ICONE
+- Le icone hanno: transform: translateY(var(--nav-icon-vert-offset, 6pt))
+- Questo sposta le icone VERSO IL BASSO di 6pt
+- Il pulsante "Tutti" NON ha questo transform
+- Risultato: "Tutti" rimane nella posizione originale mentre le icone sono spostate giù
+
+PROBLEMA SECONDARIO: ALTEZZE DIVERSE
+- Icone: height: var(--nav-icon) = clamp(22px, 2.6vh, 28px)
+- "Tutti": height: var(--nav-icon) (stesso valore ma stile diverso)
+
+=== STRUTTURA DOM ATTUALE ===
+
+```html
+<nav class="mobile-navbar">
+  <div class="nav-icons-group">  ← transform: translateY(6pt)
+    <button class="nav-btn btn-ordine">...</button>
+    <button class="nav-btn btn-filtri">...</button>
+    <button class="nav-btn btn-allert">...</button>
+    <button class="nav-btn btn-search">...</button>
+  </div>
+  <button class="nav-btn btn-tutti">...</button>  ← NO transform, disallineato
+</nav>
+```
+
+=== SOLUZIONE IDENTIFICATA: STRATEGIA A ===
+
+"Tutti" come FLEX ITEM della navbar (PREFERITA)
+
+AZIONI RICHIESTE:
+1. Spostare il pulsante "Tutti" DENTRO il .nav-icons-group
+2. Applicare lo stesso transform: translateY(6pt) anche a "Tutti"
+3. Uniformare le altezze e il posizionamento verticale
+4. Mantenere justify-content: space-between per distribuzione
+
+VANTAGGI:
+- "Tutti" diventa un vero elemento della barra
+- Allineamento automatico con le altre icone
+- Coerenza nel layout e negli stili
+
+=== COMPUTED STYLES PROBLEMATICI ===
+
+NAV-ICONS-GROUP:
+- transform: translateY(6pt) ← Sposta icone giù
+- align-items: center
+
+BTN-TUTTI:
+- transform: none ← Rimane in posizione originale
+- align-self: center ← Non sufficiente per compensare
+
+STATO: Causa identificata, Strategia A pronta per implementazione

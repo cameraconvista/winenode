@@ -258,12 +258,13 @@
   align-items: center !important;
   justify-content: center !important;
   gap: 4pt !important;
-  padding: 6pt clamp(10px, 2.5vw, 14px) !important; /* Padding verticale ridotto per allineamento */
+  padding: 6pt clamp(10px, 2.5vw, 14px) !important;
   min-width: clamp(70px, 18vw, 90px) !important;
-  height: var(--nav-icon) !important; /* Altezza uguale alle icone per allineamento perfetto */
+  height: var(--nav-icon) !important;
   box-shadow: 0 1px 3px rgba(84, 17, 17, 0.1) !important;
   margin-left: auto !important;
-  /* Allineamento verticale forzato */
+  /* ALLINEAMENTO CRITICO: stesso transform delle icone per allineamento perfetto */
+  transform: translateY(var(--nav-icon-vert-offset, 6pt)) !important;
   align-self: center !important;
 }
 
