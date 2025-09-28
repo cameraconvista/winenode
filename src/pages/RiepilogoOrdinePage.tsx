@@ -104,13 +104,15 @@ export default function RiepilogoOrdinePage() {
         </div>
       </header>
 
-      {/* HEADER STICKY ESTERNO */}
+      {/* HEADER STICKY SOTTO IL LOGO */}
       <div 
-        className="sticky top-0 z-50 border-b"
+        className="sticky border-b"
         style={{ 
           background: 'var(--bg)', 
           borderColor: '#e2d6aa',
-          paddingTop: 'calc(var(--safe-top) + 60pt + 16px)',
+          top: 'calc(var(--safe-top) + 60pt)',
+          zIndex: 40,
+          paddingTop: '16px',
           paddingBottom: '16px',
           paddingLeft: '16px',
           paddingRight: '16px'
