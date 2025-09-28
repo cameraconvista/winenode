@@ -1,22 +1,40 @@
 ===============================================================================
-DEV WORKFLOW GIT - WINENODE
+GIT WORKFLOW WINENODE - COMMIT DIRETTO SU MAIN (NO PR, FF-ONLY)
 ===============================================================================
 
 CREATO: 2025-09-28 21:44:00 CET
-VERSIONE: 1.0
+AGGIORNATO: 2025-09-28 23:06:00 CET
+VERSIONE: 2.0
 OPERATORE: CASCADE (Windsurf AI)
 
 ===============================================================================
-COMMIT DIRETTO SENZA CONFERME
+POLICY UFFICIALE: COMMIT DIRETTO SU MAIN (NO PR, FF-ONLY)
 ===============================================================================
 
-OBIETTIVO:
-Eseguire commit e push automatici senza prompt interattivi o finestre "Run".
+PRINCIPIO FONDAMENTALE:
+Tutti i commit vanno DIRETTAMENTE su origin/main senza creare branch automatici,
+senza PR verdi, senza aprire pagine web GitHub.
+
+WORKFLOW STANDARD:
+1. Stage → Commit → Pull (fast-forward only) → Push su origin/main
+2. Se non è possibile fast-forward: ABORT con messaggio chiaro
+3. Durante lavori grossi: branch locale → merge ff-only su main → elimina branch
+
+REGOLE OPERATIVE:
+✅ Commit diretto su main per modifiche normali
+✅ Fast-forward only (no merge commits)
+✅ Nessuna PR automatica
+✅ Nessuna apertura browser/UI
+✅ Branch temporanei eliminati dopo merge
+
+===============================================================================
+SCRIPT COMMIT DIRETTO
+===============================================================================
 
 SCRIPT PRINCIPALE:
 - File: scripts/commit-direct.js
 - Uso: node scripts/commit-direct.js "messaggio commit"
-- Comportamento: stage → commit → push in sequenza automatica
+- Comportamento: stage → commit → pull ff-only → push origin/main
 
 FUNZIONALITÀ:
 ✅ Stage automatico di tutti i file modificati
