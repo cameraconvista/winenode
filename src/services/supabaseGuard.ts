@@ -49,12 +49,14 @@ export const supabaseGuarded = {
       // Blocca INSERT
       insert: (...args: any[]) => {
         const operation = 'insert';
-        console.warn(`🚫 GUARDRAIL: ${operation} bloccato su tabella '${table}'`);
-        console.warn('📋 Dati bloccati:', args[0]);
+        const data = args[0];
+        
+        // Verifica rischio duplicati
+        checkPotentialDuplicate(data);
+        logBlockedOperation(operation, table, data);
         
         if (import.meta.env.DEV) {
           console.warn('⚠️ DEV MODE: Operazione bloccata ma non genera errore');
-          // In dev, log warning ma non bloccare completamente
           return Promise.resolve({ data: null, error: null });
         }
         
@@ -64,8 +66,11 @@ export const supabaseGuarded = {
       // Blocca UPSERT
       upsert: (...args: any[]) => {
         const operation = 'upsert';
-        console.warn(`🚫 GUARDRAIL: ${operation} bloccato su tabella '${table}'`);
-        console.warn('📋 Dati bloccati:', args[0]);
+        const data = args[0];
+        
+        // Verifica rischio duplicati
+        checkPotentialDuplicate(data);
+        logBlockedOperation(operation, table, data);
         
         if (import.meta.env.DEV) {
           console.warn('⚠️ DEV MODE: Operazione bloccata ma non genera errore');
@@ -172,7 +177,26 @@ export function logBlockedOperation(operation: string, table: string, data?: any
   }
   console.warn(`⚠️ Motivo: App deve essere read-only su tabella 'vini'`);
   console.warn(`💡 Soluzione: I vini devono essere sincronizzati da Google Sheet → Supabase`);
+  console.warn(`🚨 PREVENZIONE DUPLICATI: Operazione bloccata per mantenere integrità dati`);
   console.groupEnd();
+}
+
+/**
+ * Verifica se un'operazione potrebbe creare duplicati
+ */
+export function checkPotentialDuplicate(data: any): boolean {
+  if (!data || typeof data !== 'object') return false;
+  
+  // Controlla se contiene campi che potrebbero creare duplicati
+  const duplicateRiskFields = ['nome_vino', 'produttore', 'anno', 'fornitore'];
+  const hasRiskFields = duplicateRiskFields.some(field => data[field] !== undefined);
+  
+  if (hasRiskFields) {
+    console.warn('🚨 RISCHIO DUPLICATI: Operazione contiene campi che potrebbero creare duplicati');
+    console.warn('📋 Campi a rischio:', duplicateRiskFields.filter(field => data[field] !== undefined));
+  }
+  
+  return hasRiskFields;
 }
 
 export default supabaseGuarded;
