@@ -9,7 +9,7 @@ import { initMainRoutesPrefetch } from './utils/prefetch'
 import './utils/resetFirstLaunch'
 
 // Lazy loading per ottimizzare le prestazioni
-const HomePage = lazy(() => import('./pages/HomePage'))
+const HomePage = lazy(() => import('./pages/HomePage/index'))
 // RIMOSSO: const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const ManualWineInsertPage = lazy(() => import('./pages/ManualWineInsertPage'))
 const FornitoriPage = lazy(() => import('./pages/FornitoriPage'))
