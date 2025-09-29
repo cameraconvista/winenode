@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Minus, Plus } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import PhosphorBell from '~icons/ph/bell-light';
 import useWines from '../hooks/useWines';
 import { useCreaOrdine } from '../hooks/useCreaOrdine';

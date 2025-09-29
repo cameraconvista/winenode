@@ -50,22 +50,22 @@ export function useCreaOrdine() {
     console.log(`🔄 Unit change: ${wineId}, unit: ${unit}, existingIndex: ${existingIndex}`);
     
     if (existingIndex >= 0) {
-      // Item esiste: aggiorna solo l'unità mantenendo la quantità
-      const currentQuantity = ordineItems[existingIndex].quantity;
-      console.log(`🔄 Updating existing item, keeping quantity: ${currentQuantity}`);
+      // Item esiste: RESET quantità a 0 quando si cambia unità
+      console.log(`🔄 Resetting quantity to 0 and changing unit to: ${unit}`);
       setOrdineItems(prev => {
         const newItems = [...prev];
-        newItems[existingIndex].unit = unit;
+        // RIMUOVI l'item esistente (reset a 0)
+        newItems.splice(existingIndex, 1);
         return newItems;
       });
-    } else {
-      // Item non esiste: salva solo la preferenza unità
-      console.log(`🆕 Saving unit preference: ${wineId} -> ${unit}`);
-      setUnitPreferences(prevPrefs => ({
-        ...prevPrefs,
-        [wineId]: unit
-      }));
     }
+    
+    // Salva sempre la preferenza unità per futuri click +
+    console.log(`🆕 Saving unit preference: ${wineId} -> ${unit}`);
+    setUnitPreferences(prevPrefs => ({
+      ...prevPrefs,
+      [wineId]: unit
+    }));
   }, [ordineItems]);
 
   // Calcola totale bottiglie (convertendo cartoni in bottiglie)

@@ -117,7 +117,7 @@ export const ordiniService = {
           contenuto,
           stato,
           created_at,
-          fornitori:${FORNITORE_UUID_COL} ( id, nome )
+          fornitori!${FORNITORE_UUID_COL} ( id, nome )
         `)
         .order('created_at', { ascending: false });
 
