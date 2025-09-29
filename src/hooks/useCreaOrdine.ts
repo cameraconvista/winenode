@@ -8,6 +8,7 @@ export interface OrdineItem {
 
 export function useCreaOrdine() {
   const [ordineItems, setOrdineItems] = useState<OrdineItem[]>([]);
+  const [unitPreferences, setUnitPreferences] = useState<Record<string, 'bottiglie' | 'cartoni'>>({});
 
   const handleQuantityChange = (wineId: string, delta: number) => {
     setOrdineItems(prev => {
@@ -15,7 +16,10 @@ export function useCreaOrdine() {
       
       if (existingIndex >= 0) {
         const newItems = [...prev];
-        const newQuantity = Math.max(0, newItems[existingIndex].quantity + delta);
+        const currentQuantity = newItems[existingIndex].quantity;
+        const newQuantity = Math.max(0, currentQuantity + delta);
+        
+        // console.log(`🔢 Quantity change: ${wineId}, current: ${currentQuantity}, delta: ${delta}, new: ${newQuantity}`);
         
         if (newQuantity === 0) {
           // Rimuovi item se quantità è 0
@@ -26,11 +30,13 @@ export function useCreaOrdine() {
         
         return newItems;
       } else if (delta > 0) {
-        // Aggiungi nuovo item se delta positivo - DEFAULT CARTONI
+        // Aggiungi nuovo item se delta positivo - USA PREFERENZA O DEFAULT CARTONI
+        const preferredUnit = unitPreferences[wineId] || 'cartoni';
+        // console.log(`➕ Creating new item: ${wineId}, quantity: ${delta}, unit: ${preferredUnit}`);
         return [...prev, {
           wineId,
           quantity: delta,
-          unit: 'cartoni'
+          unit: preferredUnit
         }];
       }
       
@@ -44,16 +50,19 @@ export function useCreaOrdine() {
       
       if (existingIndex >= 0) {
         const newItems = [...prev];
+        const currentQuantity = newItems[existingIndex].quantity;
+        // console.log(`🔄 Unit change: ${wineId}, keeping quantity: ${currentQuantity}, new unit: ${unit}`);
         // MANTIENI quantità esistente quando si cambia unità (selezione manuale)
         newItems[existingIndex].unit = unit;
         return newItems;
       } else {
-        // Crea nuovo item se non esiste - DEFAULT CARTONI
-        return [...prev, {
-          wineId,
-          quantity: 0,
-          unit: unit || 'cartoni'
-        }];
+        // NON creare item se non esiste - memorizza solo la preferenza
+        // console.log(`🆕 Unit selection for new item: ${wineId}, unit: ${unit} - saving preference`);
+        setUnitPreferences(prevPrefs => ({
+          ...prevPrefs,
+          [wineId]: unit
+        }));
+        return prev; // Non modificare ordineItems
       }
     });
   };
@@ -73,6 +82,7 @@ export function useCreaOrdine() {
   return {
     ordineItems,
     totalBottiglie,
+    unitPreferences,
     handleQuantityChange,
     handleUnitChange,
     resetOrdine

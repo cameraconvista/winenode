@@ -13,6 +13,7 @@ export default function CreaOrdinePage() {
   const {
     ordineItems,
     totalBottiglie,
+    unitPreferences,
     handleQuantityChange,
     handleUnitChange
   } = useCreaOrdine();
@@ -106,6 +107,7 @@ export default function CreaOrdinePage() {
             {supplierWines.map((wine) => {
               const isLowStock = wine.inventory <= wine.minStock;
               const currentItem = ordineItems.find(item => item.wineId === wine.id);
+              const preferredUnit = unitPreferences[wine.id] || 'cartoni';
               
               return (
                 <div
@@ -180,9 +182,9 @@ export default function CreaOrdinePage() {
                         onClick={() => handleUnitChange(wine.id, 'bottiglie')}
                         className="px-3 py-1 text-xs font-medium transition-colors"
                         style={{
-                          background: (currentItem?.unit === 'bottiglie') ? '#d4a300' : 'transparent',
-                          color: (currentItem?.unit === 'bottiglie') ? '#fff9dc' : '#541111',
-                          border: (currentItem?.unit === 'bottiglie') ? 'none' : '1px solid #e2d6aa'
+                          background: ((currentItem?.unit || preferredUnit) === 'bottiglie') ? '#d4a300' : 'transparent',
+                          color: ((currentItem?.unit || preferredUnit) === 'bottiglie') ? '#fff9dc' : '#541111',
+                          border: ((currentItem?.unit || preferredUnit) === 'bottiglie') ? 'none' : '1px solid #e2d6aa'
                         }}
                       >
                         Bottiglie
@@ -191,9 +193,9 @@ export default function CreaOrdinePage() {
                         onClick={() => handleUnitChange(wine.id, 'cartoni')}
                         className="px-3 py-1 text-xs font-medium transition-colors"
                         style={{
-                          background: (!currentItem || currentItem.unit === 'cartoni') ? '#d4a300' : 'transparent',
-                          color: (!currentItem || currentItem.unit === 'cartoni') ? '#fff9dc' : '#541111',
-                          border: (!currentItem || currentItem.unit === 'cartoni') ? 'none' : '1px solid #e2d6aa'
+                          background: ((currentItem?.unit || preferredUnit) === 'cartoni') ? '#d4a300' : 'transparent',
+                          color: ((currentItem?.unit || preferredUnit) === 'cartoni') ? '#fff9dc' : '#541111',
+                          border: ((currentItem?.unit || preferredUnit) === 'cartoni') ? 'none' : '1px solid #e2d6aa'
                         }}
                       >
                         Cartoni
