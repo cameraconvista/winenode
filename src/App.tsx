@@ -20,7 +20,7 @@ const PreferenzePage = lazy(() => import('./pages/PreferenzePage'))
 const FoglioExcelPage = lazy(() => import('./pages/FoglioExcelPage'))
 const CreaOrdinePage = lazy(() => import('./pages/CreaOrdinePage'))
 const RiepilogoOrdinePage = lazy(() => import('./pages/RiepilogoOrdinePage'))
-const GestisciOrdiniPage = lazy(() => import('./pages/GestisciOrdiniPage'))
+const GestisciOrdiniPage = lazy(() => import('./pages/GestisciOrdiniPage/index'))
 
 function App() {
   const { isFirstLaunch, isLoading, markIntroCompleted } = useFirstLaunch()

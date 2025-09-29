@@ -8,7 +8,7 @@ export function useOrdersState() {
   const [searchParams] = useSearchParams();
   
   // Stati principali
-  const [activeTab, setActiveTab] = useState<TabType>('inviati');
+  const [activeTab, setActiveTab] = useState<TabType>('creati');
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
   const [managingOrders, setManagingOrders] = useState<Set<string>>(new Set());
   const [modifiedQuantities, setModifiedQuantities] = useState<Record<string, Record<number, number>>>({});
@@ -31,7 +31,7 @@ export function useOrdersState() {
     if (tab === 'archiviati' || tab === 'storico') {
       setActiveTab('archiviati');
     } else {
-      setActiveTab('inviati');
+      setActiveTab('creati');
     }
   }, [searchParams]);
 

@@ -51,7 +51,8 @@ export const ORDINI_LABELS = {
   // Titoli e header
   header: {
     titoloPagina: "Gestisci Ordini",
-    modaleTitolo: "Elimina Ordine"
+    modaleTitolo: "Elimina Ordine",
+    eliminaOrdine: "Elimina Ordine"
   },
 
   // Dettagli ordine

@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect, useRef } from 'react';
 import { OrdersDataProvider, useOrdersData, useOrdersInviati, useOrdersStorico, useOrdersLoading } from './OrdersDataContext';
 import { OrdersActionsProvider, useOrdersActions } from './OrdersActionsContext';
 import { QuantityManagementProvider, useQuantityManagement } from './QuantityManagementContext';
-import { OrdiniCompatProvider } from './OrdiniContext';
+import { OrdiniProvider } from './OrdiniContext';
 
 // Re-export tipi per compatibilità
 export type { Ordine, OrdineDettaglio } from '../types/orders';
@@ -14,11 +14,11 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     <OrdersDataProvider>
       <OrdersActionsProvider>
         <QuantityManagementProvider>
-          <OrdiniCompatProvider>
+          <OrdiniProvider>
             <OrdersInitializer>
               {children}
             </OrdersInitializer>
-          </OrdiniCompatProvider>
+          </OrdiniProvider>
         </QuantityManagementProvider>
       </OrdersActionsProvider>
     </OrdersDataProvider>

@@ -22,54 +22,100 @@ export default function WhatsAppOrderModal({
   const message = buildWhatsAppMessage(orderDetails);
 
   // Handler per apertura WhatsApp - Mobile First
-  const handleOpenWhatsApp = () => {
+  const handleOpenWhatsApp = async () => {
+    console.log('🔄 Tentativo apertura WhatsApp...');
+    console.log('📝 Messaggio:', message);
+    
     const mobileUrl = buildWhatsAppMobileUrl(message);
     const waUrl = buildWhatsAppUrl(message);
     const webUrl = buildWhatsAppWebUrl(message);
     
-    // Sequenza mobile-first con fallback
+    console.log('🔗 URL generati:', { mobileUrl, waUrl, webUrl });
+    
+    // Strategia mobile-first ottimizzata
     try {
-      // 1. Prova app mobile nativa (iOS/Android)
-      window.open(mobileUrl, '_blank', 'noopener,noreferrer');
+      // 1. Primo tentativo: app WhatsApp nativa (whatsapp://)
+      console.log('📱 Tentativo app WhatsApp nativa...');
+      window.location.href = mobileUrl;
+      console.log('✅ Redirect app nativa avviato');
     } catch (error) {
+      console.log('❌ App nativa fallita, provo wa.me...');
       try {
-        // 2. Fallback wa.me (universale)
-        window.open(waUrl, '_blank', 'noopener,noreferrer');
+        // 2. Fallback: wa.me (universale mobile)
+        console.log('🌐 Tentativo wa.me universale...');
+        window.location.href = waUrl;
+        console.log('✅ Redirect wa.me avviato');
       } catch (fallbackError) {
+        console.warn('❌ Entrambi i tentativi falliti:', error, fallbackError);
+        // Copia automaticamente il testo come fallback
         try {
-          // 3. Fallback web WhatsApp (desktop)
-          window.open(webUrl, '_blank', 'noopener,noreferrer');
-        } catch (webError) {
-          console.warn('Impossibile aprire WhatsApp:', error, fallbackError, webError);
+          await navigator.clipboard.writeText(message);
+          alert('WhatsApp non disponibile. Il messaggio è stato copiato negli appunti. Aprire WhatsApp e incollare il messaggio.');
+        } catch (clipboardError) {
+          alert('Impossibile aprire WhatsApp automaticamente. Copiare il testo sopra e incollarlo manualmente in WhatsApp.');
         }
       }
     }
-    
-    // Log success dopo apertura (non bloccante)
-    setTimeout(() => {
-      console.log('✅ WhatsApp aperto con messaggio precompilato');
-    }, 0);
   };
 
   // Handler per copia testo
   const handleCopyText = async () => {
+    console.log('🔄 Tentativo copia testo...');
+    console.log('📝 Testo da copiare:', message);
+    
     try {
+      // Strategia mobile-first per copia testo
       if (navigator.clipboard && window.isSecureContext) {
+        console.log('📋 Usando Clipboard API moderna...');
         await navigator.clipboard.writeText(message);
+        console.log('✅ Testo copiato con Clipboard API');
       } else {
-        // Fallback per browser non supportati
+        console.log('📋 Usando fallback mobile-friendly...');
+        // Fallback ottimizzato per mobile
         const textArea = document.createElement('textarea');
         textArea.value = message;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '0';
+        textArea.style.top = '0';
+        textArea.style.width = '1px';
+        textArea.style.height = '1px';
+        textArea.style.padding = '0';
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+        textArea.setAttribute('readonly', '');
+        
         document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
+        
+        // Per iOS Safari
+        textArea.contentEditable = 'true';
+        textArea.readOnly = false;
+        
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        
+        textArea.setSelectionRange(0, 999999);
+        
+        const successful = document.execCommand('copy');
         document.body.removeChild(textArea);
+        
+        if (!successful) {
+          throw new Error('execCommand copy failed');
+        }
+        console.log('✅ Testo copiato con fallback mobile');
       }
       
       setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
+      setTimeout(() => setCopySuccess(false), 3000);
+      console.log('✅ Stato copySuccess impostato');
     } catch (error) {
-      console.warn('Impossibile copiare il testo:', error);
+      console.warn('❌ Impossibile copiare il testo:', error);
+      alert('Impossibile copiare automaticamente. Tenere premuto sul testo sopra e selezionare "Copia".');
     }
   };
 
@@ -89,7 +135,12 @@ export default function WhatsAppOrderModal({
   }, [isOpen, onClose]);
 
   // ✅ RENDER CONDIZIONALE DOPO TUTTI GLI HOOK
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('❌ WhatsAppOrderModal: isOpen = false, non renderizzato');
+    return null;
+  }
+  
+  console.log('✅ WhatsAppOrderModal: renderizzato con orderDetails:', orderDetails);
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
@@ -148,6 +199,14 @@ export default function WhatsAppOrderModal({
               borderColor: '#e2d6aa',
               color: '#541111'
             }}
+            onTouchStart={(e) => {
+              // Facilita la selezione su mobile
+              const textarea = e.currentTarget;
+              setTimeout(() => {
+                textarea.select();
+                textarea.setSelectionRange(0, textarea.value.length);
+              }, 100);
+            }}
           />
           <p className="text-xs mt-2" style={{ color: '#7a4a30' }}>
             Il messaggio non include prezzi. Potrai scegliere il destinatario in WhatsApp.
@@ -161,7 +220,12 @@ export default function WhatsAppOrderModal({
         >
           {/* Pulsante Apri WhatsApp */}
           <button
-            onClick={handleOpenWhatsApp}
+            onClick={(e) => {
+              console.log('🔄 Click su pulsante Apri WhatsApp');
+              e.preventDefault();
+              e.stopPropagation();
+              handleOpenWhatsApp();
+            }}
             className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors"
             style={{ 
               background: '#16a34a', 
@@ -176,7 +240,12 @@ export default function WhatsAppOrderModal({
           <div className="flex gap-3">
             {/* Pulsante Copia Testo */}
             <button
-              onClick={handleCopyText}
+              onClick={(e) => {
+                console.log('🔄 Click su pulsante Copia Testo');
+                e.preventDefault();
+                e.stopPropagation();
+                handleCopyText();
+              }}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium transition-colors"
               style={{ 
                 background: 'white', 
