@@ -5,7 +5,7 @@ interface UseHomeHandlersProps {
   // Handlers esterni
   updateWineInventory: (id: string, value: number) => Promise<boolean>;
   refreshWines: () => Promise<void>;
-  updateWine: (id: string, updates: Partial<WineType>) => Promise<void>;
+  updateWine: (id: string, updates: Partial<WineType>) => Promise<boolean>;
   
   // State setters
   setSelectedWine: (wine: WineType | null) => void;
@@ -89,7 +89,10 @@ export function useHomeHandlers({
 
   const handleUpdateWine = useCallback(async (id: string, updates: Partial<WineType>): Promise<void> => {
     try {
-      await updateWine(id, updates);
+      const success = await updateWine(id, updates);
+      if (!success) {
+        console.error('❌ Errore aggiornamento vino');
+      }
     } catch (error) {
       console.error('❌ Errore aggiornamento vino:', error);
     }

@@ -38,7 +38,7 @@ interface ModalsManagerProps {
   // Nuovo Ordine Modal
   isNuovoOrdineModalOpen: boolean;
   closeNuovoOrdineModal: () => void;
-  handleAvanti: () => void;
+  handleAvanti: (supplier: string) => void;
   
   // PIN Modal
   isPinModalOpen: boolean;
