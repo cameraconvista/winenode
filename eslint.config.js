@@ -47,7 +47,17 @@ export default [
       'complexity': ['warn', 20],
       'max-depth': ['warn', 6],
       'max-params': ['warn', 8],
-      'max-nested-callbacks': ['warn', 5]
+      'max-nested-callbacks': ['warn', 5],
+      // Guardrail v1.0.0 - Restricted imports
+      'no-restricted-imports': ['error', {
+        'patterns': [{
+          'group': ['lodash'],
+          'message': 'Use lodash-es or specific function imports instead of default lodash import'
+        }, {
+          'group': ['moment'],
+          'message': 'Use dayjs instead of moment for better performance and smaller bundle'
+        }]
+      }]
     }
   },
   // Pages/Components complessi - governance rilassata
@@ -120,7 +130,8 @@ export default [
       'dist/**', 
       'node_modules/**', 
       '.recovery/**', 
-      'Backup_Automatico/**', 
+      'Backup_Automatico/**',
+      'ARCHIVE/**',
       '**/*.config.*',
       '.eslintrc.js',
       'scripts/recovery-system.cjs',
