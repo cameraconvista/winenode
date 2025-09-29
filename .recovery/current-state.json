@@ -1,21 +1,29 @@
 {
-  "timestamp": "2025-09-25T21:21:37.592Z",
-  "snapshotId": "recovery-2025-09-25T21-21-37-589Z",
+  "timestamp": "2025-09-29T08:14:00.427Z",
+  "snapshotId": "recovery-2025-09-29T08-14-00-425Z",
   "branch": "main",
-  "lastCommit": "d2be4b8cd3f6cc1d0305522566bdebeccfc55247 feat: Implementa conferma ordini con giacenze in Creati + rimozione tab Storico",
+  "lastCommit": "9ceef02e4cc39912883901b2161001c953dec9d9 🧹 DEDUP DEFINITIVO VINI: Diagnosi + Script + Guardrail",
   "modifiedFiles": [
-    ".recovery/current-state.json",
-    "src/components/orders/OrdineRicevutoCard.tsx",
-    "src/pages/GestisciOrdiniPage.tsx",
-    ".recovery/snapshots/recovery-2025-09-25T21-14-28-219Z/",
-    "REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt"
+    "REPORT_FILE_ANALISI_500_RIGHE_OTTIMIZZATO.txt",
+    "REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt",
+    "src/components/ErrorBoundary.tsx",
+    "src/components/orders/OrdersModalsManager.tsx",
+    "src/components/orders/OrdersTable.tsx",
+    "src/contexts/OrdersActionsContext.tsx",
+    "src/contexts/OrdersDataContext.tsx",
+    "src/contexts/OrdersProvider.tsx",
+    "src/contexts/QuantityManagementContext.tsx",
+    "src/contexts/index.ts",
+    "src/hooks/useOrdersHandlers.ts",
+    "src/hooks/useOrdersState.ts",
+    "src/pages/GestisciOrdiniPage_broken.tsx",
+    "src/types/"
   ],
   "activeTask": "Task generico",
   "reports": [
+    "REPORT_FILE_ANALISI_500_RIGHE.txt",
+    "REPORT_FILE_ANALISI_500_RIGHE 2.txt",
     "REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt",
-    "REPORT_CONFERMA_IN_CREATI_E_RIMOZIONE_STORICO.txt",
-    "REPORT_OTTIMIZZAZIONE_TESTI_GESTISCI_ORDINI.txt",
-    "REPORT_RIMOZIONE_ICONE_GESTISCI_ORDINI.txt",
-    "REPORT_CENTRALIZZAZIONE_LABELS_GESTISCI_ORDINI.txt"
+    "REPORT_FILE_ANALISI_500_RIGHE_OTTIMIZZATO.txt"
   ]
 }

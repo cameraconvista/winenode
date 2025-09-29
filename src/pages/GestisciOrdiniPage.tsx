@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { X, Package, Eye, Check, Trash2 } from 'lucide-react';
 import { useOrdini, Ordine } from '../contexts/OrdiniContext';
@@ -56,8 +56,40 @@ export default function GestisciOrdiniPage() {
   const [ordineToDelete, setOrdineToDelete] = useState<{
     id: string;
     ordine: Ordine;
-    tipo: 'inviato' | 'ricevuto' | 'storico';
+    tipo: 'inviato' | 'archiviato';
   } | null>(null);
+
+  // PERF: Selettori memoizzati per derive data
+  const currentTabData = useMemo(() => {
+    switch (activeTab) {
+      case 'inviati':
+        return ordiniInviati;
+      case 'archiviati':
+        return ordiniStorico;
+      default:
+        return [];
+    }
+  }, [activeTab, ordiniInviati, ordiniStorico]);
+
+  const emptyMessage = useMemo(() => {
+    switch (activeTab) {
+      case 'inviati':
+        return {
+          title: ORDINI_LABELS.emptyState.creati.title,
+          subtitle: ORDINI_LABELS.emptyState.creati.subtitle
+        };
+      case 'archiviati':
+        return {
+          title: ORDINI_LABELS.emptyState.archiviati.title,
+          subtitle: ORDINI_LABELS.emptyState.archiviati.subtitle
+        };
+      default:
+        return {
+          title: ORDINI_LABELS.emptyState.default.title,
+          subtitle: ORDINI_LABELS.emptyState.default.subtitle
+        };
+    }
+  }, [activeTab]);
 
   // Gestisci tab da URL query
   useEffect(() => {
@@ -67,40 +99,30 @@ export default function GestisciOrdiniPage() {
     }
   }, [searchParams]);
 
-  const handleClose = () => {
+  // PERF: Handlers stabili con useCallback
+  const handleClose = useCallback(() => {
     navigate('/');
-  };
+  }, [navigate]);
 
-  const handleVisualizza = (ordineId: string) => {
-    console.log('👁️ Visualizza ordine:', ordineId);
+  const handleVisualizza = useCallback((ordineId: string) => {
     // TODO: Implementare visualizzazione dettagli ordine
-  };
+  }, []);
 
-  const handleConfermaOrdine = async (ordineId: string) => {
-    console.log('✅ Conferma ordine con aggiornamento giacenze:', ordineId);
-    
-    // Conferma diretta con aggiornamento giacenze (sempre attiva)
+  const handleConfermaOrdine = useCallback(async (ordineId: string) => {
     await confermaRicezioneOrdine(ordineId);
-  };
+  }, [confermaRicezioneOrdine]);
 
-  const handleConfermaRicezione = async (ordineId: string) => {
-    console.log('📦 Conferma ricezione ordine:', ordineId);
-    await confermaRicezioneOrdine(ordineId);
-  };
-
-  const handleEliminaOrdineInviato = (ordineId: string, ordine: Ordine) => {
+  const handleEliminaOrdineCreato = useCallback((ordineId: string, ordine: Ordine) => {
     setOrdineToDelete({ id: ordineId, ordine, tipo: 'inviato' });
     setShowConfermaEliminazione(true);
-  };
+  }, []);
 
-  // handleEliminaOrdineRicevuto rimossa - ordini ricevuti non esistono più
-
-  const handleEliminaOrdineStorico = (ordineId: string, ordine: Ordine) => {
-    setOrdineToDelete({ id: ordineId, ordine, tipo: 'storico' });
+  const handleEliminaOrdineArchiviato = useCallback((ordineId: string, ordine: Ordine) => {
+    setOrdineToDelete({ id: ordineId, ordine, tipo: 'archiviato' });
     setShowConfermaEliminazione(true);
-  };
+  }, []);
 
-  const handleToggleExpanded = (ordineId: string) => {
+  const handleToggleExpanded = useCallback((ordineId: string) => {
     setExpandedOrders(prev => {
       const newSet = new Set(prev);
       if (newSet.has(ordineId)) {
@@ -110,7 +132,7 @@ export default function GestisciOrdiniPage() {
       }
       return newSet;
     });
-  };
+  }, []);
 
   const handleToggleManaging = (ordineId: string) => {
     if (!isFeatureEnabled('CREATI_INLINE_GESTISCI')) return;
@@ -143,7 +165,7 @@ export default function GestisciOrdiniPage() {
     });
   };
 
-  const handleQuantityChange = (ordineId: string, dettaglioIndex: number, newQuantity: number) => {
+  const handleQuantityChange = useCallback((ordineId: string, dettaglioIndex: number, newQuantity: number) => {
     setModifiedQuantities(prev => ({
       ...prev,
       [ordineId]: {
@@ -151,37 +173,30 @@ export default function GestisciOrdiniPage() {
         [dettaglioIndex]: newQuantity
       }
     }));
-  };
+  }, []);
 
-  const handleOpenQuantityModal = (ordineId: string, dettaglioIndex: number) => {
+  const handleOpenQuantityModal = useCallback((ordineId: string, dettaglioIndex: number) => {
     const ordine = ordiniInviati.find(o => o.id === ordineId);
-    if (!ordine || !ordine.dettagli || !ordine.dettagli[dettaglioIndex]) return;
+    if (!ordine?.dettagli?.[dettaglioIndex]) return;
 
     const originalValue = ordine.dettagli[dettaglioIndex].quantity;
-    // Usa draftQuantities se disponibile, altrimenti modifiedQuantities, altrimenti originale
     const currentValue = isFeatureEnabled('QTY_MODAL_PERSIST_COMMIT') 
       ? (draftQuantities[ordineId]?.[dettaglioIndex] ?? modifiedQuantities[ordineId]?.[dettaglioIndex] ?? originalValue)
       : (modifiedQuantities[ordineId]?.[dettaglioIndex] ?? originalValue);
 
-    setEditingQuantity({
-      ordineId,
-      dettaglioIndex,
-      currentValue,
-      originalValue
-    });
+    setEditingQuantity({ ordineId, dettaglioIndex, currentValue, originalValue });
     setShowQuantityModal(true);
-  };
+  }, [ordiniInviati, draftQuantities, modifiedQuantities]);
 
-  const handleCloseQuantityModal = () => {
+  const handleCloseQuantityModal = useCallback(() => {
     setShowQuantityModal(false);
     setEditingQuantity(null);
-  };
+  }, []);
 
   const handleConfirmQuantityModal = (newQuantity: number) => {
     if (!editingQuantity) return;
 
     if (isFeatureEnabled('QTY_MODAL_PERSIST_COMMIT')) {
-      // Commit del draft: salva in draftQuantities per persistenza
       setDraftQuantities(prev => ({
         ...prev,
         [editingQuantity.ordineId]: {
@@ -190,7 +205,6 @@ export default function GestisciOrdiniPage() {
         }
       }));
 
-      // AGGIORNA LE QUANTITÀ REALI NELL'ORDINE
       const ordine = ordiniInviati.find(o => o.id === editingQuantity.ordineId);
       if (ordine && ordine.dettagli) {
         const dettagliAggiornati = ordine.dettagli.map((dettaglio, index) => {
@@ -207,7 +221,6 @@ export default function GestisciOrdiniPage() {
         // Aggiorna le quantità confermate invece dell'ordine direttamente
         const wineId = ordine.dettagli[editingQuantity.dettaglioIndex].wineId;
         aggiornaQuantitaConfermata(editingQuantity.ordineId, wineId, newQuantity);
-        console.log('✅ Quantità confermata aggiornata:', newQuantity);
       }
 
       // Se abilitato il flusso di archiviazione, mostra dialog
@@ -237,7 +250,7 @@ export default function GestisciOrdiniPage() {
     handleCloseQuantityModal();
   };
 
-  const handleOpenSmartModal = (ordine: Ordine) => {
+  const handleOpenSmartModal = useCallback((ordine: Ordine) => {
     if (!isFeatureEnabled('CREATI_SMART_FULL_MODAL')) return;
     
     // Inizializza le quantità confermate per questo ordine
@@ -247,15 +260,15 @@ export default function GestisciOrdiniPage() {
     
     setSmartModalOrdine(ordine);
     setShowSmartModal(true);
-  };
+  }, [inizializzaQuantitaConfermate]);
 
-  const handleCloseSmartModal = () => {
+  const handleCloseSmartModal = useCallback(() => {
     setShowSmartModal(false);
     setSmartModalOrdine(null);
-  };
+  }, []);
 
-  const handleSmartModalConfirm = (modifiedQuantities: Record<number, number>) => {
-    if (!smartModalOrdine || !smartModalOrdine.dettagli) return;
+  const handleSmartModalConfirm = useCallback((modifiedQuantities: Record<number, number>) => {
+    if (!smartModalOrdine?.dettagli) return;
 
     // Aggiorna le quantità confermate per ogni prodotto modificato
     smartModalOrdine.dettagli.forEach((dettaglio, index) => {
@@ -263,11 +276,9 @@ export default function GestisciOrdiniPage() {
         aggiornaQuantitaConfermata(smartModalOrdine.id, dettaglio.wineId, modifiedQuantities[index]);
       }
     });
+  }, [smartModalOrdine, aggiornaQuantitaConfermata]);
 
-    console.log('✅ Quantità confermate aggiornate tramite Smart Modal');
-  };
-
-  const handleSmartModalArchive = async (modifiedQuantities: Record<number, number>) => {
+  const handleSmartModalArchive = useCallback(async (modifiedQuantities: Record<number, number>) => {
     if (!smartModalOrdine || !smartModalOrdine.dettagli) return;
 
     try {
@@ -284,11 +295,10 @@ export default function GestisciOrdiniPage() {
       // Switch al tab Archiviati
       setActiveTab('archiviati');
 
-      console.log('✅ Ordine archiviato con successo tramite Smart Modal');
     } catch (error) {
-      console.error('❌ Errore durante archiviazione Smart Modal:', error);
+      console.error('Errore durante archiviazione Smart Modal:', error);
     }
-  };
+  }, [smartModalOrdine, aggiornaQuantitaConfermata, confermaRicezioneOrdine, setActiveTab]);
 
   const handleConfirmArchive = async () => {
     if (!pendingArchiveOrder) return;
@@ -323,9 +333,8 @@ export default function GestisciOrdiniPage() {
       setPendingArchiveOrder(null);
       setActiveTab('archiviati');
 
-      console.log('✅ Ordine archiviato con successo');
     } catch (error) {
-      console.error('❌ Errore durante archiviazione:', error);
+      console.error('Errore durante archiviazione:', error);
     }
   };
 
@@ -381,88 +390,50 @@ export default function GestisciOrdiniPage() {
       // Chiudi la modalità gestione
       handleToggleManaging(ordineId);
 
-      console.log('✅ Quantità confermate e ordine archiviato con successo');
     } catch (error) {
-      console.error('❌ Errore durante la conferma delle modifiche:', error);
+      console.error('Errore durante la conferma delle modifiche:', error);
     }
   };
 
-  const confermaEliminazione = () => {
+  const confermaEliminazione = useCallback(() => {
     if (!ordineToDelete) return;
 
     switch (ordineToDelete.tipo) {
       case 'inviato':
         eliminaOrdineInviato(ordineToDelete.id);
         break;
-      case 'ricevuto':
-        // eliminaOrdineRicevuto rimossa - non più necessaria
-        break;
-      case 'storico':
+      case 'archiviato':
         eliminaOrdineStorico(ordineToDelete.id);
         break;
     }
 
     setOrdineToDelete(null);
-  };
+  }, [ordineToDelete, eliminaOrdineInviato, eliminaOrdineStorico]);
 
-  const getMessaggioEliminazione = () => {
+  const getMessaggioEliminazione = useMemo(() => {
     if (!ordineToDelete) return '';
     
     switch (ordineToDelete.tipo) {
       case 'inviato':
         return ORDINI_LABELS.eliminazione.creato;
-      case 'ricevuto':
-        return ORDINI_LABELS.eliminazione.archiviato;
-      case 'storico':
+      case 'archiviato':
         return ORDINI_LABELS.eliminazione.archiviato;
       default:
         return '';
     }
-  };
+  }, [ordineToDelete]);
 
-  const getTabCount = (tab: TabType) => {
+  // PERF: Funzione helper per conteggi tab
+  const getTabCount = useCallback((tab: TabType) => {
     switch (tab) {
       case 'inviati':
         return ordiniInviati.length;
       case 'archiviati':
-        // Tab "Ordini Archiviati" conta ordini completati (storico)
         return ordiniStorico.length;
       default:
         return 0;
     }
-  };
-
-  const getCurrentTabData = () => {
-    switch (activeTab) {
-      case 'inviati':
-        return ordiniInviati;
-      case 'archiviati':
-        // Tab "Ordini Archiviati" mostra ordini completati (storico)
-        return ordiniStorico;
-      default:
-        return [];
-    }
-  };
-
-  const getEmptyMessage = () => {
-    switch (activeTab) {
-      case 'inviati':
-        return {
-          title: ORDINI_LABELS.emptyState.creati.title,
-          subtitle: ORDINI_LABELS.emptyState.creati.subtitle
-        };
-      case 'archiviati':
-        return {
-          title: ORDINI_LABELS.emptyState.archiviati.title,
-          subtitle: ORDINI_LABELS.emptyState.archiviati.subtitle
-        };
-      default:
-        return {
-          title: ORDINI_LABELS.emptyState.default.title,
-          subtitle: ORDINI_LABELS.emptyState.default.subtitle
-        };
-    }
-  };
+  }, [ordiniInviati.length, ordiniStorico.length]);
 
   if (loading) {
     return (
@@ -472,8 +443,7 @@ export default function GestisciOrdiniPage() {
     );
   }
 
-  const currentData = getCurrentTabData();
-  const emptyMessage = getEmptyMessage();
+  // PERF: Usa selettori memoizzati
 
   return (
     <div className="homepage-container" style={{ 
@@ -484,7 +454,6 @@ export default function GestisciOrdiniPage() {
       position: 'relative',
       background: '#fff9dc'
     }}>
-      {/* HEADER FISSO CON LOGO */}
       <header className="mobile-header">
         <div className="header-content">
           <div className="logo-wrap">
@@ -579,7 +548,7 @@ export default function GestisciOrdiniPage() {
             padding: '0 16px',
             paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px'
           }}>
-            {currentData.length === 0 ? (
+            {currentTabData.length === 0 ? (
               <div className="gestisci-ordini-empty" style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -607,7 +576,7 @@ export default function GestisciOrdiniPage() {
                 display: 'flex',
                 flexDirection: 'column'
               }}>
-            {currentData.map((ordine) => {
+            {currentTabData.map((ordine) => {
               // Usa componente specializzato per ordini archiviati
               if (activeTab === 'archiviati') {
                 return (
@@ -615,14 +584,14 @@ export default function GestisciOrdiniPage() {
                     key={ordine.id}
                     ordine={ordine}
                     onVisualizza={handleVisualizza}
-                    onConfermaRicezione={handleConfermaRicezione}
-                    onElimina={handleEliminaOrdineStorico}
+                    onConfermaRicezione={handleConfermaOrdine}
+                    onElimina={handleEliminaOrdineArchiviato}
                     onAggiornaQuantita={aggiornaQuantitaOrdine}
                   />
                 );
               }
 
-              // Layout standard per inviati e storico
+              // Layout standard per ordini creati
               return (
                 <div
                   key={ordine.id}
@@ -887,7 +856,7 @@ export default function GestisciOrdiniPage() {
                     </div>
                   )}
 
-                  {/* Pulsanti azione per tab Inviati */}
+                  {/* Pulsanti azione per ordini creati */}
                   {activeTab === 'inviati' && (
                     <div className="flex gap-2 pt-2 border-t" style={{ borderColor: '#e2d6aa' }}>
                       <button
@@ -911,7 +880,7 @@ export default function GestisciOrdiniPage() {
                         {ORDINI_LABELS.azioni.conferma}
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleEliminaOrdineInviato(ordine.id, ordine); }}
+                        onClick={(e) => { e.stopPropagation(); handleEliminaOrdineCreato(ordine.id, ordine); }}
                         className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded text-xs font-medium transition-colors"
                         style={{ 
                           background: '#dc2626', 
@@ -924,7 +893,6 @@ export default function GestisciOrdiniPage() {
                     </div>
                   )}
 
-                  {/* Layout per storico rimosso - tab eliminato */}
                 </div>
               );
             })}
@@ -940,7 +908,7 @@ export default function GestisciOrdiniPage() {
         onOpenChange={setShowConfermaEliminazione}
         onConfirm={confermaEliminazione}
         titolo={ORDINI_LABELS.header.modaleTitolo}
-        messaggio={getMessaggioEliminazione()}
+        messaggio={getMessaggioEliminazione}
         dettagliOrdine={ordineToDelete ? {
           fornitore: ordineToDelete.ordine.fornitore,
           totale: ordineToDelete.ordine.totale,
