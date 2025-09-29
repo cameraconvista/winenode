@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Minus, Plus } from 'lucide-react';
 import PhosphorBell from '~icons/ph/bell-light';
@@ -18,39 +18,14 @@ export default function CreaOrdinePage() {
     handleUnitChange
   } = useCreaOrdine();
 
-  // Memoizza filtro vini per fornitore selezionato
-  const supplierWines = useMemo(() => {
-    const decodedSupplier = decodeURIComponent(supplier || '');
-    return wines.filter(wine => wine.supplier === decodedSupplier);
-  }, [wines, supplier]);
+  // Filtra vini per fornitore selezionato
+  const supplierWines = wines.filter(wine => 
+    wine.supplier === decodeURIComponent(supplier || '')
+  );
 
-  // Memoizza lookup O(1) per ordineItems
-  const ordineItemsById = useMemo(() => {
-    const map = new Map();
-    ordineItems.forEach(item => map.set(item.wineId, item));
-    return map;
-  }, [ordineItems]);
-
-  // Memoizza handlers
-  const handleBack = useCallback(() => {
+  const handleBack = () => {
     navigate(-1);
-  }, [navigate]);
-
-  const handleNavigateToSummary = useCallback(() => {
-    console.log('🔘 Click Conferma Ordine - totalBottiglie:', totalBottiglie);
-    console.log('🔘 ordineItems:', ordineItems);
-    if (totalBottiglie > 0) {
-      console.log('✅ Navigando a riepilogo ordine...');
-      navigate(`/orders/summary/${supplier}`, {
-        state: {
-          ordineItems,
-          totalBottiglie
-        }
-      });
-    } else {
-      console.log('❌ Nessuna bottiglia selezionata');
-    }
-  }, [navigate, supplier, ordineItems, totalBottiglie]);
+  };
 
   if (loading) {
     return (
@@ -131,7 +106,7 @@ export default function CreaOrdinePage() {
           <div className="space-y-2">
             {supplierWines.map((wine) => {
               const isLowStock = wine.inventory <= wine.minStock;
-              const currentItem = ordineItemsById.get(wine.id);
+              const currentItem = ordineItems.find(item => item.wineId === wine.id);
               const preferredUnit = unitPreferences[wine.id] || 'cartoni';
               
               return (
@@ -281,7 +256,21 @@ export default function CreaOrdinePage() {
             Indietro
           </button>
           <button
-            onClick={handleNavigateToSummary}
+            onClick={() => {
+              console.log('🔘 Click Conferma Ordine - totalBottiglie:', totalBottiglie);
+              console.log('🔘 ordineItems:', ordineItems);
+              if (totalBottiglie > 0) {
+                console.log('✅ Navigando a riepilogo ordine...');
+                navigate(`/orders/summary/${supplier}`, {
+                  state: {
+                    ordineItems,
+                    totalBottiglie
+                  }
+                });
+              } else {
+                console.log('❌ Nessuna bottiglia selezionata');
+              }
+            }}
             className="px-6 py-3 rounded-lg font-medium transition-colors"
             style={{ 
               background: totalBottiglie > 0 ? '#16a34a' : '#d1c7b8',
