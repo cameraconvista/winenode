@@ -11,7 +11,7 @@ import './utils/resetFirstLaunch'
 // Lazy loading per ottimizzare le prestazioni
 const HomePage = lazy(() => import('./pages/HomePage/index'))
 // RIMOSSO: const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const ManualWineInsertPage = lazy(() => import('./pages/ManualWineInsertPage'))
+const ManualWineInsertPage = lazy(() => import('./pages/ManualWineInsertPage/index'))
 const FornitoriPage = lazy(() => import('./pages/FornitoriPage'))
 // RIMOSSO: const ArchiviPage = lazy(() => import('./pages/ArchiviPage'))
 const ImportaPage = lazy(() => import('./pages/ImportaPage'))
