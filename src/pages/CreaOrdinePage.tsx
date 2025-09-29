@@ -152,7 +152,11 @@ export default function CreaOrdinePage() {
                     {/* Quantity Controls */}
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleQuantityChange(wine.id, -1)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleQuantityChange(wine.id, -1);
+                        }}
                         className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-colors"
                         style={{ background: '#dc2626' }}
                         disabled={!currentItem || currentItem.quantity <= 0}
@@ -168,7 +172,11 @@ export default function CreaOrdinePage() {
                       </div>
                       
                       <button
-                        onClick={() => handleQuantityChange(wine.id, 1)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleQuantityChange(wine.id, 1);
+                        }}
                         className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-colors"
                         style={{ background: '#16a34a' }}
                       >
@@ -179,7 +187,11 @@ export default function CreaOrdinePage() {
                     {/* Unit Toggle */}
                     <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid #e2d6aa' }}>
                       <button
-                        onClick={() => handleUnitChange(wine.id, 'bottiglie')}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleUnitChange(wine.id, 'bottiglie');
+                        }}
                         className="px-3 py-1 text-xs font-medium transition-colors"
                         style={{
                           background: ((currentItem?.unit || preferredUnit) === 'bottiglie') ? '#d4a300' : 'transparent',
@@ -190,7 +202,11 @@ export default function CreaOrdinePage() {
                         Bottiglie
                       </button>
                       <button
-                        onClick={() => handleUnitChange(wine.id, 'cartoni')}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleUnitChange(wine.id, 'cartoni');
+                        }}
                         className="px-3 py-1 text-xs font-medium transition-colors"
                         style={{
                           background: ((currentItem?.unit || preferredUnit) === 'cartoni') ? '#d4a300' : 'transparent',
