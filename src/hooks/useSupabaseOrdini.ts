@@ -68,12 +68,30 @@ export function useSupabaseOrdini() {
     }
   };
 
+  // Archivia ordine con quantità applicate (funzione atomica)
+  const archiveOrdineWithAppliedQuantities = async (params: {
+    ordineId: string;
+    quantitaConfermate: Record<string, number>;
+    contenutoCorrente: OrdineDettaglio[];
+  }): Promise<boolean> => {
+    try {
+      await ordiniService.archiveOrdineWithAppliedQuantities(params);
+      return true;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore archiviazione';
+      console.error('❌ Errore archiviazione con quantità applicate:', errorMessage);
+      setError(errorMessage);
+      return false;
+    }
+  };
+
   return {
     loading,
     error,
     loadOrdini,
     salvaOrdine,
     aggiornaStatoOrdine,
-    eliminaOrdine
+    eliminaOrdine,
+    archiveOrdineWithAppliedQuantities
   };
 }

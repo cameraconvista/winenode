@@ -45,7 +45,10 @@ export default function GestisciOrdiniPage() {
     aggiornaQuantitaOrdine,
     confermaRicezioneOrdine,
     eliminaOrdineInviato,
-    eliminaOrdineStorico
+    eliminaOrdineStorico,
+    inizializzaQuantitaConfermate,
+    aggiornaQuantitaConfermata,
+    getQuantitaConfermate
   } = useOrdini();
 
   // Stati per il modale di conferma eliminazione
@@ -201,9 +204,10 @@ export default function GestisciOrdiniPage() {
           return dettaglio;
         });
         
-        // Aggiorna l'ordine nel context
-        aggiornaQuantitaOrdine(editingQuantity.ordineId, dettagliAggiornati);
-        console.log('✅ Quantità aggiornata:', newQuantity);
+        // Aggiorna le quantità confermate invece dell'ordine direttamente
+        const wineId = ordine.dettagli[editingQuantity.dettaglioIndex].wineId;
+        aggiornaQuantitaConfermata(editingQuantity.ordineId, wineId, newQuantity);
+        console.log('✅ Quantità confermata aggiornata:', newQuantity);
       }
 
       // Se abilitato il flusso di archiviazione, mostra dialog
@@ -236,6 +240,11 @@ export default function GestisciOrdiniPage() {
   const handleOpenSmartModal = (ordine: Ordine) => {
     if (!isFeatureEnabled('CREATI_SMART_FULL_MODAL')) return;
     
+    // Inizializza le quantità confermate per questo ordine
+    if (ordine.dettagli) {
+      inizializzaQuantitaConfermate(ordine.id, ordine.dettagli);
+    }
+    
     setSmartModalOrdine(ordine);
     setShowSmartModal(true);
   };
@@ -248,38 +257,28 @@ export default function GestisciOrdiniPage() {
   const handleSmartModalConfirm = (modifiedQuantities: Record<number, number>) => {
     if (!smartModalOrdine || !smartModalOrdine.dettagli) return;
 
-    // Aggiorna le quantità nell'ordine
-    const dettagliAggiornati = smartModalOrdine.dettagli.map((dettaglio, index) => {
-      const newQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
-      return {
-        ...dettaglio,
-        quantity: newQuantity,
-        totalPrice: newQuantity * dettaglio.unitPrice
-      };
+    // Aggiorna le quantità confermate per ogni prodotto modificato
+    smartModalOrdine.dettagli.forEach((dettaglio, index) => {
+      if (modifiedQuantities[index] !== undefined) {
+        aggiornaQuantitaConfermata(smartModalOrdine.id, dettaglio.wineId, modifiedQuantities[index]);
+      }
     });
 
-    // Aggiorna l'ordine nel context
-    aggiornaQuantitaOrdine(smartModalOrdine.id, dettagliAggiornati);
-
-    console.log('✅ Quantità aggiornate tramite Smart Modal');
+    console.log('✅ Quantità confermate aggiornate tramite Smart Modal');
   };
 
   const handleSmartModalArchive = async (modifiedQuantities: Record<number, number>) => {
     if (!smartModalOrdine || !smartModalOrdine.dettagli) return;
 
     try {
-      // Prepara i dettagli aggiornati con le quantità modificate
-      const dettagliAggiornati = smartModalOrdine.dettagli.map((dettaglio, index) => {
-        const newQuantity = modifiedQuantities[index] ?? dettaglio.quantity;
-        return {
-          ...dettaglio,
-          quantity: newQuantity,
-          totalPrice: newQuantity * dettaglio.unitPrice
-        };
+      // Aggiorna le quantità confermate per ogni prodotto modificato
+      smartModalOrdine.dettagli.forEach((dettaglio, index) => {
+        if (modifiedQuantities[index] !== undefined) {
+          aggiornaQuantitaConfermata(smartModalOrdine.id, dettaglio.wineId, modifiedQuantities[index]);
+        }
       });
 
-      // Prima aggiorna le quantità, poi conferma ricezione (logica atomica Fase 3)
-      aggiornaQuantitaOrdine(smartModalOrdine.id, dettagliAggiornati);
+      // Conferma ricezione con quantità confermate (logica atomica)
       await confermaRicezioneOrdine(smartModalOrdine.id);
 
       // Switch al tab Archiviati

@@ -17,6 +17,10 @@ interface OrdiniContextType {
   confermaRicezioneOrdine: (ordineId: string) => Promise<void>;
   eliminaOrdineInviato: (ordineId: string) => Promise<void>;
   eliminaOrdineStorico: (ordineId: string) => Promise<void>;
+  // Nuove funzioni per quantità confermate
+  inizializzaQuantitaConfermate: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
+  aggiornaQuantitaConfermata: (ordineId: string, wineId: string, quantity: number) => void;
+  getQuantitaConfermate: (ordineId: string) => Record<string, number>;
 }
 
 const OrdiniContext = createContext<OrdiniContextType | undefined>(undefined);
@@ -26,7 +30,38 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
   
+  // Draft state per quantità confermate (single source of truth)
+  const [quantitaConfermate, setQuantitaConfermate] = useState<Record<string, Record<string, number>>>({});
+  
   const supabaseOrdini = useSupabaseOrdini();
+  
+  // Inizializza quantità confermate per un ordine
+  const inizializzaQuantitaConfermate = (ordineId: string, dettagli: OrdineDettaglio[]) => {
+    const quantitaInitiali: Record<string, number> = {};
+    dettagli.forEach(item => {
+      quantitaInitiali[item.wineId] = item.quantity;
+    });
+    setQuantitaConfermate(prev => ({
+      ...prev,
+      [ordineId]: quantitaInitiali
+    }));
+  };
+  
+  // Aggiorna quantità confermata per un prodotto specifico
+  const aggiornaQuantitaConfermata = (ordineId: string, wineId: string, quantity: number) => {
+    setQuantitaConfermate(prev => ({
+      ...prev,
+      [ordineId]: {
+        ...prev[ordineId],
+        [wineId]: quantity
+      }
+    }));
+  };
+  
+  // Ottieni quantità confermate per un ordine
+  const getQuantitaConfermate = (ordineId: string): Record<string, number> => {
+    return quantitaConfermate[ordineId] || {};
+  };
   const { wines, updateWineInventory } = useWines();
 
   // Audit trail function
@@ -177,97 +212,134 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
         setOrderProcessing(ordineId, true);
       }
 
-      // Atomic transaction simulation
-      if (isFeatureEnabled('INVENTORY_TX')) {
-        console.log('🔒 Inizio transazione atomica per ordine:', ordineId);
-      }
-
       // Trova l'ordine prima di aggiornare lo stato (cerca solo in inviati)
       const ordine = ordiniInviati.find(o => o.id === ordineId);
       
       if (!ordine) {
         logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Ordine non trovato' });
+        return;
       }
 
-      // AGGIORNA LE GIACENZE REALI DEI VINI PRIMA DI ARCHIVIARE
-      if (ordine.dettagli) {
-        console.log('📦 Aggiornamento giacenze per ordine:', ordine);
+      // Ottieni quantità confermate (se presenti) o usa quelle originali
+      const quantitaConfermate = getQuantitaConfermate(ordineId);
+      const hasQuantitaConfermate = Object.keys(quantitaConfermate).length > 0;
+      
+      console.log('📊 Quantità confermate disponibili:', hasQuantitaConfermate, quantitaConfermate);
+
+      if (hasQuantitaConfermate && ordine.dettagli) {
+        // Usa la funzione atomica apply + archive
+        const success = await supabaseOrdini.archiveOrdineWithAppliedQuantities({
+          ordineId,
+          quantitaConfermate,
+          contenutoCorrente: ordine.dettagli
+        });
         
-        // Aggiorna le giacenze per ogni vino nell'ordine
+        if (!success) {
+          throw new Error('Errore nell\'archiviazione con quantità applicate');
+        }
+        
+        console.log('✅ Ordine archiviato con quantità confermate applicate');
+        
+        // Aggiorna giacenze usando le quantità confermate
         for (const item of ordine.dettagli) {
           const currentWine = wines.find(w => w.id === item.wineId);
           if (currentWine) {
+            const qtyConfermata = quantitaConfermate[item.wineId] ?? item.quantity;
             const currentInventory = currentWine.inventory || 0;
-            const bottlesToAdd = item.quantity * (item.unit === 'cartoni' ? 6 : 1);
+            const bottlesToAdd = qtyConfermata * (item.unit === 'cartoni' ? 6 : 1);
             const newInventory = currentInventory + bottlesToAdd;
             
-            console.log(`📦 ${item.wineName}: ${currentInventory} + ${bottlesToAdd} = ${newInventory}`);
-            
-            // Aggiorna la giacenza nel database
+            console.log(`📦 ${item.wineName}: ${currentInventory} + ${bottlesToAdd} (confermata) = ${newInventory}`);
             await updateWineInventory(item.wineId, newInventory);
           }
         }
+      } else {
+        // Fallback al metodo originale se non ci sono quantità confermate
+        console.log('📦 Nessuna quantità confermata, uso metodo originale');
         
-        // Log delle quantità per audit
-        const inventoryChanges = ordine.dettagli?.map(item => {
-          const currentWine = wines.find(w => w.id === item.wineId);
-          const currentInventory = currentWine?.inventory || 0;
-          const bottlesToAdd = item.quantity * (item.unit === 'cartoni' ? 6 : 1);
-          return {
-            wineId: item.wineId,
-            wineName: item.wineName,
-            quantityBefore: currentInventory,
-            quantityAfter: currentInventory + bottlesToAdd,
-            delta: bottlesToAdd
-          };
-        }) || [];
-
-        logAuditEvent('INVENTORY_UPDATE', ordineId, { 
-          changes: inventoryChanges,
-          totalBottiglie: ordine.bottiglie,
-          totalValue: ordine.totale
-        });
+        const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'archiviato');
+        if (!success) {
+          throw new Error('Errore nell\'aggiornamento stato ordine');
+        }
+        
+        // Aggiorna giacenze con quantità originali
+        if (ordine.dettagli) {
+          console.log('📦 Aggiornamento giacenze con quantità originali');
+          
+          for (const item of ordine.dettagli) {
+            const currentWine = wines.find(w => w.id === item.wineId);
+            if (currentWine) {
+              const currentInventory = currentWine.inventory || 0;
+              const bottlesToAdd = item.quantity * (item.unit === 'cartoni' ? 6 : 1);
+              const newInventory = currentInventory + bottlesToAdd;
+              
+              console.log(`📦 ${item.wineName}: ${currentInventory} + ${bottlesToAdd} = ${newInventory}`);
+              await updateWineInventory(item.wineId, newInventory);
+            }
+          }
+        }
       }
 
-      // Aggiorna lo stato nel database
-      const success = await supabaseOrdini.aggiornaStatoOrdine(ordineId, 'archiviato');
-      
-      if (success) {
-        // Crea l'ordine completato
-        const ordineCompletato: Ordine = {
-          ...ordine,
-          stato: 'archiviato' // Stato finale per ordini completati
-        };
-        
-        // Aggiungi allo storico (archiviati)
-        setOrdiniStorico(prevStorico => {
-          // Controlla se l'ordine esiste già nello storico per evitare duplicazioni
-          const exists = prevStorico.some(o => o.id === ordineId);
-          if (exists) {
-            console.log('⚠️ Ordine già presente nello storico, evito duplicazione:', ordineId);
-            logAuditEvent('CONFERMA_RICEZIONE_DUPLICATE', ordineId, { warning: 'Ordine già archiviato' });
-            return prevStorico;
-          }
-          return [ordineCompletato, ...prevStorico];
-        });
-        
-        // Rimuovi dalla lista inviati (unica lista di origine ora)
-        setOrdiniInviati(prev => prev.filter(o => o.id !== ordineId));
-        console.log('📤 Ordine rimosso da inviati e spostato in archiviati:', ordineId);
-        
-        // Audit trail - success
-        logAuditEvent('CONFERMA_RICEZIONE_SUCCESS', ordineId, { 
-          finalState: 'archiviato',
-          movedToStorico: true,
-          sourceList: 'inviati',
-          processingTime: Date.now()
-        });
+      // Crea l'ordine completato con quantità aggiornate se necessario
+      let ordineCompletato: Ordine = {
+        ...ordine,
+        stato: 'archiviato'
+      };
 
-        if (isFeatureEnabled('INVENTORY_TX')) {
-          console.log('✅ Transazione atomica completata per ordine:', ordineId);
+      // Se abbiamo quantità confermate, aggiorna i dettagli dell'ordine
+      if (hasQuantitaConfermate && ordine.dettagli) {
+        const dettagliAggiornati = ordine.dettagli.map(item => ({
+          ...item,
+          quantity: quantitaConfermate[item.wineId] ?? item.quantity,
+          totalPrice: (quantitaConfermate[item.wineId] ?? item.quantity) * item.unitPrice
+        }));
+        
+        const nuovoTotale = dettagliAggiornati.reduce((sum, item) => sum + item.totalPrice, 0);
+        const nuoveTotBottiglie = dettagliAggiornati.reduce((sum, item) => {
+          return sum + (item.quantity * (item.unit === 'cartoni' ? 6 : 1));
+        }, 0);
+
+        ordineCompletato = {
+          ...ordineCompletato,
+          dettagli: dettagliAggiornati,
+          totale: nuovoTotale,
+          bottiglie: nuoveTotBottiglie
+        };
+      }
+      
+      // Aggiungi allo storico (archiviati)
+      setOrdiniStorico(prevStorico => {
+        const exists = prevStorico.some(o => o.id === ordineId);
+        if (exists) {
+          console.log('⚠️ Ordine già presente nello storico, evito duplicazione:', ordineId);
+          logAuditEvent('CONFERMA_RICEZIONE_DUPLICATE', ordineId, { warning: 'Ordine già archiviato' });
+          return prevStorico;
         }
-      } else {
-        logAuditEvent('CONFERMA_RICEZIONE_ERROR', ordineId, { error: 'Aggiornamento database fallito' });
+        return [ordineCompletato, ...prevStorico];
+      });
+      
+      // Rimuovi dalla lista inviati
+      setOrdiniInviati(prev => prev.filter(o => o.id !== ordineId));
+      console.log('📤 Ordine rimosso da inviati e spostato in archiviati:', ordineId);
+      
+      // Pulisci le quantità confermate per questo ordine
+      setQuantitaConfermate(prev => {
+        const newState = { ...prev };
+        delete newState[ordineId];
+        return newState;
+      });
+      
+      // Audit trail - success
+      logAuditEvent('CONFERMA_RICEZIONE_SUCCESS', ordineId, { 
+        finalState: 'archiviato',
+        movedToStorico: true,
+        sourceList: 'inviati',
+        hasQuantitaConfermate,
+        processingTime: Date.now()
+      });
+
+      if (isFeatureEnabled('INVENTORY_TX')) {
+        console.log('✅ Transazione atomica completata per ordine:', ordineId);
       }
     } catch (error) {
       console.error('❌ Errore durante conferma ricezione:', error);
@@ -324,7 +396,10 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       aggiornaQuantitaOrdine,
       confermaRicezioneOrdine,
       eliminaOrdineInviato,
-      eliminaOrdineStorico
+      eliminaOrdineStorico,
+      inizializzaQuantitaConfermate,
+      aggiornaQuantitaConfermata,
+      getQuantitaConfermate
     }), [
       ordiniInviati,
       ordiniStorico,
@@ -334,7 +409,10 @@ export function OrdiniProvider({ children }: { children: ReactNode }) {
       aggiornaQuantitaOrdine,
       confermaRicezioneOrdine,
       eliminaOrdineInviato,
-      eliminaOrdineStorico
+      eliminaOrdineStorico,
+      inizializzaQuantitaConfermate,
+      aggiornaQuantitaConfermata,
+      getQuantitaConfermate
     ])}>
       {children}
     </OrdiniContext.Provider>

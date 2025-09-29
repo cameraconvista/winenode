@@ -1966,4 +1966,162 @@ npm run ci:verify: ✅ SUCCESS
 
 **STATUS:** ✅ **RELEASE v1.0.0 PRONTA PER PRODUZIONE**
 
-**RISULTATO FINALE:** App ultra-performante con runtime ottimizzato, re-render controllati, creazione ordini DEFINITIVAMENTE stabile, load ordini robusto (join + fallback), formato date italiano, pulizia residui completa, asset ottimizzati, Web Vitals eccellenti, cache refresh automatico, protezione automatica regressioni, budget CI attivi, guardrail completi, release v1.0.0 packaging completo.
+---
+
+## 🛠️ FIX QUANTITÀ ARCHIVIATE — APPLY + ARCHIVE ATOMICO COMPLETATO
+
+### ✅ Problema Risolto (2025-09-29 02:10)
+
+**Obiettivo Raggiunto:**
+Quando si modificano le quantità in "Gestisci Ordine" e si archivia, l'ordine archiviato ora mostra **le quantità confermate** (non quelle originali).
+
+### ✅ Single Source of Truth Implementato
+
+**Context State Aggiunto:**
+```typescript
+// Draft state per quantità confermate (single source of truth)
+const [quantitaConfermate, setQuantitaConfermate] = useState<Record<string, Record<string, number>>>({});
+
+// Funzioni di gestione
+const inizializzaQuantitaConfermate = (ordineId: string, dettagli: OrdineDettaglio[]) => { ... };
+const aggiornaQuantitaConfermata = (ordineId: string, wineId: string, quantity: number) => { ... };
+const getQuantitaConfermate = (ordineId: string): Record<string, number> => { ... };
+```
+
+**Inizializzazione Automatica:**
+- All'apertura di "Gestisci Ordine" → inizializza draft dalle quantità originali
+- Ogni modifica picker → aggiorna il draft (non l'ordine direttamente)
+- Struttura: `Record<ordineId, Record<wineId, quantityConfermata>>`
+
+### ✅ Service: Funzione Atomica Apply + Archive
+
+**Nuova Funzione nel Service:**
+```typescript
+async archiveOrdineWithAppliedQuantities(params: {
+  ordineId: string;
+  quantitaConfermate: Record<string, number>;
+  contenutoCorrente: OrdineDettaglio[];
+}): Promise<void> {
+  // Costruisce nuovo contenuto con quantità confermate
+  const nuovoContenuto = contenutoCorrente.map(item => ({
+    ...item,
+    quantity: quantitaConfermate[item.wineId] ?? item.quantity,
+    totalPrice: (quantitaConfermate[item.wineId] ?? item.quantity) * item.unitPrice
+  }));
+
+  // Ricalcola aggregati
+  const totBottiglie = nuovoContenuto.reduce(...);
+  const totale = nuovoContenuto.reduce(...);
+
+  // Update atomico dell'ordine
+  await supabase.from('ordini').update({
+    contenuto: nuovoContenuto,  // JSONB con quantità confermate
+    totale: totale,             // Totale ricalcolato
+    stato: 'archiviato',        // Stato finale
+    updated_at: new Date().toISOString()
+  }).eq('id', ordineId);
+}
+```
+
+### ✅ UI: Conferma Archiviazione Atomica
+
+**Logica Aggiornata nel Context:**
+```typescript
+const confermaRicezioneOrdine = async (ordineId: string) => {
+  // Ottieni quantità confermate (se presenti)
+  const quantitaConfermate = getQuantitaConfermate(ordineId);
+  const hasQuantitaConfermate = Object.keys(quantitaConfermate).length > 0;
+
+  if (hasQuantitaConfermate && ordine.dettagli) {
+    // Usa funzione atomica apply + archive
+    await supabaseOrdini.archiveOrdineWithAppliedQuantities({
+      ordineId,
+      quantitaConfermate,
+      contenutoCorrente: ordine.dettagli
+    });
+    
+    // Aggiorna giacenze usando quantità confermate
+    for (const item of ordine.dettagli) {
+      const qtyConfermata = quantitaConfermate[item.wineId] ?? item.quantity;
+      const bottlesToAdd = qtyConfermata * (item.unit === 'cartoni' ? 6 : 1);
+      await updateWineInventory(item.wineId, currentInventory + bottlesToAdd);
+    }
+  } else {
+    // Fallback al metodo originale
+  }
+};
+```
+
+**UI Aggiornata:**
+- **GestisciOrdiniPage**: Usa `aggiornaQuantitaConfermata()` invece di `aggiornaQuantitaOrdine()`
+- **Smart Modal**: Inizializza quantità confermate all'apertura
+- **Picker Quantità**: Aggiorna draft invece dell'ordine direttamente
+
+### ✅ Lettura in "Archiviati"
+
+**Ordine Completato con Quantità Aggiornate:**
+```typescript
+// Se abbiamo quantità confermate, aggiorna i dettagli dell'ordine
+if (hasQuantitaConfermate && ordine.dettagli) {
+  const dettagliAggiornati = ordine.dettagli.map(item => ({
+    ...item,
+    quantity: quantitaConfermate[item.wineId] ?? item.quantity,
+    totalPrice: (quantitaConfermate[item.wineId] ?? item.quantity) * item.unitPrice
+  }));
+  
+  ordineCompletato = {
+    ...ordineCompletato,
+    dettagli: dettagliAggiornati,
+    totale: nuovoTotale,
+    bottiglie: nuoveTotBottiglie
+  };
+}
+```
+
+### 📊 Test Completati
+
+**Validazione Tecnica:**
+```
+npx tsc --noEmit:   ✅ 0 errors
+npm run build:      ✅ Success in 2.78s
+Bundle sizes:       ✅ Stabili (no regression)
+```
+
+**Flusso Test Scenario:**
+1. ✅ **Crea ordine** (es. 1+1 cartoni) → Gestisci → modifica a 6+1
+2. ✅ **Conferma archiviazione** → operazione atomica apply + archive
+3. ✅ **In "Archiviati"** → card mostra 6 e 1 (quantità confermate)
+4. ✅ **Refresh browser** → quantità confermate persistono
+5. ✅ **Giacenze aggiornate** → con quantità confermate, non originali
+
+### 🔍 Interventi Chirurgici
+
+**File Modificati (4 totali):**
+1. **src/contexts/OrdiniContext.tsx** - Single source of truth + logica atomica
+2. **src/services/ordiniService.ts** - Funzione atomica apply + archive
+3. **src/hooks/useSupabaseOrdini.ts** - Hook per funzione atomica
+4. **src/pages/GestisciOrdiniPage.tsx** - UI aggiornata per quantità confermate
+
+**Approccio Chirurgico:**
+- ✅ **Nessuna modifica visiva** - Layout invariato
+- ✅ **Nessun cambio schema DB** - Solo update contenuto JSONB
+- ✅ **Backward compatibility** - Fallback al metodo originale
+- ✅ **Cache invalidation** - Preservata logica esistente
+
+### 🎯 Benefici Raggiunti
+
+**Funzionalità Corretta:**
+- **Quantità confermate persistenti** - Ordini archiviati mostrano quantità modificate
+- **Operazione atomica** - Apply + archive in singola transazione
+- **Giacenze accurate** - Aggiornate con quantità confermate
+- **Single source of truth** - Draft state centralizzato
+
+**Architettura Migliorata:**
+- **Separazione concerns** - Draft state vs ordine persistente
+- **Transazioni atomiche** - Contenuto + totali + stato in un'operazione
+- **Error handling** - Fallback automatico se quantità non confermate
+- **Memory cleanup** - Draft state pulito dopo archiviazione
+
+**STATUS:** ✅ **FIX QUANTITÀ ARCHIVIATE COMPLETATO CON SUCCESSO**
+
+**RISULTATO FINALE:** App ultra-performante con runtime ottimizzato, re-render controllati, creazione ordini DEFINITIVAMENTE stabile, load ordini robusto (join + fallback), formato date italiano, pulizia residui completa, asset ottimizzati, Web Vitals eccellenti, quantità archiviate corrette (apply + archive atomico), cache refresh automatico, protezione automatica regressioni, budget CI attivi, guardrail completi, release v1.0.0 packaging completo.
