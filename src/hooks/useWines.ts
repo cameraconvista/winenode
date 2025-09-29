@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { supabaseGuarded } from '../services/supabaseGuard';
 
 export interface WineType {
   id: string;
@@ -140,7 +141,13 @@ const useWines = () => {
 
   const updateWine = async (id: string, updates: Partial<WineType>): Promise<boolean> => {
     try {
-      const updatesDb: any = {
+      // ❌ DISABILITATO: App deve essere READ-ONLY su tabella 'vini'
+      // I metadati vini devono essere gestiti solo tramite sincronizzazione Google Sheet
+      console.warn('🚫 updateWine DISABILITATO: App è read-only su tabella vini');
+      console.warn('📋 Update ignorato per vino ID:', id, 'updates:', updates);
+      
+      // Blocca operazioni su metadati vini
+      const metadataUpdates = {
         ...(updates.name !== undefined && { nome_vino: updates.name }),
         ...(updates.type !== undefined && { tipologia: updates.type }),
         ...(updates.supplier !== undefined && { fornitore: updates.supplier }),
@@ -152,9 +159,16 @@ const useWines = () => {
         ...(updates.description !== undefined && { produttore: updates.description })
       };
 
-      if (Object.keys(updatesDb).length > 0) {
-        const { error } = await supabase.from('vini').update(updatesDb).eq('id', id);
-        if (error) throw error;
+      if (Object.keys(metadataUpdates).length > 0) {
+        console.warn('🚫 OPERAZIONE BLOCCATA: Tentativo di aggiornare metadati vino');
+        console.warn('📋 Metadati bloccati:', metadataUpdates);
+        
+        // Usa il wrapper guardato che bloccherà l'operazione
+        try {
+          await supabaseGuarded.from('vini').update(metadataUpdates).eq('id', id);
+        } catch (error) {
+          console.warn('✅ Guardrail attivo: Operazione bloccata correttamente');
+        }
       }
 
       if (updates.inventory !== undefined) {
@@ -163,10 +177,15 @@ const useWines = () => {
         if (!inventoryUpdateSuccess) {
           throw new Error('Errore aggiornamento giacenza');
         }
+        
+        // Aggiorna solo la giacenza nello stato locale (metadati bloccati)
+        setWines(prev => prev.map(w => (w.id === id ? { ...w, inventory: updates.inventory } : w)));
+        return true;
       }
 
-      setWines(prev => prev.map(w => (w.id === id ? { ...w, ...updates } : w)));
-      return true;
+      // Se solo metadati (bloccati), non aggiornare stato locale
+      console.warn('🚫 Aggiornamento stato locale bloccato per metadati vino');
+      return false;
     } catch (err: any) {
       if (import.meta.env.DEV) console.error('❌ Errore aggiornamento vino:', err.message);
       return false;

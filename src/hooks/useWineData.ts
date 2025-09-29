@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Papa from 'papaparse';
 import { supabase } from '../lib/supabase';
+import { supabaseGuarded } from '../services/supabaseGuard';
 import { WineRow } from '../lib/constants';
 import { parseCsvWineRows, buildEmptyRows } from '../utils/wineUtils';
 import { getUserId } from '../config/constants';
@@ -76,7 +77,14 @@ export function useWineData() {
 
   const upsertToSupabase = async (wine: WineRow, fallbackTipologia?: string) => {
     try {
-      // App senza autenticazione - inserimento diretto
+      // ❌ DISABILITATO: App deve essere READ-ONLY su tabella 'vini'
+      // I vini devono essere sincronizzati solo da Google Sheet → Supabase
+      console.warn('🚫 upsertToSupabase DISABILITATO: App è read-only su tabella vini');
+      console.warn('📋 Vino ignorato:', wine.nomeVino);
+      return;
+
+      // CODICE ORIGINALE COMMENTATO PER PREVENIRE DUPLICATI
+      /*
       if (!wine.nomeVino?.trim()) return;
 
       const nome = wine.nomeVino.trim();
@@ -84,7 +92,6 @@ export function useWineData() {
         .from('vini')
         .select('id')
         .eq('nome_vino', nome)
-        // Nessun filtro user_id (tenant unico)
         .single();
 
       const wineData = {
@@ -106,25 +113,7 @@ export function useWineData() {
         console.error(`${existing ? 'Update' : 'Insert'} error:`, error);
         return;
       }
-
-      // Gestisci la giacenza nella tabella giacenze
-      const wineId = existing?.id || wineResult?.id;
-      if (wineId) {
-        const { error: giacenzaError } = await supabase
-          .from('giacenza')
-          .upsert({
-            vino_id: wineId,
-            giacenzaa: wine.giacenza ?? 0,
-            user_id: getUserId(),
-            updated_at: new Date().toISOString()
-          })
-          .eq('vino_id', wineId)
-          // Nessun filtro user_id (tenant unico);
-
-        if (giacenzaError) {
-          console.error('Errore upsert giacenza:', giacenzaError);
-        }
-      }
+      */
     } catch (err) {
       console.error('Errore upsert Supabase:', err);
     }
