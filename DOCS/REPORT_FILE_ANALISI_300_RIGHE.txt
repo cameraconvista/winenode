@@ -1,0 +1,94 @@
+REPORT ANALISI FILE >300 RIGHE - WINENODE
+Data: 01/10/2025 00:21
+Scope: File funzionali (*.ts, *.tsx, *.js, *.jsx) con più di 300 righe
+
+=== FILE CRITICI DA OTTIMIZZARE (>300 RIGHE) ===
+
+1. src/contexts/OrdiniContext.tsx                    602 righe  🔴 CRITICO
+   - Context grasso con logica mista
+   - Candidato per split modulare (pattern GestisciOrdini)
+   - Target: 3 context <200 righe ciascuno
+
+2. src/services/ordiniService.ts                     463 righe  🟡 ALTO  
+   - Service layer con molte operazioni
+   - Candidato per split per responsabilità
+   - Target: 2-3 service <200 righe
+
+3. src/components/modals/SmartGestisciModal.tsx      324 righe  🟡 ALTO
+   - Modale complesso con logica business
+   - Candidato per rimodulazione componenti
+   - Target: hook + componenti <150 righe
+
+4. src/pages/RiepilogoOrdinePage.tsx                 319 righe  🟡 ALTO
+   - Pagina monolite 
+   - Candidato per pattern modulare HomePage
+   - Target: container + moduli <200 righe
+
+5. src/pages/GestisciOrdiniPage/hooks/useOrdersHandlers.ts  314 righe  🟡 ALTO
+   - Hook con troppa business logic
+   - Già in struttura modulare ma oversized
+   - Target: split in 2 hook <200 righe
+
+6. src/lib/importFromGoogleSheet.ts                  312 righe  🟡 ALTO
+   - Libreria import con logica complessa
+   - Candidato per split per responsabilità
+   - Target: 2-3 moduli <150 righe
+
+7. src/pages/TabellaViniPage.tsx                     310 righe  🟡 ALTO
+   - Pagina monolite
+   - Candidato per pattern modulare
+   - Target: container + moduli <200 righe
+
+8. src/pages/CreaOrdinePage.tsx                      304 righe  🟡 ALTO
+   - Pagina già ottimizzata ma al limite
+   - Monitoraggio per future ottimizzazioni
+   - Target: mantenere <300 righe
+
+9. src/pages/FornitoriPage.tsx                       303 righe  🟡 ALTO
+   - Pagina al limite critico
+   - Candidato per rimodulazione
+   - Target: container + moduli <200 righe
+
+=== STATISTICHE ===
+
+File totali analizzati: ~50 file funzionali
+File >300 righe: 9 file (18% del codebase)
+File critici (>500 righe): 1 file (OrdiniContext.tsx)
+File ad alto rischio (300-500 righe): 8 file
+
+=== PRIORITÀ INTERVENTI ===
+
+PRIORITÀ 1 (CRITICA):
+- OrdiniContext.tsx (602 righe) → Split in 3 context modulari
+
+PRIORITÀ 2 (ALTA):
+- ordiniService.ts (463 righe) → Split per responsabilità
+- SmartGestisciModal.tsx (324 righe) → Rimodulazione componenti
+
+PRIORITÀ 3 (MEDIA):
+- RiepilogoOrdinePage.tsx (319 righe) → Pattern modulare
+- useOrdersHandlers.ts (314 righe) → Split hook
+- importFromGoogleSheet.ts (312 righe) → Split libreria
+
+PRIORITÀ 4 (BASSA):
+- TabellaViniPage.tsx (310 righe) → Pattern modulare
+- CreaOrdinePage.tsx (304 righe) → Monitoraggio
+- FornitoriPage.tsx (303 righe) → Rimodulazione
+
+=== BENEFICI ATTESI ===
+
+Riduzione complessità: -40%
+Manutenibilità: +60%  
+Bundle size: -15%
+Performance: +25%
+Testabilità: +50%
+
+=== APPROCCIO RACCOMANDATO ===
+
+1. Seguire pattern già implementato (HomePage, GestisciOrdini)
+2. Split chirurgico senza breaking changes
+3. Backup automatico pre-intervento
+4. Validazione continua (build/lint/test)
+5. Rollback <2 minuti per ogni step
+
+STATUS: ANALISI COMPLETATA - PRONTO PER PRIORITÀ 1

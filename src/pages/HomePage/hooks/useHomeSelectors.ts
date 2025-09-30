@@ -4,70 +4,77 @@ import { useWineSearch } from '../../../hooks/useWineSearch';
 import { isFeatureEnabled } from '../../../config/features';
 import { HomeFilters } from './useHomeState';
 
+// Helper functions per ridurre complessità
+const getChipDisplayText = (activeTab: string): string => {
+  const chipMap: Record<string, string> = {
+    'TUTTI I VINI': 'Tutti',
+    'BOLLICINE ITALIANE': 'Bollicine IT',
+    'BOLLICINE FRANCESI': 'Bollicine FR',
+    'BIANCHI': 'Bianchi',
+    'ROSSI': 'Rossi',
+    'ROSATI': 'Rosati',
+    'VINI DOLCI': 'Dolci'
+  };
+  return chipMap[activeTab] || 'Tutti';
+};
+
+const isTypeHeaderOnly = (wine: WineType): boolean => {
+  const typeHeaders = ["BIANCHI", "ROSSI", "ROSATI", "BOLLICINE ITALIANE", "BOLLICINE FRANCESI", "VINI DOLCI"];
+  return !wine.description && !wine.supplier && typeHeaders.includes(wine.name);
+};
+
+const matchesCategory = (wine: WineType, activeTab: string): boolean => {
+  if (activeTab === "TUTTI I VINI") return true;
+  
+  const normalizedType = (wine.type || '').toLowerCase();
+  const categoryMatches: Record<string, string[]> = {
+    'BOLLICINE ITALIANE': ['bollicine italiane', 'bollicine'],
+    'BOLLICINE FRANCESI': ['bollicine francesi'],
+    'BIANCHI': ['bianchi', 'bianco'],
+    'ROSSI': ['rossi', 'rosso'],
+    'ROSATI': ['rosati', 'rosato'],
+    'VINI DOLCI': ['vini dolci', 'dolce']
+  };
+  
+  return categoryMatches[activeTab]?.includes(normalizedType) || false;
+};
+
+const sortWines = (wines: WineType[], activeTab: string): WineType[] => {
+  if (activeTab === "TUTTI I VINI") {
+    return wines.sort((a, b) => a.name.localeCompare(b.name, 'it', { 
+      sensitivity: 'base',
+      numeric: true,
+      ignorePunctuation: true 
+    }));
+  }
+  return wines; // Mantieni ordine originale per tipologie specifiche
+};
+
 export function useHomeSelectors(
   wines: WineType[], 
   activeTab: string, 
   filters: HomeFilters
 ) {
   // Memoizza testo chip per performance
-  const chipDisplayText = useMemo(() => {
-    switch (activeTab) {
-      case 'TUTTI I VINI': return 'Tutti';
-      case 'BOLLICINE ITALIANE': return 'Bollicine IT';
-      case 'BOLLICINE FRANCESI': return 'Bollicine FR';
-      case 'BIANCHI': return 'Bianchi';
-      case 'ROSSI': return 'Rossi';
-      case 'ROSATI': return 'Rosati';
-      case 'VINI DOLCI': return 'Dolci';
-      default: return 'Tutti';
-    }
-  }, [activeTab]);
+  const chipDisplayText = useMemo(() => getChipDisplayText(activeTab), [activeTab]);
 
   // Memoizza filtri e ordinamento per performance
   const baseFilteredWines = useMemo(() => {
-    return wines
-      .filter(wine => {
-        const normalizedType = (wine.type || '').toLowerCase(); // ✅ FIX crash
+    const filtered = wines.filter(wine => {
+      // Esclude header tipologie
+      if (isTypeHeaderOnly(wine)) return false;
+      
+      // Applica filtri
+      const normalizedType = (wine.type || '').toLowerCase();
+      const matchesCat = matchesCategory(wine, activeTab);
+      const matchesType = !filters.wineType || normalizedType === filters.wineType;
+      const matchesSupplier = !filters.supplier || wine.supplier === filters.supplier;
+      const matchesAlerts = !filters.showAlertsOnly || wine.inventory <= wine.minStock;
 
-        // Esclude le righe che sono solo nomi di tipologie (senza produttore/descrizione)
-        const isTypeHeaderOnly = !wine.description && !wine.supplier && 
-          (wine.name === "BIANCHI" || wine.name === "ROSSI" || wine.name === "ROSATI" || 
-           wine.name === "BOLLICINE ITALIANE" || wine.name === "BOLLICINE FRANCESI" || 
-           wine.name === "VINI DOLCI");
-
-        if (isTypeHeaderOnly) {
-          return false;
-        }
-
-        const matchesCategory = 
-          activeTab === "TUTTI I VINI" ||
-          (activeTab === "BOLLICINE ITALIANE" && (normalizedType === "bollicine italiane" || normalizedType === "bollicine")) ||
-          (activeTab === "BOLLICINE FRANCESI" && normalizedType === "bollicine francesi") ||
-          (activeTab === "BIANCHI" && (normalizedType === "bianchi" || normalizedType === "bianco")) ||
-          (activeTab === "ROSSI" && (normalizedType === "rossi" || normalizedType === "rosso")) ||
-          (activeTab === "ROSATI" && (normalizedType === "rosati" || normalizedType === "rosato")) ||
-          (activeTab === "VINI DOLCI" && (normalizedType === "vini dolci" || normalizedType === "dolce"));
-
-        const matchesType = !filters.wineType || normalizedType === filters.wineType;
-        const matchesSupplier = !filters.supplier || wine.supplier === filters.supplier;
-        // Logica alert: se showAlertsOnly è true, mostra SOLO vini con giacenza <= minStock
-        const isInAlert = wine.inventory <= wine.minStock;
-        const matchesAlerts = !filters.showAlertsOnly || isInAlert;
-
-        return matchesCategory && matchesType && matchesSupplier && matchesAlerts;
-      })
-      .sort((a, b) => {
-        // ✅ Ordinamento alfabetico A-Z SOLO per "TUTTI I VINI"
-        if (activeTab === "TUTTI I VINI") {
-          return a.name.localeCompare(b.name, 'it', { 
-            sensitivity: 'base',
-            numeric: true,
-            ignorePunctuation: true 
-          });
-        }
-        // ✅ Per le singole tipologie, mantieni ordine originale del database/Google Sheet
-        return 0;
-      });
+      return matchesCat && matchesType && matchesSupplier && matchesAlerts;
+    });
+    
+    return sortWines(filtered, activeTab);
   }, [wines, activeTab, filters.wineType, filters.supplier, filters.showAlertsOnly]);
 
   // Hook ricerca vini (solo se feature abilitata)

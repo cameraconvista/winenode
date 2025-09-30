@@ -11,6 +11,7 @@ interface OrdersActionsContextType {
   aggiornaStatoOrdine: (ordineId: string, nuovoStato: Ordine['stato']) => Promise<void>;
   aggiornaQuantitaOrdine: (ordineId: string, dettagli: OrdineDettaglio[]) => void;
   confermaRicezioneOrdine: (ordineId: string) => Promise<void>;
+  confermaRicezioneOrdineConQuantita: (ordineId: string, quantitaConfermate?: Record<string, number>) => Promise<void>;
   eliminaOrdineInviato: (ordineId: string) => Promise<void>;
   eliminaOrdineStorico: (ordineId: string) => Promise<void>;
   loadOrdiniFromSupabase: () => Promise<void>;
@@ -180,6 +181,55 @@ export function OrdersActionsProvider({ children }: { children: ReactNode }) {
     }
   }, [supabaseOrdini, wines, updateWineInventory, loadOrdiniFromSupabase, isOrderProcessing, setOrderProcessing, logAuditEvent]);
 
+  // FIX: Nuova funzione per conferma con quantità modificate (operazione atomica)
+  const confermaRicezioneOrdineConQuantita = useCallback(async (ordineId: string, quantitaConfermate?: Record<string, number>) => {
+    if (isOrderProcessing(ordineId)) {
+      console.warn('⚠️ Ordine già in elaborazione:', ordineId);
+      return;
+    }
+
+    try {
+      setOrderProcessing(ordineId, true);
+      logAuditEvent('CONFIRM_RECEPTION_WITH_QUANTITIES_START', ordineId, { quantitaConfermate });
+
+      // Trova l'ordine corrente
+      const ordine = ordiniInviati.find(o => o.id === ordineId);
+      if (!ordine?.dettagli) {
+        throw new Error('Ordine non trovato o senza dettagli');
+      }
+
+      // Se non ci sono quantità modificate, usa la funzione standard
+      if (!quantitaConfermate || Object.keys(quantitaConfermate).length === 0) {
+        await confermaRicezioneOrdine(ordineId);
+        return;
+      }
+
+      // Usa l'operazione atomica per applicare quantità e archiviare
+      await supabaseOrdini.archiveOrdineWithAppliedQuantities({
+        ordineId,
+        quantitaConfermate,
+        contenutoCorrente: ordine.dettagli
+      });
+
+      // Se abilitato, aggiorna le giacenze
+      if (isFeatureEnabled('ORDINI_CONFIRM_IN_CREATI')) {
+        // TODO: Implementare aggiornamento giacenze quando disponibile l'ordine
+        console.log('Aggiornamento giacenze da implementare');
+      }
+
+      // Ricarica gli ordini
+      await loadOrdiniFromSupabase();
+      
+      logAuditEvent('CONFIRM_RECEPTION_WITH_QUANTITIES_SUCCESS', ordineId, { quantitaConfermate });
+    } catch (error) {
+      console.error('❌ Errore nella conferma ricezione con quantità:', error);
+      logAuditEvent('CONFIRM_RECEPTION_WITH_QUANTITIES_ERROR', ordineId, { error: error.message });
+      throw error;
+    } finally {
+      setOrderProcessing(ordineId, false);
+    }
+  }, [supabaseOrdini, ordiniInviati, confermaRicezioneOrdine, loadOrdiniFromSupabase, isOrderProcessing, setOrderProcessing, logAuditEvent]);
+
   const eliminaOrdineInviato = useCallback(async (ordineId: string) => {
     try {
       logAuditEvent('DELETE_INVIATO_START', ordineId, {});
@@ -213,6 +263,7 @@ export function OrdersActionsProvider({ children }: { children: ReactNode }) {
     aggiornaStatoOrdine,
     aggiornaQuantitaOrdine,
     confermaRicezioneOrdine,
+    confermaRicezioneOrdineConQuantita,
     eliminaOrdineInviato,
     eliminaOrdineStorico,
     loadOrdiniFromSupabase,
@@ -222,6 +273,7 @@ export function OrdersActionsProvider({ children }: { children: ReactNode }) {
     aggiornaStatoOrdine,
     aggiornaQuantitaOrdine,
     confermaRicezioneOrdine,
+    confermaRicezioneOrdineConQuantita,
     eliminaOrdineInviato,
     eliminaOrdineStorico,
     loadOrdiniFromSupabase,

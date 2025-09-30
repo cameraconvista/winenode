@@ -34,6 +34,7 @@ export const useOrdersHandlers = ({
   const {
     ordiniInviati,
     confermaRicezioneOrdine,
+    confermaRicezioneOrdineConQuantita,
     aggiornaQuantitaOrdine,
     eliminaOrdineInviato,
     eliminaOrdineStorico,
@@ -203,17 +204,21 @@ export const useOrdersHandlers = ({
   const handleSmartModalArchive = useCallback(async (modifiedQuantities: Record<number, number>) => {
     if (!pageState.smartModalOrdine?.dettagli) return;
     try {
+      // FIX: Costruisci le quantità confermate nel formato corretto (wineId -> quantity)
+      const quantitaConfermate: Record<string, number> = {};
       pageState.smartModalOrdine.dettagli.forEach((dettaglio, index) => {
         if (modifiedQuantities[index] !== undefined) {
-          aggiornaQuantitaConfermata(pageState.smartModalOrdine!.id, dettaglio.wineId, modifiedQuantities[index]);
+          quantitaConfermate[dettaglio.wineId] = modifiedQuantities[index];
         }
       });
-      await confermaRicezioneOrdine(pageState.smartModalOrdine.id);
+
+      // FIX: Usa la nuova funzione atomica invece del flusso separato
+      await confermaRicezioneOrdineConQuantita(pageState.smartModalOrdine.id, quantitaConfermate);
       setTabs(prev => ({ ...prev, active: 'archiviati' }));
     } catch (error) {
       console.error('Errore durante archiviazione Smart Modal:', error);
     }
-  }, [pageState.smartModalOrdine, aggiornaQuantitaConfermata, confermaRicezioneOrdine, setTabs]);
+  }, [pageState.smartModalOrdine, confermaRicezioneOrdineConQuantita, setTabs]);
 
   const handleConfirmArchive = useCallback(async () => {
     if (!pageState.pendingArchiveOrder) return;
@@ -221,14 +226,17 @@ export const useOrdersHandlers = ({
     if (!ordine?.dettagli) return;
 
     try {
-      const dettagliAggiornati = ordine.dettagli.map((dettaglio, index) => ({
-        ...dettaglio,
-        quantity: pageState.pendingArchiveOrder!.quantities[index] ?? dettaglio.quantity,
-        totalPrice: (pageState.pendingArchiveOrder!.quantities[index] ?? dettaglio.quantity) * dettaglio.unitPrice
-      }));
+      // FIX: Costruisci le quantità confermate nel formato corretto (wineId -> quantity)
+      const quantitaConfermate: Record<string, number> = {};
+      ordine.dettagli.forEach((dettaglio, index) => {
+        const quantitaModificata = pageState.pendingArchiveOrder!.quantities[index];
+        if (quantitaModificata !== undefined) {
+          quantitaConfermate[dettaglio.wineId] = quantitaModificata;
+        }
+      });
 
-      aggiornaQuantitaOrdine(pageState.pendingArchiveOrder!.ordineId, dettagliAggiornati);
-      await confermaRicezioneOrdine(pageState.pendingArchiveOrder!.ordineId);
+      // FIX: Usa la nuova funzione atomica invece del flusso separato
+      await confermaRicezioneOrdineConQuantita(pageState.pendingArchiveOrder!.ordineId, quantitaConfermate);
 
       setDraftQuantities(prev => {
         const newDrafts = { ...prev };
@@ -242,7 +250,7 @@ export const useOrdersHandlers = ({
     } catch (error) {
       console.error('Errore durante archiviazione:', error);
     }
-  }, [pageState.pendingArchiveOrder, ordiniInviati, aggiornaQuantitaOrdine, confermaRicezioneOrdine, setDraftQuantities, setModals, setPendingArchiveOrder, setTabs]);
+  }, [pageState.pendingArchiveOrder, ordiniInviati, confermaRicezioneOrdineConQuantita, setDraftQuantities, setModals, setPendingArchiveOrder, setTabs]);
 
   const handleCancelArchive = useCallback(() => {
     setModals(prev => ({ ...prev, showConfirmArchive: false }));

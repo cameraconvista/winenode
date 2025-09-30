@@ -49,6 +49,7 @@ export function useOrdini() {
     aggiornaStatoOrdine,
     aggiornaQuantitaOrdine,
     confermaRicezioneOrdine,
+    confermaRicezioneOrdineConQuantita,
     eliminaOrdineInviato,
     eliminaOrdineStorico
   } = useOrdersActions();
@@ -66,6 +67,7 @@ export function useOrdini() {
     aggiornaStatoOrdine,
     aggiornaQuantitaOrdine,
     confermaRicezioneOrdine,
+    confermaRicezioneOrdineConQuantita,
     eliminaOrdineInviato,
     eliminaOrdineStorico,
     inizializzaQuantitaConfermate,
