@@ -42,7 +42,7 @@ export const OrdersList: React.FC<OrdersListProps> = React.memo(({
       WebkitOverflowScrolling: 'touch',
       overscrollBehavior: 'contain',
       padding: '0 16px',
-      paddingBottom: 'calc(64px + max(env(safe-area-inset-bottom), 0px) + 16px)' // Spazio per navbar
+      paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px'
     }}>
       {currentTabData.length === 0 ? (
         <div className="gestisci-ordini-empty" style={{

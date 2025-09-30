@@ -22,18 +22,16 @@ export function buildWhatsAppMessage(
 ): string {
   const lines: string[] = [];
   
-  // Intestazione fissa - Nuovo ordine
-  lines.push('Ordine vini');
-  lines.push('');
+  // Intestazione fissa - Camera con Vista prima
   lines.push('Camera con Vista');
   lines.push('');
   
-  // Data in formato italiano
+  // Data in formato italiano con prefisso
   const formattedDate = date.toLocaleDateString('it-IT');
-  lines.push(formattedDate);
+  lines.push(`Ordine vini del ${formattedDate}`);
   lines.push('');
   
-  // Elenco articoli (solo nome, annata opzionale, quantità, unità)
+  // Elenco articoli (nome, annata opzionale su riga separata per quantità)
   orderDetails.forEach(item => {
     let line = `• ${item.wineName}`;
     
@@ -42,11 +40,11 @@ export function buildWhatsAppMessage(
       line += ` ${item.vintage}`;
     }
     
-    // Quantità e unità (capitalizza prima lettera)
-    const unit = item.unit.charAt(0).toUpperCase() + item.unit.slice(1);
-    line += ` — x${item.quantity} ${unit}`;
-    
     lines.push(line);
+    
+    // Quantità e unità su riga separata, allineata sotto la prima lettera del nome (dopo il bullet)
+    const unit = item.unit.charAt(0).toLowerCase() + item.unit.slice(1);
+    lines.push(`  Nr ${item.quantity} ${unit}`); // 2 spazi per allineare sotto la prima lettera
   });
   
   // Normalizza CRLF → LF e trim finale

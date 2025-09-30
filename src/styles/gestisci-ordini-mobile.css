@@ -35,7 +35,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 16px;
-  padding-bottom: max(var(--safe-bottom), 0px) + 16px;
+  padding-bottom: calc(64px + max(var(--safe-bottom), 0px) + 16px); /* Spazio per navbar */
   
   /* Ottimizzazioni scroll mobile */
   -webkit-overflow-scrolling: touch;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 import { useOrdini } from '../../contexts/OrdiniContext';
 import { useOrdersPageState } from './hooks/useOrdersPageState';
 import { useOrdersSelectors } from './hooks/useOrdersSelectors';
@@ -6,7 +7,6 @@ import { useOrdersHandlers } from './hooks/useOrdersHandlers';
 import { OrdersTabs } from './components/OrdersTabs';
 import { OrdersList } from './components/OrdersList';
 import { ModalsManager } from './modals/ModalsManager';
-import { GestisciOrdiniNavBar } from './components/GestisciOrdiniNavBar';
 import '../../styles/gestisci-ordini-mobile.css';
 
 export default function GestisciOrdiniPage() {
@@ -71,17 +71,30 @@ export default function GestisciOrdiniPage() {
           flexDirection: 'column'
         }}>
           
-          {/* Titolo */}
+          {/* Titolo e Pulsante Chiudi */}
           <div className="gestisci-ordini-header-section" style={{
             flexShrink: 0,
             padding: '16px',
             borderBottom: '1px solid #e2d6aa',
             background: '#fff9dc'
           }}>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-between">
               <h1 className="text-lg font-bold" style={{ color: '#541111' }}>
                 Gestisci Ordini
               </h1>
+              <button
+                onClick={handlers.handleClose}
+                className="gestisci-ordini-button"
+                style={{ 
+                  color: '#541111',
+                  background: 'transparent',
+                  minWidth: '44px',
+                  minHeight: '44px',
+                  padding: '10px'
+                }}
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
           </div>
 
@@ -109,9 +122,6 @@ export default function GestisciOrdiniPage() {
           />
         </div>
       </main>
-
-      {/* Navbar fissa in basso */}
-      <GestisciOrdiniNavBar />
 
       {/* Modali Manager con Lazy Loading */}
       <ModalsManager
