@@ -94,8 +94,12 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Bundle Size Guard
+      - name: Size Limit Enforcement
+        run: npm run size
+        
+      - name: Legacy Bundle Guard (fallback)
         run: npm run bundle:guard
+        continue-on-error: true
   
   wa_soft_guard:
     name: WhatsApp Soft Guard
