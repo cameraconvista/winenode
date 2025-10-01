@@ -1,9 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, lazy, Suspense } from 'react';
 import FilterModal from '../../../components/FilterModal';
-import WineDetailsModal from '../../../components/WineDetailsModal';
 import HomeInventoryModal from '../../../components/HomeInventoryModal';
 import CarrelloOrdiniModal from '../../../components/modals/CarrelloOrdiniModal';
 import NuovoOrdineModal from '../../../components/modals/NuovoOrdineModal';
+
+// Lazy loading per modali pesanti non critici al first render
+const WineDetailsModal = lazy(() => import('../../../components/WineDetailsModal'));
 import OrdersPinModal from '../../../components/security/OrdersPinModal';
 import { WineType } from '../../../hooks/useWines';
 import { HomeFilters } from '../hooks/useHomeState';
@@ -84,13 +86,15 @@ export const ModalsManager = memo(function ModalsManager({
         wines={wines}
       />
       
-      <WineDetailsModal 
-        wine={selectedWine} 
-        open={showWineDetailsModal} 
-        onOpenChange={setShowWineDetailsModal} 
-        onUpdateWine={onUpdateWine} 
-        suppliers={suppliers} 
-      />
+      <Suspense fallback={null}>
+        <WineDetailsModal 
+          wine={selectedWine} 
+          open={showWineDetailsModal} 
+          onOpenChange={setShowWineDetailsModal} 
+          onUpdateWine={onUpdateWine} 
+          suppliers={suppliers} 
+        />
+      </Suspense>
 
       <HomeInventoryModal
         isOpen={showInventoryModal}

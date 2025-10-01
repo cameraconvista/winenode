@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Check, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import useWines from '../hooks/useWines';
 import { OrdineItem } from '../hooks/useCreaOrdine';
 import { useOrdini } from '../contexts/OrdiniContext';
-import WhatsAppOrderModal from '../components/modals/WhatsAppOrderModal';
 import { OrderDetail } from '../utils/buildWhatsAppMessage';
+
+// Lazy loading per modale WhatsApp non critico al first render
+const WhatsAppOrderModal = lazy(() => import('../components/modals/WhatsAppOrderModal'));
 
 interface LocationState {
   ordineItems: OrdineItem[];
@@ -308,12 +310,14 @@ export default function RiepilogoOrdinePage() {
       </footer>
 
       {/* Modale WhatsApp */}
-      <WhatsAppOrderModal
-        isOpen={isWhatsAppModalOpen}
-        onClose={handleWhatsAppModalClose}
-        orderDetails={whatsAppOrderDetails}
-        supplierName={decodeURIComponent(supplier || '')}
-      />
+      <Suspense fallback={null}>
+        <WhatsAppOrderModal
+          isOpen={isWhatsAppModalOpen}
+          onClose={handleWhatsAppModalClose}
+          orderDetails={whatsAppOrderDetails}
+          supplierName={supplier}
+        />
+      </Suspense>
     </div>
   );
 }

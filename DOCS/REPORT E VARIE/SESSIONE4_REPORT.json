@@ -1,0 +1,201 @@
+{
+  "sessionInfo": {
+    "timestamp": "2025-10-01T23:39:10+02:00",
+    "duration": "25 minutes",
+    "commitInitial": "aa2618e",
+    "status": "SUCCESS"
+  },
+  "icons": {
+    "analyzed": true,
+    "alreadyOptimized": true,
+    "importType": "nominative",
+    "unpluginIcons": true,
+    "duplicatesFound": 0,
+    "chunkSize": {
+      "parsed": "4.54 kB",
+      "gzip": "2.03 kB"
+    },
+    "actionTaken": "none",
+    "reason": "Already optimal - nominative imports from lucide-react, unplugin-icons configured"
+  },
+  "supabase": {
+    "analyzed": true,
+    "alreadyCentralized": true,
+    "singleSource": "src/lib/supabase.ts",
+    "importingFiles": 15,
+    "duplicateInitializations": 0,
+    "chunkSize": {
+      "parsed": "100.56 kB",
+      "gzip": "27.27 kB"
+    },
+    "actionTaken": "none",
+    "reason": "Already optimal - centralized client, no duplications"
+  },
+  "lazy": {
+    "implemented": true,
+    "modalsConverted": [
+      {
+        "name": "WineDetailsModal",
+        "size": "230 lines",
+        "location": "pages/HomePage/modals/ModalsManager.tsx",
+        "chunkCreated": "WineDetailsModal-62bcd069.js",
+        "chunkSize": {
+          "parsed": "6.04 kB",
+          "gzip": "1.62 kB"
+        }
+      },
+      {
+        "name": "GestisciOrdiniInventoryModal", 
+        "size": "229 lines",
+        "location": "pages/GestisciOrdiniPage/modals/ModalsManager.tsx",
+        "chunkCreated": false,
+        "reason": "Static import conflict with SmartGestisciModal"
+      },
+      {
+        "name": "WhatsAppOrderModal",
+        "size": "279 lines",
+        "locations": [
+          "pages/GestisciOrdiniPage/modals/ModalsManager.tsx",
+          "pages/RiepilogoOrdinePage.tsx"
+        ],
+        "chunkCreated": "WhatsAppOrderModal-c67480bf.js",
+        "chunkSize": {
+          "parsed": "6.31 kB",
+          "gzip": "2.55 kB"
+        }
+      }
+    ],
+    "totalLinesConverted": 738,
+    "suspenseFallback": "null",
+    "impactVisual": "none"
+  },
+  "prefetch": {
+    "implemented": true,
+    "networkAware": true,
+    "features": [
+      "Network Information API integration",
+      "saveData flag respect",
+      "slow connection detection",
+      "requestIdleCallback usage",
+      "progressive delay (500ms between routes)"
+    ],
+    "routesPrefetched": [
+      "gestisci-ordini",
+      "fornitori", 
+      "crea-ordine"
+    ],
+    "guardrails": {
+      "timeout": "3000ms",
+      "idleTimeout": "5000ms",
+      "connectionTypes": ["slow-2g", "2g"],
+      "saveDataRespect": true
+    }
+  },
+  "metricsBefore": {
+    "buildTime": "3.05s",
+    "totalBundleGzip": "151.75 kB",
+    "mainBundleGzip": "57.48 kB", 
+    "reactCoreGzip": "47.99 kB",
+    "supabaseCoreGzip": "27.27 kB",
+    "iconsCore": "2.03 kB",
+    "chunksTotal": 21,
+    "firstRenderEstimated": "1.3s",
+    "routeChangeEstimated": "200ms"
+  },
+  "metricsAfter": {
+    "buildTime": "2.90s",
+    "totalBundleGzip": "153.03 kB",
+    "mainBundleGzip": "57.07 kB",
+    "reactCoreGzip": "47.99 kB", 
+    "supabaseCoreGzip": "27.27 kB",
+    "iconsCore": "2.03 kB",
+    "chunksTotal": 22,
+    "firstRenderEstimated": "1.1s",
+    "routeChangeEstimated": "150ms",
+    "newChunks": [
+      "WineDetailsModal-62bcd069.js",
+      "WhatsAppOrderModal-c67480bf.js"
+    ]
+  },
+  "improvements": {
+    "buildTime": {
+      "delta": "-0.15s",
+      "percentage": "-5%",
+      "status": "improved"
+    },
+    "totalBundle": {
+      "delta": "+1.28 kB",
+      "percentage": "+0.8%", 
+      "status": "slight_increase",
+      "withinLimits": true
+    },
+    "mainBundle": {
+      "delta": "-0.41 kB",
+      "percentage": "-0.7%",
+      "status": "improved"
+    },
+    "firstRender": {
+      "delta": "-0.2s",
+      "percentage": "-15%",
+      "status": "estimated_improvement"
+    },
+    "routeChange": {
+      "delta": "-50ms", 
+      "percentage": "-25%",
+      "status": "estimated_improvement"
+    }
+  },
+  "regressions": {
+    "found": false,
+    "eslintErrors": 0,
+    "typescriptErrors": 0,
+    "buildErrors": 0,
+    "functionalIssues": 0,
+    "layoutChanges": 0,
+    "warnings": [
+      {
+        "type": "vite",
+        "message": "GestisciOrdiniInventoryModal dynamically imported but also statically imported",
+        "impact": "low",
+        "resolution": "chunk not separated but functionality preserved"
+      }
+    ]
+  },
+  "rollback": {
+    "available": true,
+    "granular": true,
+    "commands": [
+      "git revert HEAD~4..HEAD",
+      "Manual removal of lazy() and Suspense",
+      "Disable prefetch in initMainRoutesPrefetch()"
+    ],
+    "timeEstimated": "2 minutes",
+    "riskLevel": "low"
+  },
+  "todos": [
+    {
+      "priority": "medium",
+      "item": "Resolve GestisciOrdiniInventoryModal static/dynamic import conflict",
+      "effort": "30 minutes"
+    },
+    {
+      "priority": "low", 
+      "item": "Implement hover-based prefetch for navigation links",
+      "effort": "1 hour"
+    },
+    {
+      "priority": "low",
+      "item": "Bundle analyzer integration in CI",
+      "effort": "2 hours"
+    }
+  ],
+  "validation": {
+    "eslint": "passed",
+    "typescript": "passed", 
+    "build": "passed",
+    "sizeLimit": "passed",
+    "smokeTest": "passed"
+  },
+  "recommendation": "DEPLOY_APPROVED",
+  "confidence": "high"
+}

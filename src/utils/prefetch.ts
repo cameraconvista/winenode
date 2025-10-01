@@ -84,10 +84,37 @@ export const usePrefetchOnHover = () => {
 };
 
 /**
+ * Verifica se la connessione è adatta per prefetch
+ * Evita prefetch su connessioni lente o limitate
+ */
+const isConnectionSuitableForPrefetch = (): boolean => {
+  // Supporto Network Information API
+  const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+  
+  if (!connection) {
+    // Fallback: assume connessione buona
+    return true;
+  }
+
+  // Evita prefetch su connessioni lente o save-data
+  if (connection.saveData || connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+    console.log('⚠️ Prefetch disabilitato: connessione lenta o save-data attivo');
+    return false;
+  }
+
+  return true;
+};
+
+/**
  * Prefetch automatico delle rotte principali su idle
  * Da chiamare una volta all'avvio dell'app
  */
 export const initMainRoutesPrefetch = (): void => {
+  // Verifica connessione prima di iniziare prefetch
+  if (!isConnectionSuitableForPrefetch()) {
+    return;
+  }
+
   // Rotte ad alta probabilità di navigazione
   const highPriorityRoutes = [
     {

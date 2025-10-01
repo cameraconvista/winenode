@@ -1,14 +1,16 @@
-import React, { Suspense } from 'react';
-import { Ordine } from '../../../contexts/OrdiniContext';
+import React, { lazy, Suspense } from 'react';
+import { Ordine, OrdineDettaglio } from '../../../contexts/OrdiniContext';
 import { OrderDetail } from '../../../utils/buildWhatsAppMessage';
 import { ORDINI_LABELS } from '../../../constants/ordiniLabels';
 
-// Import diretti per evitare problemi di lazy loading durante il debug
+// Import diretti per modali critici
 import ConfermaEliminazioneModal from '../../../components/modals/ConfermaEliminazioneModal';
-import GestisciOrdiniInventoryModal from '../../../components/GestisciOrdiniInventoryModal';
 import SmartGestisciModal from '../../../components/modals/SmartGestisciModal';
 import ConfirmArchiveModal from '../../../components/modals/ConfirmArchiveModal';
-import WhatsAppOrderModal from '../../../components/modals/WhatsAppOrderModal';
+
+// Lazy loading per modali pesanti non critici
+const GestisciOrdiniInventoryModal = lazy(() => import('../../../components/GestisciOrdiniInventoryModal'));
+const WhatsAppOrderModal = lazy(() => import('../../../components/modals/WhatsAppOrderModal'));
 
 interface ModalsManagerProps {
   // Conferma Eliminazione
@@ -99,15 +101,17 @@ export const ModalsManager: React.FC<ModalsManagerProps> = ({
 
       {/* Modale Modifica Quantità */}
       {showQuantityModal && editingQuantity && (
-        <GestisciOrdiniInventoryModal
-          isOpen={showQuantityModal}
-          initialValue={editingQuantity.currentValue}
-          onConfirm={onConfirmQuantityModal}
-          onCancel={onCloseQuantityModal}
-          min={0}
-          max={100}
-          originalValue={editingQuantity.originalValue}
-        />
+        <Suspense fallback={null}>
+          <GestisciOrdiniInventoryModal
+            isOpen={showQuantityModal}
+            initialValue={editingQuantity.currentValue}
+            onConfirm={onConfirmQuantityModal}
+            onCancel={onCloseQuantityModal}
+            min={0}
+            max={100}
+            originalValue={editingQuantity.originalValue}
+          />
+        </Suspense>
       )}
 
       {/* Modale Smart Gestisci */}
@@ -141,12 +145,14 @@ export const ModalsManager: React.FC<ModalsManagerProps> = ({
 
       {/* Modale WhatsApp */}
       {showWhatsAppModal && (
-        <WhatsAppOrderModal
-          isOpen={showWhatsAppModal}
-          onClose={onCloseWhatsAppModal}
-          orderDetails={whatsAppOrderDetails}
-          supplierName={whatsAppSupplierName}
-        />
+        <Suspense fallback={null}>
+          <WhatsAppOrderModal
+            isOpen={showWhatsAppModal}
+            onClose={onCloseWhatsAppModal}
+            orderDetails={whatsAppOrderDetails}
+            supplierName={whatsAppSupplierName}
+          />
+        </Suspense>
       )}
     </>
   );
