@@ -28,6 +28,13 @@ ReactDOM.createRoot(root).render(
 )
 
 // Inizializza Web Vitals dopo il render (non blocca startup)
-setTimeout(() => {
-  initWebVitals()
-}, 100)
+// Usa requestIdleCallback se disponibile, altrimenti setTimeout
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(() => {
+    initWebVitals();
+  });
+} else {
+  setTimeout(() => {
+    initWebVitals();
+  }, 100);
+}

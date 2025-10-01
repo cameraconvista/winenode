@@ -37,6 +37,28 @@ const defaultMetricHandler = (metric: WebVitalsMetric) => {
 };
 
 /**
+ * Callback con integrazione GA4 (se configurato)
+ */
+const ga4MetricHandler = (metric: WebVitalsMetric) => {
+  // Prova a inviare a GA4 se disponibile
+  if (typeof gtag !== 'undefined' && import.meta.env.VITE_GA4_MEASUREMENT_ID) {
+    gtag('event', metric.name, {
+      event_category: 'Web Vitals',
+      event_label: metric.id,
+      value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+      custom_parameter_1: metric.rating,
+    });
+  }
+  
+  // Fallback a console.debug (mascherando valori sensibili)
+  const maskedMetric = {
+    ...metric,
+    id: metric.id.substring(0, 8) + '***' // Maschera ID per privacy
+  };
+  console.debug(`Web Vitals: ${maskedMetric.name}`, maskedMetric);
+};
+
+/**
  * Inizializza Web Vitals monitoring
  * Solo in produzione, lazy import per non impattare bundle
  */
@@ -48,23 +70,15 @@ export const initWebVitals = async (callback: WebVitalsCallback = defaultMetricH
   }
 
   try {
-    // Lazy import condizionale - fallback a stub se non disponibile
-    let webVitals;
-    try {
-      // Dynamic import con string per evitare risoluzione statica
-      const moduleName = 'web-vitals';
-      webVitals = await import(/* @vite-ignore */ moduleName);
-    } catch {
-      console.debug('Web Vitals: Library not available, using stub');
-      webVitals = webVitalsStub;
-    }
+    // Import del pacchetto ufficiale web-vitals
+    const webVitals = await import('web-vitals');
 
     // Inizializza tutte le metriche Core Web Vitals
-    webVitals.getCLS(callback);
-    webVitals.getFID(callback);
-    webVitals.getFCP(callback);
-    webVitals.getLCP(callback);
-    webVitals.getTTFB(callback);
+    webVitals.onCLS(callback);
+    webVitals.onINP(callback); // FID è deprecato, sostituito da INP
+    webVitals.onFCP(callback);
+    webVitals.onLCP(callback);
+    webVitals.onTTFB(callback);
 
     console.debug('Web Vitals: Monitoring initialized');
   } catch (error) {
@@ -75,23 +89,10 @@ export const initWebVitals = async (callback: WebVitalsCallback = defaultMetricH
 /**
  * Versione con integrazione GA4 (se configurato)
  */
-export const initWebVitalsWithGA4 = (measurementId?: string): void => {
-  const sendToGA4 = (metric: WebVitalsMetric) => {
-    // Prova a inviare a GA4 se disponibile
-    if (typeof gtag !== 'undefined' && measurementId) {
-      gtag('event', metric.name, {
-        event_category: 'Web Vitals',
-        event_label: metric.id,
-        value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
-        custom_parameter_1: metric.rating,
-      });
-    }
-    
-    // Fallback a console.debug
-    defaultMetricHandler(metric);
-  };
-
-  initWebVitals(sendToGA4);
+export const initWebVitalsWithGA4 = (): void => {
+  // Usa il callback GA4 se measurement ID è configurato
+  const callback = import.meta.env.VITE_GA4_MEASUREMENT_ID ? ga4MetricHandler : defaultMetricHandler;
+  initWebVitals(callback);
 };
 
 /**
