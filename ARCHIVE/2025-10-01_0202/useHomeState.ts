@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { WineType } from '../../../hooks/useWines';
-import { useAuth } from '../../../contexts/AuthContext';
 
 export interface HomeFilters {
   wineType: string;
@@ -9,8 +8,13 @@ export interface HomeFilters {
 }
 
 export function useHomeState() {
-  // Usa il nuovo AuthContext per lo stato autenticazione
-  const { isAuthenticated, user, isAdmin, isMobileDevice } = useAuth();
+  // Stato autenticazione (sempre true per questa app)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // App senza autenticazione - sempre autenticato
+    setIsAuthenticated(true);
+  }, []);
 
   // Stato filtri e UI
   const [filters, setFilters] = useState<HomeFilters>({ 
@@ -28,11 +32,8 @@ export function useHomeState() {
   const [editingWine, setEditingWine] = useState<WineType | null>(null);
 
   return {
-    // Stato autenticazione dal AuthContext
+    // Stato autenticazione
     isAuthenticated,
-    user,
-    isAdmin,
-    isMobileDevice,
     
     // Stato filtri
     filters,

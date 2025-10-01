@@ -1,7 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
-import { AuthProvider } from './contexts/AuthContext'
 import { OrdiniProvider } from './contexts/OrdiniContext'
 import IntroPage from './components/IntroPage'
 import { useFirstLaunch } from './hooks/useFirstLaunch'
@@ -48,49 +47,47 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <OrdiniProvider>
-        <div className="min-h-screen bg-app-bg">
-          <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-app-bg">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
-            </div>
-          }>
-            <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/fornitori" element={<FornitoriPage />} />
-            <Route path="/gestisci-ordini" element={<GestisciOrdiniPage />} />
-            <Route path="/crea-ordine" element={<CreaOrdinePage />} />
-            <Route path="/riepilogo-ordine" element={<RiepilogoOrdinePage />} />
-            <Route path="/manual-wine-insert" element={<ManualWineInsertPage />} />
-            <Route path="/preferenze" element={<PreferenzePage />} />
-            <Route path="/importa" element={<ImportaPage />} />
-            <Route path="/foglio-excel" element={<FoglioExcelPage />} />
-            {/* Legacy routes per compatibilità */}
-            <Route path="/orders/create/:supplier" element={<CreaOrdinePage />} />
-            <Route path="/orders/summary/:supplier" element={<RiepilogoOrdinePage />} />
-            <Route path="/orders/manage" element={<GestisciOrdiniPage />} />
-            </Routes>
-          </Suspense>
-          
-          {/* Toast notifications */}
-          <Toaster 
-            position="bottom-center"
-            toastOptions={{
-              style: {
-                background: '#fff9dc',
-                color: '#541111',
-                border: '1px solid #e2d6aa',
-                fontSize: '14px',
-                marginBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
-                zIndex: 9999 // Sopra il modale WhatsApp
-              },
-              duration: 3000
-            }}
-          />
-        </div>
-      </OrdiniProvider>
-    </AuthProvider>
+    <OrdiniProvider>
+      <div className="min-h-screen bg-app-bg">
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center bg-app-bg">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-app-accent"></div>
+          </div>
+        }>
+          <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/fornitori" element={<FornitoriPage />} />
+          <Route path="/gestisci-ordini" element={<GestisciOrdiniPage />} />
+          <Route path="/crea-ordine" element={<CreaOrdinePage />} />
+          <Route path="/riepilogo-ordine" element={<RiepilogoOrdinePage />} />
+          <Route path="/manual-wine-insert" element={<ManualWineInsertPage />} />
+          <Route path="/preferenze" element={<PreferenzePage />} />
+          <Route path="/importa" element={<ImportaPage />} />
+          <Route path="/foglio-excel" element={<FoglioExcelPage />} />
+          {/* Legacy routes per compatibilità */}
+          <Route path="/orders/create/:supplier" element={<CreaOrdinePage />} />
+          <Route path="/orders/summary/:supplier" element={<RiepilogoOrdinePage />} />
+          <Route path="/orders/manage" element={<GestisciOrdiniPage />} />
+          </Routes>
+        </Suspense>
+        
+        {/* Toast notifications */}
+        <Toaster 
+          position="bottom-center"
+          toastOptions={{
+            style: {
+              background: '#fff9dc',
+              color: '#541111',
+              border: '1px solid #e2d6aa',
+              fontSize: '14px',
+              marginBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
+              zIndex: 9999 // Sopra il modale WhatsApp
+            },
+            duration: 3000
+          }}
+        />
+      </div>
+    </OrdiniProvider>
   )
 }
 

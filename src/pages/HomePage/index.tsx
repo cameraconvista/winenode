@@ -30,6 +30,9 @@ export default function HomePage() {
   // Stato locale consolidato
   const {
     isAuthenticated,
+    user,
+    isAdmin,
+    isMobileDevice,
     filters,
     setFilters,
     selectedWine,
