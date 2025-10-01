@@ -132,6 +132,7 @@ export default [
       '.recovery/**', 
       'Backup_Automatico/**',
       'ARCHIVE/**',
+      '.archive/**',
       '**/*.config.*',
       '.eslintrc.js',
       'scripts/recovery-system.cjs',

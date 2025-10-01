@@ -120,9 +120,8 @@ export default function OrdersPinModal({
         className="w-full mx-auto rounded-2xl shadow-2xl p-6 relative"
         style={{ 
           background: 'linear-gradient(180deg, #6b1f1f 0%, #541111 50%, #4a0f0f 100%)',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          maxWidth: '320px'
+          maxWidth: '320px',
+          overflow: 'hidden'
         }}
       >
         {/* Header */}

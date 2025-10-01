@@ -1,8 +1,8 @@
 /* PIN Modal Touch Optimizations */
 
 .pin-modal-overlay {
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  overflow: hidden;
 }
 
 .pin-button {
