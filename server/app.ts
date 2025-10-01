@@ -15,16 +15,30 @@ app.use(express.json());
 app.use(requestCompatibilityMiddleware);
 app.use(responseCompatibilityMiddleware);
 
-// Health Check
-app.get('/api/health', asyncHandler(async (req, res) => {
+// Health Check (GET/HEAD)
+const healthHandler = asyncHandler(async (req, res) => {
+  const startTime = process.hrtime();
+  
   // Test database connectivity
   await storage.getWines();
-  res.json({ 
+  
+  const healthData = { 
     status: 'ok',
-    timestamp: new Date().toISOString(),
+    time: new Date().toISOString(),
+    uptime: Math.floor(process.uptime()),
     database: 'connected'
-  });
-}));
+  };
+  
+  // HEAD request - solo headers, no body
+  if (req.method === 'HEAD') {
+    res.status(200).end();
+  } else {
+    res.json(healthData);
+  }
+});
+
+app.get('/api/health', healthHandler);
+app.head('/api/health', healthHandler);
 
 // Routes
 app.use('/api/wines', winesRouter);

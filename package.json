@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:server": "tsx server/index.ts",
     "build": "vite build",
     "preview": "vite preview",
     "start": "node index.js",
@@ -101,6 +102,7 @@
     "postcss": "^8.5.4",
     "tailwindcss": "^3.4.17",
     "ts-prune": "^0.10.3",
+    "tsx": "^4.20.6",
     "typescript": "^5.8.3",
     "unimported": "^1.31.0",
     "unplugin-icons": "^22.3.0",
