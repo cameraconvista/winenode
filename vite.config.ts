@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import Icons from 'unplugin-icons/vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   plugins: [
@@ -14,8 +15,16 @@ export default defineConfig({
       defaultClass: 'icon',
       scale: 1,
       autoInstall: true
+    }),
+    // Bundle analyzer - solo quando richiesto esplicitamente
+    process.env.ANALYZE && visualizer({
+      filename: 'artifacts/bundle-stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+      template: 'treemap' // treemap, sunburst, network
     })
-  ],
+  ].filter(Boolean),
   server: {
     host: 'localhost',
     port: 3000,

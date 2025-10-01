@@ -1,0 +1,82 @@
+name: Bundle Analysis
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  bundle-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run bundle analysis
+      run: npm run analyze
+      continue-on-error: true  # Non bloccare la pipeline
+      
+    - name: Upload bundle stats
+      uses: actions/upload-artifact@v4
+      if: always()  # Upload anche se analyze fallisce
+      with:
+        name: bundle-stats-${{ github.sha }}
+        path: artifacts/bundle-stats.html
+        retention-days: 30
+        
+    - name: Comment bundle size (PR only)
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Leggi dimensioni bundle da dist/
+          const distPath = 'dist';
+          let bundleInfo = '';
+          
+          try {
+            const files = fs.readdirSync(distPath);
+            const jsFiles = files.filter(f => f.endsWith('.js') && !f.includes('.map'));
+            const cssFiles = files.filter(f => f.endsWith('.css'));
+            
+            bundleInfo += '## 📦 Bundle Analysis\n\n';
+            bundleInfo += '### JavaScript Files:\n';
+            jsFiles.forEach(file => {
+              const stats = fs.statSync(path.join(distPath, file));
+              const sizeKB = (stats.size / 1024).toFixed(2);
+              bundleInfo += `- \`${file}\`: ${sizeKB} KB\n`;
+            });
+            
+            bundleInfo += '\n### CSS Files:\n';
+            cssFiles.forEach(file => {
+              const stats = fs.statSync(path.join(distPath, file));
+              const sizeKB = (stats.size / 1024).toFixed(2);
+              bundleInfo += `- \`${file}\`: ${sizeKB} KB\n`;
+            });
+            
+            bundleInfo += '\n📊 **Detailed analysis**: Download `bundle-stats.html` artifact';
+            
+          } catch (error) {
+            bundleInfo = '❌ Could not analyze bundle sizes';
+          }
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: bundleInfo
+          });
