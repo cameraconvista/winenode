@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { SmartGestisciModalProps, EditingItem } from './types';
 import { Header } from './parts/Header';
 import { OrderList } from './parts/OrderList';
 import { Footer } from './parts/Footer';
 import { NavBar } from './parts/NavBar';
-import GestisciOrdiniInventoryModal from '../../GestisciOrdiniInventoryModal';
 import ConfirmArchiveModal from '../ConfirmArchiveModal';
+
+// Lazy loading per risolvere conflitto static/dynamic import
+const GestisciOrdiniInventoryModal = lazy(() => import('../../GestisciOrdiniInventoryModal'));
 
 interface SmartGestisciModalViewProps extends SmartGestisciModalProps {
   // State
@@ -74,15 +76,17 @@ export function SmartGestisciModalView({
       </div>
 
       {/* Modale quantità */}
-      <GestisciOrdiniInventoryModal
-        isOpen={showQuantityModal}
-        initialValue={editingItem?.currentValue || 0}
-        onConfirm={handleQuantityConfirm}
-        onCancel={handleQuantityCancel}
-        min={0}
-        max={100}
-        originalValue={editingItem?.originalValue}
-      />
+      <Suspense fallback={null}>
+        <GestisciOrdiniInventoryModal
+          isOpen={showQuantityModal}
+          initialValue={editingItem?.currentValue || 0}
+          onConfirm={handleQuantityConfirm}
+          onCancel={handleQuantityCancel}
+          min={0}
+          max={100}
+          originalValue={editingItem?.originalValue}
+        />
+      </Suspense>
 
       {/* Dialog Conferma Archiviazione */}
       <ConfirmArchiveModal
