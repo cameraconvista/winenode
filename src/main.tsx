@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 
+// Web Vitals monitoring (solo produzione, non impatta bundle)
+import { initWebVitals } from './monitoring/webVitals'
+
 // Gestione errori globali
 window.addEventListener('error', (event) => {
   console.error('Errore globale:', event.error)
@@ -23,3 +26,8 @@ ReactDOM.createRoot(root).render(
     <App />
   </BrowserRouter>
 )
+
+// Inizializza Web Vitals dopo il render (non blocca startup)
+setTimeout(() => {
+  initWebVitals()
+}, 100)
