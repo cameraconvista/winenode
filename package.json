@@ -40,7 +40,8 @@
     "supabase:doc:check": "node scripts/supabase-doc-generator.js check",
     "commit:auto": "node scripts/auto-commit.js",
     "bundle:guard": "node scripts/bundle-guard.js",
-    "size-limit": "size-limit",
+    "size": "size-limit",
+    "postbuild:size": "npm run size",
     "size:check": "npm run build && size-limit",
     "size:why": "npm run build && size-limit --why"
   },

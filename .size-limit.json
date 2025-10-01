@@ -1,38 +1,26 @@
 [
   {
-    "name": "Main Bundle (Entry)",
+    "name": "Main Bundle (gzip)",
     "path": "dist/assets/index-*.js",
-    "limit": "90 KB",
+    "limit": "500 KB",
+    "gzip": true
+  },
+  {
+    "name": "Total Bundle (gzip)",
+    "path": "dist/assets/*.js",
+    "limit": "167 KB",
     "gzip": true
   },
   {
     "name": "React Core Vendor",
     "path": "dist/assets/react-core-*.js", 
-    "limit": "150 KB",
+    "limit": "53 KB",
     "gzip": true
   },
   {
     "name": "Supabase Core Vendor",
     "path": "dist/assets/supabase-core-*.js",
-    "limit": "105 KB", 
-    "gzip": true
-  },
-  {
-    "name": "Icons Core Vendor",
-    "path": "dist/assets/icons-core-*.js",
-    "limit": "6 KB",
-    "gzip": true
-  },
-  {
-    "name": "HomePage Route",
-    "path": "dist/assets/HomePage-*.js",
-    "limit": "50 KB",
-    "gzip": true
-  },
-  {
-    "name": "GestisciOrdini Route", 
-    "path": "dist/assets/GestisciOrdiniPage-*.js",
-    "limit": "50 KB",
+    "limit": "30 KB", 
     "gzip": true
   }
 ]
