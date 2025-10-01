@@ -28,12 +28,22 @@ jobs:
       run: npm run analyze
       continue-on-error: true  # Non bloccare la pipeline
       
-    - name: Upload bundle stats
+    - name: Run size limit check
+      run: npm run size
+      continue-on-error: true  # Non bloccare la pipeline
+      
+    - name: Generate bundle metrics JSON
+      run: node scripts/generate-bundle-metrics.cjs
+      continue-on-error: true
+        
+    - name: Upload bundle artifacts
       uses: actions/upload-artifact@v4
       if: always()  # Upload anche se analyze fallisce
       with:
-        name: bundle-stats-${{ github.sha }}
-        path: artifacts/bundle-stats.html
+        name: bundle-analysis-${{ github.sha }}
+        path: |
+          artifacts/bundle-stats.html
+          artifacts/bundle-metrics.json
         retention-days: 30
         
     - name: Comment bundle size (PR only)
@@ -42,36 +52,36 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const path = require('path');
           
-          // Leggi dimensioni bundle da dist/
-          const distPath = 'dist';
           let bundleInfo = '';
           
           try {
-            const files = fs.readdirSync(distPath);
-            const jsFiles = files.filter(f => f.endsWith('.js') && !f.includes('.map'));
-            const cssFiles = files.filter(f => f.endsWith('.css'));
-            
-            bundleInfo += '## 📦 Bundle Analysis\n\n';
-            bundleInfo += '### JavaScript Files:\n';
-            jsFiles.forEach(file => {
-              const stats = fs.statSync(path.join(distPath, file));
-              const sizeKB = (stats.size / 1024).toFixed(2);
-              bundleInfo += `- \`${file}\`: ${sizeKB} KB\n`;
-            });
-            
-            bundleInfo += '\n### CSS Files:\n';
-            cssFiles.forEach(file => {
-              const stats = fs.statSync(path.join(distPath, file));
-              const sizeKB = (stats.size / 1024).toFixed(2);
-              bundleInfo += `- \`${file}\`: ${sizeKB} KB\n`;
-            });
-            
-            bundleInfo += '\n📊 **Detailed analysis**: Download `bundle-stats.html` artifact';
+            // Leggi metriche JSON generate
+            const metricsPath = 'artifacts/bundle-metrics.json';
+            if (fs.existsSync(metricsPath)) {
+              const metrics = JSON.parse(fs.readFileSync(metricsPath, 'utf8'));
+              
+              bundleInfo += '## 📦 Bundle Analysis\n\n';
+              bundleInfo += `**Total Size**: ${metrics.summary.totalSizeKB} KB\n`;
+              bundleInfo += `**Files**: ${metrics.totalFiles} (${Object.keys(metrics.javascript).length} JS + ${Object.keys(metrics.css).length} CSS)\n\n`;
+              
+              // Top 5 largest JS files
+              const jsFiles = Object.entries(metrics.javascript)
+                .sort(([,a], [,b]) => b.size - a.size)
+                .slice(0, 5);
+              
+              bundleInfo += '### 🔥 Largest JavaScript Files:\n';
+              jsFiles.forEach(([file, data]) => {
+                bundleInfo += `- \`${file}\`: ${data.sizeKB} KB (${data.type})\n`;
+              });
+              
+              bundleInfo += '\n📊 **Detailed analysis**: Download `bundle-analysis` artifact';
+            } else {
+              bundleInfo = '⚠️ Bundle metrics not available';
+            }
             
           } catch (error) {
-            bundleInfo = '❌ Could not analyze bundle sizes';
+            bundleInfo = '❌ Could not analyze bundle sizes: ' + error.message;
           }
           
           github.rest.issues.createComment({

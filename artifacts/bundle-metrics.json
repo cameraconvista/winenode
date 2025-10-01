@@ -1,0 +1,126 @@
+{
+  "timestamp": "2025-10-01T22:36:47.958Z",
+  "totalFiles": 23,
+  "javascript": {
+    "CreaOrdinePage-9a3abf7f.js": {
+      "size": 7632,
+      "sizeKB": 7.45,
+      "type": "other"
+    },
+    "FoglioExcelPage-c7e0c9d5.js": {
+      "size": 516,
+      "sizeKB": 0.5,
+      "type": "other"
+    },
+    "FornitoriPage-51c78873.js": {
+      "size": 15448,
+      "sizeKB": 15.09,
+      "type": "other"
+    },
+    "GestisciOrdiniInventoryModal-8dca1a1e.js": {
+      "size": 4063,
+      "sizeKB": 3.97,
+      "type": "other"
+    },
+    "GestisciOrdiniPage-3069848c.js": {
+      "size": 243,
+      "sizeKB": 0.24,
+      "type": "other"
+    },
+    "ImportaPage-5392bd4b.js": {
+      "size": 1556,
+      "sizeKB": 1.52,
+      "type": "other"
+    },
+    "PreferenzePage-c7f6f760.js": {
+      "size": 7557,
+      "sizeKB": 7.38,
+      "type": "other"
+    },
+    "RiepilogoOrdinePage-7c9b7142.js": {
+      "size": 8270,
+      "sizeKB": 8.08,
+      "type": "other"
+    },
+    "WhatsAppOrderModal-ff6429f7.js": {
+      "size": 6352,
+      "sizeKB": 6.2,
+      "type": "other"
+    },
+    "WineDetailsModal-22ae0612.js": {
+      "size": 6050,
+      "sizeKB": 5.91,
+      "type": "other"
+    },
+    "bell-light-2b6e4b4f.js": {
+      "size": 908,
+      "sizeKB": 0.89,
+      "type": "other"
+    },
+    "browser-86a31c16.js": {
+      "size": 736,
+      "sizeKB": 0.72,
+      "type": "other"
+    },
+    "icons-core-a0ccb632.js": {
+      "size": 4536,
+      "sizeKB": 4.43,
+      "type": "vendor"
+    },
+    "index-34fcbb09.js": {
+      "size": 39048,
+      "sizeKB": 38.13,
+      "type": "main"
+    },
+    "index-773ae9df.js": {
+      "size": 39407,
+      "sizeKB": 38.48,
+      "type": "main"
+    },
+    "index-88b58963.js": {
+      "size": 95819,
+      "sizeKB": 93.57,
+      "type": "main"
+    },
+    "index-df0cb15d.js": {
+      "size": 15853,
+      "sizeKB": 15.48,
+      "type": "main"
+    },
+    "react-core-a7f709dc.js": {
+      "size": 145952,
+      "sizeKB": 142.53,
+      "type": "vendor"
+    },
+    "supabase-core-16676e73.js": {
+      "size": 100561,
+      "sizeKB": 98.2,
+      "type": "vendor"
+    },
+    "web-vitals-62f78092.js": {
+      "size": 6601,
+      "sizeKB": 6.45,
+      "type": "other"
+    }
+  },
+  "css": {
+    "index-50afbcbf.css": {
+      "size": 1062,
+      "sizeKB": 1.04
+    },
+    "index-6ad9cc56.css": {
+      "size": 52590,
+      "sizeKB": 51.36
+    },
+    "index-8aad19b5.css": {
+      "size": 2301,
+      "sizeKB": 2.25
+    }
+  },
+  "summary": {
+    "totalJSSize": 507108,
+    "totalCSSSize": 55953,
+    "totalSize": 563061,
+    "totalSizeKB": 549.86
+  }
+}
