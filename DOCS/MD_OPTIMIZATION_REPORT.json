@@ -1,0 +1,295 @@
+{
+  "generated_at": "2025-10-02T19:57:14Z",
+  "branch": "docs/ottimizzazione-md-full",
+  "operation": "MD/TXT Full Optimization",
+  "before": {
+    "total_files": 212,
+    "active_files": 104,
+    "archived_files": 108,
+    "exact_duplicates": 16,
+    "main_directories": 2,
+    "recovery_space_mb": 11,
+    "structure": "chaotic"
+  },
+  "after": {
+    "total_files": 43,
+    "active_files": 43,
+    "archived_files": 169,
+    "exact_duplicates": 0,
+    "main_directories": 7,
+    "recovery_space_mb": 11,
+    "structure": "modular"
+  },
+  "moves": [
+    {
+      "from": "DOCS/01-STRUTTURA_PROGETTO.md",
+      "to": "DOCS/01-INFORMATIVI/01-STRUTTURA_PROGETTO.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/02-SISTEMA_BACKUP.md",
+      "to": "DOCS/01-INFORMATIVI/02-SISTEMA_BACKUP.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/03-PIPELINE_CI_CD.md",
+      "to": "DOCS/01-INFORMATIVI/03-PIPELINE_CI_CD.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/04-SUPABASE_SCHEMA.md",
+      "to": "DOCS/01-INFORMATIVI/04-SUPABASE_SCHEMA.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/05-SCRIPTS_UTILITY.md",
+      "to": "DOCS/01-INFORMATIVI/05-SCRIPTS_UTILITY.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/06-REPORT_QUALITÀ.md",
+      "to": "DOCS/01-INFORMATIVI/06-REPORT_QUALITÀ.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/07-PLAYBOOK_OPERATIVI.md",
+      "to": "DOCS/01-INFORMATIVI/07-PLAYBOOK_OPERATIVI.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/08-DOCS_INDEX.md",
+      "to": "DOCS/01-INFORMATIVI/08-DOCS_INDEX.md",
+      "category": "informativi"
+    },
+    {
+      "from": "DOCS/SESSIONE5_REPORT.md",
+      "to": "DOCS/02-SESSIONI/SESSIONE5_REPORT.md",
+      "category": "sessioni"
+    },
+    {
+      "from": "DOCS/SESSIONE6_REPORT.md",
+      "to": "DOCS/02-SESSIONI/SESSIONE6_REPORT.md",
+      "category": "sessioni"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/SESSIONE2_FIX_REPORT.md",
+      "to": "DOCS/02-SESSIONI/SESSIONE2_FIX_REPORT.md",
+      "category": "sessioni"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/SESSIONE4_REPORT.md",
+      "to": "DOCS/02-SESSIONI/SESSIONE4_REPORT.md",
+      "category": "sessioni"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_ASSET.md",
+      "to": "DOCS/03-ANALISI/ANALISI_ASSET.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_BUNDLE.md",
+      "to": "DOCS/03-ANALISI/ANALISI_BUNDLE.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_DATA.md",
+      "to": "DOCS/03-ANALISI/ANALISI_DATA.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_DEPENDENCIES.md",
+      "to": "DOCS/03-ANALISI/ANALISI_DEPENDENCIES.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_DUPLICATI_VINI.md",
+      "to": "DOCS/03-ANALISI/ANALISI_DUPLICATI_VINI.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_QUALITY.md",
+      "to": "DOCS/03-ANALISI/ANALISI_QUALITY.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_ROUTING.md",
+      "to": "DOCS/03-ANALISI/ANALISI_ROUTING.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_RUNTIME.md",
+      "to": "DOCS/03-ANALISI/ANALISI_RUNTIME.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_UNUSED_REPORT.md",
+      "to": "DOCS/03-ANALISI/ANALISI_UNUSED_REPORT.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/ANALISI_VITALS.md",
+      "to": "DOCS/03-ANALISI/ANALISI_VITALS.md",
+      "category": "analisi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_BOTTOM_NAV.txt",
+      "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_BOTTOM_NAV.txt",
+      "category": "diagnosi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_GENERALE_PROGETTO.txt",
+      "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_GENERALE_PROGETTO.txt",
+      "category": "diagnosi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_NAVBAR_MOBILE.txt",
+      "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_NAVBAR_MOBILE.txt",
+      "category": "diagnosi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_PROGETTO.md",
+      "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_PROGETTO.md",
+      "category": "diagnosi"
+    },
+    {
+      "from": "REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt",
+      "to": "DOCS/04-DIAGNOSI/REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt",
+      "category": "diagnosi"
+    },
+    {
+      "from": "DOCS/REPORT E VARIE/CHANGELOG_CLEANUP.md",
+      "to": "DOCS/05-CHANGELOG/CHANGELOG_CLEANUP.md",
+      "category": "changelog"
+    },
+    {
+      "from": "DOCS/BACKUP_AUTOMATICO.md",
+      "to": "DOCS/06-GUIDE/BACKUP_AUTOMATICO.md",
+      "category": "guide"
+    }
+  ],
+  "archived": [
+    {
+      "from": "DOCS/01-STRUTTURA_PROGETTO 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/01-STRUTTURA_PROGETTO 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": "DOCS/02-SISTEMA_BACKUP 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/02-SISTEMA_BACKUP 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": "DOCS/03-PIPELINE_CI_CD 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/03-PIPELINE_CI_CD 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": "DOCS/04-SUPABASE_SCHEMA 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/04-SUPABASE_SCHEMA 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": "DOCS/05-SCRIPTS_UTILITY 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/05-SCRIPTS_UTILITY 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": "DOCS/06-REPORT_QUALITÀ 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/06-REPORT_QUALITÀ 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": "DOCS/07-PLAYBOOK_OPERATIVI 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/07-PLAYBOOK_OPERATIVI 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": "DOCS/08-DOCS_INDEX 2.md",
+      "to": "DOCS/ARCHIVIATI/duplicates/08-DOCS_INDEX 2.md",
+      "reason": "exact_duplicate"
+    },
+    {
+      "from": ".recovery/",
+      "to": "DOCS/ARCHIVIATI/snapshots_20251002-193228.tar.gz",
+      "reason": "recovery_compression"
+    }
+  ],
+  "kept": [
+    {
+      "path": "DOCS/01-INFORMATIVI/01-STRUTTURA_PROGETTO.md",
+      "reason": "canonical_numbered"
+    },
+    {
+      "path": "DOCS/01-INFORMATIVI/02-SISTEMA_BACKUP.md",
+      "reason": "canonical_numbered"
+    },
+    {
+      "path": "DOCS/01-INFORMATIVI/03-PIPELINE_CI_CD.md",
+      "reason": "canonical_numbered"
+    },
+    {
+      "path": "DOCS/01-INFORMATIVI/04-SUPABASE_SCHEMA.md",
+      "reason": "canonical_numbered"
+    },
+    {
+      "path": "DOCS/01-INFORMATIVI/05-SCRIPTS_UTILITY.md",
+      "reason": "canonical_numbered"
+    },
+    {
+      "path": "DOCS/01-INFORMATIVI/06-REPORT_QUALITÀ.md",
+      "reason": "canonical_numbered"
+    },
+    {
+      "path": "DOCS/01-INFORMATIVI/07-PLAYBOOK_OPERATIVI.md",
+      "reason": "canonical_numbered"
+    },
+    {
+      "path": "DOCS/01-INFORMATIVI/08-DOCS_INDEX.md",
+      "reason": "canonical_numbered"
+    }
+  ],
+  "skipped": [],
+  "redirects": {
+    "total_redirects": 29,
+    "file_path": "DOCS/00-INDICI/REDIRECTS_MAP.json"
+  },
+  "snapshots": {
+    "compressed": 1,
+    "original_files": 86,
+    "compressed_size_mb": 11,
+    "file_path": "DOCS/ARCHIVIATI/snapshots_20251002-193228.tar.gz"
+  },
+  "rollback_hint": {
+    "full_backup_path": ".archive/docs/20251002_193143_pre-cleanup/",
+    "recovery_snapshots": "DOCS/ARCHIVIATI/snapshots_20251002-193228.tar.gz",
+    "redirects_map": "DOCS/00-INDICI/REDIRECTS_MAP.json",
+    "rollback_time_estimate": "< 5 minutes"
+  },
+  "commits": [
+    {
+      "message": "chore(docs): backup pre-cleanup + snapshots rotation [SAFE-DOCS]",
+      "files_changed": 212,
+      "type": "backup"
+    },
+    {
+      "message": "chore(docs): archivia duplicati esatti (no contenuto perso) [SAFE-DOCS]",
+      "files_changed": 8,
+      "type": "cleanup"
+    },
+    {
+      "message": "docs: riorganizza MD/TXT in struttura target + index + redirects map [SAFE-DOCS]",
+      "files_changed": 43,
+      "type": "reorganization"
+    }
+  ],
+  "validation": {
+    "no_files_lost": true,
+    "structure_consistent": true,
+    "indices_generated": true,
+    "commits_granular": true,
+    "canonical_files_preserved": true,
+    "categorization_correct": true,
+    "backup_verified": true,
+    "compression_successful": true
+  }
+}
