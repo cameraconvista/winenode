@@ -15,7 +15,8 @@ export interface WineType {
   vintage: string | null;
   region: string | null;
   description: string | null;
-  // Campi per optimistic locking
+  // Campi per optimistic locking con PK giacenza
+  giacenza_id?: string;
   inventoryVersion?: number;
   inventoryUpdatedAt?: string;
 }
@@ -26,8 +27,16 @@ const useWines = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Feature flag per realtime (da env)
+  // TASK 2 - Feature flag per realtime (da env) con logging runtime
   const realtimeEnabled = import.meta.env.VITE_REALTIME_GIACENZE_ENABLED === 'true';
+  
+  // Log feature flag una sola volta all'avvio (solo in dev)
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.debug('🔧 REALTIME_GIACENZE_ENABLED:', realtimeEnabled, 
+        '(env value:', import.meta.env.VITE_REALTIME_GIACENZE_ENABLED, ')');
+    }
+  }, []); // Solo al mount
 
   const fetchWines = async () => {
     setLoading(true);
@@ -60,7 +69,8 @@ const useWines = () => {
           vintage: wine.anno?.toString() || '',
           region: wine.provenienza || '',
           description: wine.produttore || '',
-          // Campi optimistic locking
+          // Campi optimistic locking con PK giacenza
+          giacenza_id: g?.id,
           inventoryVersion: g?.version ?? 1,
           inventoryUpdatedAt: g?.updated_at
         };
@@ -80,6 +90,46 @@ const useWines = () => {
     }
   };
 
+  // TASK 5 - Helper refetch by PK giacenza (definito prima degli handler)
+  const refetchGiacenzaById = useCallback(async (giacenzaId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('giacenza')
+        .select('id, vino_id, giacenza, min_stock, version, updated_at')
+        .eq('id', giacenzaId)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          if (import.meta.env.DEV) {
+            console.warn('⚠️ Giacenza non trovata per ID:', giacenzaId);
+          }
+          return null;
+        }
+        throw error;
+      }
+
+      // Merge record aggiornato nello store per vino_id
+      setWines(prev => prev.map(wine => 
+        wine.id === data.vino_id 
+          ? { 
+              ...wine, 
+              inventory: data.giacenza, 
+              minStock: data.min_stock ?? wine.minStock,
+              giacenza_id: data.id,
+              inventoryVersion: data.version ?? wine.inventoryVersion,
+              inventoryUpdatedAt: data.updated_at
+            }
+          : wine
+      ));
+
+      return data;
+    } catch (err: any) {
+      if (import.meta.env.DEV) console.error('Errore refetch giacenza by ID:', err.message);
+      return null;
+    }
+  }, []);
+
   // Handler per eventi realtime giacenza
   const handleRealtimeInsert = useCallback((record: any) => {
     if (import.meta.env.DEV) {
@@ -92,6 +142,7 @@ const useWines = () => {
             ...wine, 
             inventory: record.giacenza, 
             minStock: record.min_stock ?? wine.minStock,
+            giacenza_id: record.id,
             inventoryVersion: record.version ?? wine.inventoryVersion,
             inventoryUpdatedAt: record.updated_at
           }
@@ -104,18 +155,30 @@ const useWines = () => {
       console.log('🔄 Realtime UPDATE giacenza:', record);
     }
     
+    // Merge locale
     setWines(prev => prev.map(wine => 
       wine.id === record.vino_id 
         ? { 
             ...wine, 
             inventory: record.giacenza, 
             minStock: record.min_stock ?? wine.minStock,
+            giacenza_id: record.id,
             inventoryVersion: record.version ?? wine.inventoryVersion,
             inventoryUpdatedAt: record.updated_at
           }
         : wine
     ));
-  }, []);
+
+    // TASK 3 - Fallback diagnostico: refetch by PK con debounce
+    if (record.id) {
+      setTimeout(() => {
+        refetchGiacenzaById(record.id);
+        if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+          console.debug('🔄 Fallback refetch by PK:', record.id);
+        }
+      }, 250);
+    }
+  }, [refetchGiacenzaById]);
 
   const handleRealtimeDelete = useCallback((record: any) => {
     if (import.meta.env.DEV) {
@@ -129,6 +192,7 @@ const useWines = () => {
             ...wine, 
             inventory: 0, 
             minStock: 2,
+            giacenza_id: undefined,
             inventoryVersion: 1,
             inventoryUpdatedAt: undefined
           }
@@ -136,8 +200,8 @@ const useWines = () => {
     ));
   }, []);
 
-  // TASK 4 - Helper refetch puntuale per conflitti
-  const refetchGiacenzaById = useCallback(async (vinoId: string) => {
+  // TASK 4 - Helper refetch puntuale per conflitti (fallback by vino_id)
+  const refetchGiacenzaByVinoId = useCallback(async (vinoId: string) => {
     try {
       const { data, error } = await supabase
         .from('giacenza')
@@ -191,15 +255,61 @@ const useWines = () => {
         markUpdatePending(id);
       }
 
-      // Trova il wine corrente per ottenere la versione
+      // Trova il wine corrente per ottenere giacenza_id e versione
       const currentWine = wines.find(w => w.id === id);
       const currentVersion = currentWine?.inventoryVersion ?? 1;
+      const giacenzaId = currentWine?.giacenza_id;
 
       if (import.meta.env.DEV) {
-        console.log(`🔄 Update giacenza vino ${id}: ${currentWine?.inventory} → ${newInventory} (version: ${currentVersion})`);
+        console.log(`🔄 Update giacenza vino ${id}: ${currentWine?.inventory} → ${newInventory} (version: ${currentVersion}, giacenza_id: ${giacenzaId})`);
       }
 
-      // Prima controlla se esiste già un record per questo vino
+      // Se abbiamo giacenza_id, usa optimistic locking con PK
+      if (giacenzaId) {
+        const result = await supabase
+          .from('giacenza')
+          .update({
+            giacenza: newInventory
+          })
+          .eq('id', giacenzaId)
+          .eq('version', currentVersion)
+          .select('id, vino_id, giacenza, min_stock, version, updated_at');
+
+        // Gestione conflitto (0 righe aggiornate)
+        if (result.data && result.data.length === 0) {
+          if (import.meta.env.DEV) {
+            console.warn(`⚠️ Conflitto concorrenza per giacenza ${giacenzaId} (version ${currentVersion})`);
+          }
+
+          // Refetch by PK per riallineare
+          await refetchGiacenzaById(giacenzaId);
+          
+          console.warn('🔄 Valore aggiornato da un altro utente, dati ricaricati.');
+          return false; // Conflitto gestito
+        }
+
+        // Successo - merge della riga confermata con nuova version
+        if (result.data && result.data.length > 0) {
+          const updatedRecord = result.data[0];
+          setWines(prev => prev.map(w => 
+            w.id === id 
+              ? { 
+                  ...w, 
+                  inventory: updatedRecord.giacenza,
+                  minStock: updatedRecord.min_stock ?? w.minStock,
+                  giacenza_id: updatedRecord.id,
+                  inventoryVersion: updatedRecord.version,
+                  inventoryUpdatedAt: updatedRecord.updated_at
+                }
+              : w
+          ));
+        }
+
+        if (result.error) throw result.error;
+        return true;
+      }
+
+      // Fallback: controlla se esiste già un record per questo vino
       const { data: existingRecord, error: checkError } = await supabase
         .from('giacenza')
         .select('id, version')
@@ -231,7 +341,7 @@ const useWines = () => {
           }
 
           // Refetch puntuale per riallineare
-          const refetchedData = await refetchGiacenzaById(id);
+          const refetchedData = await refetchGiacenzaByVinoId(id);
           
           // TASK 2 - Toast non bloccante
           // TODO: Implementare toast system
@@ -324,12 +434,58 @@ const useWines = () => {
         markUpdatePending(id);
       }
 
-      // Trova il wine corrente per ottenere la versione
+      // Trova il wine corrente per ottenere giacenza_id e versione
       const currentWine = wines.find(w => w.id === id);
       const currentVersion = currentWine?.inventoryVersion ?? 1;
+      const giacenzaId = currentWine?.giacenza_id;
 
       if (import.meta.env.DEV) {
-        console.log(`🔄 Update min_stock vino ${id}: ${currentWine?.minStock} → ${newMinStock} (version: ${currentVersion})`);
+        console.log(`🔄 Update min_stock vino ${id}: ${currentWine?.minStock} → ${newMinStock} (version: ${currentVersion}, giacenza_id: ${giacenzaId})`);
+      }
+
+      // Se abbiamo giacenza_id, usa optimistic locking con PK
+      if (giacenzaId) {
+        const result = await supabase
+          .from('giacenza')
+          .update({
+            min_stock: newMinStock
+          })
+          .eq('id', giacenzaId)
+          .eq('version', currentVersion)
+          .select('id, vino_id, giacenza, min_stock, version, updated_at');
+
+        // Gestione conflitto (0 righe aggiornate)
+        if (result.data && result.data.length === 0) {
+          if (import.meta.env.DEV) {
+            console.warn(`⚠️ Conflitto concorrenza min_stock per giacenza ${giacenzaId} (version ${currentVersion})`);
+          }
+
+          // Refetch by PK per riallineare
+          await refetchGiacenzaById(giacenzaId);
+          
+          console.warn('🔄 Soglia minima aggiornata da un altro utente, dati ricaricati.');
+          return false; // Conflitto gestito
+        }
+
+        // Successo - merge della riga confermata
+        if (result.data && result.data.length > 0) {
+          const updatedRecord = result.data[0];
+          setWines(prev => prev.map(w => 
+            w.id === id 
+              ? { 
+                  ...w, 
+                  inventory: updatedRecord.giacenza,
+                  minStock: updatedRecord.min_stock,
+                  giacenza_id: updatedRecord.id,
+                  inventoryVersion: updatedRecord.version,
+                  inventoryUpdatedAt: updatedRecord.updated_at
+                }
+              : w
+          ));
+        }
+
+        if (result.error) throw result.error;
+        return true;
       }
 
       // Controlla se esiste già un record per questo vino
@@ -362,7 +518,7 @@ const useWines = () => {
           }
 
           // Refetch puntuale per riallineare
-          await refetchGiacenzaById(id);
+          await refetchGiacenzaByVinoId(id);
           
           // Toast non bloccante
           console.warn('🔄 Soglia minima aggiornata da un altro utente, dati ricaricati.');
@@ -479,12 +635,23 @@ const useWines = () => {
   };
 
   // Setup realtime subscription
-  const { isConnected: realtimeConnected, markUpdatePending } = useRealtimeGiacenza({
+  const { isConnected: realtimeConnected, isSubscribed: realtimeSubscribed, markUpdatePending } = useRealtimeGiacenza({
     onInsert: handleRealtimeInsert,
     onUpdate: handleRealtimeUpdate,
     onDelete: handleRealtimeDelete,
     enabled: realtimeEnabled
   });
+
+  // TASK 2 - Log status realtime al mount
+  useEffect(() => {
+    if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+      console.debug('🏠 useWines realtime status:', { 
+        enabled: realtimeEnabled, 
+        connected: realtimeConnected, 
+        subscribed: realtimeSubscribed 
+      });
+    }
+  }, [realtimeEnabled, realtimeConnected, realtimeSubscribed]);
 
   useEffect(() => {
     fetchWines();
@@ -501,8 +668,10 @@ const useWines = () => {
     updateWineMinStock,
     updateWine,
     refetchGiacenzaById,
+    refetchGiacenzaByVinoId,
     // Realtime status
-    realtimeConnected: realtimeEnabled ? realtimeConnected : false
+    realtimeConnected: realtimeEnabled ? realtimeConnected : false,
+    realtimeSubscribed: realtimeEnabled ? realtimeSubscribed : false
   };
 };
 

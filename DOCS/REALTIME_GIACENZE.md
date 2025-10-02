@@ -202,6 +202,151 @@
 
 ---
 
-## STATUS: PHASE 2 COMPLETATA ✅
+## FIX MIRATO - REALTIME GIACENZE UI ✅
+
+### TASK 1 - CHIAVE CORRETTA OVUNQUE:
+- ✅ **refetchGiacenzaByVinoId**: Usa `eq('vino_id', vinoId)` per cercare per wine ID
+- ✅ **Merge store**: Condizione `w.id === id` (wine ID) coerente
+- ✅ **Separazione chiavi**: `vino_id` come campo dati, non chiave di indicizzazione
+
+### TASK 2 - FEATURE FLAG IN RUNTIME:
+- ✅ **Logging startup**: `console.debug('🔧 REALTIME_GIACENZE_ENABLED:', enabled)`
+- ✅ **Env value**: Mostra valore effettivo da `import.meta.env`
+- ✅ **Una sola volta**: useEffect con deps vuote per evitare spam
+
+### TASK 3 - VERIFICA SUBSCRIBE E CALLBACK:
+- ✅ **Log stati canale**: `console.debug('📡 RT giacenza channel:', status)`
+- ✅ **Log eventi**: `console.debug('RT giacenza EVT', {type, id})`
+- ✅ **TypeScript safe**: Cast per accesso sicuro a `newRecord?.id`
+
+### TASK 4 - ANTI-ECO SOLO LOCALE:
+- ✅ **Store locale**: `pendingUpdatesRef` vive nel device che invia
+- ✅ **Non condiviso**: Lista pending non sincronizzata tra device
+- ✅ **Ignore selettivo**: Solo eventi con ID pending su quel device
+
+### TELEMETRIA DEBUGGING:
+```javascript
+// Startup
+🔧 REALTIME_GIACENZE_ENABLED: true (env value: true)
+
+// Channel states
+📡 RT giacenza channel: connecting
+📡 RT giacenza channel: subscribed
+
+// Eventi
+RT giacenza EVT {type: 'UPDATE', id: 'abc123'}
+```
+
+### PRODUZIONE:
+- ⚠️ **Feature flag**: Settare `VITE_REALTIME_GIACENZE_ENABLED=true` nell'ambiente
+- ⚠️ **Non solo .env.example**: Configurare nel deployment environment
+
+---
+
+## PATCH CHIAVI GIACENZA - ALLINEA PK/MERGE ✅
+
+### TASK 1 - TIPI & SELECT:
+- ✅ **Interfaccia WineType**: Aggiunto `giacenza_id?: string` per PK giacenza
+- ✅ **Query giacenza**: Include `id, vino_id, giacenza, min_stock, version, updated_at`
+- ✅ **Mapping store**: `giacenza_id: g?.id` per salvare PK giacenza
+
+### TASK 2 - STORE:
+- ✅ **Indicizzazione**: Store indicizzato per `vino_id` (wineId) come prima
+- ✅ **Salvataggio PK**: Ogni item salva `giacenza_id` e `version`
+- ✅ **Realtime handlers**: Aggiornano `giacenza_id: record.id` nei merge
+
+### TASK 3 - UPDATE OPTIMISTIC:
+- ✅ **PK first**: `eq('id', giacenzaId).eq('version', currentVersion)`
+- ✅ **Fallback**: Se no `giacenza_id`, usa logica precedente per `vino_id`
+- ✅ **Conflitti**: Refetch by PK `refetchGiacenzaById(giacenzaId)`
+
+### TASK 4 - REALTIME HANDLER:
+- ✅ **Mapping corretto**: `record.id` → `giacenza_id`, `record.vino_id` → wineId
+- ✅ **Store update**: Aggiorna per wineId con `giacenza_id: record.id`
+- ✅ **Telemetria**: Log eventi con `id: recordId` per debugging
+
+### TASK 5 - HELPER:
+- ✅ **refetchGiacenzaById**: PK first con `eq('id', giacenzaId)`
+- ✅ **refetchGiacenzaByVinoId**: Mantenuto come fallback
+- ✅ **API estesa**: Entrambi helper disponibili nel return
+
+### FLUSSO OTTIMIZZATO:
+```javascript
+// 1. Store ha giacenza_id
+wine.giacenza_id = "abc-123"
+
+// 2. Update usa PK
+UPDATE giacenza SET giacenza = 10 
+WHERE id = 'abc-123' AND version = 5
+
+// 3. Realtime propaga
+RT giacenza EVT {type: 'UPDATE', id: 'abc-123'}
+
+// 4. Merge per wineId
+setWines(prev => prev.map(w => 
+  w.id === record.vino_id ? {...w, giacenza_id: record.id} : w
+))
+```
+
+### TESTING PRONTO:
+- ✅ **App attiva**: http://localhost:3000/ (HMR funzionante)
+- ✅ **Telemetria**: Log PK e vino_id per debugging
+- ✅ **Conflitti**: Refetch by PK + toast per riallineamento
+
+---
+
+## FIX/DIAGNOSI - REALTIME NON SI AGGIORNA SU B ✅
+
+### TASK 1 - AGGANCIARE WS E JOIN:
+- ✅ **Logging dettagliato**: `console.debug('📡 RT giacenza channel status:', status)`
+- ✅ **Eventi completi**: `console.debug('RT giacenza EVT', {type, id, vino_id})`
+- ✅ **Subscription corretta**: `event: '*', schema: 'public', table: 'giacenza'`
+- ✅ **Status esposto**: `realtimeSubscribed` disponibile nel hook
+
+### TASK 2 - MONTAGGIO NELLE VISTE:
+- ✅ **useWines integrato**: Hook realtime montato in useWines
+- ✅ **Status logging**: Log realtime status al mount di useWines
+- ✅ **Produzione ready**: Nessuna condizione che disattivi in prod
+- ✅ **API estesa**: `realtimeSubscribed` esposto nel return
+
+### TASK 3 - FALLBACK DIAGNOSTICO:
+- ✅ **Refetch automatico**: Dopo merge UPDATE, refetch by PK con 250ms debounce
+- ✅ **Logging fallback**: `console.debug('🔄 Fallback refetch by PK:', id)`
+- ✅ **Temporaneo**: Da rimuovere dopo conferma funzionamento merge
+
+### TASK 4 - ANTI-ECO LOCALE:
+- ✅ **Disabilitabile**: `VITE_RT_IGNORE_PENDING=false` per test
+- ✅ **Default attivo**: Anti-eco attivo di default per produzione
+- ✅ **Test ready**: Facile disattivare per verificare eventi UPDATE
+
+### TASK 5 - LOG PRODUZIONE:
+- ✅ **Condizionali**: Log attivi solo se `DEV || VITE_RT_DEBUG==='true'`
+- ✅ **Minimali**: Solo debug essenziali per diagnosi
+- ✅ **Performance**: Nessun impatto su produzione normale
+
+### TELEMETRIA COMPLETA:
+```javascript
+// Startup
+🔧 REALTIME_GIACENZE_ENABLED: true (env value: true)
+🏠 useWines realtime status: {enabled: true, connected: false, subscribed: false}
+
+// Connection
+📡 RT giacenza channel status: connecting
+📡 RT giacenza channel status: subscribed
+
+// Eventi
+RT giacenza EVT {type: 'UPDATE', id: 'abc-123', vino_id: 'wine-456'}
+🔄 Fallback refetch by PK: abc-123
+```
+
+### TEST SCENARIOS:
+1. **Due finestre**: A modifica → B log `RT giacenza EVT` + UI aggiornata
+2. **WS Status**: Verifica `status: subscribed` in console
+3. **Anti-eco test**: `VITE_RT_IGNORE_PENDING=false` → eventi visibili su A
+4. **Fallback**: Refetch automatico se merge non aggiorna UI
+
+---
+
+## STATUS: PHASE 2 ✅ + FIX ✅ + PATCH PK ✅ + DIAGNOSI ✅
 
 **PROSSIMO STEP**: PHASE 3 - Focus/reconnect fallback con debounce

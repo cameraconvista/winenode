@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
@@ -73,6 +73,14 @@ export function useRealtimeGiacenza({
   const handleRealtimeEvent = useCallback((payload: RealtimePostgresChangesPayload<GiacenzaRecord>) => {
     const { eventType, new: newRecord, old: oldRecord } = payload;
 
+    // TASK 1 - Log eventi con ID e vino_id per debugging
+    const recordId = (newRecord as GiacenzaRecord)?.id || (oldRecord as GiacenzaRecord)?.id;
+    const vinoId = (newRecord as GiacenzaRecord)?.vino_id || (oldRecord as GiacenzaRecord)?.vino_id;
+    
+    if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+      console.debug('RT giacenza EVT', { type: eventType, id: recordId, vino_id: vinoId });
+    }
+
     if (import.meta.env.DEV) {
       console.log('🔄 Realtime giacenza event:', eventType, { newRecord, oldRecord });
     }
@@ -94,8 +102,9 @@ export function useRealtimeGiacenza({
 
       case 'UPDATE':
         if (newRecord) {
-          // Ignora eco locale se update è in pending
-          if (pendingUpdatesRef.current.has(newRecord.vino_id)) {
+          // TASK 4 - Anti-eco locale (disabilitabile per test)
+          const ignorePending = import.meta.env.VITE_RT_IGNORE_PENDING !== 'false';
+          if (ignorePending && pendingUpdatesRef.current.has(newRecord.vino_id)) {
             pendingUpdatesRef.current.delete(newRecord.vino_id);
             if (import.meta.env.DEV) {
               console.log('🔇 Ignorato eco locale UPDATE per vino:', newRecord.vino_id);
@@ -140,6 +149,11 @@ export function useRealtimeGiacenza({
         handleRealtimeEvent
       )
       .subscribe((status) => {
+        // TASK 1 - Log stati canale per debugging
+        if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+          console.debug('📡 RT giacenza channel status:', status);
+        }
+        
         if (import.meta.env.DEV) {
           console.log('📡 Realtime giacenza status:', status);
         }
@@ -181,11 +195,35 @@ export function useRealtimeGiacenza({
     }, 5000);
   }, []);
 
-  // Status subscription
-  const isConnected = channelRef.current?.state === 'joined';
+  // TASK 1 - Status subscription con logging
+  const [isConnected, setIsConnected] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    const updateStatus = () => {
+      const connected = channelRef.current?.state === 'joined';
+      const subscribed = channelRef.current?.state === 'subscribed';
+      
+      setIsConnected(connected);
+      setIsSubscribed(subscribed);
+      
+      // TASK 1 - Log status changes
+      if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+        console.debug('RT giacenza status update:', { connected, subscribed, state: channelRef.current?.state });
+      }
+    };
+
+    updateStatus();
+    
+    // Polling per aggiornare status (ogni 1s)
+    const interval = setInterval(updateStatus, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   return {
     isConnected,
+    isSubscribed,
     markUpdatePending
   };
 }
