@@ -201,15 +201,16 @@ export function useRealtimeGiacenza({
 
   useEffect(() => {
     const updateStatus = () => {
-      const connected = channelRef.current?.state === 'joined';
-      const subscribed = channelRef.current?.state === 'subscribed';
+      const state = channelRef.current?.state;
+      const connected = state === 'joined';
+      const subscribed = ['subscribed', 'joined'].includes(state as string);
       
       setIsConnected(connected);
       setIsSubscribed(subscribed);
       
       // TASK 1 - Log status changes
       if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
-        console.debug('RT giacenza status update:', { connected, subscribed, state: channelRef.current?.state });
+        console.debug('RT giacenza status update:', { connected, subscribed, state });
       }
     };
 
