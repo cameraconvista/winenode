@@ -417,6 +417,76 @@ RT giacenza EVT {type: 'UPDATE', id: 'abc-123', vino_id: 'wine-456'}
 
 ---
 
-## STATUS: PHASE 2 ✅ + FIX ✅ + PATCH PK ✅ + DIAGNOSI ✅ + PROD FIX ✅
+## FIX CHIRURGICO - INSTRADAMENTO MIN_STOCK → GIACENZA ✅
 
-**PROSSIMO STEP**: PHASE 3 - Focus/reconnect fallback con debounce
+### PROBLEMA IDENTIFICATO:
+- ❌ **updateWine()** tentava di aggiornare `min_stock` su tabella `vini` (bloccato da guardrail)
+- ❌ **Realtime non propagava** modifiche soglia minima tra device
+- ❌ **Pipeline separata** per min_stock vs stock causava inconsistenze
+
+### SOLUZIONE CHIRURGICA:
+- ✅ **Instradamento**: `updates.minStock` → `updateWineMinStock()` (pipeline giacenza)
+- ✅ **Guardrail migliorato**: `minStock` rimosso da `metadataUpdates` su `vini`
+- ✅ **Pipeline unificata**: Stessa logica optimistic locking per stock e min_stock
+- ✅ **Logging diagnostico**: `🟡 giacenza.update (min_stock)` per debug
+
+### CODICE MODIFICATO:
+
+```typescript
+// PRIMA - updateWine() tentava update su vini
+const metadataUpdates = {
+  ...(updates.minStock !== undefined && { min_stock: updates.minStock }), // ❌ BLOCCATO
+  // altri metadati...
+};
+
+// DOPO - Instradamento chirurgico
+if (updates.minStock !== undefined) {
+  console.debug('🟡 giacenza.update (min_stock): instradamento da updateWine → updateWineMinStock');
+  const success = await updateWineMinStock(id, updates.minStock); // ✅ PIPELINE GIACENZA
+  return success;
+}
+```
+
+### FLUSSO OTTIMIZZATO:
+```javascript
+// 1. User modifica soglia minima
+updateWine(wineId, { minStock: 5 })
+
+// 2. Instradamento chirurgico
+→ updateWineMinStock(wineId, 5)
+
+// 3. Update su giacenza con optimistic locking
+UPDATE public.giacenza SET min_stock = 5 
+WHERE id = 'giacenza-pk' AND version = currentVersion
+
+// 4. Trigger DB: version++, updated_at = now()
+
+// 5. Realtime propagazione
+RT giacenza EVT {type: 'UPDATE', id: 'giacenza-pk', vino_id: 'wine-id'}
+
+// 6. Device B riceve evento e aggiorna UI
+```
+
+### GUARDRAIL PRESERVATI:
+- ✅ **Tabella vini**: Rimane read-only (nessun write)
+- ✅ **Anti-eco**: `markUpdatePending()` attivo
+- ✅ **Optimistic locking**: Version control su giacenza
+- ✅ **Fallback refetch**: By PK per conflitti (temporaneo)
+
+### LOGGING DIAGNOSTICO:
+```javascript
+// Instradamento (solo se debug)
+🟡 giacenza.update (min_stock): instradamento da updateWine → updateWineMinStock
+
+// Update giacenza (solo se debug)  
+🟡 giacenza.update (min_stock): { vino_id: 'wine-123', prevVersion: 5, nextValue: 3, giacenza_id: 'giac-456' }
+
+// Realtime evento (sempre attivo)
+RT giacenza EVT {type: 'UPDATE', id: 'giac-456', vino_id: 'wine-123'}
+```
+
+---
+
+## STATUS: PHASE 2 ✅ + FIX ✅ + PATCH PK ✅ + DIAGNOSI ✅ + PROD FIX ✅ + MIN_STOCK FIX ✅
+
+**PROSSIMO STEP**: Test multi-device produzione min_stock realtime
