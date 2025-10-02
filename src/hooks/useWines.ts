@@ -169,7 +169,8 @@ const useWines = () => {
         : wine
     ));
 
-    // TASK 3 - Fallback diagnostico: refetch by PK con debounce
+    // STEP 4 - Fallback diagnostico: refetch by PK con debounce (TEMPORANEO)
+    // TODO: Rimuovere dopo conferma sincronizzazione OK in produzione
     if (record.id) {
       setTimeout(() => {
         refetchGiacenzaById(record.id);

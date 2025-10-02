@@ -102,8 +102,8 @@ export function useRealtimeGiacenza({
 
       case 'UPDATE':
         if (newRecord) {
-          // TASK 4 - Anti-eco locale (disabilitabile per test)
-          const ignorePending = import.meta.env.VITE_RT_IGNORE_PENDING !== 'false';
+          // STEP 4 - Anti-eco locale (attivo in prod, disabilitabile per test)
+          const ignorePending = import.meta.env.VITE_RT_DEBUG !== 'true';
           if (ignorePending && pendingUpdatesRef.current.has(newRecord.vino_id)) {
             pendingUpdatesRef.current.delete(newRecord.vino_id);
             if (import.meta.env.DEV) {

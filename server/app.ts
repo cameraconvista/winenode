@@ -11,6 +11,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// STEP 3 - CSP Headers per consentire WebSocket Supabase
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data: https:; " +
+    "font-src 'self' data:; " +
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in wss://*.supabase.in; " +
+    "frame-src 'none'; " +
+    "object-src 'none';"
+  );
+  next();
+});
+
 // Compatibility middleware per mapping supplier/fornitore
 app.use(requestCompatibilityMiddleware);
 app.use(responseCompatibilityMiddleware);

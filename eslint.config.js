@@ -162,7 +162,8 @@ export default [
       '**/*.config.*',
       '.eslintrc.js',
       'scripts/recovery-system.cjs',
-      'shared/**'
+      'shared/**',
+      'public/sw.js'  // Service Worker ignorato
     ]
   }
 ];

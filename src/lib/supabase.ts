@@ -8,4 +8,25 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY || /your-project\.supabase\.co/.test(SUP
     'Imposta .env (dev) e .env.production (build) e ricostruisci.')
 }
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+// STEP 2 - SUPABASE CLIENT HARDENING con configurazioni esplicite
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+  realtime: {
+    params: { eventsPerSecond: 10 }
+  }
+})
+
+// STEP 2 - Log diagnostici condizionali per produzione
+if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+  const maskedKey = SUPABASE_ANON_KEY.slice(0, 4) + '...' + SUPABASE_ANON_KEY.slice(-4);
+  console.debug('🔧 Supabase client initialized:', {
+    url: SUPABASE_URL,
+    anonKey: maskedKey,
+    channels: supabase.realtime.getChannels().length,
+    wsEndpoint: (supabase as any)?.realtime?.socket?.endpoint || 'N/A'
+  });
+}

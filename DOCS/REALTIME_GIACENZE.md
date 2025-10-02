@@ -347,6 +347,76 @@ RT giacenza EVT {type: 'UPDATE', id: 'abc-123', vino_id: 'wine-456'}
 
 ---
 
-## STATUS: PHASE 2 ✅ + FIX ✅ + PATCH PK ✅ + DIAGNOSI ✅
+## PROD FIX SICURO - REALTIME GIACENZE ✅
+
+### STEP 1 - ENV & BUILD-TIME:
+- ✅ **VITE_RT_DEBUG**: Aggiunto a .env.example per controllo produzione
+- ✅ **Build-time flags**: Tutte le VITE_* devono essere presenti in Render Environment Variables
+- ✅ **Render config**: Impostare `VITE_REALTIME_GIACENZE_ENABLED=true` e `VITE_RT_DEBUG=true` (temporaneo)
+
+### STEP 2 - SUPABASE CLIENT HARDENING:
+- ✅ **Configurazioni esplicite**: auth.persistSession, realtime.eventsPerSecond
+- ✅ **Log diagnostici**: URL, anon key mascherata, channels count, WS endpoint
+- ✅ **Condizionali**: Solo se DEV || VITE_RT_DEBUG==='true'
+
+### STEP 3 - HEADERS & SERVICE WORKER:
+- ✅ **CSP Headers**: connect-src include https://*.supabase.co wss://*.supabase.co
+- ✅ **Service Worker**: Cache busting con CACHE_VERSION='wn-rt-202510030022'
+- ✅ **SW Registration**: Automatica in index.html con skipWaiting e clientsClaim
+- ✅ **Cache Strategy**: Network First per HTML/API, Cache First per assets
+
+### STEP 4 - HOOK & TEST:
+- ✅ **Anti-eco configurabile**: Attivo in prod, disabilitabile con VITE_RT_DEBUG=true
+- ✅ **Fallback temporaneo**: Refetch by PK con TODO per rimozione post-test
+- ✅ **Telemetria completa**: Channel status, eventi, WS endpoint logging
+
+### CONFIGURAZIONE RENDER:
+```bash
+# Environment Variables (Build + Runtime)
+VITE_SUPABASE_URL=https://rtmohyjquscdkbtibdsu.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_REALTIME_GIACENZE_ENABLED=true
+VITE_RT_DEBUG=true  # Temporaneo per diagnosi
+```
+
+### LOG ATTESI IN PRODUZIONE:
+```javascript
+// Startup
+🔧 Supabase client initialized: {url: "https://...", anonKey: "eyJh...CuWg", channels: 0}
+🔧 REALTIME_GIACENZE_ENABLED: true (env value: true)
+🏠 useWines realtime status: {enabled: true, connected: true, subscribed: true}
+
+// Service Worker
+[SW] Registered successfully: https://domain.com/
+[SW] Installing version: wn-rt-202510030022
+
+// WebSocket Connection
+📡 RT giacenza channel status: connecting
+📡 RT giacenza channel status: subscribed
+
+// Eventi Realtime
+RT giacenza EVT {type: 'UPDATE', id: 'abc-123', vino_id: 'wine-456'}
+🔄 Fallback refetch by PK: abc-123
+```
+
+### TEST MULTI-DEVICE PRODUZIONE:
+1. **Network Tab**: Verificare `wss://rtmohyjquscdkbtibdsu.supabase.co/realtime/v1/websocket`
+2. **Console Logs**: Startup + channel status + eventi UPDATE
+3. **Sincronizzazione**: Device A modifica → Device B UI aggiornata
+4. **Hard Refresh**: Ctrl/Cmd+Shift+R per invalidare cache SW
+
+### PULIZIA POST-TEST:
+- [ ] `VITE_RT_DEBUG=false` in Render Environment Variables
+- [ ] Rimuovere fallback refetch da useWines.ts (TODO presente)
+- [ ] Nuovo build per applicare modifiche
+
+### ROLLBACK SICURO:
+- **CSP**: Rimuovere middleware CSP da server/app.ts
+- **SW**: Incrementare CACHE_VERSION per invalidare
+- **Flags**: Impostare `VITE_REALTIME_GIACENZE_ENABLED=false`
+
+---
+
+## STATUS: PHASE 2 ✅ + FIX ✅ + PATCH PK ✅ + DIAGNOSI ✅ + PROD FIX ✅
 
 **PROSSIMO STEP**: PHASE 3 - Focus/reconnect fallback con debounce
