@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { supabaseGuarded } from '../services/supabaseGuard';
+import { useRealtimeGiacenza } from './useRealtimeGiacenza';
 
 export interface WineType {
   id: string;
@@ -21,6 +22,9 @@ const useWines = () => {
   const [suppliers, setSuppliers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Feature flag per realtime (da env)
+  const realtimeEnabled = import.meta.env.VITE_REALTIME_GIACENZE_ENABLED === 'true';
 
   const fetchWines = async () => {
     setLoading(true);
@@ -70,8 +74,51 @@ const useWines = () => {
     }
   };
 
+  // Handler per eventi realtime giacenza
+  const handleRealtimeInsert = useCallback((record: any) => {
+    if (import.meta.env.DEV) {
+      console.log('🔄 Realtime INSERT giacenza:', record);
+    }
+    
+    setWines(prev => prev.map(wine => 
+      wine.id === record.vino_id 
+        ? { ...wine, inventory: record.giacenza, minStock: record.min_stock ?? wine.minStock }
+        : wine
+    ));
+  }, []);
+
+  const handleRealtimeUpdate = useCallback((record: any) => {
+    if (import.meta.env.DEV) {
+      console.log('🔄 Realtime UPDATE giacenza:', record);
+    }
+    
+    setWines(prev => prev.map(wine => 
+      wine.id === record.vino_id 
+        ? { ...wine, inventory: record.giacenza, minStock: record.min_stock ?? wine.minStock }
+        : wine
+    ));
+  }, []);
+
+  const handleRealtimeDelete = useCallback((record: any) => {
+    if (import.meta.env.DEV) {
+      console.log('🔄 Realtime DELETE giacenza:', record);
+    }
+    
+    // Reset a valori default quando giacenza viene eliminata
+    setWines(prev => prev.map(wine => 
+      wine.id === record.vino_id 
+        ? { ...wine, inventory: 0, minStock: 2 }
+        : wine
+    ));
+  }, []);
+
   const updateWineInventory = async (id: string, newInventory: number): Promise<boolean> => {
     try {
+      // Marca update come pending per evitare eco realtime
+      if (realtimeEnabled) {
+        markUpdatePending(id);
+      }
+
       // Prima controlla se esiste già un record per questo vino
       const { data: existingRecord, error: checkError } = await supabase
         .from('giacenza')
@@ -192,6 +239,14 @@ const useWines = () => {
     }
   };
 
+  // Setup realtime subscription
+  const { isConnected: realtimeConnected, markUpdatePending } = useRealtimeGiacenza({
+    onInsert: handleRealtimeInsert,
+    onUpdate: handleRealtimeUpdate,
+    onDelete: handleRealtimeDelete,
+    enabled: realtimeEnabled
+  });
+
   useEffect(() => {
     fetchWines();
   }, []);
@@ -204,7 +259,9 @@ const useWines = () => {
     refreshWines: fetchWines,
     updateWineInventory,
     updateMultipleWineInventories,
-    updateWine
+    updateWine,
+    // Realtime status
+    realtimeConnected: realtimeEnabled ? realtimeConnected : false
   };
 };
 
