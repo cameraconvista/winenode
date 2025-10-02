@@ -169,6 +169,14 @@ const useWines = () => {
         : wine
     ));
 
+    // MICRO-FIX: Log merge applicato per min_stock (solo se debug)
+    if ((import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') && record.min_stock !== undefined) {
+      console.debug('🟡 realtime merge applied: min_stock', { 
+        vino_id: record.vino_id, 
+        newValue: record.min_stock 
+      });
+    }
+
     // STEP 4 - Fallback diagnostico: refetch by PK con debounce (TEMPORANEO)
     // TODO: Rimuovere dopo conferma sincronizzazione OK in produzione
     if (record.id) {
