@@ -1,0 +1,174 @@
+REPORT DIAGNOSI RIEPILOGO ORDINE - WineNode
+Data: 28/09/2025 16:58
+Versione: 1.1.0
+
+=== ANALISI STRUTTURA PAGINA RIEPILOGO ORDINE ===
+
+FILE COINVOLTO:
+- src/pages/RiepilogoOrdinePage.tsx (323 righe)
+
+=== PROBLEMI IDENTIFICATI DALL'IMMAGINE ===
+
+1. **PRIMA SCHEDA TAGLIATA**
+   - Problema: Prima card vino parzialmente nascosta sotto header sticky
+   - Causa: Header sticky + "Dettaglio Ordine:" coprono inizio contenuto scroll
+
+2. **SEZIONE TOTALI VERBOSA**
+   - Attuale: 3 righe separate
+     - "24 bottiglie totali" (riga 249)
+     - "⚠️ Prezzi IVA esclusa" (righe 253-256)  
+     - "Calcolato sui costi di acquisto" (righe 257-259)
+   - Richiesto: 1 riga unificata "24 bottiglie totali • Prezzi IVA esclusa"
+
+3. **FOOTER TROPPO ALTO**
+   - Attuale: paddingBottom con safe-area + 16px
+   - Richiesto: Leggermente più basso (+8-12px)
+
+=== STRUTTURA DOM ATTUALE ===
+
+**HEADER STICKY (righe 143-172):**
+```jsx
+<div className="sticky border-b" style={{ 
+  top: 'calc(var(--safe-top) + 60pt)',
+  zIndex: 40,
+  paddingTop: '16px',
+  paddingBottom: '16px'
+}}>
+  <h2>Riepilogo Ordine</h2>
+  <p>Fornitore: ...</p>
+  <h3>Dettaglio Ordine:</h3>
+</div>
+```
+
+**CONTENITORE SCROLL (righe 175-185):**
+```jsx
+<main className="mobile-content">
+  <div className="wine-list-container" style={{
+    height: '100%',
+    overflow: 'auto',
+    paddingTop: '16px'  // INSUFFICIENTE per header sticky
+  }}>
+```
+
+**SEZIONE TOTALI (righe 247-260):**
+```jsx
+<div className="text-center mb-3">
+  <p>{totalBottiglie} bottiglie totali</p>
+</div>
+<div className="flex items-center justify-center gap-2">
+  <AlertTriangle />
+  <span>Prezzi IVA esclusa</span>
+</div>
+<p className="text-center text-xs mt-1">
+  Calcolato sui costi di acquisto  // DA RIMUOVERE
+</p>
+```
+
+**FOOTER FISSO (righe 265-272):**
+```jsx
+<footer className="fixed bottom-0" style={{ 
+  paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px',
+  zIndex: 50
+}}>
+```
+
+=== CAUSE ROOT PROBLEMI ===
+
+1. **OVERLAP HEADER-CONTENT:**
+   - Header sticky altezza: ~100px (padding + testi)
+   - Content paddingTop: 16px (INSUFFICIENTE)
+   - Manca: scroll-margin-top o padding compensativo
+
+2. **VERBOSITÀ TOTALI:**
+   - 3 elementi separati invece di 1 riga compatta
+   - Testo "Calcolato sui costi di acquisto" superfluo
+
+3. **FOOTER POSITIONING:**
+   - paddingBottom: safe-area + 16px
+   - Richiesto: safe-area + 24-28px (~+8-12px)
+
+=== ELEMENTI STICKY/FIXED IDENTIFICATI ===
+
+**STICKY ELEMENTS:**
+- .mobile-header: Header logo (top: 0)
+- Header riepilogo: top: calc(var(--safe-top) + 60pt), zIndex: 40
+
+**FIXED ELEMENTS:**  
+- Footer azioni: bottom: 0, zIndex: 50
+
+**Z-INDEX STACK:**
+- Footer: 50 (massimo)
+- Header sticky: 40
+- Content: default (sotto)
+
+=== VALORI POSIZIONAMENTO ATTUALI ===
+
+**HEADER STICKY:**
+- position: sticky
+- top: calc(var(--safe-top) + 60pt)
+- padding: 16px (tutti i lati)
+- altezza stimata: ~100px
+
+**CONTENT SCROLL:**
+- padding-top: 16px (PROBLEMA: troppo poco)
+- overflow: auto
+- height: 100%
+
+**FOOTER:**
+- position: fixed
+- bottom: 0
+- padding-bottom: max(env(safe-area-inset-bottom), 0px) + 16px
+
+=== SOLUZIONI RICHIESTE ===
+
+1. **FIX VISIBILITÀ PRIMA CARD:**
+   - Aumentare padding-top contenitore scroll da 16px a ~120px
+   - Alternativa: scroll-margin-top sulle card
+
+2. **RIGA UNICA TOTALI:**
+   - Flex row: "XX bottiglie totali • Prezzi IVA esclusa"
+   - Rimuovere: "Calcolato sui costi di acquisto"
+
+3. **ABBASSARE FOOTER:**
+   - Da: safe-area + 16px
+   - A: safe-area + 24-28px
+
+=== MOBILE COLOR OPTIMIZATION ===
+
+NOTA: Richiesta ottimizzazione colori per iPhone (attualmente più scuri)
+
+COLORI ATTUALI:
+- Background: var(--bg) = #fff9dc
+- Testo primario: #541111
+- Testo secondario: #7a4a30
+- Card background: #fff2b8
+- Border: #e2d6aa
+
+POSSIBILI CAUSE SCURIMENTO IPHONE:
+- Color profile sRGB vs Display P3
+- Mancanza meta color-scheme
+- CSS color-adjust property
+
+AGGIORNAMENTO DIAGNOSI - 28/09/2025 17:24:
+
+=== PROBLEMI CONFERMATI DALL'IMMAGINE ===
+
+1. **PRIMA CARD TAGLIATA**: Visibile nell'immagine - prima card "FRANCIACORTA" parzialmente nascosta
+2. **SEZIONE TOTALI VERBOSA**: 3 righe separate invece di 1 riga unificata
+3. **TESTO SUPERFLUO**: "Calcolato sui costi di acquisto" da rimuovere
+4. **FOOTER POSIZIONE**: Può essere abbassato leggermente
+
+=== VALORI ATTUALI IDENTIFICATI ===
+
+CONTENITORE SCROLL:
+- paddingTop: '16px' (INSUFFICIENTE - causa taglio prima card)
+
+SEZIONE TOTALI (righe 247-259):
+- Riga 1: "24 bottiglie totali" (separata)
+- Riga 2: "⚠️ Prezzi IVA esclusa" (separata)  
+- Riga 3: "Calcolato sui costi di acquisto" (DA RIMUOVERE)
+
+FOOTER (righe 265-272):
+- paddingBottom: 'max(env(safe-area-inset-bottom), 0px) + 16px'
+
+STATO: Problemi identificati, soluzioni pronte per implementazione

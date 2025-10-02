@@ -1,0 +1,130 @@
+REPORT DIAGNOSI BOTTOM NAVBAR - WineNode
+Data: 28/09/2025 17:10
+Versione: 1.1.0
+
+=== ANALISI COMPONENTI E STILI COINVOLTI ===
+
+COMPONENTI IDENTIFICATI:
+- Navbar: src/pages/HomePage.tsx (righe 367-526) - <nav className="mobile-navbar">
+- Stili: src/styles/layout/mobile-standard.css (righe 110-416)
+- Responsive: src/styles/mobile/responsive.css (classi .bottom-toolbar)
+- Tokens: src/styles/base/tokens.css (--z-navbar: 20)
+
+FILTRO "TUTTI":
+- Componente: <button className="nav-btn btn-tutti"> in HomePage.tsx
+- Stili: .mobile-navbar .btn-tutti (righe 240-311 mobile-standard.css)
+
+=== POSIZIONAMENTO ATTUALE PROBLEMATICO ===
+
+NAVBAR PRINCIPALE (.mobile-navbar):
+- position: fixed
+- bottom: -8pt (PROBLEMA: offset negativo causa posizionamento errato)
+- z-index: var(--z-navbar) = 20
+- min-height: 56pt, max-height: 64pt
+- padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12pt)
+- padding-top: 6pt
+
+SPAZIO VISIVO MISURATO:
+- Gap eccessivo tra contenuto e navbar (~20-30px stimati)
+- Navbar appare "fluttuante" invece che ancorata al bordo
+
+SAFE-AREA:
+✅ Presente: env(safe-area-inset-bottom, 0px) + 12pt
+✅ Laterale: env(safe-area-inset-left/right, 0px) + 12pt
+
+=== DIMENSIONAMENTO CONTENUTI ===
+
+ICONE (.mobile-navbar .nav-btn .icon):
+- Dimensioni FISSE: 24pt x 24pt (PROBLEMA: non responsive)
+- Icona filtri: 17pt x 17pt (inconsistente)
+
+TAP TARGETS (.mobile-navbar .nav-btn):
+- height: 44pt (✅ CONFORME accessibilità)
+- width: 44pt per icone (✅ CONFORME)
+- btn-tutti: width auto con padding (✅ OK)
+
+LAYOUT ORIZZONTALE:
+- display: flex, justify-content: space-between
+- gap: 6pt tra elementi
+- .nav-icons-group: gap var(--nav-icon-gap, 8pt)
+
+=== OVERFLOW/CLIPPING PULSANTE "TUTTI" ===
+
+ANALISI CLIPPING:
+- .mobile-navbar: NO overflow hidden rilevato
+- .btn-tutti: margin-left: auto (posizionato a destra)
+- POSSIBILE CAUSA: width viewport insufficiente su schermi piccoli
+- Z-index: stesso livello navbar (20) - OK
+
+DIMENSIONI PILL "TUTTI":
+- background: #FFFFFF, border: 1px solid var(--border)
+- border-radius: 12pt
+- padding: 6pt 12pt (stimato)
+- PROBLEMA: Nessun max-width definito
+
+=== SPAZIO IN ECCESSO SOPRA LA BARRA ===
+
+CONTENITORE PAGINA (.homepage-container):
+- height: 100vh, overflow: hidden
+- background: var(--bg)
+
+MAIN CONTENT (.mobile-content):
+- padding-bottom: calc(var(--safe-bottom) + 60pt) (ECCESSIVO)
+- z-index: var(--z-base) = 10
+
+CAUSA SPAZIO ECCESSIVO:
+- bottom: -8pt della navbar crea gap visivo
+- padding-bottom del content troppo generoso
+- Mancanza di coordinamento tra navbar offset e content padding
+
+=== RESPONSIVE BREAKPOINTS ===
+
+MOBILE ≤767px (.bottom-toolbar):
+- height: 50px, gap: 6px
+- icon: 26px x 26px
+
+MOBILE ≤375px:
+- height: 46px, gap: 4px  
+- icon: 24px x 24px
+
+MOBILE ≤320px:
+- height: 46px, gap: 2px
+- icon: 22px x 22px
+
+TABLET 768-1024px:
+- height: 52px, gap: 8px
+- icon: 22px x 22px
+
+PROBLEMA: Dimensioni FISSE in px invece di unità responsive
+
+=== CAUSE ESATTE IDENTIFICATE ===
+
+1. **POSIZIONAMENTO ERRATO**:
+   - bottom: -8pt causa gap visivo eccessivo
+   - Mancanza di ancoraggio al bordo effettivo
+
+2. **DIMENSIONI NON RESPONSIVE**:
+   - Icone fisse in pt/px invece di clamp() o vh
+   - Altezza navbar fissa invece di adattiva
+
+3. **SPAZIO CONTENT ECCESSIVO**:
+   - padding-bottom del main content non coordinato con navbar
+   - Offset negativo navbar non compensato
+
+4. **PILL "TUTTI" VULNERABILE**:
+   - Nessun max-width per schermi piccoli
+   - Possibile overflow su device stretti
+
+5. **INCONSISTENZA RESPONSIVE**:
+   - Mix di unità pt, px, e percentuali
+   - Breakpoint fissi invece di clamp fluido
+
+=== SOLUZIONI RICHIESTE ===
+
+1. **ANCORAGGIO CORRETTO**: bottom: 0 + padding-bottom safe-area
+2. **DIMENSIONI ADAPTIVE**: clamp() per icone e altezza navbar
+3. **COORDINAMENTO SPACING**: Eliminare gap visivo eccessivo
+4. **PILL PROTECTION**: max-width + ellipsis per "Tutti"
+5. **RESPONSIVE FLUIDO**: Sostituire breakpoint fissi con clamp()
+
+STATO: Problemi identificati, soluzioni CSS pronte per implementazione

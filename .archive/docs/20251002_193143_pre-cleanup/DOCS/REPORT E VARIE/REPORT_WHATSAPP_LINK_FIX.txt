@@ -1,0 +1,105 @@
+REPORT WHATSAPP LINK FIX - WineNode
+Data: 28/09/2025 16:38
+Versione: 1.1.0
+
+=== DIAGNOSI MIRATA PROBLEMI WHATSAPP ===
+
+PROBLEMA 1: Link WhatsApp non precompila messaggio
+PROBLEMA 2: Toast "Ordine confermato" appare in alto invece che in basso
+
+=== ANALISI TECNICA DETTAGLIATA ===
+
+1. **TESTO MESSAGGIO (buildWhatsAppMessage.ts)**
+   ✅ Il testo è generato correttamente da buildWhatsAppMessage()
+   ✅ Formato: Camera con Vista + Ordine vini + Data IT + Lista vini
+   ✅ Caratteri speciali: • (bullet), — (em dash) presenti
+   ✅ Fine riga: usa \n (corretto)
+   ✅ Nessuna manipolazione successiva del testo
+
+2. **URL GENERATION (buildWhatsAppMessage.ts)**
+   ❌ PROBLEMA: Ordine fallback non ottimale
+   - Attuale: wa.me → whatsapp:// (solo 2 tentativi)
+   - Manca: web.whatsapp.com per desktop
+   ✅ encodeURIComponent applicato correttamente sull'intero messaggio
+   ✅ Fine riga \n → %0A automaticamente
+
+3. **CLICK HANDLER (WhatsAppOrderModal.tsx)**
+   ✅ Apertura sincrona nel click handler (no await)
+   ❌ PROBLEMA: Try/catch potrebbe bloccare fallback
+   ❌ PROBLEMA: window.open senza parametri sicurezza
+   ✅ Nessuna chiamata async prima dell'apertura
+
+4. **CARATTERI SPECIALI E ENCODING**
+   ✅ Bullet • e em dash — presenti nel messaggio
+   ✅ encodeURIComponent gestisce caratteri speciali
+   ✅ Fine riga \n → %0A correttamente
+   ✅ Accenti italiani supportati
+
+5. **TOAST POSIZIONE (App.tsx)**
+   ❌ PROBLEMA: position="top-center" invece di bottom
+   ✅ Durata 2000ms corretta
+   ✅ Stili tema light coerenti
+
+=== CAUSE ROOT IDENTIFICATE ===
+
+**WHATSAPP LINK:**
+1. **Fallback limitato**: Solo wa.me → whatsapp://, manca web.whatsapp.com
+2. **Desktop non ottimizzato**: wa.me su desktop spesso non precompila
+3. **Try/catch troppo generico**: Potrebbe nascondere errori utili
+4. **Manca rilevamento piattaforma**: Nessuna logica mobile vs desktop
+
+**TOAST POSIZIONE:**
+1. **Position top-center**: Dovrebbe essere bottom-center
+2. **Manca safe-area**: Non considera safe-area-inset-bottom
+
+=== SOLUZIONE IMPLEMENTATA ===
+
+**WHATSAPP CROSS-PLATFORM:**
+1. Rilevamento piattaforma (mobile vs desktop)
+2. Catena fallback ottimizzata:
+   - Mobile: whatsapp:// → web.whatsapp.com → wa.me
+   - Desktop: web.whatsapp.com → wa.me
+3. window.open con parametri sicurezza
+4. Logging migliorato per debug
+
+**TOAST BOTTOM:**
+1. Position: bottom-center
+2. Safe-area aware per mobile
+3. Z-index ottimizzato
+
+=== ORDINE TENTATIVI CROSS-PLATFORM ===
+
+MOBILE (iOS/Android):
+1. whatsapp://send?text={ENCODED} (app nativa)
+2. https://web.whatsapp.com/send?text={ENCODED} (web fallback)
+3. https://wa.me/?text={ENCODED} (generico)
+
+DESKTOP:
+1. https://web.whatsapp.com/send?text={ENCODED} (web ottimizzato)
+2. https://wa.me/?text={ENCODED} (generico)
+
+RILEVAMENTO: navigator.userAgent per iOS/Android detection
+
+=== FILE DA MODIFICARE ===
+
+1. src/utils/buildWhatsAppMessage.ts
+   - Aggiungere buildWebWhatsAppUrl()
+   - Migliorare normalizzazione testo
+
+2. src/components/modals/WhatsAppOrderModal.tsx
+   - Implementare catena fallback cross-platform
+   - Rilevamento piattaforma
+   - Logging migliorato
+
+3. src/App.tsx
+   - Cambiare toast position: bottom-center
+   - Aggiungere safe-area support
+
+=== VALIDAZIONE RICHIESTA ===
+
+PRE-ENCODE: Messaggio visivo con \n e caratteri speciali
+POST-ENCODE: Verifica %0A per ogni \n, caratteri speciali encodati
+CROSS-PLATFORM: Test desktop (web.whatsapp.com) e mobile (app nativa)
+TOAST: Posizione bottom con safe-area iOS/Android
+
+STATO: Problemi identificati, soluzione pronta per implementazione

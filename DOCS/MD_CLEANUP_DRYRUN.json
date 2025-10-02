@@ -1,0 +1,77 @@
+{
+  "generated_at": "2025-10-02T19:28:06Z",
+  "summary": {
+    "total_files_analyzed": 212,
+    "actions": {
+      "keeps": 16,
+      "moves": 27,
+      "archives": 169,
+      "skips": 0
+    }
+  },
+  "actions": {
+    "keeps": [
+      {"path": "DOCS/01-STRUTTURA_PROGETTO.md", "reason": "canonical_version"},
+      {"path": "DOCS/02-SISTEMA_BACKUP.md", "reason": "canonical_version"},
+      {"path": "DOCS/03-PIPELINE_CI_CD.md", "reason": "canonical_version"},
+      {"path": "DOCS/04-SUPABASE_SCHEMA.md", "reason": "canonical_version"},
+      {"path": "DOCS/05-SCRIPTS_UTILITY.md", "reason": "canonical_version"},
+      {"path": "DOCS/06-REPORT_QUALITÀ.md", "reason": "canonical_version"},
+      {"path": "DOCS/07-PLAYBOOK_OPERATIVI.md", "reason": "canonical_version"},
+      {"path": "DOCS/08-DOCS_INDEX.md", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/CHANGELOG_WHATSAPP_INTEGRAZIONE.txt", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/FEATURES_SEARCH_LENS.md", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/README.md", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/RELEASE_v1.1.0.md", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_WHATSAPP.txt", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/REPORT_MOBILE_SAFE_AREAS.txt", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/REPORT_UI_CREATE_ORDER_SPACING_RESET.txt", "reason": "canonical_version"},
+      {"path": "DOCS/REPORT E VARIE/REPORT_UI_FIXES_CREATE_ORDER.txt", "reason": "canonical_version"}
+    ],
+    "moves": [
+      {"from": "DOCS/BACKUP_AUTOMATICO.md", "to": "DOCS/06-GUIDE/BACKUP_AUTOMATICO.md", "reason": "reorganize_to_guide"},
+      {"from": "DOCS/SESSIONE5_REPORT.md", "to": "DOCS/02-SESSIONI/SESSIONE5_REPORT.md", "reason": "reorganize_to_sessioni"},
+      {"from": "DOCS/SESSIONE6_REPORT.md", "to": "DOCS/02-SESSIONI/SESSIONE6_REPORT.md", "reason": "reorganize_to_sessioni"},
+      {"from": "DOCS/SAFE_CHECKLIST_BEFORE_CHANGES.md", "to": "DOCS/06-GUIDE/SAFE_CHECKLIST_BEFORE_CHANGES.md", "reason": "reorganize_to_guide"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_ASSET.md", "to": "DOCS/03-ANALISI/ANALISI_ASSET.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_BUNDLE.md", "to": "DOCS/03-ANALISI/ANALISI_BUNDLE.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_DATA.md", "to": "DOCS/03-ANALISI/ANALISI_DATA.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_DEPENDENCIES.md", "to": "DOCS/03-ANALISI/ANALISI_DEPENDENCIES.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_DUPLICATI_VINI.md", "to": "DOCS/03-ANALISI/ANALISI_DUPLICATI_VINI.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_QUALITY.md", "to": "DOCS/03-ANALISI/ANALISI_QUALITY.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_ROUTING.md", "to": "DOCS/03-ANALISI/ANALISI_ROUTING.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_RUNTIME.md", "to": "DOCS/03-ANALISI/ANALISI_RUNTIME.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_UNUSED_REPORT.md", "to": "DOCS/03-ANALISI/ANALISI_UNUSED_REPORT.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/ANALISI_VITALS.md", "to": "DOCS/03-ANALISI/ANALISI_VITALS.md", "reason": "reorganize_to_analisi"},
+      {"from": "DOCS/REPORT E VARIE/CHANGELOG_CLEANUP.md", "to": "DOCS/05-CHANGELOG/CHANGELOG_CLEANUP.md", "reason": "reorganize_to_changelog"},
+      {"from": "DOCS/REPORT E VARIE/CHANGELOG_NAVBAR_MOBILE.txt", "to": "DOCS/05-CHANGELOG/CHANGELOG_NAVBAR_MOBILE.txt", "reason": "reorganize_to_changelog"},
+      {"from": "DOCS/REPORT E VARIE/CHANGELOG_NAV_BOTTOM_RESPONSIVE.txt", "to": "DOCS/05-CHANGELOG/CHANGELOG_NAV_BOTTOM_RESPONSIVE.txt", "reason": "reorganize_to_changelog"},
+      {"from": "DOCS/REPORT E VARIE/CHANGELOG_RIEPILOGO_ORDINE_UI.txt", "to": "DOCS/05-CHANGELOG/CHANGELOG_RIEPILOGO_ORDINE_UI.txt", "reason": "reorganize_to_changelog"},
+      {"from": "DOCS/REPORT E VARIE/RELEASE_CHECKLIST.md", "to": "DOCS/05-CHANGELOG/RELEASE_CHECKLIST.md", "reason": "reorganize_to_changelog"},
+      {"from": "DOCS/REPORT E VARIE/RELEASE_NOTES_v1.0.0.md", "to": "DOCS/05-CHANGELOG/RELEASE_NOTES_v1.0.0.md", "reason": "reorganize_to_changelog"},
+      {"from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_BOTTOM_NAV.txt", "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_BOTTOM_NAV.txt", "reason": "reorganize_to_diagnosi"},
+      {"from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_GENERALE_PROGETTO.txt", "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_GENERALE_PROGETTO.txt", "reason": "reorganize_to_diagnosi"},
+      {"from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_NAVBAR_MOBILE.txt", "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_NAVBAR_MOBILE.txt", "reason": "reorganize_to_diagnosi"},
+      {"from": "DOCS/REPORT E VARIE/REPORT_DIAGNOSI_PROGETTO.md", "to": "DOCS/04-DIAGNOSI/REPORT_DIAGNOSI_PROGETTO.md", "reason": "reorganize_to_diagnosi"},
+      {"from": "DOCS/REPORT E VARIE/SESSIONE2_FIX_REPORT.md", "to": "DOCS/02-SESSIONI/SESSIONE2_FIX_REPORT.md", "reason": "reorganize_to_sessioni"},
+      {"from": "DOCS/REPORT E VARIE/SESSIONE4_REPORT.md", "to": "DOCS/02-SESSIONI/SESSIONE4_REPORT.md", "reason": "reorganize_to_sessioni"},
+      {"from": "REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt", "to": "DOCS/04-DIAGNOSI/REPORT_VALIDAZIONE_FINALE_GESTISCI_ORDINI.txt", "reason": "reorganize_to_diagnosi"}
+    ],
+    "archives": [
+      {"from": "DOCS/01-STRUTTURA_PROGETTO 2.md", "to": "DOCS/ARCHIVIATI/duplicates/01-STRUTTURA_PROGETTO 2.md/DOCS_01-STRUTTURA_PROGETTO 2.md", "reason": "exact_duplicate"},
+      {"from": "DOCS/02-SISTEMA_BACKUP 2.md", "to": "DOCS/ARCHIVIATI/duplicates/02-SISTEMA_BACKUP 2.md/DOCS_02-SISTEMA_BACKUP 2.md", "reason": "exact_duplicate"},
+      {"from": "DOCS/03-PIPELINE_CI_CD 2.md", "to": "DOCS/ARCHIVIATI/duplicates/03-PIPELINE_CI_CD 2.md/DOCS_03-PIPELINE_CI_CD 2.md", "reason": "exact_duplicate"},
+      {"from": "DOCS/04-SUPABASE_SCHEMA 2.md", "to": "DOCS/ARCHIVIATI/duplicates/04-SUPABASE_SCHEMA 2.md/DOCS_04-SUPABASE_SCHEMA 2.md", "reason": "exact_duplicate"},
+      {"from": "DOCS/05-SCRIPTS_UTILITY 2.md", "to": "DOCS/ARCHIVIATI/duplicates/05-SCRIPTS_UTILITY 2.md/DOCS_05-SCRIPTS_UTILITY 2.md", "reason": "exact_duplicate"},
+      {"from": "DOCS/06-REPORT_QUALITÀ 2.md", "to": "DOCS/ARCHIVIATI/duplicates/06-REPORT_QUALITÀ 2.md/DOCS_06-REPORT_QUALITÀ 2.md", "reason": "exact_duplicate"},
+      {"from": "DOCS/07-PLAYBOOK_OPERATIVI 2.md", "to": "DOCS/ARCHIVIATI/duplicates/07-PLAYBOOK_OPERATIVI 2.md/DOCS_07-PLAYBOOK_OPERATIVI 2.md", "reason": "exact_duplicate"},
+      {"from": "DOCS/08-DOCS_INDEX 2.md", "to": "DOCS/ARCHIVIATI/duplicates/08-DOCS_INDEX 2.md/DOCS_08-DOCS_INDEX 2.md", "reason": "exact_duplicate"}
+    ]
+  },
+  "conflicts": [],
+  "warnings": [
+    "Large number of files will be archived (169 files)",
+    "Recovery snapshots contain 86 files - will be compressed",
+    "Some files may need manual review for proper categorization"
+  ]
+}

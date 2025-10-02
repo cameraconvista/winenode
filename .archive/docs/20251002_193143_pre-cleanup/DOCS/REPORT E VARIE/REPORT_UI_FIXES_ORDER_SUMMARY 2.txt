@@ -1,0 +1,93 @@
+# REPORT UI FIXES - PAGINA "RIEPILOGO ORDINE"
+Data: 28/09/2025
+Branch: feat/ui-create-order-tweaks
+
+## MODIFICHE APPLICATE
+
+### File Modificato:
+- src/pages/RiepilogoOrdinePage.tsx
+
+### MODIFICA A - Footer Pulsanti Standard
+
+**PRIMA:**
+- Navbar mobile con icona freccia SVG inline
+- Pulsante "Modifica" con icona personalizzata
+- Layout asimmetrico: icona + pulsante verde
+
+**DOPO:**
+- Footer fisso standard (stile CreaOrdinePage)
+- Pulsante "Indietro" bianco con bordo
+- Pulsanti uniformi: stessa larghezza (flex: 1), altezza (44px)
+- Layout simmetrico e coerente con app
+
+**Codice cambiato:**
+- Sostituita `<nav className="mobile-navbar">` con `<footer className="fixed bottom-0">`
+- Rimossa icona SVG freccia, aggiunto pulsante "Indietro" standard
+- Applicati stili uniformi: minHeight, minWidth, flex, touchAction
+
+### MODIFICA B - "Totale Ordine" Senza Container
+
+**PRIMA:**
+- Container marrone scuro (#2e0d0d) con bordo
+- Testi bianchi (#fff9dc) su sfondo scuro
+- Sezione visivamente separata e pesante
+
+**DOPO:**
+- Nessun container: contenuti inline nella pagina
+- Testi tema chiaro: #541111 (primario), #7a4a30 (secondario)
+- Sezione integrata nel flusso della pagina
+- Mantenuto colore giallo (#d4a300) per avviso IVA
+
+**Codice cambiato:**
+- Rimossi: background, border, padding, rounded-lg
+- Aggiornati colori testo per tema chiaro
+- Mantenuta struttura e spaziatura (mb-3, mb-6)
+
+### MODIFICA C - Colori Testo Tema Chiaro
+
+**Mappatura colori:**
+- `#fff9dc` (bianco tema scuro) → `#541111` (testo primario tema chiaro)
+- `#fff9dc` (secondario tema scuro) → `#7a4a30` (testo secondario tema chiaro)
+- `#9b9b9b` (grigio) → `#7a4a30` (più leggibile su tema chiaro)
+- `#d4a300` (giallo avviso) → Mantenuto per coerenza
+
+## LOGICHE PRESERVATE
+
+✅ Calcoli prezzi, IVA, quantità invariati
+✅ Navigazione e payload conferma identici
+✅ Validazione pulsante "Conferma Ordine" mantenuta
+✅ Responsive layout e safe-area insets
+✅ Touch targets e accessibilità
+
+## TEST ESEGUITI
+
+### Test Footer:
+1. ✅ Pulsanti "Indietro" e "Conferma Ordine" stessa dimensione
+2. ✅ Layout simmetrico, gap corretto (3px)
+3. ✅ Nessuna icona freccia, solo testo "Indietro"
+4. ✅ Safe-area insets iOS/Android applicati
+5. ✅ Touch targets ≥44px conformi
+
+### Test Totale Ordine:
+1. ✅ Nessun container marrone visibile
+2. ✅ Contenuti inline, spaziatura coerente
+3. ✅ Testi leggibili su tema chiaro
+4. ✅ Contrasto AA garantito
+5. ✅ Nessun overlap con footer
+
+### Test Funzionalità:
+1. ✅ Calcoli totali corretti
+2. ✅ Navigazione "Indietro" funzionante
+3. ✅ Conferma ordine salva correttamente
+4. ✅ Validazione disabilitazione pulsante
+5. ✅ Responsive su diversi viewport
+
+## IMPATTO:
+- Zero regressioni funzionali
+- UI più coerente con resto app
+- Footer standard uniformato
+- Tema chiaro completamente integrato
+- Migliore leggibilità e accessibilità
+
+## ROLLBACK:
+Disponibile via git revert del commit specifico

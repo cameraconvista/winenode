@@ -1,0 +1,67 @@
+===============================================================================
+REPORT UI FIXES - CAMPANELLA ALERT OTTIMIZZATA
+===============================================================================
+
+CREATO: 2025-09-28 23:28:45 CET
+OPERATORE: CASCADE (Windsurf AI)
+HASH COMMIT: 2d8dee9
+
+===============================================================================
+MODIFICA APPLICATA
+===============================================================================
+
+FILE TOCCATO:
+- src/pages/HomePage.tsx (linee 333-366)
+
+MODIFICA SPECIFICA:
+- Spostata icona campanella alert da posizione separata a dentro il container giacenza
+- Posizionata a destra del valore giacenza con margin-left: 4px (ml-1)
+- Colore cambiato da brand (#541111) a rosso (var(--danger))
+- Dimensioni ridotte da 18x18px a 14x14px per integrazione con testo giacenza
+
+PRIMA:
+{wine.inventory <= wine.minStock && (
+  <PhosphorBell className="alert-icon flex-shrink-0" aria-hidden="true" />
+)}
+<div className="flex items-center flex-shrink-0 ml-auto">
+  <span>{wine.inventory || 0}</span>
+</div>
+
+DOPO:
+<div className="flex items-center flex-shrink-0 ml-auto">
+  <span>
+    {wine.inventory || 0}
+    {wine.inventory <= wine.minStock && (
+      <PhosphorBell 
+        className="ml-1 flex-shrink-0" 
+        style={{ width: '14px', height: '14px', color: 'var(--danger)' }}
+        aria-hidden="true" 
+      />
+    )}
+  </span>
+</div>
+
+===============================================================================
+TEST RAPIDI
+===============================================================================
+
+✅ Commit diretto su main completato (2d8dee9)
+✅ Push su origin/main senza PR
+✅ Nessun branch creato
+✅ Layout preservato - campanella integrata nel container giacenza
+✅ Colore rosso applicato (var(--danger))
+✅ Posizionamento ottimizzato - a destra del valore giacenza
+
+CONDIZIONE INVARIATA:
+- wine.inventory <= wine.minStock (logica business preservata)
+
+DIMENSIONI OTTIMIZZATE:
+- Da 18x18px a 14x14px per migliore integrazione visiva
+- Margin-left 4px per spaziatura dal numero
+
+ACCESSIBILITÀ MANTENUTA:
+- aria-hidden="true" preservato (icona decorativa)
+
+===============================================================================
+STATO: COMPLETATO CON SUCCESSO
+===============================================================================

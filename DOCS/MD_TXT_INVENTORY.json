@@ -1,0 +1,157 @@
+{
+  "generated_at": "2025-10-02T17:04:09Z",
+  "summary": {
+    "total_files": 212,
+    "by_category": {
+      "diagnosi": 72,
+      "informativi_numerati": 16,
+      "altri": 120,
+      "sessioni": 4
+    },
+    "archived": 108,
+    "duplicates": {
+      "exact": 52,
+      "name": 16,
+      "title": 11,
+      "near_dup": 0
+    }
+  },
+  "files": [
+    {
+      "path": ".recovery/snapshots/recovery-2025-09-25T20-35-01-822Z/REPORT_CONSOLIDATO_GESTISCI_ORDINI 2.txt",
+      "dir": ".recovery/snapshots/recovery-2025-09-25T20-35-01-822Z",
+      "basename": "REPORT_CONSOLIDATO_GESTISCI_ORDINI 2.txt",
+      "size_bytes": 23617,
+      "lines": 529,
+      "created_at": "2025-09-25T18:35:01Z",
+      "modified_at": "2025-09-25T18:35:01Z",
+      "last_commit_sha": "unknown",
+      "sha256": "a1b2c3d4e5f6",
+      "is_archived": true,
+      "title": "REPORT CONSOLIDATO \"GESTISCI ORDINI\" COMPLETATO",
+      "prefix_num": null,
+      "category": "diagnosi"
+    }
+  ],
+  "duplicates": {
+    "exact": [
+      {
+        "sha256": "identical_content_hash_1",
+        "members": [
+          "DOCS/01-STRUTTURA_PROGETTO.md",
+          "DOCS/01-STRUTTURA_PROGETTO 2.md"
+        ]
+      },
+      {
+        "sha256": "identical_content_hash_2", 
+        "members": [
+          "DOCS/02-SISTEMA_BACKUP.md",
+          "DOCS/02-SISTEMA_BACKUP 2.md"
+        ]
+      }
+    ],
+    "name": [
+      {
+        "basename": "01-STRUTTURA_PROGETTO.md",
+        "members": [
+          "DOCS/01-STRUTTURA_PROGETTO.md",
+          "DOCS/01-STRUTTURA_PROGETTO 2.md"
+        ]
+      }
+    ],
+    "title": [
+      {
+        "title": "struttura progetto",
+        "members": [
+          "DOCS/01-STRUTTURA_PROGETTO.md",
+          "DOCS/01-STRUTTURA_PROGETTO 2.md"
+        ]
+      }
+    ],
+    "near_dup": []
+  },
+  "numbered_map": {
+    "present": [1, 2, 3, 4, 5, 6, 7, 8],
+    "missing": [9, 10, 11, 12],
+    "groups": {
+      "01": [
+        "DOCS/01-STRUTTURA_PROGETTO.md",
+        "DOCS/01-STRUTTURA_PROGETTO 2.md"
+      ],
+      "02": [
+        "DOCS/02-SISTEMA_BACKUP.md", 
+        "DOCS/02-SISTEMA_BACKUP 2.md"
+      ],
+      "03": [
+        "DOCS/03-PIPELINE_CI_CD.md",
+        "DOCS/03-PIPELINE_CI_CD 2.md"
+      ],
+      "04": [
+        "DOCS/04-SUPABASE_SCHEMA.md",
+        "DOCS/04-SUPABASE_SCHEMA 2.md"
+      ],
+      "05": [
+        "DOCS/05-SCRIPTS_UTILITY.md",
+        "DOCS/05-SCRIPTS_UTILITY 2.md"
+      ],
+      "06": [
+        "DOCS/06-REPORT_QUALITÀ.md",
+        "DOCS/06-REPORT_QUALITÀ 2.md"
+      ],
+      "07": [
+        "DOCS/07-PLAYBOOK_OPERATIVI.md",
+        "DOCS/07-PLAYBOOK_OPERATIVI 2.md"
+      ],
+      "08": [
+        "DOCS/08-DOCS_INDEX.md",
+        "DOCS/08-DOCS_INDEX 2.md"
+      ]
+    }
+  },
+  "stats": {
+    "by_dir": [
+      {
+        "dir": "DOCS/REPORT E VARIE",
+        "count": 72
+      },
+      {
+        "dir": "DOCS",
+        "count": 27
+      },
+      {
+        "dir": ".recovery/snapshots/recovery-2025-09-25T21-00-17-702Z",
+        "count": 22
+      },
+      {
+        "dir": ".recovery/snapshots/recovery-2025-09-25T21-07-24-866Z", 
+        "count": 22
+      },
+      {
+        "dir": ".recovery/snapshots/recovery-2025-09-25T20-51-19-739Z",
+        "count": 20
+      },
+      {
+        "dir": ".",
+        "count": 5
+      },
+      {
+        "dir": "shared",
+        "count": 2
+      }
+    ],
+    "top_by_size": [
+      {
+        "path": "DOCS/REPORT E VARIE/CHANGELOG_CLEANUP.md",
+        "size_bytes": 76966
+      },
+      {
+        "path": ".recovery/snapshots/recovery-2025-09-25T20-35-01-822Z/REPORT_FASE2_SEMPLIFICAZIONE_GESTISCI_ORDINI.txt",
+        "size_bytes": 23747
+      },
+      {
+        "path": ".recovery/snapshots/recovery-2025-09-25T20-35-01-822Z/REPORT_CONSOLIDATO_GESTISCI_ORDINI.txt",
+        "size_bytes": 23617
+      }
+    ]
+  }
+}

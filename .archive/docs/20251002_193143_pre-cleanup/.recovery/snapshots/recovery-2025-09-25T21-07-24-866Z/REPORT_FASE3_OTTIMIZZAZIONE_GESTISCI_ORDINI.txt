@@ -1,0 +1,425 @@
+================================================================================
+                  REPORT FASE 3 — OTTIMIZZAZIONE "GESTISCI ORDINI"
+================================================================================
+
+Data Pianificazione: 25/09/2025 22:03
+Operatore: Cascade AI Assistant
+Basato su: REPORT_GESTISCI_ORDINI.txt + REPORT_PIANIFICAZIONE_CHIRURGICA_GESTISCI_ORDINI.txt + REPORT_FASE2_SEMPLIFICAZIONE_GESTISCI_ORDINI.txt
+Fase: 3 di 3 (Ottimizzazione Avanzata)
+
+================================================================================
+1. DESIGN AGGIORNAMENTO GIACENZE (ALTO LIVELLO)
+================================================================================
+
+1.1 PUNTO DI INGRESSO UNICO
+
+TRIGGER OPERAZIONE:
+- Momento: Click "Conferma" nel ConfermaOrdineModal (implementato Fase 2)
+- Condizione: Dopo validazione quantità, prima transizione stato CREATO → ARCHIVIATO
+- Flusso: ConfermaOrdineModal → useInventoryManager → InventoryTransactionService
+
+ARCHITETTURA MODULARE:
+┌─────────────────────────────────────────────────────────────────┐
+│                    ConfermaOrdineModal                          │
+│                      (UI Layer)                                 │
+└─────────────────────┬───────────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────────┐
+│                useInventoryManager                              │
+│                 (Business Logic)                                │
+└─────────────────────┬───────────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────────┐
+│              InventoryTransactionService                        │
+│                  (Data Layer)                                   │
+└─────────────────────┬───────────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────────┐
+│                 Supabase Database                               │
+│            (giacenza + audit_logs tables)                      │
+└─────────────────────────────────────────────────────────────────┘
+
+1.2 REGOLE DI CALCOLO
+
+INCREMENTO STOCK PER RIGA:
+- Formula base: giacenza_attuale + quantita_ricevuta
+- Unità bottiglie: incremento diretto (1:1)
+- Unità cartoni: moltiplicatore x6 (1 cartone = 6 bottiglie)
+- Arrotondamenti: sempre per eccesso su unità minima (bottiglia)
+
+GESTIONE UNITÀ MISTE:
+┌─────────────────┬─────────────────┬─────────────────┬─────────────────┐
+│ UNITÀ ORDINATA  │ QTÀ ORDINATA    │ QTÀ RICEVUTA    │ INCREMENTO      │
+├─────────────────┼─────────────────┼─────────────────┼─────────────────┤
+│ bottiglie       │ 12              │ 10              │ +10             │
+│ cartoni         │ 2 (=12 bott.)   │ 1 (=6 bott.)    │ +6              │
+│ misto           │ 1 cart + 6 bott │ 1 cart + 4 bott │ +10             │
+└─────────────────┴─────────────────┴─────────────────┴─────────────────┘
+
+1.3 GESTIONE QUANTITÀ PARZIALI
+
+SCENARIO PARZIALI (quantita_ricevuta < quantita_ordinata):
+- Incremento solo per quantità effettivamente ricevuta
+- Registrazione differenza in audit_logs per tracciabilità
+- Nessun impatto su quantità ordinata originale (storico preservato)
+- Flag "parziale" in log per reporting futuro
+
+1.4 POLITICHE GESTIONE ANOMALIE
+
+STOCK NON TROVATO:
+- Creazione automatica record giacenza con valore ricevuto
+- Log warning "Stock creato automaticamente per vino_id X"
+
+VINO DISATTIVATO/ELIMINATO:
+- Blocco operazione con errore recuperabile
+- Rollback transazione completa
+- UI feedback: "Vino non più disponibile"
+
+1.5 STRATEGIA CONCORRENZA
+
+LOCK OTTIMISTICO (APPROCCIO PREFERITO):
+- Campo version_number in tabella giacenza
+- Read → Process → Write con controllo versione
+- Retry automatico (max 3 tentativi) in caso conflitto
+
+FLUSSO LOCK OTTIMISTICO:
+1. SELECT giacenza, version_number WHERE vino_id = X
+2. Calcolo: new_giacenza = giacenza + quantita_ricevuta
+3. UPDATE giacenza SET giacenza = new_giacenza, version_number = version_number + 1 
+   WHERE vino_id = X AND version_number = old_version
+4. Se affected_rows = 0 → Conflitto → Retry
+5. Se affected_rows = 1 → Successo → Commit
+
+================================================================================
+2. TRANSAZIONI & IDEMPOTENZA
+================================================================================
+
+2.1 FLUSSO TRANSAZIONALE END-TO-END
+
+SEQUENZA ATOMICA:
+1. START TRANSACTION
+2. Verifica idempotenza (chiave univoca)
+3. Lock giacenze coinvolte
+4. Calcolo e validazione nuovi valori
+5. UPDATE giacenze multiple
+6. INSERT audit_log record
+7. UPDATE ordine stato → ARCHIVIATO
+8. COMMIT TRANSACTION
+
+2.2 CHIAVE IDEMPOTENZA
+
+STRUTTURA CHIAVE:
+- Formato: `{ordine_id}_{confirmation_timestamp}_{user_session_id}`
+- Storage: Campo idempotency_key in tabella audit_logs
+
+MECCANISMO PREVENZIONE DOPPIO PROCESSING:
+1. Generazione chiave idempotenza in ConfermaOrdineModal
+2. Controllo esistenza chiave prima elaborazione
+3. Se esiste: Return success immediato (già processato)
+4. Se non esiste: Procedi con transazione + salva chiave
+
+2.3 PREVENZIONE DOPPIO CLICK
+
+LATO UI (ConfermaOrdineModal):
+- Disabilitazione pulsante "Conferma" dopo primo click
+- Loading state con spinner
+- Timeout UI: 10 secondi max
+
+LATO BUSINESS LOGIC (useInventoryManager):
+- Flag processing_order_id in stato locale
+- Blocco nuove richieste per stesso ordine_id
+- Debounce 500ms per click multipli
+
+LATO DATA (InventoryTransactionService):
+- Chiave idempotenza come descritto sopra
+- Atomic check-and-set per prevenzione race conditions
+
+================================================================================
+3. AUDIT TRAIL & LOGGING
+================================================================================
+
+3.1 EVENTI MINIMI DA REGISTRARE
+
+STRUTTURA AUDIT_LOGS TABLE:
+```sql
+CREATE TABLE audit_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type VARCHAR(50) NOT NULL,
+  ordine_id UUID NOT NULL REFERENCES ordini(id),
+  user_id UUID NOT NULL,
+  session_id VARCHAR(100),
+  idempotency_key VARCHAR(200) UNIQUE,
+  timestamp TIMESTAMPTZ DEFAULT NOW(),
+  before_state JSONB,
+  after_state JSONB,
+  metadata JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+EVENTI TRACCIATI:
+1. INVENTORY_UPDATE_STARTED - before_state: giacenze attuali
+2. INVENTORY_UPDATE_COMPLETED - after_state: giacenze aggiornate
+3. INVENTORY_UPDATE_FAILED - metadata: errore, retry count
+4. ORDER_STATUS_CHANGED - transizione stati
+5. IDEMPOTENCY_CHECK_HIT - chiave duplicata rilevata
+
+3.2 CORRELAZIONE E RICERCA
+
+INDICI PERFORMANCE:
+- idx_audit_logs_ordine_id (ricerca per ordine)
+- idx_audit_logs_timestamp (ricerca temporale)
+- idx_audit_logs_event_type (filtro per tipo evento)
+- idx_audit_logs_idempotency_key (controllo duplicati)
+
+3.3 PRIVACY E MINIMIZZAZIONE DATI
+
+DATI SENSIBILI ESCLUSI:
+- Nessun prezzo/valore commerciale in log
+- IP address hashato per privacy
+- User agent solo versione browser
+
+RETENTION POLICY:
+- Audit logs: 2 anni per compliance
+- Error logs: 6 mesi per debugging
+- Performance logs: 30 giorni
+
+================================================================================
+4. PIANO PERFORMANCE & SCALABILITÀ
+================================================================================
+
+4.1 CASI STRESS IDENTIFICATI
+
+SCENARIO A: ORDINE CON MOLTE RIGHE
+- Ordine con 50+ vini diversi
+- Rischio: Timeout transazione, lock contention
+- Mitigazione: Batch processing max 20 vini per transazione
+
+SCENARIO B: CONFERME SIMULTANEE
+- 10+ utenti confermano ordini contemporaneamente
+- Rischio: Deadlock, performance degradation
+- Mitigazione: Lock ordering, connection pooling
+
+SCENARIO C: VOLUME ALTO ORDINI
+- 100+ ordini/ora in peak time
+- Rischio: Slow queries, timeout
+- Mitigazione: Read replicas, indici ottimizzati
+
+4.2 STRATEGIE INDICIZZAZIONE
+
+INDICI CRITICI:
+```sql
+CREATE INDEX idx_giacenza_vino_id_version ON giacenza(vino_id, version_number);
+CREATE INDEX idx_audit_logs_composite ON audit_logs(ordine_id, timestamp, event_type);
+```
+
+4.3 METRICHE PERFORMANCE
+
+SLO DEFINITI:
+- Tempo medio transazione giacenze: ≤500ms (p95)
+- Throughput: ≥100 conferme/minuto
+- Error rate: <0.1% in produzione
+- Availability: 99.9% uptime
+
+================================================================================
+5. PIANO DI ATTIVAZIONE E ROLLBACK (FEATURE FLAGS)
+================================================================================
+
+5.1 ELENCO FLAG PREVISTI
+
+```javascript
+const FASE3_FLAGS = {
+  INVENTORY_TX: {
+    enabled: false,
+    description: "Abilita aggiornamento giacenze reale"
+  },
+  IDEMPOTENCY_GUARD: {
+    enabled: false,
+    description: "Abilita controlli idempotenza",
+    dependencies: ["INVENTORY_TX"]
+  },
+  AUDIT_LOGS: {
+    enabled: false,
+    description: "Abilita logging audit completo"
+  },
+  OPTIMISTIC_LOCKING: {
+    enabled: false,
+    description: "Usa lock ottimistico",
+    dependencies: ["INVENTORY_TX"]
+  }
+}
+```
+
+5.2 SEQUENZA ATTIVAZIONE
+
+FASE 3.1 - AUDIT INFRASTRUCTURE (1-2 giorni)
+- Attivare AUDIT_LOGS
+- Creazione tabella audit_logs
+- Testing scrittura/lettura logs
+
+FASE 3.2 - SHADOW MODE (2-3 giorni)
+- Attivare INVENTORY_TX_SHADOW
+- Logging operazioni senza aggiornamenti reali
+- Validazione calcoli
+
+FASE 3.3 - IDEMPOTENCY LAYER (1 giorno)
+- Attivare IDEMPOTENCY_GUARD
+- Testing prevenzione doppi click
+- Validazione retry sicuri
+
+FASE 3.4 - REAL UPDATES BETA (3-5 giorni)
+- Attivare INVENTORY_TX_BETA
+- Aggiornamenti reali per beta users
+- Monitoring intensivo
+
+FASE 3.5 - FULL ROLLOUT (1 settimana)
+- Attivare INVENTORY_TX_FULL
+- Rollout graduale: 10% → 50% → 100%
+
+5.3 PROCEDURE ROLLBACK
+
+ROLLBACK INVENTORY_TX (Tempo: <2 minuti):
+1. Disabilitare flag INVENTORY_TX_FULL/BETA
+2. Ripristino comportamento simulato
+3. Verifica nessuna transazione in corso
+4. Alert team + comunicazione utenti
+
+TRIGGER ROLLBACK AUTOMATICO:
+- Error rate >1% per >5 minuti
+- Response time >2s per >3 minuti
+- Database connection failures >10%
+
+================================================================================
+6. COMPATIBILITÀ & MIGRAZIONE NON DISTRUTTIVA
+================================================================================
+
+6.1 SCHEMA DATABASE - NESSUNA MODIFICA OBBLIGATORIA
+
+APPROCCIO ADDITIVO:
+- Tabella giacenza: Aggiunta colonna version_number (nullable, default 1)
+- Tabella audit_logs: Creazione nuova
+- Nessuna modifica tabelle ordini/vini esistenti
+
+MIGRAZIONE REVERSIBILE:
+```sql
+-- Migrazione sicura
+ALTER TABLE giacenza ADD COLUMN version_number INTEGER DEFAULT 1;
+
+-- Rollback se necessario
+ALTER TABLE giacenza DROP COLUMN version_number;
+```
+
+6.2 MAPPATURA COMPORTAMENTI
+
+LEGACY → NUOVO:
+- Conferma ordine → Aggiornamento simulato → Aggiornamento reale + audit
+- Nessun audit → Audit trail completo
+- Nessuna idempotenza → Idempotenza garantita
+
+TRANSIZIONE GRADUALE:
+- SHADOW: Nuovo calcolo + logging, giacenze legacy
+- BETA: Nuovo calcolo per beta users
+- FULL: Nuovo comportamento per tutti
+
+================================================================================
+7. CHECKLIST QA E TEST DI INTEGRAZIONE
+================================================================================
+
+7.1 CASI STANDARD E EDGE
+
+TEST STANDARD:
+✅ Conferma ordine singolo vino, quantità piena
+✅ Conferma ordine multipli vini, quantità parziali
+✅ Conferma ordine con unità miste (bottiglie + cartoni)
+
+TEST EDGE CASES:
+✅ Quantità ricevuta = 0 per tutti i vini
+✅ Vino eliminato durante conferma
+✅ Giacenza negativa risultante
+✅ Rete intermittente durante conferma
+
+7.2 TEST CONCORRENZA
+
+✅ Conferme simultanee stesso ordine
+✅ Aggiornamento stessa giacenza
+✅ Load test 20 utenti simultanei
+
+7.3 TEST IDEMPOTENZA
+
+✅ Doppio click rapido
+✅ Retry network failure
+✅ Refresh browser durante elaborazione
+
+7.4 TEST ROLLBACK
+
+✅ Errore metà transazione
+✅ Timeout transazione
+✅ Rollback coordinato batch processing
+
+================================================================================
+8. METRICHE DI SUCCESSO (SLO)
+================================================================================
+
+8.1 AFFIDABILITÀ OPERAZIONI
+
+🎯 0 operazioni parziali in caso di errore
+   Baseline: Possibili inconsistenze
+   Target: Rollback completo garantito
+
+🎯 0 doppie contabilizzazioni
+   Baseline: Possibili duplicati su retry
+   Target: Idempotenza 100% garantita
+
+8.2 PERFORMANCE
+
+🎯 Tempo medio conferma ≤500ms (p95)
+   Baseline: 200ms simulato
+   Target: 500ms con aggiornamenti reali
+
+🎯 Error rate <0.1% in produzione
+   Baseline: 0.5% errori vari
+   Target: 0.1% solo errori non recuperabili
+
+8.3 TRACCIABILITÀ
+
+🎯 100% operazioni con audit completo
+   Baseline: Nessun audit dettagliato
+   Target: Ogni operazione tracciata
+
+🎯 Tempo ricerca audit <2 secondi
+   Baseline: Non applicabile
+   Target: Query audit performanti
+
+================================================================================
+CONCLUSIONI OPERATIVE FASE 3
+================================================================================
+
+La Fase 3 rappresenta il completamento dell'evoluzione del sistema Gestisci 
+Ordini, trasformandolo da sistema simulato a sistema produttivo enterprise-grade.
+
+BENEFICI ATTESI:
+✅ Aggiornamento giacenze reale e atomico
+✅ Affidabilità operazioni critica garantita
+✅ Tracciabilità completa per compliance
+✅ Performance e scalabilità enterprise
+
+RISCHI MITIGATI:
+✅ Rollback istantaneo tramite feature flags
+✅ Compatibilità totale con sistema esistente
+✅ Testing completo prima attivazione
+✅ Monitoring continuo SLO
+
+ARCHITETTURA MODULARE:
+✅ Separazione netta UI/Business/Data layer
+✅ Interfacce contrattuali chiare
+✅ Estensibilità per funzionalità future
+✅ Manutenibilità a lungo termine
+
+RACCOMANDAZIONE ESECUTIVA:
+Procedere con implementazione Fase 3 solo dopo successo completo Fase 2.
+Seguire rigorosamente sequenza step-by-step con particolare attenzione 
+ai test di concorrenza e idempotenza.
+
+================================================================================
+FINE REPORT FASE 3 - Generato il 25/09/2025 alle 22:03
+================================================================================
