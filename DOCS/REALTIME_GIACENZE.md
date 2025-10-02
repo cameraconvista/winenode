@@ -157,6 +157,51 @@
 
 ---
 
-## STATUS: PHASE 1 COMPLETATA ✅
+## PHASE 2 - CONCORRENZA OTTIMISTICA IMPLEMENTATA ✅
 
-**PROSSIMO STEP**: PHASE 2 - Concorrenza ottimistica con version control
+### TASK 1 - API UPDATE CON WHERE id + version:
+- ✅ **Interfaccia WineType** estesa con `inventoryVersion` e `inventoryUpdatedAt`
+- ✅ **Query giacenza** include campi `version` e `updated_at`
+- ✅ **Optimistic locking** con `WHERE vino_id = :id AND version = :currentVersion`
+- ✅ **Mapping realtime** aggiornato per includere version nei merge
+
+### TASK 2 - GESTIONE CONFLITTI:
+- ✅ **Rilevamento conflitto** quando update restituisce 0 righe
+- ✅ **Refetch puntuale** automatico per riallineare dati
+- ✅ **Console warning** per conflitti (TODO: toast system)
+- ✅ **Return false** per indicare conflitto gestito
+
+### TASK 3 - MARCATURA UPDATE PENDING:
+- ✅ **markUpdatePending()** chiamato prima di ogni update
+- ✅ **Prevenzione eco** realtime per update locali
+- ✅ **Auto-cleanup** pending dopo 5 secondi (safety)
+
+### TASK 4 - HELPER REFETCH PUNTUALE:
+- ✅ **refetchGiacenzaById()** per conflitti
+- ✅ **Merge selettivo** solo del record interessato
+- ✅ **Gestione record non trovato** (reset a default)
+- ✅ **Error handling** robusto
+
+### TASK 5 - UPDATE MIN_STOCK:
+- ✅ **updateWineMinStock()** con stessa logica optimistic
+- ✅ **Version control** identico a giacenza
+- ✅ **Gestione conflitti** con refetch + warning
+- ✅ **Insert/Update** atomico per min_stock
+
+### FLUSSO OPTIMISTIC LOCKING:
+1. **Lettura version** corrente dal state locale
+2. **Update condizionale** con WHERE id + version
+3. **Se 1 riga** → successo, merge nuova version
+4. **Se 0 righe** → conflitto, refetch + warning
+5. **Realtime sync** automatico per altri device
+
+### TESTING:
+- ✅ **Build success** (2.58s, 0 errori)
+- ✅ **TypeScript** compilazione OK
+- ✅ **API estesa** con `updateWineMinStock` e `refetchGiacenzaById`
+
+---
+
+## STATUS: PHASE 2 COMPLETATA ✅
+
+**PROSSIMO STEP**: PHASE 3 - Focus/reconnect fallback con debounce
