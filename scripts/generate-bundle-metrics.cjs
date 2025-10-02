@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-env node */
+
 /**
  * Genera metriche bundle in formato JSON per CI
  */

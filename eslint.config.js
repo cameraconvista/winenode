@@ -90,6 +90,32 @@ export default [
       'max-nested-callbacks': ['warn', 6]
     }
   },
+  // CommonJS files (.cjs)
+  {
+    files: ['**/*.cjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly'
+      }
+    },
+    rules: {
+      'no-undef': 'off'
+    }
+  },
   // Node environment (scripts and server)
   {
     files: ['scripts/**/*.{js,ts}', 'server/**/*.{js,ts}'],

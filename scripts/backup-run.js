@@ -8,7 +8,6 @@
  */
 
 /* eslint-env node */
-/* eslint-disable no-console */
 
 import { createBackup, listBackups } from './backup-system.js';
 
