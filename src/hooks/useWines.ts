@@ -585,22 +585,54 @@ const useWines = () => {
 
   const updateWine = async (id: string, updates: Partial<WineType>): Promise<boolean> => {
     try {
+      // PATCH 1 - SANITIZZAZIONE HARD: Rimuovi minStock da updates prima di processare metadati
+      const sanitizedUpdates = { ...updates };
+      let hasMinStock = false;
+      let minStockValue: number | undefined;
+      
+      if (sanitizedUpdates.minStock !== undefined) {
+        hasMinStock = true;
+        minStockValue = sanitizedUpdates.minStock;
+        delete sanitizedUpdates.minStock;
+        
+        if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+          console.debug('🧹 sanitize(metadata): removed { min_stock }', { vino_id: id, value: minStockValue });
+        }
+      }
+
+      // PATCH 2 - ROUTING ESPLICITO: minStock sempre → updateWineMinStock (PRIMA di processare metadati)
+      if (hasMinStock && minStockValue !== undefined) {
+        if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+          console.debug('🟡 route(min_stock) → giacenza:', { vino_id: id, nextValue: minStockValue });
+        }
+        
+        // Usa la pipeline esistente per min_stock su giacenza
+        const minStockUpdateSuccess = await updateWineMinStock(id, minStockValue);
+        if (!minStockUpdateSuccess) {
+          throw new Error('Errore aggiornamento soglia minima');
+        }
+        
+        // Se solo minStock, ritorna successo
+        if (Object.keys(sanitizedUpdates).length === 0) {
+          return true;
+        }
+      }
+
       // ❌ DISABILITATO: App deve essere READ-ONLY su tabella 'vini'
       // I metadati vini devono essere gestiti solo tramite sincronizzazione Google Sheet
       console.warn('🚫 updateWine DISABILITATO: App è read-only su tabella vini');
-      console.warn('📋 Update ignorato per vino ID:', id, 'updates:', updates);
+      console.warn('📋 Update ignorato per vino ID:', id, 'updates:', sanitizedUpdates);
       
-      // TASK 2 - GUARDRAIL: Blocca operazioni su metadati vini (escluso minStock → instradato su giacenza)
+      // GUARDRAIL: Blocca operazioni su metadati vini (minStock già rimosso)
       const metadataUpdates = {
-        ...(updates.name !== undefined && { nome_vino: updates.name }),
-        ...(updates.type !== undefined && { tipologia: updates.type }),
-        ...(updates.supplier !== undefined && { fornitore: updates.supplier }),
-        // minStock rimosso - instradato su giacenza nella sezione dedicata
-        ...(updates.price !== undefined && { vendita: parseFloat(updates.price) }),
-        ...(updates.cost !== undefined && { costo: updates.cost }),
-        ...(updates.vintage !== undefined && { anno: updates.vintage }),
-        ...(updates.region !== undefined && { provenienza: updates.region }),
-        ...(updates.description !== undefined && { produttore: updates.description })
+        ...(sanitizedUpdates.name !== undefined && { nome_vino: sanitizedUpdates.name }),
+        ...(sanitizedUpdates.type !== undefined && { tipologia: sanitizedUpdates.type }),
+        ...(sanitizedUpdates.supplier !== undefined && { fornitore: sanitizedUpdates.supplier }),
+        ...(sanitizedUpdates.price !== undefined && { vendita: parseFloat(sanitizedUpdates.price) }),
+        ...(sanitizedUpdates.cost !== undefined && { costo: sanitizedUpdates.cost }),
+        ...(sanitizedUpdates.vintage !== undefined && { anno: sanitizedUpdates.vintage }),
+        ...(sanitizedUpdates.region !== undefined && { provenienza: sanitizedUpdates.region }),
+        ...(sanitizedUpdates.description !== undefined && { produttore: sanitizedUpdates.description })
       };
 
       if (Object.keys(metadataUpdates).length > 0) {
@@ -615,34 +647,15 @@ const useWines = () => {
         }
       }
 
-      // TASK 1 - INSTRADAMENTO CHIRURGICO: min_stock → giacenza (no write su vini)
-      if (updates.minStock !== undefined) {
-        if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
-          console.debug('🟡 giacenza.update (min_stock): instradamento da updateWine → updateWineMinStock', { 
-            vino_id: id, 
-            nextValue: updates.minStock 
-          });
-        }
-        
-        // Usa la pipeline esistente per min_stock su giacenza
-        const minStockUpdateSuccess = await updateWineMinStock(id, updates.minStock);
-        if (!minStockUpdateSuccess) {
-          throw new Error('Errore aggiornamento soglia minima');
-        }
-        
-        // Non aggiornare stato locale qui - già gestito da updateWineMinStock
-        return true;
-      }
-
-      if (updates.inventory !== undefined) {
+      if (sanitizedUpdates.inventory !== undefined) {
         // Usa la funzione updateWineInventory per evitare problemi di constraint
-        const inventoryUpdateSuccess = await updateWineInventory(id, updates.inventory);
+        const inventoryUpdateSuccess = await updateWineInventory(id, sanitizedUpdates.inventory);
         if (!inventoryUpdateSuccess) {
           throw new Error('Errore aggiornamento giacenza');
         }
         
         // Aggiorna solo la giacenza nello stato locale (metadati bloccati)
-        setWines(prev => prev.map(w => (w.id === id ? { ...w, inventory: updates.inventory } : w)));
+        setWines(prev => prev.map(w => (w.id === id ? { ...w, inventory: sanitizedUpdates.inventory } : w)));
         return true;
       }
 
