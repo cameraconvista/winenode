@@ -123,7 +123,23 @@ export function useRealtimeGiacenza({
     }
   }, [addToBatch]);
 
-  // Setup subscription
+  // FIX 1 - Throttle per log di stato (2000ms)
+  const logStatusThrottledRef = useRef<NodeJS.Timeout | null>(null);
+  const logStatusThrottled = useCallback((status: any) => {
+    if (logStatusThrottledRef.current) return;
+    
+    logStatusThrottledRef.current = setTimeout(() => {
+      if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+        const state = channelRef.current?.state;
+        const connected = state === 'joined';
+        const subscribed = ['subscribed', 'joined'].includes(state as string);
+        console.debug('RT giacenza status update:', { connected, subscribed, state });
+      }
+      logStatusThrottledRef.current = null;
+    }, 2000);
+  }, []);
+
+  // Effetto principale per gestire subscription
   useEffect(() => {
     if (!enabled) {
       if (import.meta.env.DEV) {
@@ -132,8 +148,17 @@ export function useRealtimeGiacenza({
       return;
     }
 
-    if (import.meta.env.DEV) {
-      console.log('🔄 Avvio subscription realtime giacenza...');
+    // FIX 1 - SINGLETON CHANNEL: Guardia anti-duplica
+    if (channelRef.current && channelRef.current.state !== 'closed') {
+      if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+        console.debug('🔒 Channel già attivo, skip creazione:', channelRef.current.state);
+      }
+      return;
+    }
+
+    if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
+      const channelsCount = supabase.realtime.getChannels().length;
+      console.debug('🔄 Avvio subscription realtime giacenza... (channels: ' + channelsCount + ')');
     }
 
     // Crea canale realtime
@@ -149,14 +174,15 @@ export function useRealtimeGiacenza({
         handleRealtimeEvent
       )
       .subscribe((status) => {
-        // TASK 1 - Log stati canale per debugging
-        if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
-          console.debug('📡 RT giacenza channel status:', status);
-        }
+        // FIX 3 - Log throttled per evitare spam
+        logStatusThrottled(status);
         
-        if (import.meta.env.DEV) {
-          console.log('📡 Realtime giacenza status:', status);
-        }
+        // FIX 4 - Aggiorna status via callback (no polling)
+        const state = channelRef.current?.state;
+        const connected = state === 'joined';
+        const subscribed = ['subscribed', 'joined'].includes(state as string);
+        setIsConnected(connected);
+        setIsSubscribed(subscribed);
       });
 
     channelRef.current = channel;
@@ -183,7 +209,7 @@ export function useRealtimeGiacenza({
       // Clear pending updates
       pendingUpdatesRef.current.clear();
     };
-  }, [enabled, handleRealtimeEvent, processBatch]);
+  }, [enabled]); // FIX 2 - Solo [enabled] per evitare ri-creazioni continue
 
   // Funzione per marcare update come pending (evita eco locale)
   const markUpdatePending = useCallback((vinoId: string) => {
@@ -199,6 +225,7 @@ export function useRealtimeGiacenza({
   const [isConnected, setIsConnected] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
+  // FIX 4 - RIMUOVERE POLLING: Status aggiornato solo via callback subscribe
   useEffect(() => {
     const updateStatus = () => {
       const state = channelRef.current?.state;
@@ -207,20 +234,11 @@ export function useRealtimeGiacenza({
       
       setIsConnected(connected);
       setIsSubscribed(subscribed);
-      
-      // TASK 1 - Log status changes
-      if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
-        console.debug('RT giacenza status update:', { connected, subscribed, state });
-      }
     };
 
+    // Update iniziale, poi solo via callback subscribe (no polling)
     updateStatus();
-    
-    // Polling per aggiornare status (ogni 1s)
-    const interval = setInterval(updateStatus, 1000);
-    
-    return () => clearInterval(interval);
-  }, []);
+  }, [enabled]); // Solo quando enabled cambia
 
   return {
     isConnected,
