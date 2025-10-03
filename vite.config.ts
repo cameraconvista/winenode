@@ -14,7 +14,11 @@ export default defineConfig({
       defaultStyle: 'display: inline-block;',
       defaultClass: 'icon',
       scale: 1,
-      autoInstall: true
+      autoInstall: true,
+      // Configurazione collezioni per ~icons
+      collections: {
+        ph: () => import('@iconify-json/ph/icons.json').then(i => i.default)
+      }
     }),
     // Bundle analyzer - solo quando richiesto esplicitamente
     process.env.ANALYZE && visualizer({
