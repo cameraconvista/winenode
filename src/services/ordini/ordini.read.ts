@@ -40,7 +40,7 @@ export async function loadOrdini(signal?: AbortSignal): Promise<{
         stato,
         created_at,
         updated_at,
-        fornitori!${FORNITORE_UUID_COL} ( id, nome )
+        fornitori ( id, nome )
       `)
       .order('created_at', { ascending: false });
 
