@@ -3,6 +3,7 @@ import PhosphorCart from '~icons/ph/shopping-cart-light';
 import PhosphorFunnel from '~icons/ph/funnel-light';
 import PhosphorBell from '~icons/ph/bell-light';
 import PhosphorMagnifyingGlass from '~icons/ph/magnifying-glass-light';
+import PhosphorArrowClockwise from '~icons/ph/arrow-clockwise-light';
 import { isFeatureEnabled } from '../../../config/features';
 import { CategoryChip } from './CategoryChip';
 import { HomeFilters } from '../hooks/useHomeState';
@@ -19,6 +20,7 @@ interface NavBarProps {
   };
   onCarrelloClick: () => void;
   onTabChange: (category: string) => void;
+  onRefreshWines: () => void;
 }
 
 export const NavBar = memo(function NavBar({
@@ -29,7 +31,8 @@ export const NavBar = memo(function NavBar({
   chipDisplayText,
   wineSearch,
   onCarrelloClick,
-  onTabChange
+  onTabChange,
+  onRefreshWines
 }: NavBarProps) {
   return (
     <nav className="mobile-navbar">
@@ -118,6 +121,29 @@ export const NavBar = memo(function NavBar({
             />
           </button>
         )}
+        
+        {/* Pulsante refresh vini */}
+        <button
+          onClick={onRefreshWines}
+          className="nav-btn btn-refresh"
+          title="Aggiorna vini"
+          aria-label="Aggiorna vini"
+          style={{ 
+            background: 'transparent',
+            color: 'var(--text)',
+            borderRadius: '8px',
+            border: 'none',
+            outline: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            WebkitAppearance: 'none',
+            appearance: 'none'
+          } as React.CSSProperties}
+        >
+          <PhosphorArrowClockwise 
+            className="icon" 
+            aria-hidden="true"
+          />
+        </button>
       </div>
       
       {/* Pulsante "Tutti" a destra */}

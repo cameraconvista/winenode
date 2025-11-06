@@ -166,6 +166,7 @@ export default function HomePage() {
         wineSearch={wineSearch}
         onCarrelloClick={handleCarrelloClick}
         onTabChange={handleTabChange}
+        onRefreshWines={refreshWines}
       />
 
       <ModalsManager

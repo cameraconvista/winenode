@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { supabaseGuarded } from '../services/supabaseGuard';
 import { useRealtimeGiacenza } from './useRealtimeGiacenza';
+import { useRealtimeVini } from './useRealtimeVini';
 
 export interface WineType {
   id: string;
@@ -27,14 +28,19 @@ const useWines = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // TASK 2 - Feature flag per realtime (da env) con logging runtime
-  const realtimeEnabled = import.meta.env.VITE_REALTIME_GIACENZE_ENABLED === 'true';
+  // TASK 2 - Feature flags per realtime (da env) con logging runtime
+  const realtimeGiacenzeEnabled = import.meta.env.VITE_REALTIME_GIACENZE_ENABLED === 'true';
+  const realtimeViniEnabled = import.meta.env.VITE_REALTIME_VINI_ENABLED === 'true';
+  const refreshOnFocusEnabled = import.meta.env.VITE_REFRESH_ON_FOCUS_ENABLED === 'true';
   
-  // Log feature flag una sola volta all'avvio (solo in dev)
+  // Log feature flags una sola volta all'avvio (solo in dev)
   useEffect(() => {
     if (import.meta.env.DEV) {
-      console.debug('🔧 REALTIME_GIACENZE_ENABLED:', realtimeEnabled, 
-        '(env value:', import.meta.env.VITE_REALTIME_GIACENZE_ENABLED, ')');
+      console.debug('🔧 Feature flags:', {
+        realtimeGiacenze: realtimeGiacenzeEnabled,
+        realtimeVini: realtimeViniEnabled,
+        refreshOnFocus: refreshOnFocusEnabled
+      });
     }
   }, []); // Solo al mount
 
@@ -260,7 +266,7 @@ const useWines = () => {
   const updateWineInventory = async (id: string, newInventory: number): Promise<boolean> => {
     try {
       // Marca update come pending per evitare eco realtime
-      if (realtimeEnabled) {
+      if (realtimeGiacenzeEnabled) {
         markUpdatePending(id);
       }
 
@@ -439,7 +445,7 @@ const useWines = () => {
   const updateWineMinStock = async (id: string, newMinStock: number): Promise<boolean> => {
     try {
       // Marca update come pending per evitare eco realtime
-      if (realtimeEnabled) {
+      if (realtimeGiacenzeEnabled) {
         markUpdatePending(id);
       }
 
@@ -676,24 +682,60 @@ const useWines = () => {
     }
   };
 
-  // Setup realtime subscription
+  // Setup realtime subscription per giacenze
   const { isConnected: realtimeConnected, isSubscribed: realtimeSubscribed, markUpdatePending } = useRealtimeGiacenza({
     onInsert: handleRealtimeInsert,
     onUpdate: handleRealtimeUpdate,
     onDelete: handleRealtimeDelete,
-    enabled: realtimeEnabled
+    enabled: realtimeGiacenzeEnabled
+  });
+
+  // Setup realtime subscription per vini (metadati)
+  useRealtimeVini({
+    onExternalChange: fetchWines,
+    enabled: realtimeViniEnabled
   });
 
   // TASK 2 - Log status realtime al mount
   useEffect(() => {
     if (import.meta.env.DEV || import.meta.env.VITE_RT_DEBUG === 'true') {
       console.debug('🏠 useWines realtime status:', { 
-        enabled: realtimeEnabled, 
+        giacenzeEnabled: realtimeGiacenzeEnabled,
+        viniEnabled: realtimeViniEnabled,
         connected: realtimeConnected, 
         subscribed: realtimeSubscribed 
       });
     }
-  }, [realtimeEnabled, realtimeConnected, realtimeSubscribed]);
+  }, [realtimeGiacenzeEnabled, realtimeViniEnabled, realtimeConnected, realtimeSubscribed]);
+
+  // Listener focus/online per refresh fallback
+  useEffect(() => {
+    if (!refreshOnFocusEnabled) {
+      return;
+    }
+
+    const handleFocus = () => {
+      if (import.meta.env.DEV) {
+        console.debug('🔄 Window focus - refreshing wines');
+      }
+      fetchWines();
+    };
+
+    const handleOnline = () => {
+      if (import.meta.env.DEV) {
+        console.debug('🔄 Network online - refreshing wines');
+      }
+      fetchWines();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [refreshOnFocusEnabled, fetchWines]);
 
   useEffect(() => {
     fetchWines();
@@ -712,8 +754,8 @@ const useWines = () => {
     refetchGiacenzaById,
     refetchGiacenzaByVinoId,
     // Realtime status
-    realtimeConnected: realtimeEnabled ? realtimeConnected : false,
-    realtimeSubscribed: realtimeEnabled ? realtimeSubscribed : false
+    realtimeConnected: realtimeGiacenzeEnabled ? realtimeConnected : false,
+    realtimeSubscribed: realtimeGiacenzeEnabled ? realtimeSubscribed : false
   };
 };
 
