@@ -42,7 +42,9 @@ export const useWineSearch = (wines: Wine[]) => {
     
     return wines.filter(wine => {
       const normalizedName = normalizeString(wine.name || '');
-      return normalizedName.includes(normalizedQuery);
+      const normalizedDescription = normalizeString(wine.description || '');
+      return normalizedName.includes(normalizedQuery) || 
+             normalizedDescription.includes(normalizedQuery);
     });
   }, [wines, debouncedQuery]);
   

@@ -55,14 +55,14 @@ export const WineSearchBar: React.FC<WineSearchBarProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="Cerca vino... (solo nome)"
+          placeholder="Cerca vino... (nome o produttore)"
           className="w-full px-4 py-2 pr-10 rounded-lg border transition-colors"
           style={{
             background: 'white',
             borderColor: '#e2d6aa',
             color: '#541111'
           }}
-          aria-label="Cerca per nome vino"
+          aria-label="Cerca per nome o produttore"
         />
         
         {/* Pulsante Clear */}

@@ -48,21 +48,21 @@ export const WineRow = memo(function WineRow({
             >
               {wine.vintage && (
                 <>
-                  <span className="vintage" style={{ color: 'var(--muted-text)' }}>
+                  <span className="vintage" style={{ color: '#8B0000' }}>
                     {wine.vintage}
                   </span>
                   {(wine.description || (wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato')) && (
-                    <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
+                    <span className="mx-2" style={{ color: '#8B0000' }}>·</span>
                   )}
                 </>
               )}
               {wine.description && (
                 <>
-                  <span className="producer" style={{ color: 'var(--muted-text)' }}>
+                  <span className="producer" style={{ color: '#8B0000' }}>
                     {wine.description}
                   </span>
                   {wine.supplier && wine.supplier.trim() && wine.supplier.trim() !== 'Non specificato' && (
-                    <span className="mx-2" style={{ color: 'var(--muted-text)' }}>·</span>
+                    <span className="mx-2" style={{ color: '#8B0000' }}>·</span>
                   )}
                 </>
               )}

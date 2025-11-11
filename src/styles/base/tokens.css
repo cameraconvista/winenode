@@ -12,7 +12,7 @@
   --surface-hover: #ffeaa0; /* Hover / liste alternate */
   --border: #e2d6aa;       /* Divider, outline soft */
   --muted: #7a4a30;        /* Testo secondario/label su chiaro */
-  --muted-text: #9b9b9b;   /* grigio chiaro leggibile per produttore/anno */
+  --muted-text: #7a7a7a;   /* grigio medio-scuro leggibile per produttore/anno */
   --toolbar-bg: #fff7d1;   /* NUOVO: toolbar bottom, leggermente distinta */
 
   /* Stato/azioni (mantieni brand attuale) */
