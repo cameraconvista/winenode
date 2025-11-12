@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useWines as useWinesOriginal, WineType } from './useWines';
 import { offlineCache, CACHE_TTL } from '../lib/offlineCache';
 import { useNetworkStatus } from './useNetworkStatus';
-// import { useOfflineSync } from './useOfflineSync';
+import { useOfflineSync } from './useOfflineSyncClean';
 import { offlineStorage } from '../lib/offlineStorage';
 
 interface UseWinesOfflineReturn {
@@ -56,25 +56,25 @@ export const useWines = (): UseWinesOfflineReturn => {
   // Network status
   const { isOnline, queueOperation } = useNetworkStatus();
   
-  // Auto-sync hook (temporaneamente disabilitato per build)
-  // const { syncPendingOperations, getSyncStats } = useOfflineSync({
-  //   isOnline,
-  //   onSyncStart: () => setSyncInProgress(true),
-  //   onSyncComplete: (successCount, errorCount) => {
-  //     setSyncInProgress(false);
-  //     if (import.meta.env.DEV) {
-  //       console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
-  //     }
-  //     // Refresh data dopo sync
-  //     if (successCount > 0) {
-  //       originalHook.refreshWines();
-  //     }
-  //   },
-  //   onSyncError: (error) => {
-  //     setSyncInProgress(false);
-  //     console.error('Sync error:', error);
-  //   }
-  // });
+  // Auto-sync hook
+  const { syncPendingOperations, getSyncStats } = useOfflineSync({
+    isOnline,
+    onSyncStart: () => setSyncInProgress(true),
+    onSyncComplete: (successCount, errorCount) => {
+      setSyncInProgress(false);
+      if (import.meta.env.DEV) {
+        console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
+      }
+      // Refresh data dopo sync
+      if (successCount > 0) {
+        originalHook.refreshWines();
+      }
+    },
+    onSyncError: (error) => {
+      setSyncInProgress(false);
+      console.error('Sync error:', error);
+    }
+  });
   
   // State per funzionalità offline
   const [isUsingCache, setIsUsingCache] = useState(false);
@@ -116,14 +116,14 @@ export const useWines = (): UseWinesOfflineReturn => {
             setIsUsingCache(false);
             
             if (import.meta.env.DEV) {
-              console.log(`💾 Wines cached: ${originalHook.wines.length} items`);
+              console.log(`Wines cached: ${originalHook.wines.length} items`);
             }
           }
           
           return;
         } catch (networkError) {
           if (import.meta.env.DEV) {
-            console.warn('⚠️ Network refresh failed, trying cache fallback:', networkError);
+            console.warn('Network refresh failed, trying cache fallback:', networkError);
           }
         }
       }
@@ -139,7 +139,7 @@ export const useWines = (): UseWinesOfflineReturn => {
         setIsUsingCache(true);
         
         if (import.meta.env.DEV) {
-          console.log(`📱 Using cached wines: ${cachedWines.length} items (offline mode)`);
+          console.log(`Using cached wines: ${cachedWines.length} items (offline mode)`);
         }
       } else {
         // Nessun cache disponibile
@@ -149,7 +149,7 @@ export const useWines = (): UseWinesOfflineReturn => {
       }
       
     } catch (error) {
-      console.error('❌ Failed to refresh wines (online + cache):', error);
+      console.error('Failed to refresh wines (online + cache):', error);
       throw error;
     }
   }, [isOnline, originalHook]);
@@ -200,14 +200,14 @@ export const useWines = (): UseWinesOfflineReturn => {
           setInternalWines(updatedWines); // ← FIX CRITICO: Aggiorna state interno
           
           if (import.meta.env.DEV) {
-            console.log(`📱 Inventory updated offline (queued: ${operationId}): ${wineId} → ${newInventory}`);
+            console.log(`Inventory updated offline (queued: ${operationId}): ${wineId} -> ${newInventory}`);
           }
         }
         
         return true; // Ottimistic success
       }
     } catch (error) {
-      console.error('❌ Failed to update inventory:', error);
+      console.error('Failed to update inventory:', error);
       return false;
     }
   }, [isOnline, originalHook.updateWineInventory, queueOperation]);
@@ -237,11 +237,11 @@ export const useWines = (): UseWinesOfflineReturn => {
         setIsUsingCache(false);
         
         if (import.meta.env.DEV) {
-          console.log('🔄 Cache force refreshed from network');
+          console.log('Cache force refreshed from network');
         }
       }
     } catch (error) {
-      console.error('❌ Failed to force refresh cache:', error);
+      console.error('Failed to force refresh cache:', error);
       throw error;
     }
   }, [isOnline, originalHook]);
@@ -258,7 +258,7 @@ export const useWines = (): UseWinesOfflineReturn => {
     setIsUsingCache(false);
     
     if (import.meta.env.DEV) {
-      console.log('🧹 Offline cache cleared');
+      console.log('Offline cache cleared');
     }
   }, []);
   
@@ -282,17 +282,17 @@ export const useWines = (): UseWinesOfflineReturn => {
     return () => clearInterval(interval);
   }, [lastCacheUpdate]);
   
-  // Effect per gestione cambio stato rete
+  // Effect per gestione cambio stato rete - FIX: Usa syncPendingOperations
   useEffect(() => {
     if (isOnline && isUsingCache) {
-      // Quando torna online, prova a sincronizzare
+      // Quando torna online, sincronizza operazioni pending prima di refreshare
       setTimeout(() => {
-        forceCacheRefresh().catch(error => {
-          console.warn('⚠️ Auto-sync failed after reconnection:', error);
+        syncPendingOperations().catch(error => {
+          console.warn('Auto-sync failed after reconnection:', error);
         });
       }, 2000); // Aspetta 2s per stabilizzare connessione
     }
-  }, [isOnline, isUsingCache, forceCacheRefresh]);
+  }, [isOnline, isUsingCache, syncPendingOperations]);
   
   // Determina se stiamo usando dati cached
   useEffect(() => {
