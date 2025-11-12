@@ -12,6 +12,8 @@ import { useWinesHelpers } from './useWinesHelpers';
 import { useWinesRealtimeHandlers } from './useWinesRealtimeHandlers';
 import { useWinesDataManagement } from './useWinesDataManagement';
 import { useWinesInventoryOperations } from './useWinesInventoryOperations';
+import { useWinesLookupOptimization } from './useWinesLookupOptimization';
+import { useOptimisticInventory } from './useOptimisticInventory';
 
 export interface WineType {
   id: string;
@@ -59,6 +61,11 @@ const useWines = () => {
     setWines
   });
 
+  // OTTIMIZZAZIONE LOOKUP PERFORMANCE
+  const { winesMap, getWineById, getWinesBySupplier, getWinesByType } = useWinesLookupOptimization({
+    wines
+  });
+
   const { handleRealtimeInsert, handleRealtimeUpdate, handleRealtimeDelete, markUpdatePending } = useWinesRealtimeHandlers({
     wines,
     setWines,
@@ -80,7 +87,16 @@ const useWines = () => {
     refetchGiacenzaById,
     refetchGiacenzaByVinoId,
     markUpdatePending,
-    realtimeGiacenzeEnabled
+    realtimeGiacenzeEnabled,
+    getWineById // PERFORMANCE: Passa lookup ottimizzato O(1)
+  });
+
+  // OPTIMISTIC UI: Aggiornamenti immediati con rollback automatico
+  const { updateInventoryOptimistic } = useOptimisticInventory({
+    wines,
+    setWines,
+    updateWineInventory,
+    getWineById
   });
 
   // Hook realtime per giacenze (se abilitato)
@@ -123,12 +139,18 @@ const useWines = () => {
     loading,
     error,
     refreshWines: fetchWines,
-    updateWineInventory,
+    updateWineInventory: updateInventoryOptimistic, // OPTIMISTIC: UI immediata
+    updateWineInventorySync: updateWineInventory, // SYNC: Versione sincrona per casi speciali
     updateMultipleWineInventories,
     updateWineMinStock,
     updateWine,
     refetchGiacenzaById,
     refetchGiacenzaByVinoId,
+    // Performance optimizations
+    getWineById,
+    getWinesBySupplier,
+    getWinesByType,
+    winesMap,
     // Realtime status
     realtimeConnected: realtimeGiacenzeEnabled ? realtimeConnected : false,
     realtimeSubscribed: realtimeGiacenzeEnabled ? realtimeSubscribed : false

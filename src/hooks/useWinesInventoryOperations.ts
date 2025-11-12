@@ -16,6 +16,7 @@ interface UseWinesInventoryOperationsProps {
   refetchGiacenzaByVinoId: (vinoId: string) => Promise<any>;
   markUpdatePending: (id: string) => void;
   realtimeGiacenzeEnabled: boolean;
+  getWineById?: (id: string) => WineType | undefined; // Performance optimization
 }
 
 interface UseWinesInventoryOperationsReturn {
@@ -31,7 +32,8 @@ export const useWinesInventoryOperations = ({
   refetchGiacenzaById,
   refetchGiacenzaByVinoId,
   markUpdatePending,
-  realtimeGiacenzeEnabled
+  realtimeGiacenzeEnabled,
+  getWineById
 }: UseWinesInventoryOperationsProps): UseWinesInventoryOperationsReturn => {
 
   const updateWineInventory = useCallback(async (id: string, newInventory: number): Promise<boolean> => {
@@ -41,8 +43,8 @@ export const useWinesInventoryOperations = ({
         markUpdatePending(id);
       }
 
-      // Trova il wine corrente per ottenere giacenza_id e versione
-      const currentWine = wines.find(w => w.id === id);
+      // PERFORMANCE OPTIMIZATION: Usa lookup O(1) se disponibile, altrimenti fallback O(n)
+      const currentWine = getWineById ? getWineById(id) : wines.find(w => w.id === id);
       const currentVersion = currentWine?.inventoryVersion ?? 1;
       const giacenzaId = currentWine?.giacenza_id;
 
