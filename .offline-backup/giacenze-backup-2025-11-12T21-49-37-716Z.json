@@ -1,0 +1,1197 @@
+{
+  "timestamp": "2025-11-12T21:49:38.419Z",
+  "version": "1.0.0",
+  "source": "winenode-backup-giacenze",
+  "stats": {
+    "total_giacenze": 62,
+    "total_vini": 62,
+    "giacenze_zero": 2,
+    "giacenze_negative": 0,
+    "giacenze_alert": 7
+  },
+  "data": {
+    "giacenze": [
+      {
+        "id": "474fb6dd-192a-47d2-889f-6e3f8a1dd78b",
+        "vino_id": "02120ebf-5966-4214-a942-6bdaec75482d",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 6,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.786408+00:00",
+        "updated_at": "2025-11-12T21:21:44.786408+00:00",
+        "version": 1,
+        "vino_nome": "INSOGLIO DEL CINCHIALE",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "16653893-a823-498e-9905-21c13df27ea7",
+        "vino_id": "064e2094-7066-4c37-815c-f2e56f443b80",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 2,
+        "min_stock": 1,
+        "created_at": "2025-11-12T21:21:46.152632+00:00",
+        "updated_at": "2025-11-12T21:30:32.077337+00:00",
+        "version": 2,
+        "vino_nome": "PULIGNY MONTRACHET",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "c2f1a45c-a1ed-4bdf-84af-e842586329ef",
+        "vino_id": "08adc359-122a-4fa1-ae98-b4922ce62392",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 3,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.46553+00:00",
+        "updated_at": "2025-11-12T21:21:45.46553+00:00",
+        "version": 1,
+        "vino_nome": "MOSEL RIESLING ZEPPELIN",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "c7615ebe-8ba2-41f3-8b94-753a8823ce94",
+        "vino_id": "0daf74f8-b2b6-4167-b452-973b1c0c0a74",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 16,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:28:44.784+00:00",
+        "updated_at": "2025-11-12T21:28:44.870092+00:00",
+        "version": 1,
+        "vino_nome": "VERMENTINO LE BOZZE",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "5f278c85-c5a2-4770-b406-be378bc35041",
+        "vino_id": "187d3eb3-d8c9-499a-b775-77d09cab5a62",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 15,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.902897+00:00",
+        "updated_at": "2025-11-12T21:21:45.902897+00:00",
+        "version": 1,
+        "vino_nome": "PINOT NERO PATRICIA",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "05a2c90c-4b82-4d09-9a0c-910658df8eb5",
+        "vino_id": "1aee700f-f923-43c5-83a4-13cdfc167bc5",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 5,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.770829+00:00",
+        "updated_at": "2025-11-12T21:21:46.770829+00:00",
+        "version": 1,
+        "vino_nome": "TREBBIANO ABRUZZO DOC",
+        "vino_fornitore": "ANGELO TAMPIERI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "132f76e1-745a-43bf-893c-475d5afd1c31",
+        "vino_id": "1d883fec-19d4-4c3b-8c8c-94b3c9b11898",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 6,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.355217+00:00",
+        "updated_at": "2025-11-12T21:21:46.355217+00:00",
+        "version": 1,
+        "vino_nome": "SANGIOVESE BIANCO",
+        "vino_fornitore": "FRATTA MINORE",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "82809ffc-c626-48b0-9c90-d29f444b411a",
+        "vino_id": "1fd5bb29-e90d-4b60-80a2-2a988ef3bf7f",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 19,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.525573+00:00",
+        "updated_at": "2025-11-12T21:21:46.525573+00:00",
+        "version": 1,
+        "vino_nome": "SAUVIGNON VULCAIA",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "559c9f81-18aa-40e4-a877-aee7ae8c7b7e",
+        "vino_id": "200af461-6715-4ba3-b09d-7487e838afcf",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 4,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.659423+00:00",
+        "updated_at": "2025-11-12T21:21:45.659423+00:00",
+        "version": 1,
+        "vino_nome": "PECORINO ABRUZZO DOC",
+        "vino_fornitore": "ANGELO TAMPIERI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "96b4f654-21cb-4516-97b3-d4cb1984c890",
+        "vino_id": "224edd9d-dd8a-4ff0-8bd1-27286d329232",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 6,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.415088+00:00",
+        "updated_at": "2025-11-12T21:21:46.415088+00:00",
+        "version": 1,
+        "vino_nome": "SANGIOVESE RISERVA",
+        "vino_fornitore": "FRATTA MINORE",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "8d5272f0-06aa-42d0-b6ee-42178cab1dce",
+        "vino_id": "2bf098c1-e6bc-4ce1-90c5-9c10dc57de1a",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 16,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.522341+00:00",
+        "updated_at": "2025-11-12T21:21:45.522341+00:00",
+        "version": 1,
+        "vino_nome": "MULLER THURGAU PALAI",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "c2d62e51-c9a4-48da-8900-291ea8c32d8a",
+        "vino_id": "2ed7fd5c-d104-4b64-85f2-17fa0b2d48b8",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 57,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.857221+00:00",
+        "updated_at": "2025-11-12T21:21:44.857221+00:00",
+        "version": 1,
+        "vino_nome": "KERNER LAHN",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "009d85e5-2b92-4353-963e-ebce6f574e20",
+        "vino_id": "394e8eeb-2fa8-4e56-97c3-920cbd122d20",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 3,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.482341+00:00",
+        "updated_at": "2025-11-12T21:31:49.877015+00:00",
+        "version": 3,
+        "vino_nome": "AMARONE VALPOLICELLA",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "b6c159d6-da86-4483-b38a-3c2826707fcb",
+        "vino_id": "3e1d8562-f0d5-4822-b2a0-d03965533ed4",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 1,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.244437+00:00",
+        "updated_at": "2025-11-12T21:21:44.244437+00:00",
+        "version": 1,
+        "vino_nome": "DE SAINT GALL ROSÉ 1RE CRU",
+        "vino_fornitore": "ALTRO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "6fa466f0-4cd1-4465-b5e4-866852fda146",
+        "vino_id": "43214286-108b-468b-ac62-4be562ff8820",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 5,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:09:24.662+00:00",
+        "updated_at": "2025-11-12T21:21:43.324829+00:00",
+        "version": 6,
+        "vino_nome": "BOLGHERI RIUT HORA",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "f8a0171b-b59f-463d-8521-572268a52e2c",
+        "vino_id": "4acdd42c-f7ee-4284-97ea-b2fd7c724fe0",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 4,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.069072+00:00",
+        "updated_at": "2025-11-12T21:21:44.069072+00:00",
+        "version": 1,
+        "vino_nome": "CHIANTI CLASSICO",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "da6f5a44-b055-4880-b9ef-9b7d63506e32",
+        "vino_id": "4e51d4c6-e977-4f76-851f-2b57cf61cd3a",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 55,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.593243+00:00",
+        "updated_at": "2025-11-12T21:21:45.593243+00:00",
+        "version": 1,
+        "vino_nome": "NEGROAMARO ROSATO ROHESIA",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSATI"
+      },
+      {
+        "id": "d17c9f3c-e863-4f88-9792-94b9b695b747",
+        "vino_id": "532b0919-7904-4386-813c-a4f47594a639",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 22,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.952666+00:00",
+        "updated_at": "2025-11-12T21:21:43.952666+00:00",
+        "version": 1,
+        "vino_nome": "CHARDONNAY",
+        "vino_fornitore": "VARIGNANA",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "1b5659d9-97cf-49eb-909a-aa4cab1eb152",
+        "vino_id": "59971ec3-4202-4e29-814d-bc488bee0d32",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 3,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.615261+00:00",
+        "updated_at": "2025-11-12T21:21:43.615261+00:00",
+        "version": 1,
+        "vino_nome": "BRUNELLO DI MONTALCINO",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "0f326540-09ff-4b99-bf51-468cd7db53ca",
+        "vino_id": "5c06ecf7-58e8-44db-a49f-fe1789efeea5",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 11,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.358816+00:00",
+        "updated_at": "2025-11-12T21:21:44.358816+00:00",
+        "version": 1,
+        "vino_nome": "FLORENCE DUCHENE RÉSERVE",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "cb3274c7-6640-4636-addb-fac37a0d02ae",
+        "vino_id": "6c88a4c5-5d2c-4880-b0bd-391fc6921622",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 7,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.094023+00:00",
+        "updated_at": "2025-11-12T21:21:45.094023+00:00",
+        "version": 1,
+        "vino_nome": "LAMBRUSCO AMABILE",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "85de8baa-778a-4bd0-bb88-2988e3f4a2da",
+        "vino_id": "6f50a128-bf65-4831-8824-fecd502504fb",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 0,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.192129+00:00",
+        "updated_at": "2025-11-12T21:21:44.192129+00:00",
+        "version": 1,
+        "vino_nome": "DE SAINT GALL GRAN CRU MILLESIME",
+        "vino_fornitore": "ALTRO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "c71e6e33-ad0d-4fec-9791-17dbf4af45fe",
+        "vino_id": "7231d5bd-32d1-4971-bd56-b496d72242fb",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 14,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.614149+00:00",
+        "updated_at": "2025-11-12T21:21:44.614149+00:00",
+        "version": 1,
+        "vino_nome": "FRANCIACORTA ROSÉ MILLESIMATO",
+        "vino_fornitore": "BAIETTI DAVIDE",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "c6138ea8-1495-4a5f-b890-a9d5e0de7ef9",
+        "vino_id": "76f8a45a-6386-4512-b258-59d08ccdb8df",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 18,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.682002+00:00",
+        "updated_at": "2025-11-12T21:21:43.682002+00:00",
+        "version": 1,
+        "vino_nome": "BRUT ROSÉ METODO CLASSICO",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "ca43ddae-1482-4c6f-9135-816102086462",
+        "vino_id": "77823d87-5835-4850-8ac1-ada95d7aed83",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 33,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.888976+00:00",
+        "updated_at": "2025-11-12T21:21:46.888976+00:00",
+        "version": 1,
+        "vino_nome": "VALPOLICELLA RIPASSO SUPERIORE",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "aaa607b9-3ca7-45e7-8287-4ca582a5e812",
+        "vino_id": "778f94cd-b9c1-4113-87b7-c51236725a03",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 19,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.843697+00:00",
+        "updated_at": "2025-11-12T21:21:45.843697+00:00",
+        "version": 1,
+        "vino_nome": "PINOT GRIGIO",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "aa9e3c6f-b663-44c2-8fbd-fb3c3e3dc2fc",
+        "vino_id": "7c32c80a-7a51-492b-b30e-ce24aaf1c13b",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 6,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:09:16.841+00:00",
+        "updated_at": "2025-11-12T21:28:29.181307+00:00",
+        "version": 3,
+        "vino_nome": "BAROLO",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "89f7d1fb-26a9-4ae7-afdd-5ede7caf774d",
+        "vino_id": "876bb7bc-6b92-4f25-94e7-8cb7f2bb5ecd",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 3,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.125192+00:00",
+        "updated_at": "2025-11-12T21:21:44.125192+00:00",
+        "version": 1,
+        "vino_nome": "COTE D'OR BLANC",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "6f6a27bb-4f14-4c59-9ded-052be763f002",
+        "vino_id": "879009d8-76f0-47c3-84d7-b2f0b15753f6",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 2,
+        "min_stock": 1,
+        "created_at": "2025-11-12T21:09:19.887+00:00",
+        "updated_at": "2025-11-12T21:29:46.987743+00:00",
+        "version": 6,
+        "vino_nome": "BRUT ROSÉ MC MAGNUM",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "1aaa88c1-982d-4872-9436-a133dffafdc1",
+        "vino_id": "89b377e4-cd03-43bf-8938-f90b2e1396e0",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 56,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.718838+00:00",
+        "updated_at": "2025-11-12T21:21:45.718838+00:00",
+        "version": 1,
+        "vino_nome": "PIGNOLETTO BRUT BIO",
+        "vino_fornitore": "ISOLANI MARIA",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "9eca5f6a-65df-4e38-b36f-cd78e11ed2e6",
+        "vino_id": "8af4f4d5-5ddc-483f-b37f-166844610d70",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 3,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.022125+00:00",
+        "updated_at": "2025-11-12T21:21:46.022125+00:00",
+        "version": 1,
+        "vino_nome": "POL ROGER RÉSERVE MAGNUM",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "9073b239-4686-4fbf-a95a-894d4d479ea3",
+        "vino_id": "8d9310e4-6aa1-4ea7-ba14-d2361ee166d0",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 20,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.8287+00:00",
+        "updated_at": "2025-11-12T21:21:46.8287+00:00",
+        "version": 1,
+        "vino_nome": "TRENTO DOC BDB",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "4a3e76c4-9782-4773-bd9e-92ae75bfec22",
+        "vino_id": "93c9a771-8b47-494c-bb53-95ddfd6898ab",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 13,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.213899+00:00",
+        "updated_at": "2025-11-12T21:21:45.213899+00:00",
+        "version": 1,
+        "vino_nome": "LUGANA",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "6dc3da1e-45db-4013-ad25-8974be347667",
+        "vino_id": "94d21ecd-21da-4d95-a5c1-d6b6defd4ca8",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 8,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.39852+00:00",
+        "updated_at": "2025-11-12T21:21:45.39852+00:00",
+        "version": 1,
+        "vino_nome": "METODO CLASSICO BDB",
+        "vino_fornitore": "VARIGNANA",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "99814a00-8344-4b04-b269-206048381e26",
+        "vino_id": "977b0ec0-9c49-471f-aca3-5178546cde3a",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 11,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.553127+00:00",
+        "updated_at": "2025-11-12T21:21:43.553127+00:00",
+        "version": 1,
+        "vino_nome": "ARNEIS ROERO DOCG",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "bae11581-b06f-49ba-b83b-7e207bbde11f",
+        "vino_id": "9ae465e2-ab04-452f-81fc-b15a112c790e",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 2,
+        "min_stock": 1,
+        "created_at": "2025-11-12T21:28:59.784+00:00",
+        "updated_at": "2025-11-12T21:30:09.865542+00:00",
+        "version": 4,
+        "vino_nome": "LALLIER RÉFLEXION R019 MAGNUM",
+        "vino_fornitore": "IDROS ROCCO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "d863ed86-4205-4afb-b83a-57762362083a",
+        "vino_id": "9b46d880-40fb-48fe-b637-98c744ddf3a8",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 3,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.298355+00:00",
+        "updated_at": "2025-11-12T21:21:44.298355+00:00",
+        "version": 1,
+        "vino_nome": "DOM PERIGNON VINTAGE",
+        "vino_fornitore": "ALTRO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "a68c9198-8977-48c7-afc5-18954172090e",
+        "vino_id": "9c6382fc-9a07-402f-82ee-d0310b61a101",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 85,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.427357+00:00",
+        "updated_at": "2025-11-12T21:21:44.427357+00:00",
+        "version": 1,
+        "vino_nome": "FRANCIACORTA BRUT BDB",
+        "vino_fornitore": "BAIETTI DAVIDE",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "f804fdee-0f60-4abd-bfb2-2aa72f250dbc",
+        "vino_id": "a2735c56-6caa-43bc-9119-80f5fabf019f",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 2,
+        "min_stock": 1,
+        "created_at": "2025-11-12T21:21:46.078413+00:00",
+        "updated_at": "2025-11-12T21:30:30.017621+00:00",
+        "version": 2,
+        "vino_nome": "POMMARD CLOS BEAUDIER",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "6df880b5-1a24-4e3c-924f-932da01e39f0",
+        "vino_id": "ab515fac-04d8-4179-b164-3b554a65fc03",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 36,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.71703+00:00",
+        "updated_at": "2025-11-12T21:21:46.71703+00:00",
+        "version": 1,
+        "vino_nome": "SYRAH",
+        "vino_fornitore": "IDROS ROCCO",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "2ffaab20-c5bd-4df0-8115-46b9f745cf1f",
+        "vino_id": "ac45a78e-5dad-4a0f-935f-ec831100913f",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 2,
+        "min_stock": 1,
+        "created_at": "2025-11-12T21:21:44.556771+00:00",
+        "updated_at": "2025-11-12T21:29:59.932598+00:00",
+        "version": 2,
+        "vino_nome": "FRANCIACORTA  NATURE",
+        "vino_fornitore": "ANGELO TAMPIERI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "9731e8ff-4e64-4ec3-bfb8-6673fe0b5f8f",
+        "vino_id": "b8a9ce5d-d0cd-4921-a3c5-ff2ac51afccd",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 4,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.275156+00:00",
+        "updated_at": "2025-11-12T21:21:45.275156+00:00",
+        "version": 1,
+        "vino_nome": "MERLINO ROSSO FORTIFICATO",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "VINI DOLCI"
+      },
+      {
+        "id": "300139dd-dc4b-4eec-a9b1-e8d552f63301",
+        "vino_id": "b9e42bd0-ba91-4ab8-b65d-1f14ffa4d208",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 4,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.657008+00:00",
+        "updated_at": "2025-11-12T21:21:46.657008+00:00",
+        "version": 1,
+        "vino_nome": "SOAVE CLASSICO DOC",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "a293f988-5981-4100-8486-41b14df5e485",
+        "vino_id": "c5566911-5e8c-4cae-a8af-48f918b962d9",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 11,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.59494+00:00",
+        "updated_at": "2025-11-12T21:21:46.59494+00:00",
+        "version": 1,
+        "vino_nome": "SAUVIGNON VULCAIA FUMÉ",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "d6e419be-9b11-4f79-8616-55220d4a3c47",
+        "vino_id": "c6e05d4d-4754-4c84-b341-751d5e7b8b46",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 31,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.728189+00:00",
+        "updated_at": "2025-11-12T21:21:44.728189+00:00",
+        "version": 1,
+        "vino_nome": "GEWÜRZTRAMINER",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "955a087d-5c8f-426f-8704-6816fd501d58",
+        "vino_id": "c7a2c78e-15b3-476b-9f89-c98071be244a",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 0,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.671212+00:00",
+        "updated_at": "2025-11-12T21:21:44.671212+00:00",
+        "version": 1,
+        "vino_nome": "FRANCIACORTA SATÈN",
+        "vino_fornitore": "ANGELO TAMPIERI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "31c40301-8a59-42bc-a1b0-3871ff3a68a5",
+        "vino_id": "d0a0d884-ff22-4163-9953-56295f9a006e",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 1,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.494755+00:00",
+        "updated_at": "2025-11-12T21:21:44.494755+00:00",
+        "version": 1,
+        "vino_nome": "FRANCIACORTA BRUT MAGNUM",
+        "vino_fornitore": "BAIETTI DAVIDE",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "2becf8ed-5887-49cf-82c6-9efc061eee49",
+        "vino_id": "d136404b-c57b-4e5d-8773-05c31bbf914d",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 8,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.961031+00:00",
+        "updated_at": "2025-11-12T21:21:45.961031+00:00",
+        "version": 1,
+        "vino_nome": "POL ROGER RÉSERVE",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "e5ee1f75-f07a-4a33-a5ee-29d5ca45f76f",
+        "vino_id": "d411f8ce-373a-4ea3-afea-de82fea9081c",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 5,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.221867+00:00",
+        "updated_at": "2025-11-12T21:21:46.221867+00:00",
+        "version": 1,
+        "vino_nome": "ROSSO BOLOGNA RISERVA",
+        "vino_fornitore": "ISOLANI MARIA",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "d45b0dfa-8a2e-4fc3-91a7-881d947ef15e",
+        "vino_id": "d6119e9f-07ed-432a-ac9a-7de061c246b1",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 12,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.327884+00:00",
+        "updated_at": "2025-11-12T21:21:45.327884+00:00",
+        "version": 1,
+        "vino_nome": "MERLOT ETICHETTA NERA",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "f0af1f21-a9b1-4e7c-92ca-246ab93d294d",
+        "vino_id": "d9581b42-cc4e-4df5-ad7c-7a72e0c73455",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 29,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.823618+00:00",
+        "updated_at": "2025-11-12T21:21:43.823618+00:00",
+        "version": 1,
+        "vino_nome": "CHABLIS",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "80592668-0a16-4d38-8494-34604271f9d1",
+        "vino_id": "dbcd1bae-08a8-4fb8-8d87-b76fb9b09b59",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 1,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:29:06.911+00:00",
+        "updated_at": "2025-11-12T21:29:06.983838+00:00",
+        "version": 1,
+        "vino_nome": "LALLIER ROSE' BRUT",
+        "vino_fornitore": "IDROS ROCCO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "54e3dc3a-c51a-425c-a3e8-6d5be4cdddd1",
+        "vino_id": "de4a23c7-ecfb-4126-9f08-2ca76247dcde",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 4,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.781358+00:00",
+        "updated_at": "2025-11-12T21:21:45.781358+00:00",
+        "version": 1,
+        "vino_nome": "PINOT BIANCO PLATT & RIEGL",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "e7ccab39-b3da-4ee2-b062-cf48a98e4c28",
+        "vino_id": "dfaec83b-0737-438c-8da4-7a851869e2d7",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 4,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.010018+00:00",
+        "updated_at": "2025-11-12T21:21:44.010018+00:00",
+        "version": 1,
+        "vino_nome": "CHARDONNAY SCAPULIN",
+        "vino_fornitore": "ALTRO",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "43ba7714-38fd-4709-be71-8ee05df1566c",
+        "vino_id": "e9d8fc98-525d-417a-acea-37121f311e4b",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 39,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.469761+00:00",
+        "updated_at": "2025-11-12T21:21:46.469761+00:00",
+        "version": 1,
+        "vino_nome": "SANGIOVESE SUPERIORE",
+        "vino_fornitore": "FRATTA MINORE",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "7f2c0a82-dfdf-4031-9f56-14dda135a169",
+        "vino_id": "ef6c4150-4438-48f5-9034-33c9855636a6",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 41,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.974977+00:00",
+        "updated_at": "2025-11-12T21:29:38.30737+00:00",
+        "version": 3,
+        "vino_nome": "LALLIER RÉFLEXION R021",
+        "vino_fornitore": "IDROS ROCCO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "edebf311-5dec-4250-a644-130afd582ee9",
+        "vino_id": "f1a02770-871d-40c6-918b-8932a604ec5a",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 3,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.879831+00:00",
+        "updated_at": "2025-11-12T21:21:43.879831+00:00",
+        "version": 1,
+        "vino_nome": "CHABLIS 1ER CRU  COTE DE LECHET",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "ba7d17ee-fa9a-4abf-adb0-c6ae977c702c",
+        "vino_id": "f30ee78b-750f-40fe-9273-4bfaffb15377",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 15,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.286006+00:00",
+        "updated_at": "2025-11-12T21:21:46.286006+00:00",
+        "version": 1,
+        "vino_nome": "ROSSO VENETO  CARMENERE PIÙ",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "3a75e7f5-8a14-47cf-8458-eb7f4c980f29",
+        "vino_id": "f5aa1850-c2e2-4059-8d15-6c8a3b9be473",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 1,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:46.94312+00:00",
+        "updated_at": "2025-11-12T21:21:46.94312+00:00",
+        "version": 1,
+        "vino_nome": "WINSTON CHURCHILL",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "da4d3193-c824-4435-b992-cef42c1fbed5",
+        "vino_id": "f5f14d20-92ef-4c59-9b43-c82b8f5a2531",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 31,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:44.913906+00:00",
+        "updated_at": "2025-11-12T21:21:44.913906+00:00",
+        "version": 1,
+        "vino_nome": "LAGREIN RIEDER",
+        "vino_fornitore": "MAURO LOFFREDO",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "b5855e2d-7ecd-4adc-9d12-ee51b44a0c64",
+        "vino_id": "fbd8f472-7802-445d-aed0-7fa0416641b7",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 7,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:43.758729+00:00",
+        "updated_at": "2025-11-12T21:21:43.758729+00:00",
+        "version": 1,
+        "vino_nome": "CATARRATTO DOC",
+        "vino_fornitore": "IDROS ROCCO",
+        "vino_tipologia": "BIANCHI"
+      },
+      {
+        "id": "4d1f0589-b246-4069-9ec5-c06135ff6dab",
+        "vino_id": "fd8ddac7-33d4-4adc-9b58-508fe4517206",
+        "user_id": "00000000-0000-0000-0000-000000000001",
+        "giacenza": 2,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:21:45.153058+00:00",
+        "updated_at": "2025-11-12T21:21:45.153058+00:00",
+        "version": 1,
+        "vino_nome": "LAMBRUSCO SECCO",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      }
+    ],
+    "vini_context": [
+      {
+        "id": "394e8eeb-2fa8-4e56-97c3-920cbd122d20",
+        "nome_vino": "AMARONE VALPOLICELLA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "977b0ec0-9c49-471f-aca3-5178546cde3a",
+        "nome_vino": "ARNEIS ROERO DOCG",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "7c32c80a-7a51-492b-b30e-ce24aaf1c13b",
+        "nome_vino": "BAROLO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "43214286-108b-468b-ac62-4be562ff8820",
+        "nome_vino": "BOLGHERI RIUT HORA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "59971ec3-4202-4e29-814d-bc488bee0d32",
+        "nome_vino": "BRUNELLO DI MONTALCINO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "879009d8-76f0-47c3-84d7-b2f0b15753f6",
+        "nome_vino": "BRUT ROSÉ MC MAGNUM",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "76f8a45a-6386-4512-b258-59d08ccdb8df",
+        "nome_vino": "BRUT ROSÉ METODO CLASSICO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "fbd8f472-7802-445d-aed0-7fa0416641b7",
+        "nome_vino": "CATARRATTO DOC",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "d9581b42-cc4e-4df5-ad7c-7a72e0c73455",
+        "nome_vino": "CHABLIS",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "f1a02770-871d-40c6-918b-8932a604ec5a",
+        "nome_vino": "CHABLIS 1ER CRU  COTE DE LECHET",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "532b0919-7904-4386-813c-a4f47594a639",
+        "nome_vino": "CHARDONNAY",
+        "fornitore": "VARIGNANA",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "dfaec83b-0737-438c-8da4-7a851869e2d7",
+        "nome_vino": "CHARDONNAY SCAPULIN",
+        "fornitore": "ALTRO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "4acdd42c-f7ee-4284-97ea-b2fd7c724fe0",
+        "nome_vino": "CHIANTI CLASSICO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "876bb7bc-6b92-4f25-94e7-8cb7f2bb5ecd",
+        "nome_vino": "COTE D'OR BLANC",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "6f50a128-bf65-4831-8824-fecd502504fb",
+        "nome_vino": "DE SAINT GALL GRAN CRU MILLESIME",
+        "fornitore": "ALTRO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "3e1d8562-f0d5-4822-b2a0-d03965533ed4",
+        "nome_vino": "DE SAINT GALL ROSÉ 1RE CRU",
+        "fornitore": "ALTRO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "9b46d880-40fb-48fe-b637-98c744ddf3a8",
+        "nome_vino": "DOM PERIGNON VINTAGE",
+        "fornitore": "ALTRO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "5c06ecf7-58e8-44db-a49f-fe1789efeea5",
+        "nome_vino": "FLORENCE DUCHENE RÉSERVE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "ac45a78e-5dad-4a0f-935f-ec831100913f",
+        "nome_vino": "FRANCIACORTA  NATURE",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "9c6382fc-9a07-402f-82ee-d0310b61a101",
+        "nome_vino": "FRANCIACORTA BRUT BDB",
+        "fornitore": "BAIETTI DAVIDE",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "d0a0d884-ff22-4163-9953-56295f9a006e",
+        "nome_vino": "FRANCIACORTA BRUT MAGNUM",
+        "fornitore": "BAIETTI DAVIDE",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "7231d5bd-32d1-4971-bd56-b496d72242fb",
+        "nome_vino": "FRANCIACORTA ROSÉ MILLESIMATO",
+        "fornitore": "BAIETTI DAVIDE",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "c7a2c78e-15b3-476b-9f89-c98071be244a",
+        "nome_vino": "FRANCIACORTA SATÈN",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "c6e05d4d-4754-4c84-b341-751d5e7b8b46",
+        "nome_vino": "GEWÜRZTRAMINER",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "02120ebf-5966-4214-a942-6bdaec75482d",
+        "nome_vino": "INSOGLIO DEL CINCHIALE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "2ed7fd5c-d104-4b64-85f2-17fa0b2d48b8",
+        "nome_vino": "KERNER LAHN",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "f5f14d20-92ef-4c59-9b43-c82b8f5a2531",
+        "nome_vino": "LAGREIN RIEDER",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "9ae465e2-ab04-452f-81fc-b15a112c790e",
+        "nome_vino": "LALLIER RÉFLEXION R019 MAGNUM",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "ef6c4150-4438-48f5-9034-33c9855636a6",
+        "nome_vino": "LALLIER RÉFLEXION R021",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "dbcd1bae-08a8-4fb8-8d87-b76fb9b09b59",
+        "nome_vino": "LALLIER ROSE' BRUT",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "6c88a4c5-5d2c-4880-b0bd-391fc6921622",
+        "nome_vino": "LAMBRUSCO AMABILE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "fd8ddac7-33d4-4adc-9b58-508fe4517206",
+        "nome_vino": "LAMBRUSCO SECCO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "93c9a771-8b47-494c-bb53-95ddfd6898ab",
+        "nome_vino": "LUGANA",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "b8a9ce5d-d0cd-4921-a3c5-ff2ac51afccd",
+        "nome_vino": "MERLINO ROSSO FORTIFICATO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "VINI DOLCI"
+      },
+      {
+        "id": "d6119e9f-07ed-432a-ac9a-7de061c246b1",
+        "nome_vino": "MERLOT ETICHETTA NERA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "94d21ecd-21da-4d95-a5c1-d6b6defd4ca8",
+        "nome_vino": "METODO CLASSICO BDB",
+        "fornitore": "VARIGNANA",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "08adc359-122a-4fa1-ae98-b4922ce62392",
+        "nome_vino": "MOSEL RIESLING ZEPPELIN",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "2bf098c1-e6bc-4ce1-90c5-9c10dc57de1a",
+        "nome_vino": "MULLER THURGAU PALAI",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "4e51d4c6-e977-4f76-851f-2b57cf61cd3a",
+        "nome_vino": "NEGROAMARO ROSATO ROHESIA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSATI"
+      },
+      {
+        "id": "200af461-6715-4ba3-b09d-7487e838afcf",
+        "nome_vino": "PECORINO ABRUZZO DOC",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "89b377e4-cd03-43bf-8938-f90b2e1396e0",
+        "nome_vino": "PIGNOLETTO BRUT BIO",
+        "fornitore": "ISOLANI MARIA",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "de4a23c7-ecfb-4126-9f08-2ca76247dcde",
+        "nome_vino": "PINOT BIANCO PLATT & RIEGL",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "778f94cd-b9c1-4113-87b7-c51236725a03",
+        "nome_vino": "PINOT GRIGIO",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "187d3eb3-d8c9-499a-b775-77d09cab5a62",
+        "nome_vino": "PINOT NERO PATRICIA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "d136404b-c57b-4e5d-8773-05c31bbf914d",
+        "nome_vino": "POL ROGER RÉSERVE",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "8af4f4d5-5ddc-483f-b37f-166844610d70",
+        "nome_vino": "POL ROGER RÉSERVE MAGNUM",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "a2735c56-6caa-43bc-9119-80f5fabf019f",
+        "nome_vino": "POMMARD CLOS BEAUDIER",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "064e2094-7066-4c37-815c-f2e56f443b80",
+        "nome_vino": "PULIGNY MONTRACHET",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "d411f8ce-373a-4ea3-afea-de82fea9081c",
+        "nome_vino": "ROSSO BOLOGNA RISERVA",
+        "fornitore": "ISOLANI MARIA",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "f30ee78b-750f-40fe-9273-4bfaffb15377",
+        "nome_vino": "ROSSO VENETO  CARMENERE PIÙ",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "1d883fec-19d4-4c3b-8c8c-94b3c9b11898",
+        "nome_vino": "SANGIOVESE BIANCO",
+        "fornitore": "FRATTA MINORE",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "224edd9d-dd8a-4ff0-8bd1-27286d329232",
+        "nome_vino": "SANGIOVESE RISERVA",
+        "fornitore": "FRATTA MINORE",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "e9d8fc98-525d-417a-acea-37121f311e4b",
+        "nome_vino": "SANGIOVESE SUPERIORE",
+        "fornitore": "FRATTA MINORE",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "1fd5bb29-e90d-4b60-80a2-2a988ef3bf7f",
+        "nome_vino": "SAUVIGNON VULCAIA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "c5566911-5e8c-4cae-a8af-48f918b962d9",
+        "nome_vino": "SAUVIGNON VULCAIA FUMÉ",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "b9e42bd0-ba91-4ab8-b65d-1f14ffa4d208",
+        "nome_vino": "SOAVE CLASSICO DOC",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "ab515fac-04d8-4179-b164-3b554a65fc03",
+        "nome_vino": "SYRAH",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "1aee700f-f923-43c5-83a4-13cdfc167bc5",
+        "nome_vino": "TREBBIANO ABRUZZO DOC",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "8d9310e4-6aa1-4ea7-ba14-d2361ee166d0",
+        "nome_vino": "TRENTO DOC BDB",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "77823d87-5835-4850-8ac1-ada95d7aed83",
+        "nome_vino": "VALPOLICELLA RIPASSO SUPERIORE",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "0daf74f8-b2b6-4167-b452-973b1c0c0a74",
+        "nome_vino": "VERMENTINO LE BOZZE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "f5aa1850-c2e2-4059-8d15-6c8a3b9be473",
+        "nome_vino": "WINSTON CHURCHILL",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BOLLICINE FRANCESI"
+      }
+    ]
+  },
+  "checksum": "8ce7d27703a8bd11204cf9eb964fa366"
+}

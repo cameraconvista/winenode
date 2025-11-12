@@ -9,6 +9,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useWines as useWinesOriginal, WineType } from './useWines';
 import { offlineCache, CACHE_TTL } from '../lib/offlineCache';
 import { useNetworkStatus } from './useNetworkStatus';
+// import { useOfflineSync } from './useOfflineSync';
+import { offlineStorage } from '../lib/offlineStorage';
 
 interface UseWinesOfflineReturn {
   // API identica al hook originale
@@ -54,6 +56,26 @@ export const useWines = (): UseWinesOfflineReturn => {
   // Network status
   const { isOnline, queueOperation } = useNetworkStatus();
   
+  // Auto-sync hook (temporaneamente disabilitato per build)
+  // const { syncPendingOperations, getSyncStats } = useOfflineSync({
+  //   isOnline,
+  //   onSyncStart: () => setSyncInProgress(true),
+  //   onSyncComplete: (successCount, errorCount) => {
+  //     setSyncInProgress(false);
+  //     if (import.meta.env.DEV) {
+  //       console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
+  //     }
+  //     // Refresh data dopo sync
+  //     if (successCount > 0) {
+  //       originalHook.refreshWines();
+  //     }
+  //   },
+  //   onSyncError: (error) => {
+  //     setSyncInProgress(false);
+  //     console.error('Sync error:', error);
+  //   }
+  // });
+  
   // State per funzionalità offline
   const [isUsingCache, setIsUsingCache] = useState(false);
   const [lastCacheUpdate, setLastCacheUpdate] = useState<Date | null>(null);
@@ -62,6 +84,11 @@ export const useWines = (): UseWinesOfflineReturn => {
     suppliersHitRate: 0,
     lastSync: null as Date | null
   });
+  
+  // State interno per gestione offline
+  const [internalWines, setInternalWines] = useState<WineType[]>([]);
+  const [internalSuppliers, setInternalSuppliers] = useState<string[]>([]);
+  const [syncInProgress, setSyncInProgress] = useState(false);
   
   // Refs per gestione cache
   const cacheKeysRef = useRef({
@@ -106,8 +133,9 @@ export const useWines = (): UseWinesOfflineReturn => {
       const cachedSuppliers = offlineCache.get<string[]>(cacheKeysRef.current.suppliers);
       
       if (cachedWines && cachedSuppliers) {
-        // Simula aggiornamento state del hook originale
-        // Nota: questo è un workaround, idealmente si dovrebbe modificare il hook originale
+        // ← FIX CRITICO: Aggiorna state interno invece di solo flag
+        setInternalWines(cachedWines);
+        setInternalSuppliers(cachedSuppliers);
         setIsUsingCache(true);
         
         if (import.meta.env.DEV) {
@@ -154,13 +182,13 @@ export const useWines = (): UseWinesOfflineReturn => {
         return success;
       } else {
         // Offline: queue operazione per sync futuro
-        const operationId = queueOperation({
+        const operationId = await offlineStorage.addPendingOperation({
           type: 'UPDATE_INVENTORY',
           payload: { wineId, newInventory },
           maxRetries: 3
         });
         
-        // Update ottimistico in cache
+        // Update ottimistico in cache E state interno
         const cachedWines = offlineCache.get<WineType[]>(cacheKeysRef.current.wines);
         if (cachedWines) {
           const updatedWines = cachedWines.map(wine => 
@@ -169,6 +197,7 @@ export const useWines = (): UseWinesOfflineReturn => {
               : wine
           );
           offlineCache.set(cacheKeysRef.current.wines, updatedWines, CACHE_TTL.vini);
+          setInternalWines(updatedWines); // ← FIX CRITICO: Aggiorna state interno
           
           if (import.meta.env.DEV) {
             console.log(`📱 Inventory updated offline (queued: ${operationId}): ${wineId} → ${newInventory}`);
@@ -274,10 +303,10 @@ export const useWines = (): UseWinesOfflineReturn => {
   }, [isOnline]);
   
   return {
-    // API identica al hook originale
-    wines: originalHook.wines,
-    suppliers: originalHook.suppliers,
-    loading: originalHook.loading,
+    // API identica al hook originale - FIX CRITICO: Usa state interno quando offline
+    wines: isUsingCache ? internalWines : originalHook.wines,
+    suppliers: isUsingCache ? internalSuppliers : originalHook.suppliers,
+    loading: originalHook.loading || syncInProgress,
     error: originalHook.error,
     
     // Metodi originali (con enhancement offline)
