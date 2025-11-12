@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useWines } from '../../hooks/useWines';
+import { useWines } from '../../hooks/useWinesOffline'; // FIX: Ripristino hook offline
 import { useCarrelloOrdini } from '../../hooks/useCarrelloOrdini';
 import { useNuovoOrdine } from '../../hooks/useNuovoOrdine';
 import { useOrdersPinGate } from '../../hooks/useOrdersPinGate';

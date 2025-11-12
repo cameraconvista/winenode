@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Minus, Plus } from 'lucide-react';
 import PhosphorBell from '~icons/ph/bell-light';
-import { useWines } from '../hooks/useWines';
+import { useWines } from '../hooks/useWinesOffline'; // FIX: Ripristino hook offline
 import { useCreaOrdine } from '../hooks/useCreaOrdine';
 
 export default function CreaOrdinePage() {
