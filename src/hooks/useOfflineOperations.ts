@@ -78,18 +78,33 @@ export const useOfflineOperations = ({
         });
         
         // Update ottimistico in cache E state interno
-        const cachedWines = offlineCache.get<WineType[]>(cacheKeys.wines);
-        if (cachedWines) {
+        let cachedWines = offlineCache.get<WineType[]>(cacheKeys.wines);
+        
+        // FIX CRITICO: Se cache vuota, usa internalWines come fallback
+        if (!cachedWines || cachedWines.length === 0) {
+          cachedWines = internalWines;
+          if (import.meta.env.DEV) {
+            console.log(`Cache empty, using internalWines as fallback (${cachedWines.length} items)`);
+          }
+        }
+        
+        if (cachedWines && cachedWines.length > 0) {
           const updatedWines = cachedWines.map(wine => 
             wine.id === wineId 
               ? { ...wine, inventory: newInventory }
               : wine
           );
+          
+          // Aggiorna sia cache che state interno
           offlineCache.set(cacheKeys.wines, updatedWines, CACHE_TTL.vini);
-          setInternalWines(updatedWines); // ← FIX CRITICO: Aggiorna state interno
+          setInternalWines(updatedWines);
           
           if (import.meta.env.DEV) {
             console.log(`Inventory updated offline (queued: ${operationId}): ${wineId} -> ${newInventory}`);
+          }
+        } else {
+          if (import.meta.env.DEV) {
+            console.warn(`Cannot update offline: no wines data available for ${wineId}`);
           }
         }
         

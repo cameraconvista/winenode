@@ -72,10 +72,10 @@ export const useWines = (): UseWinesOfflineReturn => {
     originalRefreshWines: originalHook.refreshWines
   });
   
-  // Hook per operazioni offline
+  // Hook per operazioni offline - FIX: Usa versione sincrona per evitare conflitto con optimistic UI
   const operationsHook = useOfflineOperations({
     isOnline,
-    originalUpdateWineInventory: originalHook.updateWineInventory,
+    originalUpdateWineInventory: originalHook.updateWineInventorySync, // FIX: Usa versione sincrona
     internalWines: cacheHook.internalWines,
     setInternalWines: cacheHook.setInternalWines
   });
@@ -140,6 +140,17 @@ export const useWines = (): UseWinesOfflineReturn => {
     };
   }, [isOnline, cacheHook.isUsingCache, syncPendingOperations]);
   
+  // Sincronizza internalWines con originalWines quando disponibili
+  useEffect(() => {
+    if (originalHook.wines.length > 0 && cacheHook.internalWines.length === 0) {
+      if (import.meta.env.DEV) {
+        console.log(`Initializing internalWines with ${originalHook.wines.length} items`);
+      }
+      cacheHook.setInternalWines(originalHook.wines);
+      cacheHook.setInternalSuppliers(originalHook.suppliers);
+    }
+  }, [originalHook.wines, originalHook.suppliers, cacheHook]);
+
   // Determina se stiamo usando dati cached
   useEffect(() => {
     if (!isOnline) {
