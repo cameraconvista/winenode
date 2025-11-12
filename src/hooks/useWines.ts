@@ -44,6 +44,39 @@ const useWines = () => {
     }
   }, []); // Solo al mount
 
+  // AUTO-CREAZIONE RECORD GIACENZA: Garantisce che ogni vino abbia un record giacenza
+  const ensureGiacenzaRecords = async (wines: WineType[]) => {
+    try {
+      const winesWithoutGiacenza = wines.filter(w => !w.giacenza_id);
+      
+      if (winesWithoutGiacenza.length > 0) {
+        if (import.meta.env.DEV) {
+          console.log(`🔧 Creando ${winesWithoutGiacenza.length} record giacenza mancanti`);
+        }
+        
+        const newRecords = winesWithoutGiacenza.map(wine => ({
+          vino_id: wine.id,
+          giacenza: wine.inventory || 0,  // Preserva valore corrente
+          min_stock: 2,
+          version: 1,
+          user_id: '00000000-0000-0000-0000-000000000001' // Service user ID
+        }));
+        
+        const { error } = await supabase
+          .from('giacenza')
+          .insert(newRecords);
+        
+        if (error) {
+          console.warn('⚠️ Errore creazione record giacenza:', error);
+        } else if (import.meta.env.DEV) {
+          console.log(`✅ Creati ${newRecords.length} record giacenza`);
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Errore in ensureGiacenzaRecords:', error);
+    }
+  };
+
   const fetchWines = async () => {
     setLoading(true);
     try {
@@ -60,6 +93,8 @@ const useWines = () => {
 
       const mappedWines: WineType[] = (viniData || []).map((wine: any) => {
         const g = giacenzeMap.get(wine.id);
+        // FIX RESET GIACENZE: Preserva valore esistente in memoria se non c'è record giacenza
+        const currentWine = wines.find(w => w.id === wine.id);
         return {
           id: wine.id,
           name: wine.nome_vino || '',
@@ -68,7 +103,7 @@ const useWines = () => {
             !wine.fornitore.toLowerCase().includes('non specif') &&
             wine.fornitore.toLowerCase() !== 'non specificato') 
             ? wine.fornitore : '',
-          inventory: g?.giacenza ?? 0,
+          inventory: g?.giacenza ?? (currentWine?.inventory || 0),
           minStock: g?.min_stock ?? 2,
           price: wine.vendita?.toString() || '',
           cost: wine.costo || 0,
@@ -83,6 +118,10 @@ const useWines = () => {
       });
 
       const uniqueSuppliers = [...new Set(mappedWines.map(w => w.supplier).filter(Boolean))].sort();
+      
+      // AUTO-CREAZIONE RECORD GIACENZA: Garantisce che ogni vino abbia un record giacenza
+      await ensureGiacenzaRecords(mappedWines);
+      
       setWines(mappedWines);
       setSuppliers(uniqueSuppliers);
       setError(null);

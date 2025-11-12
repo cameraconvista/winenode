@@ -7,6 +7,9 @@ import './index.css'
 // Web Vitals monitoring (solo produzione, non impatta bundle)
 import { initWebVitals } from './monitoring/webVitals'
 
+// Offline functionality integration (non invasivo)
+import { initializeOfflineFeatures } from './lib/offlineIntegration'
+
 // Gestione errori globali
 window.addEventListener('error', (event) => {
   console.error('Errore globale:', event.error)
@@ -27,14 +30,16 @@ ReactDOM.createRoot(root).render(
   </BrowserRouter>
 )
 
-// Inizializza Web Vitals dopo il render (non blocca startup)
+// Inizializza Web Vitals e funzionalità offline dopo il render (non blocca startup)
 // Usa requestIdleCallback se disponibile, altrimenti setTimeout
 if ('requestIdleCallback' in window) {
   requestIdleCallback(() => {
     initWebVitals();
+    initializeOfflineFeatures();
   });
 } else {
   setTimeout(() => {
     initWebVitals();
+    initializeOfflineFeatures();
   }, 100);
 }

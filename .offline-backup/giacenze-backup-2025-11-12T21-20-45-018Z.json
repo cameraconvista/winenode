@@ -1,0 +1,430 @@
+{
+  "timestamp": "2025-11-12T21:20:45.258Z",
+  "version": "1.0.0",
+  "source": "winenode-backup-giacenze",
+  "stats": {
+    "total_giacenze": 3,
+    "total_vini": 62,
+    "giacenze_zero": 1,
+    "giacenze_negative": 0,
+    "giacenze_alert": 2
+  },
+  "data": {
+    "giacenze": [
+      {
+        "id": "6fa466f0-4cd1-4465-b5e4-866852fda146",
+        "vino_id": "43214286-108b-468b-ac62-4be562ff8820",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 5,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:09:24.662+00:00",
+        "updated_at": "2025-11-12T21:20:31.051404+00:00",
+        "version": 5,
+        "vino_nome": "BOLGHERI RIUT HORA",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "aa9e3c6f-b663-44c2-8fbd-fb3c3e3dc2fc",
+        "vino_id": "7c32c80a-7a51-492b-b30e-ce24aaf1c13b",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 0,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:09:16.841+00:00",
+        "updated_at": "2025-11-12T21:19:23.086698+00:00",
+        "version": 2,
+        "vino_nome": "BAROLO",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "ROSSI"
+      },
+      {
+        "id": "6f6a27bb-4f14-4c59-9ded-052be763f002",
+        "vino_id": "879009d8-76f0-47c3-84d7-b2f0b15753f6",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "giacenza": 2,
+        "min_stock": 2,
+        "created_at": "2025-11-12T21:09:19.887+00:00",
+        "updated_at": "2025-11-12T21:20:31.145145+00:00",
+        "version": 4,
+        "vino_nome": "BRUT ROSÉ MC MAGNUM",
+        "vino_fornitore": "MICHELE ZANNI",
+        "vino_tipologia": "BOLLICINE ITALIANE"
+      }
+    ],
+    "vini_context": [
+      {
+        "id": "394e8eeb-2fa8-4e56-97c3-920cbd122d20",
+        "nome_vino": "AMARONE VALPOLICELLA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "977b0ec0-9c49-471f-aca3-5178546cde3a",
+        "nome_vino": "ARNEIS ROERO DOCG",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "7c32c80a-7a51-492b-b30e-ce24aaf1c13b",
+        "nome_vino": "BAROLO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "43214286-108b-468b-ac62-4be562ff8820",
+        "nome_vino": "BOLGHERI RIUT HORA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "59971ec3-4202-4e29-814d-bc488bee0d32",
+        "nome_vino": "BRUNELLO DI MONTALCINO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "879009d8-76f0-47c3-84d7-b2f0b15753f6",
+        "nome_vino": "BRUT ROSÉ MC MAGNUM",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "76f8a45a-6386-4512-b258-59d08ccdb8df",
+        "nome_vino": "BRUT ROSÉ METODO CLASSICO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "fbd8f472-7802-445d-aed0-7fa0416641b7",
+        "nome_vino": "CATARRATTO DOC",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "d9581b42-cc4e-4df5-ad7c-7a72e0c73455",
+        "nome_vino": "CHABLIS",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "f1a02770-871d-40c6-918b-8932a604ec5a",
+        "nome_vino": "CHABLIS 1ER CRU  COTE DE LECHET",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "532b0919-7904-4386-813c-a4f47594a639",
+        "nome_vino": "CHARDONNAY",
+        "fornitore": "VARIGNANA",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "dfaec83b-0737-438c-8da4-7a851869e2d7",
+        "nome_vino": "CHARDONNAY SCAPULIN",
+        "fornitore": "ALTRO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "4acdd42c-f7ee-4284-97ea-b2fd7c724fe0",
+        "nome_vino": "CHIANTI CLASSICO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "876bb7bc-6b92-4f25-94e7-8cb7f2bb5ecd",
+        "nome_vino": "COTE D'OR BLANC",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "6f50a128-bf65-4831-8824-fecd502504fb",
+        "nome_vino": "DE SAINT GALL GRAN CRU MILLESIME",
+        "fornitore": "ALTRO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "3e1d8562-f0d5-4822-b2a0-d03965533ed4",
+        "nome_vino": "DE SAINT GALL ROSÉ 1RE CRU",
+        "fornitore": "ALTRO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "9b46d880-40fb-48fe-b637-98c744ddf3a8",
+        "nome_vino": "DOM PERIGNON VINTAGE",
+        "fornitore": "ALTRO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "5c06ecf7-58e8-44db-a49f-fe1789efeea5",
+        "nome_vino": "FLORENCE DUCHENE RÉSERVE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "ac45a78e-5dad-4a0f-935f-ec831100913f",
+        "nome_vino": "FRANCIACORTA  NATURE",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "9c6382fc-9a07-402f-82ee-d0310b61a101",
+        "nome_vino": "FRANCIACORTA BRUT BDB",
+        "fornitore": "BAIETTI DAVIDE",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "d0a0d884-ff22-4163-9953-56295f9a006e",
+        "nome_vino": "FRANCIACORTA BRUT MAGNUM",
+        "fornitore": "BAIETTI DAVIDE",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "7231d5bd-32d1-4971-bd56-b496d72242fb",
+        "nome_vino": "FRANCIACORTA ROSÉ MILLESIMATO",
+        "fornitore": "BAIETTI DAVIDE",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "c7a2c78e-15b3-476b-9f89-c98071be244a",
+        "nome_vino": "FRANCIACORTA SATÈN",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "c6e05d4d-4754-4c84-b341-751d5e7b8b46",
+        "nome_vino": "GEWÜRZTRAMINER",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "02120ebf-5966-4214-a942-6bdaec75482d",
+        "nome_vino": "INSOGLIO DEL CINCHIALE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "2ed7fd5c-d104-4b64-85f2-17fa0b2d48b8",
+        "nome_vino": "KERNER LAHN",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "f5f14d20-92ef-4c59-9b43-c82b8f5a2531",
+        "nome_vino": "LAGREIN RIEDER",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "9ae465e2-ab04-452f-81fc-b15a112c790e",
+        "nome_vino": "LALLIER RÉFLEXION R019 MAGNUM",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "ef6c4150-4438-48f5-9034-33c9855636a6",
+        "nome_vino": "LALLIER RÉFLEXION R021",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "dbcd1bae-08a8-4fb8-8d87-b76fb9b09b59",
+        "nome_vino": "LALLIER ROSE' BRUT",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "6c88a4c5-5d2c-4880-b0bd-391fc6921622",
+        "nome_vino": "LAMBRUSCO AMABILE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "fd8ddac7-33d4-4adc-9b58-508fe4517206",
+        "nome_vino": "LAMBRUSCO SECCO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "93c9a771-8b47-494c-bb53-95ddfd6898ab",
+        "nome_vino": "LUGANA",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "b8a9ce5d-d0cd-4921-a3c5-ff2ac51afccd",
+        "nome_vino": "MERLINO ROSSO FORTIFICATO",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "VINI DOLCI"
+      },
+      {
+        "id": "d6119e9f-07ed-432a-ac9a-7de061c246b1",
+        "nome_vino": "MERLOT ETICHETTA NERA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "94d21ecd-21da-4d95-a5c1-d6b6defd4ca8",
+        "nome_vino": "METODO CLASSICO BDB",
+        "fornitore": "VARIGNANA",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "08adc359-122a-4fa1-ae98-b4922ce62392",
+        "nome_vino": "MOSEL RIESLING ZEPPELIN",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "2bf098c1-e6bc-4ce1-90c5-9c10dc57de1a",
+        "nome_vino": "MULLER THURGAU PALAI",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "4e51d4c6-e977-4f76-851f-2b57cf61cd3a",
+        "nome_vino": "NEGROAMARO ROSATO ROHESIA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSATI"
+      },
+      {
+        "id": "200af461-6715-4ba3-b09d-7487e838afcf",
+        "nome_vino": "PECORINO ABRUZZO DOC",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "89b377e4-cd03-43bf-8938-f90b2e1396e0",
+        "nome_vino": "PIGNOLETTO BRUT BIO",
+        "fornitore": "ISOLANI MARIA",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "de4a23c7-ecfb-4126-9f08-2ca76247dcde",
+        "nome_vino": "PINOT BIANCO PLATT & RIEGL",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "778f94cd-b9c1-4113-87b7-c51236725a03",
+        "nome_vino": "PINOT GRIGIO",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "187d3eb3-d8c9-499a-b775-77d09cab5a62",
+        "nome_vino": "PINOT NERO PATRICIA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "d136404b-c57b-4e5d-8773-05c31bbf914d",
+        "nome_vino": "POL ROGER RÉSERVE",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "8af4f4d5-5ddc-483f-b37f-166844610d70",
+        "nome_vino": "POL ROGER RÉSERVE MAGNUM",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BOLLICINE FRANCESI"
+      },
+      {
+        "id": "a2735c56-6caa-43bc-9119-80f5fabf019f",
+        "nome_vino": "POMMARD CLOS BEAUDIER",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "064e2094-7066-4c37-815c-f2e56f443b80",
+        "nome_vino": "PULIGNY MONTRACHET",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "d411f8ce-373a-4ea3-afea-de82fea9081c",
+        "nome_vino": "ROSSO BOLOGNA RISERVA",
+        "fornitore": "ISOLANI MARIA",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "f30ee78b-750f-40fe-9273-4bfaffb15377",
+        "nome_vino": "ROSSO VENETO  CARMENERE PIÙ",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "1d883fec-19d4-4c3b-8c8c-94b3c9b11898",
+        "nome_vino": "SANGIOVESE BIANCO",
+        "fornitore": "FRATTA MINORE",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "224edd9d-dd8a-4ff0-8bd1-27286d329232",
+        "nome_vino": "SANGIOVESE RISERVA",
+        "fornitore": "FRATTA MINORE",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "e9d8fc98-525d-417a-acea-37121f311e4b",
+        "nome_vino": "SANGIOVESE SUPERIORE",
+        "fornitore": "FRATTA MINORE",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "1fd5bb29-e90d-4b60-80a2-2a988ef3bf7f",
+        "nome_vino": "SAUVIGNON VULCAIA",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "c5566911-5e8c-4cae-a8af-48f918b962d9",
+        "nome_vino": "SAUVIGNON VULCAIA FUMÉ",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "b9e42bd0-ba91-4ab8-b65d-1f14ffa4d208",
+        "nome_vino": "SOAVE CLASSICO DOC",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "ab515fac-04d8-4179-b164-3b554a65fc03",
+        "nome_vino": "SYRAH",
+        "fornitore": "IDROS ROCCO",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "1aee700f-f923-43c5-83a4-13cdfc167bc5",
+        "nome_vino": "TREBBIANO ABRUZZO DOC",
+        "fornitore": "ANGELO TAMPIERI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "8d9310e4-6aa1-4ea7-ba14-d2361ee166d0",
+        "nome_vino": "TRENTO DOC BDB",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BOLLICINE ITALIANE"
+      },
+      {
+        "id": "77823d87-5835-4850-8ac1-ada95d7aed83",
+        "nome_vino": "VALPOLICELLA RIPASSO SUPERIORE",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "ROSSI"
+      },
+      {
+        "id": "0daf74f8-b2b6-4167-b452-973b1c0c0a74",
+        "nome_vino": "VERMENTINO LE BOZZE",
+        "fornitore": "MICHELE ZANNI",
+        "tipologia": "BIANCHI"
+      },
+      {
+        "id": "f5aa1850-c2e2-4059-8d15-6c8a3b9be473",
+        "nome_vino": "WINSTON CHURCHILL",
+        "fornitore": "MAURO LOFFREDO",
+        "tipologia": "BOLLICINE FRANCESI"
+      }
+    ]
+  },
+  "checksum": "3e76f549b724d88f6c829c6e4e157f59"
+}

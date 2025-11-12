@@ -20,6 +20,7 @@
     "smart-backup": "node scripts/smart-backup.js",
     "backup:list": "node scripts/backup-system.js list",
     "backup:restore": "node scripts/backup-system.js restore",
+    "backup:giacenze": "node scripts/backup-giacenze.js",
     "restore-confirm": "node scripts/backup-system.js restore-confirm",
     "recovery": "node scripts/recovery-system.cjs",
     "recovery:save": "node scripts/recovery-system.cjs save",

@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-11-12T20:57:06.545Z",
+  "snapshotId": "recovery-2025-11-12T20-57-06-541Z",
+  "branch": "main",
+  "lastCommit": "d9657fe0e67b69afc53535706e55e92f11a6c98c feat: UI improvements - removed giacenza/prezzo from modal, extended search to producer, changed text colors to dark red",
+  "modifiedFiles": [
+    "package.json",
+    ".offline-backup/",
+    "DOCS/ANALISI_OFFLINE_DIAGNOSTICA.md",
+    "DOCS/PIANO_IMPLEMENTAZIONE_OFFLINE_FINALE.md",
+    "scripts/backup-giacenze.js"
+  ],
+  "activeTask": "Task generico",
+  "reports": []
+}

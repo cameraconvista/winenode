@@ -1,9 +1,18 @@
 /* eslint-env serviceworker */
 /* eslint-disable no-console */
 
-// STEP 3 - Service Worker per cache busting realtime fix
-const CACHE_VERSION = 'wn-rt-202510030022'; // Incrementa per invalidare cache
+// OFFLINE-READY Service Worker - WINENODE
+const CACHE_VERSION = 'wn-offline-20251112'; // Incrementa per invalidare cache
 const CACHE_NAME = `winenode-cache-${CACHE_VERSION}`;
+const OFFLINE_CACHE = `winenode-offline-${CACHE_VERSION}`;
+
+// Assets da cachare per funzionamento offline
+const OFFLINE_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  // Assets statici verranno aggiunti dinamicamente
+];
 
 // Installa nuovo service worker immediatamente
 self.addEventListener('install', (event) => {

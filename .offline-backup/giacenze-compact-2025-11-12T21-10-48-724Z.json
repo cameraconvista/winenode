@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-11-12T21:10:48.968Z",
+  "checksum": "e1d16afc6d03ea7d27662b70c4a2239d",
+  "giacenze": [
+    {
+      "vino_id": "43214286-108b-468b-ac62-4be562ff8820",
+      "giacenza": 6,
+      "min_stock": 2,
+      "version": 1
+    },
+    {
+      "vino_id": "7c32c80a-7a51-492b-b30e-ce24aaf1c13b",
+      "giacenza": 4,
+      "min_stock": 2,
+      "version": 1
+    },
+    {
+      "vino_id": "879009d8-76f0-47c3-84d7-b2f0b15753f6",
+      "giacenza": 5,
+      "min_stock": 2,
+      "version": 1
+    }
+  ]
+}
