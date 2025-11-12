@@ -1,5 +1,5 @@
 import React from 'react';
-import useWines from '../../hooks/useWines';
+import { useWines } from '../../hooks/useWinesOffline';
 
 import { useManualInsertState } from './hooks/useManualInsertState';
 import { useManualInsertSelectors } from './hooks/useManualInsertSelectors';

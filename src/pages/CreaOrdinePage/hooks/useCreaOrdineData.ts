@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import useWines from '../../../hooks/useWines';
+import { useWines } from '../../../hooks/useWinesOffline';
 import { useCreaOrdine } from '../../../hooks/useCreaOrdine';
 
 export const useCreaOrdineData = () => {

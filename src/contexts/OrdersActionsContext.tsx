@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useCallback, useState, ReactNode, useMemo, useRef } from 'react';
 import { useSupabaseOrdini } from '../hooks/useSupabaseOrdini';
 import { isFeatureEnabled } from '../config/featureFlags';
-import useWines from '../hooks/useWines';
+import { useWines } from '../hooks/useWinesOffline';
 import { Ordine, OrdineDettaglio } from '../types/orders';
 import { useOrdersData } from './OrdersDataContext';
 

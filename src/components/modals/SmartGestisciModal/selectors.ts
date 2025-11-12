@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { DettaglioOrdine } from './types';
-import useWines from '../../../hooks/useWines';
+import { useWines } from '../../../hooks/useWinesOffline';
 
 // Hook per calcolare totale confermato
 export function useTotalConfermato(dettagli: DettaglioOrdine[], modifiedQuantities: Record<number, number>) {
