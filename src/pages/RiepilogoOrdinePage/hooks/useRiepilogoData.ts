@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useWines } from '../../../hooks/useWinesOffline';
+import { useWines } from '../../../hooks/useWines';
 import { LocationState, OrdineDetail, RiepilogoData } from '../types';
 import { OrderDetail } from '../../../utils/buildWhatsAppMessage';
 

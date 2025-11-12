@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Ordine } from '../../services/ordiniService';
 import { isFeatureEnabled } from '../../config/featureFlags';
 import { useSupabaseOrdini } from '../../hooks/useSupabaseOrdini';
-import { useWines } from '../../hooks/useWinesOffline';
+import { useWines } from '../../hooks/useWines';
 import { useOrdersData } from '../orders/OrdersDataContext';
 import { useQuantityManagement } from '../orders/QuantityManagementContext';
 import { useOrdersActionsState } from './OrdersActionsState';
