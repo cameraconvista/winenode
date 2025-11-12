@@ -29,6 +29,7 @@ export const useOfflineSync = ({
 }: UseOfflineSyncProps): UseOfflineSyncReturn => {
   
   const syncInProgressRef = useRef(false);
+  const lastSyncTimeRef = useRef<number>(0);
 
   /**
    * Esegue singola operazione Supabase
@@ -90,9 +91,14 @@ export const useOfflineSync = ({
    * Sincronizza tutte le operazioni pending
    */
   const syncPendingOperations = useCallback(async (): Promise<void> => {
-    if (!isOnline || syncInProgressRef.current) {
+    const now = Date.now();
+    const minInterval = 10000; // Minimo 10 secondi tra sync
+    
+    if (!isOnline || syncInProgressRef.current || (now - lastSyncTimeRef.current) < minInterval) {
       return;
     }
+    
+    lastSyncTimeRef.current = now;
 
     syncInProgressRef.current = true;
     onSyncStart?.();
@@ -174,17 +180,7 @@ export const useOfflineSync = ({
     return await offlineStorage.getStats();
   }, []);
 
-  // Auto-sync quando torna online
-  useEffect(() => {
-    if (isOnline && !syncInProgressRef.current) {
-      // Aspetta 2 secondi per stabilizzare connessione
-      const timeout = setTimeout(() => {
-        syncPendingOperations();
-      }, 2000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [isOnline, syncPendingOperations]);
+  // Auto-sync rimosso - gestito da useWinesOffline per evitare duplicazione
 
   return {
     syncPendingOperations,

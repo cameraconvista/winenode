@@ -56,24 +56,39 @@ export const useWines = (): UseWinesOfflineReturn => {
   // Network status
   const { isOnline, queueOperation } = useNetworkStatus();
   
-  // Auto-sync hook
+  // Refs per stabilizzare callbacks e evitare loop infinito
+  const refreshWinesRef = useRef(originalHook.refreshWines);
+  refreshWinesRef.current = originalHook.refreshWines;
+  
+  // Callbacks stabilizzati con useCallback
+  const onSyncStart = useCallback(() => {
+    setSyncInProgress(true);
+  }, []);
+  
+  const onSyncComplete = useCallback((successCount: number, errorCount: number) => {
+    setSyncInProgress(false);
+    if (import.meta.env.DEV) {
+      console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
+    }
+    // Refresh data dopo sync - usando ref per evitare dependency loop
+    if (successCount > 0) {
+      setTimeout(() => {
+        refreshWinesRef.current();
+      }, 100); // Piccolo delay per evitare race conditions
+    }
+  }, []);
+  
+  const onSyncError = useCallback((error: Error) => {
+    setSyncInProgress(false);
+    console.error('Sync error:', error);
+  }, []);
+
+  // Auto-sync hook con callbacks stabilizzati
   const { syncPendingOperations, getSyncStats } = useOfflineSync({
     isOnline,
-    onSyncStart: () => setSyncInProgress(true),
-    onSyncComplete: (successCount, errorCount) => {
-      setSyncInProgress(false);
-      if (import.meta.env.DEV) {
-        console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
-      }
-      // Refresh data dopo sync
-      if (successCount > 0) {
-        originalHook.refreshWines();
-      }
-    },
-    onSyncError: (error) => {
-      setSyncInProgress(false);
-      console.error('Sync error:', error);
-    }
+    onSyncStart,
+    onSyncComplete,
+    onSyncError
   });
   
   // State per funzionalità offline
@@ -282,17 +297,31 @@ export const useWines = (): UseWinesOfflineReturn => {
     return () => clearInterval(interval);
   }, [lastCacheUpdate]);
   
-  // Effect per gestione cambio stato rete - FIX: Usa syncPendingOperations
+  // Ref per debounce sync trigger
+  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Effect per gestione cambio stato rete - FIX: Debounced per production
   useEffect(() => {
+    // Clear previous timeout
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+    
     if (isOnline && isUsingCache) {
-      // Quando torna online, sincronizza operazioni pending prima di refreshare
-      setTimeout(() => {
+      // Debounce sync trigger per evitare chiamate multiple in production
+      syncTimeoutRef.current = setTimeout(() => {
         syncPendingOperations().catch(error => {
           console.warn('Auto-sync failed after reconnection:', error);
         });
-      }, 2000); // Aspetta 2s per stabilizzare connessione
+      }, 5000); // Aumentato a 5s per stabilità production
     }
-  }, [isOnline, isUsingCache, syncPendingOperations]);
+    
+    return () => {
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+      }
+    };
+  }, [isOnline, isUsingCache]); // Dependency stabili
   
   // Determina se stiamo usando dati cached
   useEffect(() => {
