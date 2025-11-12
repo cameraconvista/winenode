@@ -79,8 +79,8 @@ export const useWinesDataManagement = ({
 
       const mappedWines: WineType[] = (viniData || []).map((wine: any) => {
         const g = giacenzeMap.get(wine.id);
-        // FIX RESET GIACENZE: Preserva valore esistente in memoria se non c'è record giacenza
-        const currentWine = wines.find(w => w.id === wine.id);
+        // NOTA: Rimosso lookup currentWine per evitare dependency loop
+        // Le giacenze vengono ora gestite completamente dal DB
         return {
           id: wine.id,
           name: wine.nome_vino || '',
@@ -89,7 +89,7 @@ export const useWinesDataManagement = ({
             !wine.fornitore.toLowerCase().includes('non specif') &&
             wine.fornitore.toLowerCase() !== 'non specificato') 
             ? wine.fornitore : '',
-          inventory: g?.giacenza ?? (currentWine?.inventory || 0),
+          inventory: g?.giacenza ?? 0, // Default a 0 se non c'è record giacenza
           minStock: g?.min_stock ?? 2,
           price: wine.vendita?.toString() || '',
           cost: wine.costo || 0,
@@ -119,7 +119,7 @@ export const useWinesDataManagement = ({
     } finally {
       setLoading(false);
     }
-  }, [wines, setWines, setSuppliers, setLoading, setError, ensureGiacenzaRecords]);
+  }, [setWines, setSuppliers, setLoading, setError, ensureGiacenzaRecords]); // RIMUOVO wines per evitare loop infinito
 
   return {
     fetchWines,
