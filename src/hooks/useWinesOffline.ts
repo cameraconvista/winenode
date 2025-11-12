@@ -1,16 +1,17 @@
 /**
- * WINES HOOK OFFLINE-READY - WINENODE
+ * WINES HOOK OFFLINE-READY REFACTORED - WINENODE
  * 
  * Wrapper del hook useWines esistente che aggiunge funzionalità offline.
  * Mantiene API identica per compatibilità totale con componenti esistenti.
+ * Governance: Max 200 righe per file - REFACTORED.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useWines as useWinesOriginal, WineType } from './useWines';
-import { offlineCache, CACHE_TTL } from '../lib/offlineCache';
 import { useNetworkStatus } from './useNetworkStatus';
 import { useOfflineSync } from './useOfflineSyncClean';
-import { offlineStorage } from '../lib/offlineStorage';
+import { useOfflineCache } from './useOfflineCache';
+import { useOfflineOperations } from './useOfflineOperations';
 
 interface UseWinesOfflineReturn {
   // API identica al hook originale
@@ -54,11 +55,30 @@ export const useWines = (): UseWinesOfflineReturn => {
   const originalHook = useWinesOriginal();
   
   // Network status
-  const { isOnline, queueOperation } = useNetworkStatus();
+  const { isOnline } = useNetworkStatus();
+  
+  // State per sync progress
+  const [syncInProgress, setSyncInProgress] = useState(false);
   
   // Refs per stabilizzare callbacks e evitare loop infinito
   const refreshWinesRef = useRef(originalHook.refreshWines);
   refreshWinesRef.current = originalHook.refreshWines;
+  
+  // Hook per gestione cache offline
+  const cacheHook = useOfflineCache({
+    originalWines: originalHook.wines,
+    originalSuppliers: originalHook.suppliers,
+    isOnline,
+    originalRefreshWines: originalHook.refreshWines
+  });
+  
+  // Hook per operazioni offline
+  const operationsHook = useOfflineOperations({
+    isOnline,
+    originalUpdateWineInventory: originalHook.updateWineInventory,
+    internalWines: cacheHook.internalWines,
+    setInternalWines: cacheHook.setInternalWines
+  });
   
   // Callbacks stabilizzati con useCallback
   const onSyncStart = useCallback(() => {
@@ -70,13 +90,16 @@ export const useWines = (): UseWinesOfflineReturn => {
     if (import.meta.env.DEV) {
       console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
     }
-    // Refresh data dopo sync - usando ref per evitare dependency loop
+    // FIX RACE CONDITION: Refresh e sync state in sequenza
     if (successCount > 0) {
-      setTimeout(() => {
-        refreshWinesRef.current();
-      }, 100); // Piccolo delay per evitare race conditions
+      setTimeout(async () => {
+        await refreshWinesRef.current();
+        // Sincronizza internalWines con originalHook.wines dopo refresh
+        cacheHook.syncInternalWithOriginal();
+        cacheHook.setIsUsingCache(false);
+      }, 100);
     }
-  }, []);
+  }, [cacheHook]);
   
   const onSyncError = useCallback((error: Error) => {
     setSyncInProgress(false);
@@ -84,218 +107,12 @@ export const useWines = (): UseWinesOfflineReturn => {
   }, []);
 
   // Auto-sync hook con callbacks stabilizzati
-  const { syncPendingOperations, getSyncStats } = useOfflineSync({
+  const { syncPendingOperations } = useOfflineSync({
     isOnline,
     onSyncStart,
     onSyncComplete,
     onSyncError
   });
-  
-  // State per funzionalità offline
-  const [isUsingCache, setIsUsingCache] = useState(false);
-  const [lastCacheUpdate, setLastCacheUpdate] = useState<Date | null>(null);
-  const [cacheStats, setCacheStats] = useState({
-    winesHitRate: 0,
-    suppliersHitRate: 0,
-    lastSync: null as Date | null
-  });
-  
-  // State interno per gestione offline
-  const [internalWines, setInternalWines] = useState<WineType[]>([]);
-  const [internalSuppliers, setInternalSuppliers] = useState<string[]>([]);
-  const [syncInProgress, setSyncInProgress] = useState(false);
-  
-  // Refs per gestione cache
-  const cacheKeysRef = useRef({
-    wines: 'wines_catalog',
-    suppliers: 'suppliers_list',
-    giacenze: 'giacenze_data'
-  });
-  
-  /**
-   * Refresh vini con supporto cache offline
-   */
-  const refreshWinesWithCache = useCallback(async (): Promise<void> => {
-    try {
-      // Se online, prova refresh normale prima
-      if (isOnline) {
-        try {
-          await originalHook.refreshWines();
-          
-          // Se successo, aggiorna cache
-          if (originalHook.wines.length > 0) {
-            offlineCache.set(cacheKeysRef.current.wines, originalHook.wines, CACHE_TTL.vini);
-            offlineCache.set(cacheKeysRef.current.suppliers, originalHook.suppliers, CACHE_TTL.fornitori);
-            
-            setLastCacheUpdate(new Date());
-            setIsUsingCache(false);
-            
-            if (import.meta.env.DEV) {
-              console.log(`Wines cached: ${originalHook.wines.length} items`);
-            }
-          }
-          
-          return;
-        } catch (networkError) {
-          if (import.meta.env.DEV) {
-            console.warn('Network refresh failed, trying cache fallback:', networkError);
-          }
-        }
-      }
-      
-      // Fallback su cache se offline o errore rete
-      const cachedWines = offlineCache.get<WineType[]>(cacheKeysRef.current.wines);
-      const cachedSuppliers = offlineCache.get<string[]>(cacheKeysRef.current.suppliers);
-      
-      if (cachedWines && cachedSuppliers) {
-        // ← FIX CRITICO: Aggiorna state interno invece di solo flag
-        setInternalWines(cachedWines);
-        setInternalSuppliers(cachedSuppliers);
-        setIsUsingCache(true);
-        
-        if (import.meta.env.DEV) {
-          console.log(`Using cached wines: ${cachedWines.length} items (offline mode)`);
-        }
-      } else {
-        // Nessun cache disponibile
-        if (!isOnline) {
-          throw new Error('Nessuna connessione e nessun dato in cache disponibile');
-        }
-      }
-      
-    } catch (error) {
-      console.error('Failed to refresh wines (online + cache):', error);
-      throw error;
-    }
-  }, [isOnline, originalHook]);
-  
-  /**
-   * Update inventory con supporto offline
-   */
-  const updateInventoryOffline = useCallback(async (
-    wineId: string, 
-    newInventory: number
-  ): Promise<boolean> => {
-    try {
-      // Se online, prova update normale
-      if (isOnline) {
-        const success = await originalHook.updateWineInventory(wineId, newInventory);
-        
-        if (success) {
-          // Aggiorna cache locale
-          const cachedWines = offlineCache.get<WineType[]>(cacheKeysRef.current.wines);
-          if (cachedWines) {
-            const updatedWines = cachedWines.map(wine => 
-              wine.id === wineId 
-                ? { ...wine, inventory: newInventory }
-                : wine
-            );
-            offlineCache.set(cacheKeysRef.current.wines, updatedWines, CACHE_TTL.vini);
-          }
-        }
-        
-        return success;
-      } else {
-        // Offline: queue operazione per sync futuro
-        const operationId = await offlineStorage.addPendingOperation({
-          type: 'UPDATE_INVENTORY',
-          payload: { wineId, newInventory },
-          maxRetries: 3
-        });
-        
-        // Update ottimistico in cache E state interno
-        const cachedWines = offlineCache.get<WineType[]>(cacheKeysRef.current.wines);
-        if (cachedWines) {
-          const updatedWines = cachedWines.map(wine => 
-            wine.id === wineId 
-              ? { ...wine, inventory: newInventory }
-              : wine
-          );
-          offlineCache.set(cacheKeysRef.current.wines, updatedWines, CACHE_TTL.vini);
-          setInternalWines(updatedWines); // ← FIX CRITICO: Aggiorna state interno
-          
-          if (import.meta.env.DEV) {
-            console.log(`Inventory updated offline (queued: ${operationId}): ${wineId} -> ${newInventory}`);
-          }
-        }
-        
-        return true; // Ottimistic success
-      }
-    } catch (error) {
-      console.error('Failed to update inventory:', error);
-      return false;
-    }
-  }, [isOnline, originalHook.updateWineInventory, queueOperation]);
-  
-  /**
-   * Forza refresh cache da rete
-   */
-  const forceCacheRefresh = useCallback(async (): Promise<void> => {
-    if (!isOnline) {
-      throw new Error('Impossibile aggiornare cache: nessuna connessione');
-    }
-    
-    try {
-      // Invalida cache esistente
-      offlineCache.invalidate(cacheKeysRef.current.wines);
-      offlineCache.invalidate(cacheKeysRef.current.suppliers);
-      
-      // Forza refresh da rete
-      await originalHook.refreshWines();
-      
-      // Aggiorna cache con dati freschi
-      if (originalHook.wines.length > 0) {
-        offlineCache.set(cacheKeysRef.current.wines, originalHook.wines, CACHE_TTL.vini);
-        offlineCache.set(cacheKeysRef.current.suppliers, originalHook.suppliers, CACHE_TTL.fornitori);
-        
-        setLastCacheUpdate(new Date());
-        setIsUsingCache(false);
-        
-        if (import.meta.env.DEV) {
-          console.log('Cache force refreshed from network');
-        }
-      }
-    } catch (error) {
-      console.error('Failed to force refresh cache:', error);
-      throw error;
-    }
-  }, [isOnline, originalHook]);
-  
-  /**
-   * Pulisce cache offline
-   */
-  const clearOfflineCache = useCallback(() => {
-    offlineCache.invalidate(cacheKeysRef.current.wines);
-    offlineCache.invalidate(cacheKeysRef.current.suppliers);
-    offlineCache.invalidate(cacheKeysRef.current.giacenze);
-    
-    setLastCacheUpdate(null);
-    setIsUsingCache(false);
-    
-    if (import.meta.env.DEV) {
-      console.log('Offline cache cleared');
-    }
-  }, []);
-  
-  // Effect per aggiornamento statistiche cache
-  useEffect(() => {
-    const updateCacheStats = () => {
-      const stats = offlineCache.getStats();
-      
-      setCacheStats(prev => ({
-        ...prev,
-        winesHitRate: stats.hitRate,
-        suppliersHitRate: stats.hitRate, // Semplificato per ora
-        lastSync: lastCacheUpdate
-      }));
-    };
-    
-    // Aggiorna stats ogni 30 secondi
-    const interval = setInterval(updateCacheStats, 30000);
-    updateCacheStats(); // Prima volta subito
-    
-    return () => clearInterval(interval);
-  }, [lastCacheUpdate]);
   
   // Ref per debounce sync trigger
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -307,7 +124,7 @@ export const useWines = (): UseWinesOfflineReturn => {
       clearTimeout(syncTimeoutRef.current);
     }
     
-    if (isOnline && isUsingCache) {
+    if (isOnline && cacheHook.isUsingCache) {
       // Debounce sync trigger per evitare chiamate multiple in production
       syncTimeoutRef.current = setTimeout(() => {
         syncPendingOperations().catch(error => {
@@ -321,26 +138,27 @@ export const useWines = (): UseWinesOfflineReturn => {
         clearTimeout(syncTimeoutRef.current);
       }
     };
-  }, [isOnline, isUsingCache]); // Dependency stabili
+  }, [isOnline, cacheHook.isUsingCache, syncPendingOperations]);
   
   // Determina se stiamo usando dati cached
   useEffect(() => {
     if (!isOnline) {
-      const hasCache = offlineCache.get(cacheKeysRef.current.wines) !== null;
-      setIsUsingCache(hasCache);
+      // Logica per determinare se abbiamo cache disponibile
+      // Implementazione semplificata per ora
+      cacheHook.setIsUsingCache(cacheHook.internalWines.length > 0);
     }
-  }, [isOnline]);
+  }, [isOnline, cacheHook]);
   
   return {
-    // API identica al hook originale - FIX CRITICO: Usa state interno quando offline
-    wines: isUsingCache ? internalWines : originalHook.wines,
-    suppliers: isUsingCache ? internalSuppliers : originalHook.suppliers,
+    // API identica al hook originale - FIX RACE CONDITION: Priorità internalWines se aggiornato
+    wines: (cacheHook.isUsingCache || cacheHook.internalWines.length > 0) ? cacheHook.internalWines : originalHook.wines,
+    suppliers: (cacheHook.isUsingCache || cacheHook.internalSuppliers.length > 0) ? cacheHook.internalSuppliers : originalHook.suppliers,
     loading: originalHook.loading || syncInProgress,
     error: originalHook.error,
     
     // Metodi originali (con enhancement offline)
-    refreshWines: refreshWinesWithCache,
-    updateWineInventory: updateInventoryOffline,
+    refreshWines: cacheHook.refreshWinesWithCache,
+    updateWineInventory: operationsHook.updateInventoryOffline,
     updateMultipleWineInventories: originalHook.updateMultipleWineInventories,
     updateWineMinStock: originalHook.updateWineMinStock,
     updateWine: originalHook.updateWine,
@@ -352,13 +170,13 @@ export const useWines = (): UseWinesOfflineReturn => {
     realtimeSubscribed: originalHook.realtimeSubscribed,
     
     // Nuove funzionalità offline
-    isUsingCache,
-    lastCacheUpdate,
-    cacheStats,
+    isUsingCache: cacheHook.isUsingCache,
+    lastCacheUpdate: cacheHook.lastCacheUpdate,
+    cacheStats: cacheHook.cacheStats,
     
     // Metodi offline
-    forceCacheRefresh,
-    clearOfflineCache
+    forceCacheRefresh: cacheHook.forceCacheRefresh,
+    clearOfflineCache: cacheHook.clearOfflineCache
   };
 };
 
