@@ -5,7 +5,7 @@
  * senza modificare i componenti principali. Approccio non invasivo.
  */
 
-import { offlineCache } from './offlineCache';
+import { offlineCache, OfflineCache } from './offlineCache';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
 // Feature flags per controllo granulare
@@ -110,7 +110,7 @@ const setupDevelopmentHelpers = () => {
       cache: offlineCache,
       features: OFFLINE_FEATURES,
       clearCache: () => {
-        offlineCache.clear();
+        OfflineCache.clear();
         console.log('🧹 Cache cleared manually');
       },
       getCacheStats: () => {
