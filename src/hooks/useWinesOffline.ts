@@ -50,7 +50,7 @@ interface UseWinesOfflineReturn {
 /**
  * Hook principale per gestione vini con supporto offline
  */
-export const useWines = (): UseWinesOfflineReturn => {
+const useWines = (): UseWinesOfflineReturn => {
   // Hook originale (mantenuto per compatibilità)
   const originalHook = useWinesOriginal();
   
@@ -193,3 +193,6 @@ export const useWines = (): UseWinesOfflineReturn => {
 
 // Re-export del tipo per compatibilità
 export type { WineType };
+
+// Export del hook principale - FIX CRITICO
+export { useWines };
