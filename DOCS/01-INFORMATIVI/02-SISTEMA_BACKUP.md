@@ -3,9 +3,9 @@
 **Sintesi Executive**: Sistema backup automatico enterprise-grade con compressione tar.gz, rotazione intelligente max 3 copie, esclusioni ottimizzate e procedure sicure di ripristino con verifica integrità.
 
 **Stato Attuale**: ✅ **ATTIVO E FUNZIONANTE** (13/11/2025)  
-**Ultimo Backup**: giacenze-backup-2025-11-12T23-32-13-214Z.json  
-**Backup Progetto**: winenode_backup_20251113_003218.tar.gz (48MB)  
-**Checksum MD5**: fd8dcac1830812cd3e26523b29cbe2e6
+**Ultimo Backup**: backup_13112025_010645.tar.gz (12.0 MB)  
+**Backup Giacenze**: giacenze-backup-2025-11-12T23-32-13-214Z.json  
+**Rotazione**: 3 backup mantenuti (rotazione automatica)
 
 ## 🔄 OVERVIEW SISTEMA
 
