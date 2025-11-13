@@ -90,14 +90,14 @@ export const useWines = (): UseWinesOfflineReturn => {
     if (import.meta.env.DEV) {
       console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
     }
-    // FIX RACE CONDITION: Refresh e sync state in sequenza
+    // FIX CRITICO: NON fare refresh dopo sync - sovrascrive le modifiche offline!
+    // Le modifiche sono già state sincronizzate sul server, mantieni lo stato locale
     if (successCount > 0) {
-      setTimeout(async () => {
-        await refreshWinesRef.current();
-        // Sincronizza internalWines con originalHook.wines dopo refresh
-        cacheHook.syncInternalWithOriginal();
-        cacheHook.setIsUsingCache(false);
-      }, 100);
+      if (import.meta.env.DEV) {
+        console.log(`✅ Sync successful, keeping local state (${successCount} operations)`);
+      }
+      // Solo aggiorna flag cache senza refresh
+      cacheHook.setIsUsingCache(false);
     }
   }, [cacheHook]);
   

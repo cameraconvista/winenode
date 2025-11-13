@@ -87,15 +87,23 @@ export const useOfflineCache = ({
             offlineCache.set(cacheKeysRef.current.wines, originalWines, CACHE_TTL.vini);
             offlineCache.set(cacheKeysRef.current.suppliers, originalSuppliers, CACHE_TTL.fornitori);
             
-            // Sincronizza state interno con dati freschi
-            setInternalWines(originalWines);
-            setInternalSuppliers(originalSuppliers);
+            // FIX CRITICO: Solo aggiorna se internalWines è vuoto o se non stiamo usando cache
+            // Preserva le modifiche locali se esistono
+            if (internalWines.length === 0 || !isUsingCache) {
+              setInternalWines(originalWines);
+              setInternalSuppliers(originalSuppliers);
+              
+              if (import.meta.env.DEV) {
+                console.log(`Internal state updated with fresh data: ${originalWines.length} items`);
+              }
+            } else {
+              if (import.meta.env.DEV) {
+                console.log(`Preserving local state, cache updated: ${originalWines.length} items`);
+              }
+            }
+            
             setLastCacheUpdate(new Date());
             setIsUsingCache(false);
-            
-            if (import.meta.env.DEV) {
-              console.log(`Wines cached: ${originalWines.length} items`);
-            }
           }
           
           return;

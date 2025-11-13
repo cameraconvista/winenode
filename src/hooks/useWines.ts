@@ -118,9 +118,11 @@ const useWines = () => {
     fetchWines();
   }, [fetchWines]);
 
-  // Effect per refresh on focus (se abilitato)
+  // Effect per refresh on focus (TEMPORANEAMENTE DISABILITATO per fix offline)
   useEffect(() => {
-    if (!refreshOnFocusEnabled) return;
+    // FIX OFFLINE: Disabilito refresh on focus che sovrascrive modifiche offline
+    const disableRefreshOnFocus = true; // Temporaneo per fix offline
+    if (!refreshOnFocusEnabled || disableRefreshOnFocus) return;
 
     const handleFocus = () => {
       if (import.meta.env.DEV) {
